@@ -1,0 +1,51 @@
+[user]
+	name = João Alberto Vortmann
+	email = jvortmann@gmail.com
+
+[color]
+	status = auto
+	branch = auto
+	log = auto
+	commit = auto
+	diff = auto
+	interactive = auto
+	ui = true
+	pager = true
+
+[color "branch"]
+	current = yellow
+	local = green
+	remote = blue
+
+[color "diff"]
+	meta = yellow 
+	frag = blue
+	old = red
+	new = green 
+
+[color "status"]
+	added = green
+	changed = yellow
+	untracked = red
+
+[core]
+	excludesfile = ~/.gitignore
+	pager = less -FRSX
+	whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
+
+[alias]
+	l = log
+	lg = log --oneline --graph
+  ls = log --stat
+  last = log -1 HEAD
+	w = log --name-status #short whatchanged
+	s = show
+	d = diff
+	ds = diff --staged
+	st = status
+	ci = commit
+	co = checkout
+	br = branch
+  p = push
+  r = remote
+  unstage = reset HEAD --
