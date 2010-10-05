@@ -1,7 +1,7 @@
 # make ls use colors
 alias ls="ls -G"
 # set up the terminal format
-export PS1='\[\033[;32m\]\u@\h\[\033[;34m\] \w \[\033[;31m\]$(__git_ps1 "(%s)")\$\[\033[00m\] '
+export PS1='\[\033[;32m\]\u@\h\[\033[1;33m\] \w \[\033[;31m\]$(__git_ps1 "(%s)")\$\[\033[00m\] '
 # set the terminal colors
 export CLICOLOR=1
 export LSCOLORS=ExFxCxDxBxegedabagacad
