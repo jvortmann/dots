@@ -4,7 +4,7 @@ alias ls="ls -G"
 export PS1='\[\033[;32m\]\u@\h\[\033[1;33m\] \w \[\033[;31m\]$(__git_ps1 "(%s)")\$\[\033[00m\] '
 # set the terminal colors
 export CLICOLOR=1
-export LSCOLORS=ExFxCxDxBxegedabagacad
+export LSCOLORS=GxFxCxDxBxegedabagacad
 # set localhost alias
 alias here="localhost"
 # set move to be verbose
