@@ -9,6 +9,8 @@ export LSCOLORS=GxFxCxDxBxegedabagacad
 alias here="localhost"
 # set move to be verbose
 alias mv="mv -v"
+#set grep to use color and to be case insensitive
+alias grep="grep -i --colour"
 # set the default editor
 # needs macvim to use this alias
 alias vim="mvim"
