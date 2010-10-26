@@ -43,6 +43,7 @@
 	d = diff
 	ds = diff --staged
 	st = status
+  ss = status -s
 	ci = commit
 	co = checkout
 	br = branch
