@@ -12,9 +12,6 @@ alias mv="mv -v"
 #set grep to use color and to be case insensitive
 alias grep="grep -i --colour"
 # set the default editor
-# needs macvim to use this alias
-alias vim="mvim"
-alias vi="mvim"
 export EDITOR=vim
 # set the PATH environment variable
 PATH="/usr/local/share:"
