@@ -33,6 +33,9 @@
 	pager = less -FRSX
 	whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
 
+[diff]
+  ignoreSubmodules = dirty
+
 [alias]
 	l = log
 	lg = log --oneline --graph
