@@ -1,55 +1,55 @@
 [user]
-	name = João Alberto Vortmann
-	email = jvortmann@gmail.com
+  name = João Alberto Vortmann
+  email = jvortmann@gmail.com
 
 [color]
-	status = auto
-	branch = auto
-	log = auto
-	commit = auto
-	diff = auto
-	interactive = auto
-	ui = true
-	pager = true
+  status = auto
+  branch = auto
+  log = auto
+  commit = auto
+  diff = auto
+  interactive = auto
+  ui = true
+  pager = true
 
 [color "branch"]
-	current = yellow
-	local = green
-	remote = cyan
+  current = yellow
+  local = green
+  remote = cyan
 
 [color "diff"]
-	meta = yellow 
-	frag = cyan 
-	old = red
-	new = green 
+  meta = yellow 
+  frag = cyan 
+  old = red
+  new = green 
 
 [color "status"]
-	added = green
-	changed = yellow
-	untracked = red
+  added = green
+  changed = yellow
+  untracked = red
 
 [core]
-	excludesfile = ~/.gitignore
-	pager = less -FRSX
-	whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
+  excludesfile = ~/.gitignore
+  pager = less -FRSX
+  whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
 
 [diff]
   ignoreSubmodules = dirty
 
 [alias]
-	l = log
-	lg = log --oneline --graph
+  l = log
+  lg = log --oneline --graph
   ls = log --stat
   last = log -1 HEAD
-	w = log --name-status #short whatchanged
-	s = show
-	d = diff
-	ds = diff --staged
-	st = status
+  w = log --name-status #short whatchanged
+  s = show
+  d = diff
+  ds = diff --staged
+  st = status
   ss = status -s
-	ci = commit
-	co = checkout
-	br = branch
+  ci = commit
+  co = checkout
+  br = branch
   p = push
   r = remote
   unstage = reset HEAD --
