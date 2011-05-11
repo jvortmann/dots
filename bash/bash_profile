@@ -1,9 +1,3 @@
-# set up the terminal format
-export PS1='\[\033[;32m\]\u@\h\[\033[1;33m\] \w \[\033[;31m\]$(__git_ps1 "(%s)")\$\[\033[00m\] '
-# set the terminal colors
-export CLICOLOR=1
-export LSCOLORS=GxFxCxDxBxegedabagacad
-
 #source the configuration of the path
 source "$HOME/.dots/bash/conf/path"
 
@@ -16,8 +10,5 @@ source "$HOME/.dots/bash/conf/general"
 #source rvm configuration
 source "$HOME/.dots/bash/conf/rvm"
 
-# set the bash-completion path
-# needs bash-completion installed
-if [ -f `brew --prefix`/etc/bash_completion ]; then
-	. `brew --prefix`/etc/bash_completion
-fi
+#source bash_completion configuration
+source "$HOME/.dots/bash/conf/bash_completion"
