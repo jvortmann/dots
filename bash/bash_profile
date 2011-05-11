@@ -13,9 +13,9 @@ source "$HOME/.dots/bash/conf/aliases"
 #source general configuration
 source "$HOME/.dots/bash/conf/general"
 
-# this loads RVM into a shell session.
-# needs RVM installed
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"  
+#source rvm configuration
+source "$HOME/.dots/bash/conf/rvm"
+
 # set the bash-completion path
 # needs bash-completion installed
 if [ -f `brew --prefix`/etc/bash_completion ]; then
