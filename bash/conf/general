@@ -1,2 +1,5 @@
 # set the default editor
 export EDITOR=vim
+
+#source the colors configuration
+source "$HOME/.dots/bash/conf/colors"
