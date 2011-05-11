@@ -1,0 +1,9 @@
+# set the PATH environment variable
+PATH="/usr/local/share:"
+PATH="$PATH/usr/local/bin:"
+PATH="$PATH/usr/local/sbin:"
+PATH="$PATH/usr/bin:"
+PATH="$PATH/usr/sbin:"
+PATH="$PATH/bin:"
+PATH="$PATH/sbin:"
+export PATH
