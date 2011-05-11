@@ -1,21 +1,16 @@
-# make ls use colors
-alias ls="ls -G"
 # set up the terminal format
 export PS1='\[\033[;32m\]\u@\h\[\033[1;33m\] \w \[\033[;31m\]$(__git_ps1 "(%s)")\$\[\033[00m\] '
 # set the terminal colors
 export CLICOLOR=1
 export LSCOLORS=GxFxCxDxBxegedabagacad
-# set localhost alias
-alias here="localhost"
-# set move to be verbose
-alias mv="mv -v"
-#set grep to use color and to be case insensitive
-alias grep="grep -i --colour"
 # set the default editor
 export EDITOR=vim
 
 #source the configuration of the path
 source "$HOME/.dots/bash/conf/path"
+
+#source the configuration of the aliases
+source "$HOME/.dots/bash/conf/aliases"
 
 # this loads RVM into a shell session.
 # needs RVM installed

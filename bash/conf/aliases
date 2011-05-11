@@ -1,0 +1,8 @@
+# make ls use colors
+alias ls="ls -G"
+# set localhost alias
+alias here="localhost"
+# set move to be verbose
+alias mv="mv -v"
+#set grep to use color and to be case insensitive
+alias grep="grep -i --colour"
