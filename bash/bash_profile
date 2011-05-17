@@ -4,6 +4,9 @@ source "$HOME/.dots/bash/conf/path"
 #source the configuration of the aliases
 source "$HOME/.dots/bash/conf/aliases"
 
+#source the configuration of the functions
+source "$HOME/.dots/bash/conf/functions"
+
 #source general configuration
 source "$HOME/.dots/bash/conf/general"
 
