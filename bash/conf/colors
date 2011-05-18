@@ -1,3 +1,4 @@
-# set the terminal colors
-export CLICOLOR=1
-export LSCOLORS=GxFxCxDxBxegedabagacad
+# enable color support of ls
+if [ -x /usr/local/bin/dircolors ]; then
+  test -r $HOME/.dots/bash/conf/dircolors && eval "$(dircolors -b $HOME/.dots/bash/conf/dircolors)" || eval "$(dircolors -b)"
+fi
