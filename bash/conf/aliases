@@ -9,5 +9,6 @@ alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 # set localhost alias
 alias here="localhost"
-# set move to be verbose
+# set move and copy to be verbose
 alias mv="mv -v"
+alias cp="cp -v"
