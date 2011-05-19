@@ -1,0 +1,5 @@
+General:
+  ✓ setup functions
+  ✓ setup local configs for bash
+  - setup a README file
+  - setup a Rake task to install
