@@ -229,6 +229,10 @@ EXEC 01;32
 .h 00;31
 .diff 00;31
 .patch 00;31
+.java 00;31
+.rb 00;31
+.js 00;31
+.clj 00;31
 
 # misc.
 *akefile 01;37
