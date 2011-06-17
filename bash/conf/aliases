@@ -13,4 +13,7 @@ alias here="localhost"
 alias mv="mv -v"
 alias cp="cp -v"
 alias vi="vim"
-alias vim="mvim"
+case `uname -s` in
+ 'Linux') alias vim="gvim" ;;
+ 'Darwin') alias vim="mvim" ;;
+esac
