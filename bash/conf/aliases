@@ -12,3 +12,5 @@ alias here="localhost"
 # set move and copy to be verbose
 alias mv="mv -v"
 alias cp="cp -v"
+alias vi="vim"
+alias vim="mvim"
