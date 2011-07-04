@@ -1,2 +1,8 @@
 # set up the terminal format
-export PS1='\[\033[;32m\]\u@\h\[\033[1;33m\] \w \[\033[;31m\]$(__git_ps1 "(%s)")\$\[\033[00m\] '
+USER_AND_HOST_='\e[;94m' ;
+PATH_='\e[1;92m' ;
+GIT_='\e[1;91m' ;
+GIT_REPO_='$(__git_ps1 "(%s)")' ;
+SEPARATOR_='\e[1;91m' ;
+END_='\e[m' ;
+export PS1="$USER_AND_HOST_\u@\h $PATH_\W $GIT_$GIT_REPO_$SEPARATOR_>$END_ "
