@@ -17,3 +17,4 @@ case `uname -s` in
  'Linux') if type -p gvim &>/dev/null; then alias vim="gvim"; fi ;;
  'Darwin') if type -p mvim &>/dev/null; then alias vim="mvim"; fi ;;
 esac
+alias g="git"

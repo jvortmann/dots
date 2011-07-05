@@ -14,6 +14,8 @@ print_found() {
 done
 }
 
+lf() { print_found; }
+
 ff() { myfind "f" "$1"; }
 
 fd() { myfind "d" "$1"; }
@@ -21,10 +23,9 @@ fd() { myfind "d" "$1"; }
 fn() {
   [ ! -z ${FFOUND[$1-1]} ] && echo ${FFOUND_PWD}/${FFOUND[$1-1]};
 }
+
 v() { vim $(fn "$1"); }
 
 d() { cd $(dirname $(fn "$1")); }
 
 c() { cat $(fn "$1"); }
-
-lf() { print_found; }
