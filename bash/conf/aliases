@@ -17,4 +17,5 @@ case `uname -s` in
  'Linux') alias vim="gvim" ;;
  'Darwin') alias vim="mvim" ;;
 esac
+alias v="vim"
 alias g="git"
