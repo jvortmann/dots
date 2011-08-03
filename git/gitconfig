@@ -31,7 +31,7 @@
 [core]
   excludesfile = ~/.gitignore
   pager = less -FRSX
-  whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
+  whitespace=fix,-indent-with-non-tab,trailing-space,space-before-tab,cr-at-eol
 
 [diff]
   ignoreSubmodules = dirty
