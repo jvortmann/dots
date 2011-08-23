@@ -26,7 +26,7 @@
 [color "status"]
   added = green
   changed = yellow
-  untracked = blue bold
+  untracked = blue
 
 [core]
   excludesfile = ~/.gitignore
