@@ -52,12 +52,12 @@ NORMAL 00	# global default, although everything should be something.
 FILE 00		# normal file
 DIR 00;34	# directory
 #LINK target
-LINK 01;36	# symbolic link.  (If you set this to 'target' instead of a
+LINK 00;35	# symbolic link.  (If you set this to 'target' instead of a
 		# numerical value, the color is as for the file pointed to.)
 FIFO 33		# pipe
-SOCK 01;35	# socket
+SOCK 01;36	# socket
 #DOOR 01;44	# door
-BLK 00;35	# block device driver
+BLK 00;36	# block device driver
 CHR 00;34	# character device driver
 ORPHAN 00;41	# symlink to nonexistent file
 MISSING 00;45	# said nonexistent file
