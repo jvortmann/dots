@@ -1,6 +1,9 @@
 # set the default editor
 export EDITOR=vim
 
+# set the term to have 256 colors
+export TERM=xterm-256color
+
 #source the colors configuration
 source "$HOME/.dots/bash/conf/colors"
 
