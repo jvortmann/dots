@@ -1,5 +1,5 @@
 [user]
-  name = João Alberto Vortmann
+  name = Joao Vortmann
   email = jvortmann@gmail.com
 
 [color]
@@ -38,7 +38,7 @@
 
 [alias]
   l = log
-  lg = log --oneline --graph
+  lg = log --graph --pretty=format:'%C(yellow)%h %Cblue%aN %Cgreen%ar %Creset%s'
   ls = log --stat
   last = log -1 HEAD
   w = log --name-status #short whatchanged
