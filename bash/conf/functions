@@ -29,3 +29,5 @@ vf() { vim $(fn "$1"); }
 d() { cd $(dirname $(fn "$1")); }
 
 c() { cat $(fn "$1"); }
+
+function hex { echo "obase=16; $1" | bc; }
