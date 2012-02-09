@@ -4,3 +4,4 @@
 *.swo
 tags
 !tags/
+*.sass-cache
