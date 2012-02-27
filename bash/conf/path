@@ -7,3 +7,5 @@ PATH="$PATH/usr/sbin:"
 PATH="$PATH/bin:"
 PATH="$PATH/sbin:"
 export PATH
+
+PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
