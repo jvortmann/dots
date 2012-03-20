@@ -27,3 +27,5 @@ alias be="bundle exec"
 alias ber="bundle exec rake"
 #rails alias
 alias r="rails"
+# alias to current projects folder
+alias gc="cd ~/prj/current"
