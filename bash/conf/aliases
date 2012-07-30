@@ -25,6 +25,7 @@ complete -o bashdefault -o default -o nospace -F _git g
 alias b="bundle"
 alias be="bundle exec"
 alias ber="bundle exec rake"
+alias bert="bundle exec rake environment RAILS_ENV=test"
 #rails alias
 alias r="rails"
 # alias to projects folder
