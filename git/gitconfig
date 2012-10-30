@@ -51,8 +51,8 @@
   ss = status -s
   ci = commit
   co = checkout
-  cf = "!git ss | grep UU --color"
-  ccf = "!git ss | grep UU --color | wc -l"
+  cf = "!git ss | grep '[UD][UD]' --color"
+  ccf = "!git cf | wc -l"
   br = branch
   p = push
   r = remote
