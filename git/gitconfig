@@ -58,6 +58,7 @@
   r = remote
   unstage = reset HEAD --
   this = !git init && git add . && git commit -m \"Initial commit.\"
+  t = !git this
   amend = !git log -n 1 --pretty=tformat:%s%n%n%b | git commit -F - --amend
   x  = commit -m
   xa = commit -a -m
