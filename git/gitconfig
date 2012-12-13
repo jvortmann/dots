@@ -57,5 +57,6 @@
   p = push
   r = remote
   unstage = reset HEAD --
+  this = !git init && git add . && git commit -m \"Initial commit.\"
 [heroku]
   account = personal
