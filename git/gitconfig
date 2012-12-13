@@ -57,3 +57,5 @@
   p = push
   r = remote
   unstage = reset HEAD --
+[heroku]
+  account = personal
