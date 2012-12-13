@@ -54,7 +54,8 @@
   cf = "!git ss | grep '[UD][UD]' --color"
   ccf = "!git cf | wc -l"
   br = branch
-  p = push
+  px = push
+  pl = pull
   r = remote
   unstage = reset HEAD --
   this = !git init && git add . && git commit -m \"Initial commit.\"
