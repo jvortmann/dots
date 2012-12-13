@@ -61,5 +61,6 @@
   amend = !git log -n 1 --pretty=tformat:%s%n%n%b | git commit -F - --amend
   x  = commit -m
   xa = commit -a -m
+  ignore=!([ ! -e .gitignore ] && touch .gitignore) | echo $1 >>.gitignore
 [heroku]
   account = personal
