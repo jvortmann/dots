@@ -49,7 +49,6 @@
   ds = diff --staged
   st = status
   ss = status -s
-  ci = commit
   co = checkout
   cf = "!git ss | grep '[UD][UD]' --color"
   ccf = "!git cf | wc -l"
@@ -59,5 +58,7 @@
   unstage = reset HEAD --
   this = !git init && git add . && git commit -m \"Initial commit.\"
   amend = !git log -n 1 --pretty=tformat:%s%n%n%b | git commit -F - --amend
+  x  = commit -m
+  xa = commit -a -m
 [heroku]
   account = personal
