@@ -38,7 +38,6 @@
 
 [alias]
   aa = add --all
-  amend = commit --amend
   l = log
   lg = log --graph --pretty=format:'%C(yellow)%h %Cblue%aN %Cgreen%ar %Creset%s'
   ls = log --stat
@@ -58,5 +57,6 @@
   r = remote
   unstage = reset HEAD --
   this = !git init && git add . && git commit -m \"Initial commit.\"
+  amend = !git log -n 1 --pretty=tformat:%s%n%n%b | git commit -F - --amend
 [heroku]
   account = personal
