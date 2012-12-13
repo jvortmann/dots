@@ -37,6 +37,7 @@
   ignoreSubmodules = dirty
 
 [alias]
+  a = add
   aa = add --all
   l = log
   lg = log --graph --pretty=format:'%C(yellow)%h %Cblue%aN %Cgreen%ar %Creset%s'
