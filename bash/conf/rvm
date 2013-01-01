@@ -1,3 +1,0 @@
-# this loads RVM into a shell session.
-# needs RVM installed
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"

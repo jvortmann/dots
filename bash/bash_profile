@@ -11,7 +11,7 @@ source "$HOME/.dots/bash/conf/functions"
 source "$HOME/.dots/bash/conf/general"
 
 #source rvm configuration
-source "$HOME/.dots/bash/conf/rvm"
+source "$HOME/.dots/bash/conf/rbenv"
 
 #source bash_completion configuration
 source "$HOME/.dots/bash/conf/bash_completion"
@@ -20,5 +20,3 @@ source "$HOME/.dots/bash/conf/bash_completion"
 if [ -e "$HOME/.bash_profile.local" ]; then
   source "$HOME/.bash_profile.local"
 fi
-
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
