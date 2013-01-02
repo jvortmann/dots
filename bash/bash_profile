@@ -10,7 +10,7 @@ source "$HOME/.dots/bash/conf/functions"
 #source general configuration
 source "$HOME/.dots/bash/conf/general"
 
-#source rvm configuration
+#source rbenv configuration
 source "$HOME/.dots/bash/conf/rbenv"
 
 #source bash_completion configuration
