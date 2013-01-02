@@ -66,3 +66,5 @@
   ignore=!([ ! -e .gitignore ] && touch .gitignore) | echo $1 >>.gitignore
 [heroku]
   account = personal
+[push]
+  default = simple
