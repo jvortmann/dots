@@ -10,5 +10,8 @@ PATH="$PATH/bin:"
 PATH="$PATH/sbin:"
 export PATH
 
-### Added by the Heroku Toolbelt
+# Added by the Heroku Toolbelt
 export PATH="/usr/local/heroku/bin:$PATH"
+
+# add local binstubs to the beginning of the path
+export PATH="vendor/bundle/binstubs:$PATH"
