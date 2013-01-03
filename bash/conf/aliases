@@ -22,10 +22,10 @@ alias g="git"
 #add autocomplete for g alias
 complete -o bashdefault -o default -o nospace -F _git g
 #bundle aliases
+alias bundle-init="bundle install --path vendor/bundle --binstubs vendor/bundle/binstubs"
 alias b="bundle"
+alias bi="bundle-init"
 alias be="bundle exec"
-alias ber="bundle exec rake"
-alias bert="bundle exec rake environment RAILS_ENV=test"
 #rails alias
 alias r="rails"
 # alias to projects folder
