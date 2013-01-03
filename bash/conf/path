@@ -1,14 +1,8 @@
-# set the PATH environment variable
-PATH="$HOME/.rbenv/bin:"
-PATH="$PATH/usr/local/share:"
-PATH="$PATH/usr/local/share/npm/bin:"
-PATH="$PATH/usr/local/bin:"
-PATH="$PATH/usr/local/sbin:"
-PATH="$PATH/usr/bin:"
-PATH="$PATH/usr/sbin:"
-PATH="$PATH/bin:"
-PATH="$PATH/sbin:"
-export PATH
+# move local bin to the beginning of path
+export PATH="/usr/local/bin:$PATH"
+
+# add rbenv bin
+export PATH="$HOME/.rbenv/bin:$PATH"
 
 # Added by the Heroku Toolbelt
 export PATH="/usr/local/heroku/bin:$PATH"
