@@ -28,6 +28,9 @@ alias bi="bundle-init"
 alias be="bundle exec"
 #rails alias
 alias r="rails"
+#rake alias
+alias rk="rake"
+alias rks="rake spec"
 # alias to projects folder
 alias gp="cd ~/prj"
 # alias to current projects folder
