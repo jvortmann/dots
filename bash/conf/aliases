@@ -30,6 +30,7 @@ alias be="bundle exec"
 alias r="rails"
 #rake alias
 alias rk="rake"
+alias rt="RAILS_ENV= test rake"
 alias rks="rake spec"
 # alias to projects folder
 alias gp="cd ~/prj"
