@@ -3,12 +3,15 @@ alias ls='ls -G'
 alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
+
 # make grep colorful
 alias grep='grep --color=auto -i'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
+
 # set localhost alias
 alias here="localhost"
+
 # set move and copy to be verbose
 alias mv="mv -v"
 alias cp="cp -v"
@@ -19,21 +22,32 @@ case `uname -s` in
 esac
 alias v="vim"
 alias g="git"
+
 #add autocomplete for g alias
 complete -o bashdefault -o default -o nospace -F _git g
+
 #bundle aliases
 alias bundle-init="bundle install --path vendor/bundle --binstubs vendor/bundle/binstubs"
 alias b="bundle"
 alias bi="bundle-init"
 alias be="bundle exec"
+
 #rails alias
 alias r="rails"
+
 #rake alias
 alias rk="rake"
 alias rkt="RAILS_ENV=test rake"
 alias rks="rake spec"
+
+#rake db:migrate and db:seed alias
+alias m="rake db:migrate"
+alias mt="RAILS_ENV=test rake db:migrate"
+alias s="rake db:seed"
+
 # alias to projects folder
 alias gp="cd ~/prj"
+
 # alias to current projects folder
 alias gc="cd ~/prj/current"
 alias pg_start="pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start"
