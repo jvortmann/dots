@@ -41,8 +41,9 @@ alias rkt="RAILS_ENV=test rake"
 alias rks="rake spec"
 
 #rake db:migrate and db:seed alias
-alias m="rake db:migrate"
+alias md="rake db:migrate"
 alias mt="RAILS_ENV=test rake db:migrate"
+alias m="md; mt"
 alias s="rake db:seed"
 
 # alias to projects folder
