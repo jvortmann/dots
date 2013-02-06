@@ -3,6 +3,7 @@
 *.swp
 *.swo
 tags
+gem.tags
 !tags/
 *.sass-cache
 vendor/bundle
