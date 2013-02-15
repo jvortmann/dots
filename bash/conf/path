@@ -1,3 +1,6 @@
+# adds npm bin to the path
+export PATH="/usr/local/share/npm/bin:$PATH"
+
 # move local bin to the beginning of path
 export PATH="/usr/local/bin:$PATH"
 
