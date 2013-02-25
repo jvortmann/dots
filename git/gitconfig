@@ -51,7 +51,7 @@
   st = status
   ss = status -s
   co = checkout
-  cf = "!git ss | grep '[UD][UD]' --color"
+  cf = "!git ss | grep '^U.\\|^.U' --color"
   ccf = "!git cf | wc -l"
   br = branch
   px = push
