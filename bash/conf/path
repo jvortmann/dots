@@ -4,8 +4,5 @@ export PATH="/usr/local/bin:$PATH"
 # add rbenv bin
 export PATH="$HOME/.rbenv/bin:$PATH"
 
-# Added by the Heroku Toolbelt
-export PATH="/usr/local/heroku/bin:$PATH"
-
 # add local binstubs to the beginning of the path
 export PATH="vendor/bundle/binstubs:$PATH"
