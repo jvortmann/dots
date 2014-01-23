@@ -64,7 +64,7 @@
   x  = commit -m
   xa = commit -a -m
   ignore = !([ ! -e .gitignore ] && touch .gitignore) | echo $1 >>.gitignore
-  shame = "!s() { git blame $1 -p | grep 'author ' | cut -d' ' -f2-10 | sort | uniq -c | sort | tail -n1 | cut -d' ' -f4-10 | say; }; s"
+  shame = "!s() { git blame $1 -p | grep 'author ' | cut -d' ' -f2-10 | sort | uniq -c | sort | tail -n1 | cut -c6-30 ; }; s"
 [heroku]
   account = personal
 [push]
