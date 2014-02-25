@@ -8,3 +8,4 @@ gem.tags
 *.sass-cache
 vendor/bundle
 coverage/
+log/
