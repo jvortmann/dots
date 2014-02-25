@@ -1,0 +1,9 @@
+#ignoring .DS_Store files
+*.DS_Store
+*.swp
+*.swo
+tags
+gem.tags
+!tags/
+*.sass-cache
+vendor/bundle
