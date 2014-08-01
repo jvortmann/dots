@@ -32,4 +32,4 @@ c() { cat $(fn "$1"); }
 
 function hex { echo "obase=16; $1" | bc; }
 
-doc () { open dash://$1 }
+doc () { open dash://$1; }
