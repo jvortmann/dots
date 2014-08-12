@@ -1177,9 +1177,9 @@
 		<array>
 			<dict>
 				<key>Desired Columns</key>
-				<integer>80</integer>
+				<integer>150</integer>
 				<key>Desired Rows</key>
-				<integer>25</integer>
+				<integer>40</integer>
 				<key>Height</key>
 				<real>786</real>
 				<key>Hide After Opening</key>
@@ -1393,7 +1393,7 @@
 											<key>Close Sessions On End</key>
 											<true/>
 											<key>Columns</key>
-											<integer>80</integer>
+											<integer>150</integer>
 											<key>Command</key>
 											<string></string>
 											<key>Cursor Color</key>
@@ -1760,7 +1760,7 @@
 											<key>Right Option Key Sends</key>
 											<integer>2</integer>
 											<key>Rows</key>
-											<integer>25</integer>
+											<integer>40</integer>
 											<key>Screen</key>
 											<integer>-1</integer>
 											<key>Scrollback Lines</key>
@@ -1897,6 +1897,8 @@
 													<string>\btelnet:([a-z0-9A-Z_]+@)?([a-zA-Z0-9\-]+\.)*[a-zA-Z0-9\-]+\b</string>
 												</dict>
 											</array>
+											<key>Space</key>
+											<integer>2</integer>
 											<key>Sync Title</key>
 											<false/>
 											<key>Tags</key>
