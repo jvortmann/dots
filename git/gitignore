@@ -10,3 +10,4 @@ vendor/bundle
 dump.rdb
 fish_history
 fishd.*
+fish/generated_completions
