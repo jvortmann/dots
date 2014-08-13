@@ -8,3 +8,5 @@ gem.tags
 *.sass-cache
 vendor/bundle
 dump.rdb
+fish_history
+fishd.*
