@@ -1,3 +1,5 @@
+# vim: ft=sh
+
 # set the default editor
 export EDITOR=vim
 

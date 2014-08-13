@@ -1,3 +1,5 @@
+# vim: ft=sh
+
 # enable color support of ls
 if type -p dircolors &>/dev/null; then
   test -r $HOME/.dots/bash/conf/dircolors && eval "$(dircolors -b $HOME/.dots/bash/conf/dircolors)" || eval "$(dircolors -b)"

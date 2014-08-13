@@ -1,3 +1,5 @@
+# vim: ft=sh
+
 myfind() {
   FFOUND_PWD=${PWD}
   FFOUND=($(find . -iname "*$2*" -type "$1"))

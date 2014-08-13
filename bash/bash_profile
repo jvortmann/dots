@@ -1,3 +1,5 @@
+# vim: ft=sh
+
 #source the configuration of the aliases
 source "$HOME/.dots/bash/conf/aliases"
 

@@ -1,3 +1,5 @@
+# vim: ft=sh
+
 # make ls colorful
 alias ls='ls -G'
 alias ll='ls -alF'

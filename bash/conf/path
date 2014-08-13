@@ -1,2 +1,4 @@
+# vim: ft=sh
+
 # move local bin to the beginning of path
 export PATH="/usr/local/bin:$PATH"
