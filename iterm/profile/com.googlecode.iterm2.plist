@@ -601,8 +601,6 @@
 	<true/>
 	<key>MaxVertically</key>
 	<false/>
-	<key>NSFontPanelPreviewHeight</key>
-	<real>0.0</real>
 	<key>NSNavLastRootDirectory</key>
 	<string>~/prj/configs/dots/iterm/profile</string>
 	<key>NSQuotedKeystrokeBinding</key>
@@ -628,23 +626,10 @@
 	<array/>
 	<key>NSTableView Sort Ordering KeyBingingTable</key>
 	<array/>
-	<key>NSToolbar Configuration Terminal Toolbar</key>
-	<dict>
-		<key>TB Display Mode</key>
-		<integer>1</integer>
-		<key>TB Icon Size Mode</key>
-		<integer>1</integer>
-		<key>TB Is Shown</key>
-		<integer>0</integer>
-		<key>TB Size Mode</key>
-		<integer>1</integer>
-	</dict>
-	<key>NSWindow Frame NSFontPanel</key>
-	<string>618 174 672 422 0 0 1440 878 </string>
 	<key>NSWindow Frame Preferences</key>
-	<string>288 278 924 485 0 0 1440 878 </string>
+	<string>576 475 924 485 0 0 1920 1058 </string>
 	<key>NSWindow Frame iTerm Window 0</key>
-	<string>20 85 1210 786 0 0 1440 878 </string>
+	<string>209 270 1207 774 0 0 1920 1058 </string>
 	<key>New Bookmarks</key>
 	<array>
 		<dict>
@@ -1352,7 +1337,7 @@
 			<key>Terminal Type</key>
 			<string>xterm-256color</string>
 			<key>Transparency</key>
-			<real>0.061013776808977127</real>
+			<real>0.022861963137984276</real>
 			<key>Triggers</key>
 			<array/>
 			<key>Unlimited Scrollback</key>
@@ -1421,7 +1406,7 @@
 		</dict>
 	</dict>
 	<key>PrefsCustomFolder</key>
-	<string>/Users/jv/prj/configs/dots/iterm/profile</string>
+	<string>/Users/joao.vortmann/prj/configs/dots/iterm/profile</string>
 	<key>PromptOnQuit</key>
 	<false/>
 	<key>QuitWhenAllWindowsClosed</key>
@@ -1437,11 +1422,11 @@
 	<key>SUHasLaunchedBefore</key>
 	<true/>
 	<key>SULastCheckTime</key>
-	<date>2014-08-12T23:21:45Z</date>
+	<date>2014-08-13T14:17:43Z</date>
 	<key>SavePasteHistory</key>
 	<false/>
 	<key>Show Toolbelt</key>
-	<true/>
+	<false/>
 	<key>ShowBookmarkName</key>
 	<false/>
 	<key>ShowPaneTitles</key>
@@ -1462,8 +1447,8 @@
 	<integer>10</integer>
 	<key>ToolbeltTools</key>
 	<array>
-		<string>Jobs</string>
 		<string>Paste History</string>
+		<string>Jobs</string>
 	</array>
 	<key>TripleClickSelectsFullWrappedLines</key>
 	<false/>
