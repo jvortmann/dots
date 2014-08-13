@@ -7,7 +7,7 @@ function _git_is_dirty
 end
 
 function fish_prompt
-  set -l cyan (set_color cyan)
+  set -l magenta (set_color magenta)
   set -l yellow (set_color yellow)
   set -l red (set_color red)
   set -l blue (set_color blue)
@@ -25,7 +25,7 @@ function fish_prompt
     if [ (_git_is_dirty) ]
       set git_info $yellow "($git_branch±)"
     else
-      set git_info $green "($git_branch)"
+      set git_info $magenta "($git_branch)"
     end
   end
 
