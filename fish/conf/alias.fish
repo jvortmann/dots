@@ -12,10 +12,13 @@ alias here 'localhost'
 alias mv 'mv -v'
 alias cp 'cp -v'
 alias vi 'vim'
-#case `uname -s` in
- #'Linux') if type -p gvim &>/dev/null; then alias vim='gvim'; fi ;;
- #'Darwin') if type -p mvim &>/dev/null; then alias vim='mvim'; fi ;;
-#esac
+
+if type -p gvim > /dev/null
+  alias vim 'gvim'
+end
+if type -p mvim > /dev/null
+  alias vim 'mvim'
+end
 
 # shortcuts
 alias v 'vim'
