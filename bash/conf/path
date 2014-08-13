@@ -1,8 +1,2 @@
 # move local bin to the beginning of path
 export PATH="/usr/local/bin:$PATH"
-
-# add rbenv bin
-export PATH="$HOME/.rbenv/bin:$PATH"
-
-# add local binstubs to the beginning of the path
-export PATH="vendor/bundle/binstubs:$PATH"
