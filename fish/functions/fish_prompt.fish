@@ -29,6 +29,12 @@ function fish_prompt
     end
   end
 
+  # show ruby version
+  set -l ruby_info
+  if which rbenv >/dev/null ^&1
+    set ruby_info $red '['(rbenv version-name)']'
+  end
+
   # Terminate with a nice prompt char
-  echo "$user_and_host $short_path$git_info $end_symbol" $normal
+  echo "$user_and_host $short_path$ruby_info$git_info $end_symbol" $normal
 end
