@@ -23,9 +23,9 @@ function fish_prompt
     set -l git_branch (_git_branch_name)
 
     if [ (_git_is_dirty) ]
-      set git_info $yellow "($git_branch±)"
+      set git_info $yellow "[$git_branch±]"
     else
-      set git_info $magenta "($git_branch)"
+      set git_info $normal "[$git_branch]"
     end
   end
 
