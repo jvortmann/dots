@@ -19,6 +19,9 @@ end
 if type -p mvim > /dev/null
   alias vim 'mvim'
 end
+if type -p hub > /dev/null
+  alias git 'hub'
+end
 
 # shortcuts
 alias v 'vim'
