@@ -41,7 +41,7 @@
   aa = add --all
   alias = !git config --list | grep 'alias\\.' | sed 's/alias\\.\\([^=]*\\)=\\(.*\\)/\\1\\\t=> \\2/' | sort
   l = log
-  lg = log --graph --pretty=format:'%C(yellow)%h %Cblue%aN %Cgreen%ar %Creset%s'
+  lg = log --graph --pretty=format:'%C(yellow)%h%Cred%d %Cblue%aN %Cgreen%ar %Creset%s'
   ls = log --stat
   last = log -1 HEAD
   w = log --name-status #short whatchanged
