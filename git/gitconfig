@@ -74,3 +74,5 @@
   rebase = preserve
 [branch]
   autosetuprebase = always
+[tag]
+  sort = version:refname
