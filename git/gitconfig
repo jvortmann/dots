@@ -66,13 +66,18 @@
   ignore = "!i() { touch .gitignore && echo $1 >> .gitignore; }; i"
   shame = "!s() { git blame $1 -p | grep 'author ' | cut -d' ' -f2-10 | sort | uniq -c | sort | tail -n1 | cut -c6-30 ; }; s"
   shout = "!s() { git shame $1 | say; }; s"
+
 [heroku]
   account = personal
+
 [push]
   default = simple
+
 [pull]
   rebase = preserve
+
 [branch]
   autosetuprebase = always
+
 [tag]
   sort = version:refname
