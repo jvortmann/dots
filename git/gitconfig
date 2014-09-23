@@ -1,7 +1,8 @@
 [user]
   name = Joao Vortmann
   email = jvortmann@gmail.com
-
+[github]
+  user = jvortmann
 [color]
   status = auto
   branch = auto
