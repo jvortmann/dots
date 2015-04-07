@@ -1,3 +1,5 @@
+#set default SHELL
+set -xg SHELL /usr/local/bin/fish
 #source aliases configuration
 source ~/.dots/fish/conf/alias.fish
 #source path configuration
