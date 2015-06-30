@@ -1,7 +1,6 @@
 ack
 bats
 boot2docker
-caskroom/cask/brew-cask
 ctags
 docker
 elasticsearch
