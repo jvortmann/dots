@@ -3,6 +3,7 @@
 command -v brew > /dev/null || ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
 brew install caskroom/cask/brew-cask
+brew tap homebrew/versions
 brew tap caskroom/versions
 brew tap caskroom/fonts
 
