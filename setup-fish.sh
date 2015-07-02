@@ -1,7 +1,7 @@
 #!/bin/bash
 
-echo "Adding Fish to /etc/shells and set it as default shell"
-echo $(which fish) | sudo tee -a /etc/shells
+echo "Adding Fish to /etc/shells and set it as default shell (needs sudo)"
+sudo grep "fish" /etc/shells || echo $(which fish) | sudo tee -a /etc/shells
 chsh -s $(which fish) jv
 
 echo "Adding Fish configs to ~/.config/fish"
