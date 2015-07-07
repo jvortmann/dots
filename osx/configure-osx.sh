@@ -10,7 +10,7 @@ fi
 computer_name="$1"
 
 # Set machine name
-echo "Setting computer name to '$computer_name'"
+echo; echo ">> Setting computer name to '$computer_name'"
 sudo scutil --set ComputerName "$computer_name"
 sudo scutil --set HostName "$computer_name"
 sudo scutil --set LocalHostName "$computer_name"
@@ -25,6 +25,7 @@ sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.serve
 #defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
 
 # swipe
+echo; echo ">> Configuring trackpad gestures"
 defaults -currentHost write -g com.apple.trackpad.fiveFingerPinchSwipeGesture -int 2
 
 defaults -currentHost write -g com.apple.trackpad.fourFingerHorizSwipeGesture -int 2
@@ -47,6 +48,7 @@ defaults -currentHost write -g com.apple.trackpad.scrollBehavior -int 2
 # Keyboard settings
 # Enable full keyboard access for all controls
 # (e.g. enable Tab in modal dialogs)
+echo; echo ">> Configuring keyboard"
 defaults write -g AppleKeyboardUIMode -int 3
 
 # set fn properly
@@ -73,25 +75,27 @@ if [[ $? -ne 0 ]]; then
 fi
 
 # Use proper units
+echo; echo ">> Configuring measurement units"
 defaults write -g AppleMeasurementUnits -string "Centimeters"
 defaults write -g AppleMetricUnits -bool true
 
 # Mission Control
+echo; echo ">> Configuring Mission Control"
 defaults write com.apple.dock expose-animation-duration -float 0.12
-# Save screenshot as a png 
+# Save screenshot as a png
 defaults write com.apple.screencapture type -string “png”
 
 # screen corners
-# Top Left - Application Windows 
+# Top Left - Application Windows
 defaults write com.apple.dock wvous-tl-corner -int 3
 defaults write com.apple.dock wvous-tl-modifier -int 0
-# Bottom Left - Dashboard 
+# Bottom Left - Dashboard
 defaults write com.apple.dock wvous-bl-corner -int 7
 defaults write com.apple.dock wvous-bl-modifier -int 0
-# Top Right - Mission Control 
+# Top Right - Mission Control
 defaults write com.apple.dock wvous-tr-corner -int 2
 defaults write com.apple.dock wvous-tr-modifier -int 0
-# Bottom Righ - Desktop 
+# Bottom Righ - Desktop
 defaults write com.apple.dock wvous-br-corner -int 4
 defaults write com.apple.dock wvous-br-modifier -int 0
 
@@ -105,11 +109,11 @@ defaults write com.apple.dock magnification -bool false
 # Enable app expose
 defaults write com.apple.dock showAppExposeGestureEnabled -bool true
 
-# Enable highlight hover effect for the grid view of a stack 
+# Enable highlight hover effect for the grid view of a stack
 defaults write com.apple.dock mouse-over-hilte-stack -bool true
 # Set the icon size of Dock items
 defaults write com.apple.dock tilesize -int 43
-# Enable spring loading for all Dock items 
+# Enable spring loading for all Dock items
 defaults write com.apple.dock enable-spring-load-actions-on-all-items -bool true
 
 # require password after screen lock
@@ -118,25 +122,26 @@ defaults write com.apple.screensaver askForPasswordDelay -int 0
 
 # Finder
 # Style - Dark Mode
+echo; echo ">> Configuring Finder Control"
 defaults write -g AppleInterfaceStyle -string 'Dark'
 
-# increase window resize speed for Cocoa applications 
+# increase window resize speed for Cocoa applications
 defaults write -g NSWindowResizeTime -float 0.001
 # decrease delay on spring loaded folder to the second level
 defaults write -g com.apple.springing.enabled -bool true
 defaults write -g com.apple.springing.delay -float 0.5
 
 # Show connected servers on desktop
-# External Hard Drive 
+# External Hard Drive
 defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool true
-# Hard Drive 
+# Hard Drive
 defaults write com.apple.finder ShowHardDrivesOnDesktop -bool false
-# Mounted Servers 
+# Mounted Servers
 defaults write com.apple.finder ShowMountedServersOnDesktop -bool true
-# Removable Media 
+# Removable Media
 defaults write com.apple.finder ShowRemovableMediaOnDesktop -bool true
 
-# Remove warning when changing extension 
+# Remove warning when changing extension
 defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
 # Trash
 defaults write com.apple.finder WarnOnEmptyTrash -bool false
@@ -149,12 +154,14 @@ defaults write com.apple.NetworkBrowser BrowseAllInterfaces -bool true
 
 ## Apps
 
+echo; echo ">> Configuring Apps"
 ## Safari
-#Prevent from opening ‘safe’ files automatically after downloading 
+echo; echo ">> Configuring Safari"
+#Prevent from opening ‘safe’ files automatically after downloading
 defaults write -app Safari AutoOpenSafeDownloads -bool false
-#Enable debug mode 
+#Enable debug mode
 defaults write -app Safari IncludeInternalDebugMenu -bool true
-#Make Safari’s search banners default to Contains instead of Starts With 
+#Make Safari’s search banners default to Contains instead of Starts With
 defaults write -app Safari FindOnPageMatchesWordStartsOnly -bool false
 #Press Tab to highlight each item on a web page
 defaults write -app Safari WebKitTabToLinksPreferenceKey -bool true
@@ -169,6 +176,7 @@ defaults write -app Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2De
 defaults write -g WebKitDeveloperExtras -bool true
 
 # iTerm
+echo; echo ">> Configuring iTerm"
 # Don’t display the annoying prompt when quitting iTerm
 defaults write -app iterm PromptOnQuit -bool false
 defaults write -app iterm SmartPlacement -bool true
@@ -178,6 +186,7 @@ defaults write -app iterm QuitWhenAllWindowsClosed -bool true
 
 
 # Transmission
+echo; echo ">> Configuring Transmission"
 # Don’t prompt for confirmation before downloading
 defaults write -app transmission DownloadAsk -bool false
 # Trash original torrent files
@@ -188,6 +197,7 @@ defaults write -app transmission WarningDonate -bool false
 defaults write -app transmission WarningLegal -bool false
 
 # MacVim
+echo; echo ">> Configuring MacVim"
 # Don't use native full screen
 defaults write org.vim.MacVim MMNativeFullScreen -bool false
 # Suppress Termination Alert
@@ -197,7 +207,8 @@ defaults write org.vim.MacVim MMRenderer -int 2
 # Enable Quickstart
 defaults write org.vim.MacVim MMPreloadCacheSize -bool true
 
-for app in "Dock" "Finder" "Safari" "SystemUIServer" "Transmission" "MacVim"; do
+echo; echo ">> Killing affected apps"
+for app in "Dock" "Finder" "SystemUIServer" "Safari" "Transmission" "MacVim", "iTerm"; do
   killall "${app}" > /dev/null 2>&1
 done
-echo "Done. Note that some of these changes require a logout/restart to take effect. (need to kill iTerm also)"
+echo "Done. Note that some of these changes require a logout/restart to take effect."
