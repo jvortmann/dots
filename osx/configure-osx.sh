@@ -83,7 +83,7 @@ defaults write -g AppleMetricUnits -bool true
 echo; echo ">> Configuring Mission Control"
 defaults write com.apple.dock expose-animation-duration -float 0.12
 # Save screenshot as a png
-defaults write com.apple.screencapture type -string “png”
+defaults write com.apple.screencapture type -string 'png'
 
 # screen corners
 # Top Left - Application Windows
