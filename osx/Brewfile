@@ -29,6 +29,7 @@ cask 'the-unarchiver'
 cask 'transmission'
 cask 'virtualbox'
 cask 'vlc'
+cask 'karabiner'
 
 # Install command line tools
 brew 'ack'
