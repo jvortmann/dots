@@ -31,6 +31,9 @@ cask 'virtualbox'
 cask 'vlc'
 cask 'karabiner'
 
+cask 'font-inconsolata-for-powerline'
+cask 'font-sauce-code-powerline'
+
 # Install command line tools
 brew 'ack'
 brew 'bats'
