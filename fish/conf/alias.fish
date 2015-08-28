@@ -26,6 +26,7 @@ end
 # shortcuts
 alias v 'vim'
 alias g 'git'
+alias t 'tmux'
 
 #bundle aliases
 alias b 'bundle'
@@ -57,5 +58,6 @@ make_completion l 'ls'
 make_completion vi 'nvim'
 make_completion v 'nvim'
 make_completion g 'git'
+make_completion t 'tmux'
 make_completion b 'bundle'
 make_completion ss 'ag'
