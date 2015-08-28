@@ -55,3 +55,7 @@ brew 'ruby-build'
 brew 'the_silver_searcher'
 brew 'tree'
 brew 'wget'
+
+# Install neovim
+tap 'neovim/neovim'
+brew 'neovim', args: ['HEAD']
