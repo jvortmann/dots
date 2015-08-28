@@ -41,12 +41,6 @@ alias rk 'rake'
 alias rkt 'RAILS_ENV=test rake'
 alias rks 'rake spec'
 
-#rake db:migrate and db:seed alias
-alias md 'rake db:migrate'
-alias mt 'RAILS_ENV=test rake db:migrate'
-alias m 'md; mt'
-alias s 'rake db:seed'
-
 # alias to projects folder
 alias gp 'cd ~/prj'
 alias gc 'cd ~/prj/current'
