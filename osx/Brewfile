@@ -59,6 +59,7 @@ brew 'the_silver_searcher'
 brew 'tree'
 brew 'wget'
 brew 'tmux'
+brew 'reattach-to-user-namespace'
 
 # Install neovim
 tap 'neovim/neovim'
