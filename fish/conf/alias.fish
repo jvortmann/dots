@@ -54,8 +54,8 @@ alias ss 'ag'
 
 # make completion for aliases
 make_completion l 'ls'
-make_completion vi 'vim'
-make_completion v 'vim'
+make_completion vi 'nvim'
+make_completion v 'nvim'
 make_completion g 'git'
 make_completion b 'bundle'
 make_completion ss 'ag'
