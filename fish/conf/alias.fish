@@ -19,6 +19,9 @@ end
 if type -p mvim > /dev/null
   alias vim 'mvim'
 end
+if type -p nvim > /dev/null
+  alias vim 'nvim'
+end
 
 # shortcuts
 alias v 'vim'
