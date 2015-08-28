@@ -55,6 +55,7 @@ brew 'ruby-build'
 brew 'the_silver_searcher'
 brew 'tree'
 brew 'wget'
+brew 'tmux'
 
 # Install neovim
 tap 'neovim/neovim'
