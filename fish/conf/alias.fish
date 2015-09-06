@@ -54,6 +54,10 @@ alias pg_stop='pg_ctl -D /usr/local/var/postgres stop -s -m fast'
 # alias for silver searcher
 alias ss 'ag'
 
+# brew cask aliases
+alias bco 'for c in (brew cask list); brew cask info $c | grep "Not Installed" -B3 | head -n1 ; end'
+alias bcu 'for c in (bco | cut -f1 -d:); brew cask install -F $c; end'
+
 # make completion for aliases
 make_completion l 'ls'
 make_completion vi 'nvim'
