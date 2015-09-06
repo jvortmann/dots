@@ -13,13 +13,13 @@ alias mv 'mv -v'
 alias cp 'cp -v'
 alias vi 'vim'
 
-if type -p gvim > /dev/null
+if type -pq gvim
   alias vim 'gvim'
 end
-if type -p mvim > /dev/null
+if type -pq mvim
   alias vim 'mvim'
 end
-if type -p nvim > /dev/null
+if type -pq nvim
   alias vim 'nvim'
 end
 
