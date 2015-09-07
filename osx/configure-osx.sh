@@ -196,17 +196,6 @@ defaults write -app transmission WarningDonate -bool false
 # Hide the legal disclaimer
 defaults write -app transmission WarningLegal -bool false
 
-# MacVim
-echo; echo ">> Configuring MacVim"
-# Don't use native full screen
-defaults write org.vim.MacVim MMNativeFullScreen -bool false
-# Suppress Termination Alert
-defaults write org.vim.MacVim SuppressTerminationAlert -bool true
-# Use Core Text Renderer
-defaults write org.vim.MacVim MMRenderer -int 2
-# Enable Quickstart
-defaults write org.vim.MacVim MMPreloadCacheSize -bool true
-
 echo; echo ">> Killing affected apps"
 for app in "Dock" "Finder" "SystemUIServer" "Safari" "Transmission" "MacVim", "iTerm"; do
   killall "${app}" > /dev/null 2>&1
