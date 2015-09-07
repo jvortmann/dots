@@ -23,7 +23,7 @@ To setup the config files on your home directory run the following:
 
 There is a script to [install applications](osx/install-apps.sh), command line utilities and fonts listed on [Brewfile](osx/Brewfile) and also a script to [download widgets](osx/download-widgets.sh).
 
-```bash
+```sh
 ./osx/install-apps.sh       # install apps, command line utilities and fonts
 ./osx/download-widgets.sh   # download widgets to ~/Downloads
 ```
@@ -32,7 +32,7 @@ There is a script to [install applications](osx/install-apps.sh), command line u
 
 There is a script to to setup Mac OSX for development on [configure osx] (osx/configure-osx.sh). It setups a lot of things: computer name, keyboard speed, remap capslock to control, spaces, shortcuts, etc. Take a look at the  script for all configuration.
 
-```
+```sh
 ./configure-osx.sh  # configure a Mac machine
 ```
 
@@ -40,6 +40,6 @@ There is a script to to setup Mac OSX for development on [configure osx] (osx/co
 
 To setup fish shell after it is installed run the following:
 
-```
-./setup-fish.sh   # configure fish by creating the config folders and setup fish as default shell
+```sh
+./setup-fish.sh   # creates the config folders and set fish as default shell
 ```
