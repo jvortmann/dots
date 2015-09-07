@@ -17,8 +17,13 @@ Run `./symlink.sh` to setup the config files on your home directory.
 
 ### Applications
 
-Run `./osx/install-apps.sh` to [install applications](osx/install-apps.sh), command line utilities and fonts listed on [Brewfile](osx/Brewfile).
-There is also a script to [download widgets](osx/download-widgets.sh): `./osx/download-widgets.sh` 
+Run `` to [install applications](osx/install-apps.sh), command line utilities and fonts listed on [Brewfile](osx/Brewfile).
+There is also a script to [download widgets](osx/download-widgets.sh).
+
+```
+./osx/install-apps.sh       # install apps, command line utilities and fonts
+./osx/download-widgets.sh   # download widgets to ~/Downloads
+```
 
 ### Mac OSX
 
