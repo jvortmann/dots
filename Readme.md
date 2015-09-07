@@ -15,7 +15,7 @@ This repo is meant to be shared and reused.
 
 To setup the config files on your home directory run the following:
 
-```
+```sh
 ./symlink.sh  # setup and symlinks
 ```
 
@@ -23,7 +23,7 @@ To setup the config files on your home directory run the following:
 
 There is a script to [install applications](osx/install-apps.sh), command line utilities and fonts listed on [Brewfile](osx/Brewfile) and also a script to [download widgets](osx/download-widgets.sh).
 
-```
+```bash
 ./osx/install-apps.sh       # install apps, command line utilities and fonts
 ./osx/download-widgets.sh   # download widgets to ~/Downloads
 ```
