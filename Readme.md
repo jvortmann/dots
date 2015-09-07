@@ -15,9 +15,9 @@ This repo is meant to be shared and reused.
 
 Run `./symlink.sh` to setup the config files on your home directory.
 
-### Applications
+### Applications [Install Apps](osx/install-apps.sh)
 
-Run `./osx/install-apps.sh` to install applications, command line utilities and fonts listed on [Brewfile](osx/Brewfile)[Install Apps](osx/install-apps.sh).
+Run `./osx/install-apps.sh`  to install applications, command line utilities and fonts listed on [Brewfile](osx/Brewfile).
 There is also a script to download widgets: `./osx/download-widgets.sh` [Download Widgets](osx/download-widgets.sh)
 
 ### Mac OSX
