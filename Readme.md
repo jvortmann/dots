@@ -13,12 +13,15 @@ This repo is meant to be shared and reused.
 
 ### Symlinks
 
-Run `./symlink.sh` to setup the config files on your home directory.
+To setup the config files on your home directory run the following:
+
+```
+./symlink.sh  # setup and symlinks
+```
 
 ### Applications
 
-Run `` to [install applications](osx/install-apps.sh), command line utilities and fonts listed on [Brewfile](osx/Brewfile).
-There is also a script to [download widgets](osx/download-widgets.sh).
+There is a script to [install applications](osx/install-apps.sh), command line utilities and fonts listed on [Brewfile](osx/Brewfile) and also a script to [download widgets](osx/download-widgets.sh).
 
 ```
 ./osx/install-apps.sh       # install apps, command line utilities and fonts
@@ -27,8 +30,16 @@ There is also a script to [download widgets](osx/download-widgets.sh).
 
 ### Mac OSX
 
-Run `./configure-osx.sh` to setup Mac OSX for development. It setups a lot of things: computer name, keyboard speed, remap capslock to control, spaces, shortcuts, etc. Take a look at [configure osx] (osx/configure-osx.sh) script for all configuration.
+There is a script to to setup Mac OSX for development on [configure osx] (osx/configure-osx.sh). It setups a lot of things: computer name, keyboard speed, remap capslock to control, spaces, shortcuts, etc. Take a look at the  script for all configuration.
+
+```
+./configure-osx.sh  # configure a Mac machine
+```
 
 ### Fish
 
-Run `./setup-fish.sh` to setup fish shell after it is installed.
+To setup fish shell after it is installed run the following:
+
+```
+./setup-fish.sh   # configure fish by creating the config folders and setup fish as default shell
+```
