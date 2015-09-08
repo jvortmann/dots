@@ -10,3 +10,4 @@ ln -sfhv ~/.dots/gem/gemrc ~/.gemrc
 ln -sfhv ~/.dots/irb/irbrc ~/.irbrc
 ln -sfhv ~/.dots/tmux/tmux.conf ~/.tmux.conf
 ln -sfhv ~/.dots/ctags/ctags ~/.ctags
+ln -sfhv ~/.dots/guard/guard.rb ~/.guard.rb
