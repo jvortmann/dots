@@ -30,6 +30,8 @@ cask 'transmission'
 cask 'virtualbox'
 cask 'vlc'
 cask 'karabiner'
+cask 'messenger'
+cask 'chitchat'
 
 cask 'font-inconsolata-for-powerline'
 cask 'font-sauce-code-powerline'
