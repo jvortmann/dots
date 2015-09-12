@@ -33,6 +33,7 @@ cask 'karabiner'
 cask 'messenger'
 cask 'chitchat'
 
+# Install fonts
 cask 'font-inconsolata-for-powerline'
 cask 'font-sauce-code-powerline'
 
