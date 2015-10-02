@@ -10,8 +10,6 @@ set -g @plugin 'tmux-plugins/tmux-continuum'
 set -g @plugin 'tmux-plugins/tmux-yank'
 set -g @plugin 'christoomey/vim-tmux-navigator'
 
-# for panes
-set -g @resurrect-capture-pane-contents 'on'
 # retore when tmux server starts
 set -g @continuum-restore 'on'
 
