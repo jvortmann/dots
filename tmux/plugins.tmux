@@ -10,5 +10,10 @@ set -g @plugin 'tmux-plugins/tmux-continuum'
 set -g @plugin 'tmux-plugins/tmux-yank'
 set -g @plugin 'christoomey/vim-tmux-navigator'
 
+# for panes
+set -g @resurrect-capture-pane-contents 'on'
+# retore when tmux server starts
+set -g @continuum-restore 'on'
+
 # Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
 run '~/.tmux/plugins/tpm/tpm'
