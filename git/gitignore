@@ -11,3 +11,5 @@ dump.rdb
 fish_history
 fishd.*
 fish/generated_completions
+Session.vim
+session/
