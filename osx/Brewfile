@@ -7,6 +7,9 @@ brew 'caskroom/cask/brew-cask'
 tap 'caskroom/versions'
 tap 'caskroom/fonts'
 
+# Tap private repos
+tap 'juanibiapina/zas'
+
 # Install Apps
 cask '1password3'
 cask 'adium'
@@ -53,7 +56,7 @@ brew 'mongodb'
 brew 'node'
 brew 'openssl'
 brew 'postgresql'
-brew 'pow'
+brew 'zas'
 brew 'rbenv'
 brew 'readline'
 brew 'redis'
