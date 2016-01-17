@@ -1,7 +1,5 @@
 #set default SHELL
 set -xg SHELL /usr/local/bin/fish
-#set default message
-set fish_greeting ""
 #source aliases configuration
 source ~/.dots/fish/conf/alias.fish
 #source path configuration
