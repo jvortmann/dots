@@ -5,4 +5,4 @@ set -xg EDITOR vim
 set -xg TERM xterm-256color
 
 # remove fish greeting
-set fish_greeting ""
+set -e fish_greeting
