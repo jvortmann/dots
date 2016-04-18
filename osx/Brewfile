@@ -70,6 +70,7 @@ brew 'wget'
 brew 'tmux'
 brew 'reattach-to-user-namespace'
 brew 'heroku-toolbelt'
+brew 'zsh'
 
 # Install neovim
 tap 'neovim/neovim'
