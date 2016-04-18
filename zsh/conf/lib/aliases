@@ -1,0 +1,80 @@
+# vim: ft=zsh
+
+# bundler
+alias b='bundle'
+alias be='bundle exec'
+alias ber='bundle exec rake'
+alias beg='bundle exec guard'
+
+# cd
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias lcd='dirs -v'
+
+# cleanconfig
+alias clean_config="sed -e '/^#/ d' -e '/^ *$/ d'"
+
+# copy
+alias cp='cp -v'
+
+# foreman
+alias f=foreman
+
+# git
+alias g=git
+
+# grep
+alias rg='grep -r'
+alias rgi='grep -ri'
+alias grep='grep --color=auto -i'
+
+# here
+alias here='localhost'
+
+# hub
+alias h=hub
+
+# ls
+alias ls='ls -G'
+alias ll='ls -alFh'
+alias la='ls -Ah'
+alias l='ls -CFh'
+
+# move
+alias mv='mv -v'
+
+# postgresql
+alias pg_start="pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start"
+alias pg_stop="pg_ctl -D /usr/local/var/postgres stop -s -m fast"
+
+# prj
+alias gp='cd ~/prj'
+alias gc='cd ~/prj/current'
+
+# rails
+alias r=rails
+
+# rake
+alias rk='rake'
+alias rkt='RAILS_ENV=test rake'
+alias rks='rake spec'
+
+# rspec
+alias rd='rspec --format d'
+
+# silver searcher
+alias ss='ag'
+
+# tmux
+alias t=tmux
+alias tm=tmuxstart
+
+# tsuru
+alias tu=tsuru
+
+# vim | nvim
+alias vim=nvim
+alias vi=vim
+alias v=vim
+alias n=nvim

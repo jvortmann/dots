@@ -1,0 +1,20 @@
+# vim: ft=zsh
+
+# Enable dynamic prompt
+setopt prompt_subst
+
+_USER_AND_HOST="${BLUE}%n@%m${RESET}"
+_CWD="${GREEN}%1~${RESET}"
+_RUBY_INFO="${RED}$(rbenv_prompt_info)"
+
+declare -f rbenv_prompt_info > /dev/null
+if [ $? -ne 0 ]; then
+  rbenv_prompt_info() { }
+fi
+
+PROMPT='${_USER_AND_HOST} ${_CWD} ${_RUBY_INFO} $(git_super_status) ∴ ${RESET}'
+
+# display exitcode on the right when >0
+return_code="%(?..${RED}%? ↵${RESET})"
+
+RPROMPT='(${LAST_COMMAND_TIME}ms) ${return_code}${RESET}'
