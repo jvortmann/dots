@@ -1,9 +1,11 @@
 # vim: ft=zsh
 
-START="$(gdate "+%s%3N")"
-#PS4='+$(gdate "+%s:%N") %N:%i> '
-#exec 3>&2 2>/tmp/startlog
-#setopt xtrace prompt_subst
+if type gdate > /dev/null; then
+  START="$(gdate "+%s%3N")"
+  #PS4='+$(gdate "+%s:%N") %N:%i> '
+  #exec 3>&2 2>/tmp/startlog
+  #setopt xtrace prompt_subst
+fi
 
 #set terminal type
 export TERM=xterm-256color
@@ -29,6 +31,8 @@ for file ($ZSH_HOME/conf/plugins/*.sh) source $file
 # Set theme
 source $ZSH_HOME/themes/init
 
-#unsetopt xtrace
-#exec 2>&3 3>&-
-LAST_COMMAND_TIME=$(($(gdate "+%s%3N")-$START))
+if type gdate > /dev/null; then
+  #unsetopt xtrace
+  #exec 2>&3 3>&-
+  LAST_COMMAND_TIME=$(($(gdate "+%s%3N")-$START))
+fi
