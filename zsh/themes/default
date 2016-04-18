@@ -17,4 +17,6 @@ PROMPT='${_USER_AND_HOST} ${_CWD} ${_RUBY_INFO} $(git_super_status) ∴ ${RESET}
 # display exitcode on the right when >0
 return_code="%(?..${RED}%? ↵${RESET})"
 
-RPROMPT='(${LAST_COMMAND_TIME}ms) ${return_code}${RESET}'
+if type gdate > /dev/null; then
+  RPROMPT='(${LAST_COMMAND_TIME}ms) ${return_code}${RESET}'
+fi
