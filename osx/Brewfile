@@ -11,6 +11,7 @@ tap 'caskroom/fonts'
 tap 'juanibiapina/zas'
 
 # Install Apps
+cask_args appdir: '/Applications'
 cask '1password3'
 cask 'adium'
 cask 'airmail-beta'
