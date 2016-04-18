@@ -1,91 +1,76 @@
 # vim: ft=zsh
+#
+# Adapted from code found at <https://gist.github.com/joshdick/4415470>.
 
-export __GIT_PROMPT_DIR="$ZSH_HOME/conf/plugins"
+setopt prompt_subst
+autoload -U colors # Enable colors in prompt
 
-# Allow for functions in the prompt.
-setopt PROMPT_SUBST
+# Modify the colors and symbols in these variables as desired.
+_GIT_PROMPT_SYMBOL=""
+_GIT_PROMPT_BRANCH="%{$RESET$BOLD%}BRANCH%{$RESET%}"
+_GIT_PROMPT_PREFIX="%{$RESET%}[%{$RESET%}"
+_GIT_PROMPT_SUFFIX="%{$RESET%}]%{$RESET%}"
+_GIT_PROMPT_AHEAD="%{$RED%}↑NUM%{$RESET%}"
+_GIT_PROMPT_BEHIND="%{$CYAN%}↓NUM%{$RESET%}"
+_GIT_PROMPT_MERGING="%{$RED%}⚡︎%{$RESET%}"
+_GIT_PROMPT_UNTRACKED="%{$BLUE%}●%{$RESET%}"
+_GIT_PROMPT_MODIFIED="%{$YELLOW%}●%{$RESET%}"
+_GIT_PROMPT_STAGED="%{$GREEN%}●%{$RESET%}"
 
-autoload -U add-zsh-hook
+# Show Git branch/tag, or name-rev if on detached head
+git_branch() {
+  local GIT_SYMBOLIC_REF=$(git symbolic-ref -q HEAD 2> /dev/null)
+  local GIT_NAME_REV=$(git name-rev --name-only --no-undefined --always HEAD 2> /dev/null)
 
-add-zsh-hook chpwd chpwd_update_git_vars
-add-zsh-hook preexec preexec_update_git_vars
-add-zsh-hook precmd precmd_update_git_vars
+  local GIT_BRANCH=$GIT_SYMBOLIC_REF || $GIT_NAME_REV
 
-## Function definitions
-function preexec_update_git_vars() {
-  case "$2" in
-    git*)
-      __EXECUTED_GIT_COMMAND=1
-      ;;
-  esac
-}
-
-function precmd_update_git_vars() {
-  if [ -n "$__EXECUTED_GIT_COMMAND" ] || [ -n "$ZSH_THEME_GIT_PROMPT_NOCACHE" ]; then
-    update_current_git_vars
-    unset __EXECUTED_GIT_COMMAND
+  if [ -n "$GIT_BRANCH" ]; then
+    echo ${_GIT_PROMPT_BRANCH//BRANCH/${GIT_BRANCH#(refs/heads/|tags/)}}
   fi
 }
 
-function chpwd_update_git_vars() {
-  update_current_git_vars
-}
+# Show different symbols as appropriate for various Git repository states
+git_status() {
 
-function update_current_git_vars() {
-  unset __CURRENT_GIT_STATUS
+  # Compose this value via multiple conditional appends.
+  local GIT_STATE=""
 
-  local gitstatus="$__GIT_PROMPT_DIR/gitstatus.py"
-  _GIT_STATUS=`python ${gitstatus}`
-  __CURRENT_GIT_STATUS=("${(@f)_GIT_STATUS}")
-  GIT_BRANCH=$__CURRENT_GIT_STATUS[1]
-  GIT_REMOTE=$__CURRENT_GIT_STATUS[2]
-  GIT_STAGED=$__CURRENT_GIT_STATUS[3]
-  GIT_CONFLICTS=$__CURRENT_GIT_STATUS[4]
-  GIT_CHANGED=$__CURRENT_GIT_STATUS[5]
-  GIT_UNTRACKED=$__CURRENT_GIT_STATUS[6]
-  GIT_CLEAN=$__CURRENT_GIT_STATUS[7]
-}
+  local NUM_AHEAD="$(git log --oneline @{u}.. 2> /dev/null | wc -l | tr -d ' ')"
+  if [ "$NUM_AHEAD" -gt 0 ]; then
+    GIT_STATE=$GIT_STATE${_GIT_PROMPT_AHEAD//NUM/$NUM_AHEAD}
+  fi
 
+  local NUM_BEHIND="$(git log --oneline ..@{u} 2> /dev/null | wc -l | tr -d ' ')"
+  if [ "$NUM_BEHIND" -gt 0 ]; then
+    GIT_STATE=$GIT_STATE${_GIT_PROMPT_BEHIND//NUM/$NUM_BEHIND}
+  fi
 
-git_super_status() {
-  precmd_update_git_vars
-  if [ -n "$__CURRENT_GIT_STATUS" ]; then
-    STATUS="$ZSH_THEME_GIT_PROMPT_PREFIX$ZSH_THEME_GIT_PROMPT_BRANCH$GIT_BRANCH${RESET}"
-    if [ -n "$GIT_REMOTE" ]; then
-      STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_SEPARATOR$ZSH_THEME_GIT_PROMPT_REMOTE$GIT_REMOTE${RESET}"
-    fi
-    STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_SEPARATOR"
-    if [ "$GIT_STAGED" -ne "0" ]; then
-      STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_STAGED$GIT_STAGED${RESET}"
-    fi
-    if [ "$GIT_CONFLICTS" -ne "0" ]; then
-      STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_CONFLICTS$GIT_CONFLICTS${RESET}"
-    fi
-    if [ "$GIT_CHANGED" -ne "0" ]; then
-      STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_CHANGED$GIT_CHANGED${RESET}"
-    fi
-    if [ "$GIT_UNTRACKED" -ne "0" ]; then
-      STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_UNTRACKED${RESET}"
-    fi
-    if [ "$GIT_CLEAN" -eq "1" ]; then
-      STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_CLEAN"
-    fi
-    STATUS="$STATUS${RESET}$ZSH_THEME_GIT_PROMPT_SUFFIX"
-    echo " $STATUS"
+  local GIT_DIR="$(git rev-parse --git-dir 2> /dev/null)"
+  if [ -n $GIT_DIR ] && test -r $GIT_DIR/MERGE_HEAD; then
+    GIT_STATE=$GIT_STATE$_GIT_PROMPT_MERGING
+  fi
+
+  if [[ -n $(git ls-files --other --exclude-standard 2> /dev/null) ]]; then
+    GIT_STATE=$GIT_STATE$_GIT_PROMPT_UNTRACKED
+  fi
+
+  if ! git diff --quiet 2> /dev/null; then
+    GIT_STATE=$GIT_STATE$_GIT_PROMPT_MODIFIED
+  fi
+
+  if ! git diff --cached --quiet 2> /dev/null; then
+    GIT_STATE=$GIT_STATE$_GIT_PROMPT_STAGED
+  fi
+
+  if [[ -n $GIT_STATE ]]; then
+    echo "$_GIT_PROMPT_PREFIX$GIT_STATE$_GIT_PROMPT_SUFFIX"
   fi
 }
 
-# Default values for the appearance of the prompt. Configure at will.
-ZSH_THEME_GIT_PROMPT_PREFIX="("
-ZSH_THEME_GIT_PROMPT_SUFFIX=")"
-ZSH_THEME_GIT_PROMPT_SEPARATOR=" "
-ZSH_THEME_GIT_PROMPT_BRANCH="${BOLD}${MAGENTA}"
-ZSH_THEME_GIT_PROMPT_STAGED="${GREEN}●"
-ZSH_THEME_GIT_PROMPT_CONFLICTS="${RED}x"
-ZSH_THEME_GIT_PROMPT_CHANGED="${RED}+"
-ZSH_THEME_GIT_PROMPT_REMOTE=""
-ZSH_THEME_GIT_PROMPT_UNTRACKED="…"
-ZSH_THEME_GIT_PROMPT_CLEAN="${BOLD}${GREEN}✓"
-ZSH_THEME_GIT_PROMPT_NOCACHE=true
-
-update_current_git_vars
+# If inside a Git repository, print its branch and state
+git_prompt_string() {
+  local _GIT_BRANCH="$(git_branch)"
+  if [ -n "$_GIT_BRANCH" ]; then
+    echo " $_GIT_PROMPT_SYMBOL$_GIT_PROMPT_PREFIX$_GIT_BRANCH$_GIT_PROMPT_SUFFIX$(git_status)"
+  fi
+}
