@@ -4002,7 +4002,7 @@
 	<key>NSWindow Frame NSFontPanel</key>
 	<string>549 209 669 249 0 0 1280 777 </string>
 	<key>NSWindow Frame Preferences</key>
-	<string>353 490 606 456 0 0 1920 1080 </string>
+	<string>353 519 606 456 0 0 1920 1080 </string>
 	<key>NSWindow Frame SUUpdateAlert</key>
 	<string>650 517 620 392 0 0 1920 1080 </string>
 	<key>NSWindow Frame UKCrashReporter</key>
@@ -6922,6 +6922,10 @@
 			<string>/Users/jv</string>
 		</dict>
 	</array>
+	<key>NoSyncDoNotWarnBeforeMultilinePaste</key>
+	<true/>
+	<key>NoSyncDoNotWarnBeforeMultilinePaste_selection</key>
+	<integer>0</integer>
 	<key>NoSyncHaveShownPromoWithId_4</key>
 	<true/>
 	<key>NoSyncPermissionToShowTip</key>
