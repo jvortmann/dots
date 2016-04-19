@@ -1,4 +1,4 @@
-# vim ft=conf
+# vim: ft=conf
 
 #### COLOUR (Solarized dark)
 # default statusbar colors
