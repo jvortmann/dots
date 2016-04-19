@@ -1,4 +1,4 @@
-# vim ft=conf
+# vim: ft=conf
 
 # List of plugins
 set -g @plugin 'tmux-plugins/tpm'

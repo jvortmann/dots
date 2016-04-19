@@ -1,4 +1,4 @@
-# vim ft=conf
+# vim: ft=conf
 
 # status line
 set-option -g status-left-length 32
