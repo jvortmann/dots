@@ -1,5 +1,8 @@
 # vim: ft=zsh
 
+# Configure PATH
+source $ZSH_HOME/conf/path
+
 if type gdate > /dev/null; then
   START="$(gdate "+%s%3N")"
   #PS4='+$(gdate "+%s:%N") %N:%i> '
@@ -18,9 +21,6 @@ bindkey -e
 
 # Disable flow control
 stty -ixon
-
-# Configure PATH
-source $ZSH_HOME/conf/path
 
 # Include all files in lib dir
 for file ($ZSH_HOME/conf/lib/*) source $file
