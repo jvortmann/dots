@@ -71,6 +71,9 @@ brew 'tmux'
 brew 'reattach-to-user-namespace'
 brew 'heroku-toolbelt'
 brew 'zsh'
+brew 'zsh-autosuggestions'
+brew 'zsh-history-substring-search'
+brew 'zsh-syntax-highlighting'
 
 # Install neovim
 tap 'neovim/neovim'
