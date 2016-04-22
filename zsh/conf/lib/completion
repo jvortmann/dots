@@ -4,11 +4,11 @@
 autoload -U compinit
 compinit -i
 
-unsetopt menu_complete   # do not autoselect the first completion entry
-setopt auto_menu         # show completion menu on succesive tab press
+unsetopt MENU_COMPLETE   # do not autoselect the first completion entry
+setopt AUTO_MENU         # show completion menu on succesive tab press
 
-setopt complete_in_word  # in word completion
-setopt always_to_end
+setopt COMPLETE_IN_WORD  # in word completion
+setopt ALWAYS_TO_END
 
 WORDCHARS=''
 
