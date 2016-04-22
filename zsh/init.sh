@@ -26,7 +26,7 @@ stty -ixon
 for file ($ZSH_HOME/conf/lib/*) source $file
 
 # Include plugins
-for file ($ZSH_HOME/conf/plugins/*.sh) source $file
+for file ($ZSH_HOME/conf/plugins/*) source $file
 
 # Set theme
 source $ZSH_HOME/themes/init
