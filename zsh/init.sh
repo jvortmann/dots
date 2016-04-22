@@ -22,6 +22,8 @@ for file ($ZSH_HOME/conf/plugins/*) source $file
 # Set theme
 source $ZSH_HOME/themes/init
 
+source $ZSH_HOME/conf/extras
+
 if type gdate > /dev/null; then
   #unsetopt xtrace
   #exec 2>&3 3>&-
