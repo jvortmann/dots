@@ -10,17 +10,8 @@ if type gdate > /dev/null; then
   #setopt xtrace prompt_subst
 fi
 
-#set terminal type
-export TERM=xterm-256color
-
-# set editor
-export EDITOR=nvim
-
-# Enable emacs keys
-bindkey -e
-
-# Disable flow control
-stty -ixon
+# Read default settings
+source $ZSH_HOME/conf/defaults
 
 # Include all files in lib dir
 for file ($ZSH_HOME/conf/lib/*) source $file

@@ -1,0 +1,13 @@
+# vim: ft=zsh
+
+#set terminal type
+export TERM=xterm-256color
+
+# set editor
+export EDITOR=nvim
+
+# Enable emacs keys
+bindkey -e
+
+# Disable flow control
+stty -ixon
