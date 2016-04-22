@@ -11,3 +11,9 @@ bindkey -e
 
 # Disable flow control
 stty -ixon
+
+setopt CORRECT_ALL # correct spelling even on argument list
+setopt EXTENDED_GLOB # enable awesome extended globbing
+setopt GLOB_COMPLETE # use glob complete
+setopt NO_CASE_GLOB # disable case when globbing
+setopt LIST_ROWS_FIRST # autocomplete cycles horizontally first
