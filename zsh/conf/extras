@@ -2,7 +2,7 @@
 
 if [ -r /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
   source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-  ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=237'
+  ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=241'
 fi
 
 if [ -r /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
