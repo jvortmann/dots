@@ -36,6 +36,7 @@
 
 [diff]
   ignoreSubmodules = dirty
+  compactionHeuristic = true
 
 [alias]
   a = add
