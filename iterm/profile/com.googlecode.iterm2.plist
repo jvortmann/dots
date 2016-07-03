@@ -3936,7 +3936,7 @@
 	<key>HideMenuBarInFullscreen</key>
 	<true/>
 	<key>HideScrollbar</key>
-	<false/>
+	<true/>
 	<key>HideTab</key>
 	<true/>
 	<key>HighlightTabLabels</key>
@@ -4002,7 +4002,7 @@
 	<key>NSWindow Frame NSFontPanel</key>
 	<string>816 212 748 149 0 0 1920 1057 </string>
 	<key>NSWindow Frame Preferences</key>
-	<string>519 498 606 456 0 0 1920 1080 </string>
+	<string>519 527 606 456 0 0 1920 1080 </string>
 	<key>NSWindow Frame SUUpdateAlert</key>
 	<string>650 517 620 392 0 0 1920 1080 </string>
 	<key>NSWindow Frame iTerm Window 0</key>
@@ -6928,6 +6928,10 @@
 	<integer>0</integer>
 	<key>NoSyncInstallationId</key>
 	<string>FEC4612F-097A-4045-A837-2B4CD7B5978D</string>
+	<key>NoSyncNeverRemindPrefsChangesLostForFile</key>
+	<true/>
+	<key>NoSyncNeverRemindPrefsChangesLostForFile_selection</key>
+	<integer>0</integer>
 	<key>NoSyncPermissionToShowTip</key>
 	<false/>
 	<key>NoSyncTimeOfFirstLaunchOfVersionWithTip</key>
@@ -6996,7 +7000,7 @@
 	<key>SUHasLaunchedBefore</key>
 	<true/>
 	<key>SULastCheckTime</key>
-	<date>2016-06-08T01:29:16Z</date>
+	<date>2016-06-18T14:42:48Z</date>
 	<key>SUSendProfileInfo</key>
 	<false/>
 	<key>SavePasteHistory</key>
@@ -7015,6 +7019,8 @@
 	<integer>4</integer>
 	<key>SwitchWindowModifier</key>
 	<integer>6</integer>
+	<key>TabStyle</key>
+	<integer>1</integer>
 	<key>TabViewType</key>
 	<integer>0</integer>
 	<key>ThreeFingerEmulates</key>
