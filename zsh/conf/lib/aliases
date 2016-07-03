@@ -65,6 +65,7 @@ alias rd='rspec --format d'
 
 # silver searcher
 alias ss='ag'
+alias s='smart-grep'
 
 # tmux
 alias t=tmux
