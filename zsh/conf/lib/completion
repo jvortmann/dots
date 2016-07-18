@@ -15,7 +15,8 @@ WORDCHARS=''
 zmodload -i zsh/complist
 
 ## all, partial-word and then substring completion
-zstyle ':completion:*' matcher-list '' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}'  'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+zstyle ':completion:*' completer _complete
+zstyle ':completion:*' matcher-list '' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}'  'r:|[._-]=* r:|=*' '+l:|=* r:|=*'
 
 zstyle ':completion:*' list-colors ''
 zstyle ':completion:*:*:*:*:*' menu select
