@@ -13,3 +13,4 @@ fishd.*
 fish/generated_completions
 Session.vim
 session/
+.rspec-local
