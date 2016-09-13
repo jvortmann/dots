@@ -83,5 +83,3 @@
 
 [tag]
   sort = version:refname
-[ghi]
-  token = !security find-internet-password -a jvortmann -s github.com -l 'ghi token' -w
