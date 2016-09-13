@@ -35,7 +35,7 @@ There is a script to to setup Mac OSX for development on [configure osx] (osx/co
 
 ```sh
 cd osx/
-./configure-osx.sh "computer_name" # configure a Mac machine
+./configure-osx.sh "computer_name" "User Name"  "user@email.com" # configure a Mac machine
 ```
 
 ### Zsh
