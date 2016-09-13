@@ -6,9 +6,6 @@ tap 'caskroom/cask'
 tap 'caskroom/versions'
 tap 'caskroom/fonts'
 
-# Tap private repos
-tap 'juanibiapina/zas'
-
 # Install Apps
 cask 'airmail-beta'
 cask 'alfred'
