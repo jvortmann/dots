@@ -45,3 +45,11 @@ To setup zsh shell after it is installed run the following:
 ```sh
 ./setup-zsh.sh   # creates the config folders and set zsh as default shell
 ```
+
+### Tmux
+
+To setup tmux after it is installed run the following:
+
+```sh
+./setup-tmux.sh   # creates the plugin manager folder and clone it
+```
