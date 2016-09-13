@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 # based on https://github.com/mathiasbynens/dotfiles/blob/master/.osx
 
-if [ $# -ne 1 ]
+if [ $# -ne 3 ]
 then
-  echo 'Usage: ./configure-osx "computer_name"'
+  echo 'Usage: ./configure-osx "computer_name"  "User Name"  "user@email.com"'
   exit 1
 fi
 
 computer_name="$1"
+user_name="$2"
+user_email_name="$3"
 
 # Set machine name
 echo; echo ">> Setting computer name to '$computer_name'"
