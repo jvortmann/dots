@@ -38,10 +38,10 @@ cd osx/
 ./configure-osx.sh  # configure a Mac machine
 ```
 
-### Fish
+### Zsh
 
-To setup fish shell after it is installed run the following:
+To setup zsh shell after it is installed run the following:
 
 ```sh
-./setup-fish.sh   # creates the config folders and set fish as default shell
+./setup-zsh.sh   # creates the config folders and set zsh as default shell
 ```
