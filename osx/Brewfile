@@ -3,7 +3,6 @@ tap 'homebrew/versions'
 
 # Install cask with versions and fonts
 tap 'caskroom/cask'
-brew 'caskroom/cask/brew-cask'
 tap 'caskroom/versions'
 tap 'caskroom/fonts'
 
@@ -11,7 +10,6 @@ tap 'caskroom/fonts'
 tap 'juanibiapina/zas'
 
 # Install Apps
-cask_args appdir: '/Applications'
 cask 'airmail-beta'
 cask 'alfred'
 cask 'appcleaner'
