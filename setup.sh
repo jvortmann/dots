@@ -23,6 +23,7 @@ echo; echo ">> Downloading widgets"
 
 echo; echo ">> Configuring macOS"
 ./configure-osx.sh "$computer_name" "$user_name"  "$user_email" # configure a Mac machine
+cd -
 
 echo; echo ">> Configuring zsh"
 ./setup-zsh.sh   # creates the config folders and set zsh as default shell
