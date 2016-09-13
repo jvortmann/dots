@@ -8,7 +8,7 @@ fi
 
 computer_name="$1"
 user_name="$2"
-user_email_name="$3"
+user_email="$3"
 
 
 echo ">> Symlinking"
@@ -24,7 +24,7 @@ echo; echo ">> Downloading widgets"
 ./download-widgets.sh   # download widgets to ~/Downloads
 
 echo; echo ">> Configuring macOS"
-./configure-osx.sh "$computer_name" "$user_name"  "$user_email" # configure a Mac machine
+./configure-osx.sh "$computer_name" # configure a Mac machine
 
 echo; echo ">> Leaving /osx"
 cd -
