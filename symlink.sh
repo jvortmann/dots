@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "Creating ~/.config folder"
+mkdir -p ~/.config/
+
 echo "Setting symlinks for default configurations"
 ln -sfhv $(pwd) ~/.dots
 ln -sfhv ~/.dots/ag/agignore ~/.agignore
