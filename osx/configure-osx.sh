@@ -3,13 +3,11 @@
 
 if [ $# -ne 3 ]
 then
-  echo 'Usage: ./configure-osx "computer_name"  "User Name"  "user@email.com"'
+  echo 'Usage: ./configure-osx "computer_name"
   exit 1
 fi
 
 computer_name="$1"
-user_name="$2"
-user_email_name="$3"
 
 # Set machine name
 echo; echo ">> Setting computer name to '$computer_name'"
