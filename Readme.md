@@ -11,6 +11,15 @@ This repo is meant to be shared and reused.
 
 ##  Setup
 
+To setup everything at once, run the folowwing:
+
+```sh
+./setup.sh "computer_name" "User Name"  "user@email.com" # configure everything
+```
+
+##  Individual setup
+If you wish to setup just some of the configs individually, use the follwoing instructions.
+
 ### Symlinks
 
 To setup the config files on your home directory run the following:
