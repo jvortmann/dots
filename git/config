@@ -1,3 +1,5 @@
+# vim: ft=gitconfig
+
 [user]
   name = Joao Vortmann
   email = jvortmann@gmail.com
@@ -29,7 +31,6 @@
   untracked = blue
 
 [core]
-  excludesfile = ~/.gitignore
   pager = less -FRSX
   whitespace=fix,-indent-with-non-tab,trailing-space,space-before-tab,cr-at-eol
 
