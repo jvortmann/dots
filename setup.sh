@@ -14,8 +14,10 @@ user_email_name="$3"
 echo ">> Symlinking"
 ./symlink.sh  # setup and symlinks
 
-echo; echo ">> Installing apps"
+echo; echo ">> Entering /osx"
 cd osx/
+
+echo; echo ">> Installing apps"
 ./install-apps.sh       # install apps, command line utilities and fonts
 
 echo; echo ">> Downloading widgets"
@@ -23,6 +25,8 @@ echo; echo ">> Downloading widgets"
 
 echo; echo ">> Configuring macOS"
 ./configure-osx.sh "$computer_name" "$user_name"  "$user_email" # configure a Mac machine
+
+echo; echo ">> Leaving /osx"
 cd -
 
 echo; echo ">> Configuring zsh"
