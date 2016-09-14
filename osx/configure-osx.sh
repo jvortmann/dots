@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # based on https://github.com/mathiasbynens/dotfiles/blob/master/.osx
 
-if [ $# -ne 3 ]
+if [ $# -ne 1 ]
 then
   echo 'Usage: ./configure-osx "computer_name"'
   exit 1
