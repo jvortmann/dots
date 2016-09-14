@@ -20,7 +20,7 @@ _GIT_PROMPT_STAGED="%{$GREEN%}●%{$RESET%}"
 
 # Show Git branch/tag, or name-rev if on detached head
 git_branch() {
-  GIT_BRANCH=$(git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/' -e 's/(\(.*\))/\1/')
+  local GIT_BRANCH="$(git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/' -e 's/(\(.*\))/\1/')"
 
   if [ -n "$GIT_BRANCH" ]; then
     if [ $GIT_BRANCH -regex-match "no branch|detached" 2>/dev/null ]; then
