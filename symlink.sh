@@ -21,6 +21,4 @@ echo; echo ">> Setting symlinks for tmux configurations"
 ln -sfhv ~/.dots/tmux/tmux.conf ~/.tmux.conf
 
 echo; echo ">> Setting symlinks for git"
-mkdir -p ~/.config/git
-ln -sfhv ~/.dots/git/ignore ~/.config/git/ignore
-ln -sfhv ~/.dots/git/config ~/.config/git/config
+ln -sfhv ~/.dots/git ~/.config/git
