@@ -1,6 +1,9 @@
 # Add versions
 tap 'homebrew/versions'
 
+# Add services
+tap 'homebrew/services'
+
 # Install cask with versions and fonts
 tap 'caskroom/cask'
 tap 'caskroom/versions'
