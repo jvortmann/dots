@@ -12,6 +12,6 @@ rbenv_prompt_info() {
   if [[ $name == "system" ]]; then
     echo ""
   else
-    echo "[$name]"
+    echo " [$name]"
   fi
 }
