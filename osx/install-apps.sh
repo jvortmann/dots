@@ -4,6 +4,7 @@ command -v brew > /dev/null || (echo; echo ">> Homebrew" && ruby -e "$(curl -fsS
 
 brew tap Homebrew/bundle
 
+echo; echo ">> Installing Apps"
 brew bundle --verbose
 
 echo; echo ">> Installing Basher"
