@@ -9,7 +9,6 @@ set -g @plugin 'tmux-plugins/tmux-resurrect'
 set -g @plugin 'tmux-plugins/tmux-continuum'
 set -g @plugin 'tmux-plugins/tmux-yank'
 set -g @plugin 'tmux-plugins/tmux-open'
-set -g @plugin 'christoomey/vim-tmux-navigator'
 set -g @plugin 'tmux-plugins/vim-tmux-focus-events'
 
 # restore sessions when tmux server starts
