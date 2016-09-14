@@ -1,4 +1,6 @@
 # vim: ft=gitconfig
+[include]
+  path = user
 
 [color]
   status = auto
