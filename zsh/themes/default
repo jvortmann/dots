@@ -12,7 +12,7 @@ if [ $? -ne 0 ]; then
   rbenv_prompt_info() { }
 fi
 
-PROMPT="${_USER_AND_HOST} ${_CWD}${_RUBY_INFO}$(git_prompt_string) ∴ ${RESET}"
+PROMPT='${_USER_AND_HOST} ${_CWD}${_RUBY_INFO}$(git_prompt_string) ∴ ${RESET}'
 
 # display exitcode on the right when >0
 return_code="%(?..${RED}%? ↵${RESET})"
