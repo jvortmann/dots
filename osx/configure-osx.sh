@@ -3,7 +3,7 @@
 
 if [ $# -ne 3 ]
 then
-  echo 'Usage: ./configure-osx "computer_name"
+  echo 'Usage: ./configure-osx "computer_name"'
   exit 1
 fi
 
