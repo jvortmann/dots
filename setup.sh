@@ -36,5 +36,10 @@ echo; echo ">> Configuring Tmux"
 ./setup-tmux.sh   # creates the config folders and set zsh as default shell
 
 echo; echo ">> Setting git User and Email"
-git config --global user.name "$user_name"
-git config --global user.email "$user_email"
+cat > "$HOME/.config/git/user" <<EOF
+# vim: ft=gitconfig
+
+[user]
+  name = $user_name
+  email = $user_email
+EOF
