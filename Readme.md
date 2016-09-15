@@ -25,7 +25,7 @@ If you wish to setup just some of the configs individually, use the follwoing in
 To setup the config files on your home directory run the following:
 
 ```sh
-./symlink.sh  # setup and symlinks
+./symlink.sh  # setup symlinks
 ```
 
 ### Applications

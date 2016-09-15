@@ -12,7 +12,7 @@ user_email="$3"
 
 
 echo ">> Symlinking"
-./symlink.sh  # setup and symlinks
+./symlink.sh  # setup symlinks
 
 echo; echo ">> Entering /osx"
 cd osx/
