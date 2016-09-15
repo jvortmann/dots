@@ -58,7 +58,7 @@ git_status() {
     GIT_STATE=$GIT_STATE$_GIT_PROMPT_MODIFIED
   fi
 
-  if git status --porcelain | grep '^[MRC].' --quiet; then
+  if git status --porcelain | grep '^[AMRC].' --quiet; then
     GIT_STATE=$GIT_STATE$_GIT_PROMPT_STAGED
   fi
 
