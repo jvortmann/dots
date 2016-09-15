@@ -33,7 +33,7 @@ echo; echo ">> Configuring zsh"
 ./setup-zsh.sh   # creates the config folders and set zsh as default shell
 
 echo; echo ">> Configuring Tmux"
-./setup-tmux.sh   # creates the config folders and set zsh as default shell
+./setup-tmux.sh   # creates the plugin manager folder and clone it
 
 echo; echo ">> Setting git User and Email"
 cat > "$HOME/.config/git/user" <<EOF
