@@ -62,3 +62,11 @@ To setup tmux after it is installed run the following:
 ```sh
 ./setup-tmux.sh   # creates the plugin manager folder and clone it
 ```
+
+### Setup Git user and email
+
+To setup git user and email after the symlink is in place:
+
+```sh
+./setup-git-user.sh "User Name" "user@email.com" # configure git user and email
+```
