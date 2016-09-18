@@ -35,11 +35,4 @@ echo; echo ">> Configuring zsh"
 echo; echo ">> Configuring Tmux"
 ./setup-tmux.sh   # creates the plugin manager folder and clone it
 
-echo; echo ">> Setting git User and Email"
-cat > "$HOME/.config/git/user" <<EOF
-# vim: ft=gitconfig
-
-[user]
-  name = $user_name
-  email = $user_email
-EOF
+./setup-git-user.sh "$user_name" "$user_email" # creates the file with git user and email
