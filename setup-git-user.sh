@@ -1,6 +1,6 @@
 if [ $# -ne 2 ]
 then
-  echo 'Usage: ./setup-git-user.sh "User Name"  "user@email.com"'
+  echo 'Usage: ./setup-git-user.sh "User Name" "user@email.com"'
   exit 1
 fi
 
