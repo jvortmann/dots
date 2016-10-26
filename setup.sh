@@ -2,7 +2,7 @@
 
 if [ $# -ne 3 ]
 then
-  echo 'Usage: ./setup "computer_name"  "User Name"  "user@email.com"'
+  echo 'Usage: ./setup "computer_name" "User Name" "user@email.com"'
   exit 1
 fi
 
