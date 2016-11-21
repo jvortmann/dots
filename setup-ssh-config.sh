@@ -26,9 +26,4 @@ Host bitbucket
   HostName bitbucket.org
   User git
   IdentityFile ~/.ssh/$computer_name
-
-Host globo
-  HostName gitlab.globoi.com
-  User gitlab
-  IdentityFile ~/.ssh/$computer_name
 EOF
