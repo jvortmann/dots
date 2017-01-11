@@ -2,6 +2,9 @@
 [include]
   path = user
 
+[include]
+  path = github
+
 [color]
   status = auto
   branch = auto
