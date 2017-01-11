@@ -10,7 +10,6 @@ computer_name="$1"
 user_name="$2"
 user_email="$3"
 
-
 echo ">> Symlinking"
 ./symlink.sh  # setup symlinks
 
