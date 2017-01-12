@@ -81,4 +81,4 @@ brew 'zsh-syntax-highlighting'
 
 # Install neovim
 tap 'neovim/neovim'
-brew 'neovim', args: ['HEAD']
+brew 'neovim'
