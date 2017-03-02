@@ -2,12 +2,3 @@
 
 # Base path
 export PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
-
-# User bin
-export PATH=~/bin:$PATH
-
-# dev
-export PATH=~/.dev/bin:$PATH
-
-# Multirust cargo plugins
-export PATH=~/.multirust/toolchains/stable/cargo/bin:$PATH
