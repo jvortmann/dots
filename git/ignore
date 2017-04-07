@@ -16,3 +16,4 @@ session/
 git/user
 git/github
 node_modules
+.tern*
