@@ -17,7 +17,8 @@ source $ZSH_HOME/conf/defaults
 for file ($ZSH_HOME/conf/lib/*) source $file
 
 # Include plugins
-for file ($ZSH_HOME/conf/plugins/*) source $file
+source $ZSH_HOME/conf/zplug
+source $ZSH_HOME/conf/plugins.zsh
 
 # Set theme
 source $ZSH_HOME/themes/init
