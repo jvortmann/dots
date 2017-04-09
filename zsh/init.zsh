@@ -20,10 +20,11 @@ for file ($ZSH_HOME/conf/lib/*) source $file
 source $ZSH_HOME/conf/zplug
 source $ZSH_HOME/conf/plugins.zsh
 
+# source all settings files
+for file ($ZSH_HOME/conf/settings/*) source $file
+
 # Set theme
 source $ZSH_HOME/themes/init
-
-source $ZSH_HOME/conf/extras
 
 if type gdate > /dev/null; then
   #unsetopt xtrace
