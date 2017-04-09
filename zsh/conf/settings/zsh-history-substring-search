@@ -1,13 +1,5 @@
 # vim: ft=zsh
 
-if (zplug check zsh-users/zsh-autosuggestions); then
-  ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=241'
-fi
-
-if (zplug check zsh-users/zsh-syntax-highlighting); then
-  ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets cursor)
-fi
-
 # setup history substring search
 if (zplug check zsh-users/zsh-history-substring-search); then
   # bind P and N for EMACS mode
