@@ -1,10 +1,7 @@
 # vim: ft=zsh
 
-local cache_path="$ZSH_HOME/conf/plugins/.yarn_path_cache"
-local cache_is_old=$(find "$cache_path" -mtime -1d 2> /dev/null)
+export YARN_PATH_CACHEFILE="$ZSH_HOME/conf/plugins/.yarn_path_cache"
 
-if [ ! -r "$cache_is_old" ]; then
-  $(yarn global bin > $cache_path)
-fi
+cache "$YARN_PATH_CACHEFILE" "1d" "yarn global bin"
 
-export PATH="$(cat $cache_path):$PATH"
+export PATH="$(cat $YARN_PATH_CACHEFILE):$PATH"

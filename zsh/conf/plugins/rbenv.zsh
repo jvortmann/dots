@@ -2,16 +2,9 @@
 
 if [ -d "$HOME/.rbenv" ]; then
   export PATH="$HOME/.rbenv/bin:$PATH"
+  export RBENV_INIT_CACHEFILE="$ZSH_HOME/conf/plugins/.rbenv_init_cache"
 
-  local cache_path="$ZSH_HOME/conf/plugins/.rbenv_init_cache"
-  local cache_is_old=$(find "$cache_path" -mtime -1d 2> /dev/null)
-
-  if [ ! -r "$cache_is_old" ]; then
-    eval "$(rbenv init -)"
-    touch $cache_path
-  else
-    export PATH="$HOME/.rbenv/shims:$PATH"
-  fi
+  cache "$RBENV_INIT_CACHEFILE" "1d" "rbenv init -" "export PATH=\"$HOME/.rbenv/shims:$PATH\""
 fi
 
 # prompt function
