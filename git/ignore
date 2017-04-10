@@ -18,3 +18,4 @@ git/github
 node_modules
 .tern*
 .yarn_path_cache
+.rbenv_init_cache
