@@ -8,16 +8,16 @@ fi
 # Enable dynamic prompt
 setopt prompt_subst
 
-_USER_AND_HOST="${BLUE}%n@%m${RESET}"
-_CWD="${GREEN}%1~${RESET}"
-_RUBY_INFO="${RED}$(rbenv_prompt_info)${RESET}"
+local _user_and_host="${BLUE}%n@%m${RESET}"
+local _cwd="${GREEN}%1~${RESET}"
+local _ruby_info="${RED}$(rbenv_prompt_info)${RESET}"
 
 declare -f rbenv_prompt_info > /dev/null
 if [ $? -ne 0 ]; then
   rbenv_prompt_info() { }
 fi
 
-PROMPT='${_USER_AND_HOST} ${_CWD}${_RUBY_INFO}$(git_prompt_string) ∴ ${RESET}'
+PROMPT='${_user_and_host} ${_cwd}${_ruby_info}$(git_prompt_string) ∴ ${RESET}'
 
 # display exitcode on the right when >0
 return_code="%(?..${RED}%? ↵${RESET})"
