@@ -17,3 +17,4 @@ git/user
 git/github
 node_modules
 .tern*
+.yarn_path_cache
