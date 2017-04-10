@@ -1,5 +1,6 @@
 # vim: ft=zsh
 
-if (zplug check zsh-users/zsh-autosuggestions); then
+if [ -r /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
+  source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
   ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=241'
 fi
