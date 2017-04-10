@@ -17,7 +17,6 @@ source $ZSH_HOME/conf/defaults
 for file ($ZSH_HOME/conf/lib/*) source $file
 
 # Include plugins
-source $ZSH_HOME/conf/zplug
 source $ZSH_HOME/conf/plugins.zsh
 
 # source all settings files
