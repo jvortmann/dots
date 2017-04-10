@@ -1,5 +1,10 @@
 # vim: ft=zsh
 
+# Set jvortmann theme if no theme selected
+if [ -z "$ZSH_THEME" ]; then
+  export ZSH_THEME=jvortmann
+fi
+
 # Enable dynamic prompt
 setopt prompt_subst
 
