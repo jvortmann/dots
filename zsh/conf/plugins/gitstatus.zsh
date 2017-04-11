@@ -2,9 +2,6 @@
 #
 # Adapted from code found at <https://gist.github.com/joshdick/4415470>.
 
-setopt prompt_subst
-autoload -U colors # Enable colors in prompt
-
 # Modify the colors and symbols in these variables as desired.
 _GIT_PROMPT_SYMBOL=""
 _GIT_PROMPT_BRANCH="%{$RESET$BOLD%}BRANCH%{$RESET%}"
