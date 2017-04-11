@@ -25,5 +25,5 @@ PROMPT='${_user_and_host} ${_cwd} $(git_prompt_string) ∴ ${RESET}'
 if type gdate > /dev/null; then
   RPROMPT='${_ruby_info}(${LAST_COMMAND_TIME}ms)${_return_code}${RESET}'
 else
-  RPROMPT='${_ruby_info} ${return_code}${RESET}'
+  RPROMPT='${_ruby_info}${return_code}${RESET}'
 fi
