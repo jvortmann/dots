@@ -10,18 +10,20 @@ setopt prompt_subst
 
 local _user_and_host="${BLUE}%n@%m${RESET}"
 local _cwd="${GREEN}%1~${RESET}"
-local _ruby_info="${RED}$(rbenv_prompt_info)${RESET}"
+local _ruby_info="${RED}$(ruby_version_info)${RESET}"
 
-declare -f rbenv_prompt_info > /dev/null
+declare -f ruby_version_info > /dev/null
 if [ $? -ne 0 ]; then
-  rbenv_prompt_info() { }
+  ruby_version_info() { }
 fi
 
-PROMPT='${_user_and_host} ${_cwd}${_ruby_info}$(git_prompt_string) ∴ ${RESET}'
+PROMPT='${_user_and_host} ${_cwd} $(git_prompt_string) ∴ ${RESET}'
 
 # display exitcode on the right when >0
-return_code="%(?..${RED}%? ↵${RESET})"
+local _return_code=" %(?..${RED}%? ↵${RESET})"
 
 if type gdate > /dev/null; then
-  RPROMPT='(${LAST_COMMAND_TIME}ms) ${return_code}${RESET}'
+  RPROMPT='${_ruby_info}(${LAST_COMMAND_TIME}ms)${_return_code}${RESET}'
+else
+  RPROMPT='${_ruby_info} ${return_code}${RESET}'
 fi
