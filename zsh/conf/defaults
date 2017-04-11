@@ -22,4 +22,4 @@ zmodload zsh/regex
 
 # setup cd options
 DIRSTACKSIZE=8
-setopt autopushd pushdminus pushdsilent pushdtohome
+setopt AUTOPUSHD PUSHDMINUS PUSHDSILENT PUSHDTOHOME
