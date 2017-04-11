@@ -7,7 +7,7 @@ if type gdate > /dev/null; then
   START="$(gdate "+%s%3N")"
   #PS4='+$(gdate "+%s:%N") %N:%i> '
   #exec 3>&2 2>/tmp/startlog
-  #setopt xtrace prompt_subst
+  #setopt XTRACE PROMPT_SUBST
 fi
 
 # Read default settings
@@ -25,7 +25,7 @@ for file ($ZSH_HOME/conf/settings/*) source $file
 source $ZSH_HOME/conf/theme.zsh
 
 if type gdate > /dev/null; then
-  #unsetopt xtrace
+  #unsetopt XTRACE
   #exec 2>&3 3>&-
   LAST_COMMAND_TIME=$(($(gdate "+%s%3N")-$START))
 fi
