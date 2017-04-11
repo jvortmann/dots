@@ -3,7 +3,7 @@
 export NVM_DIR=~/.nvm
 
 nvm_activate() {
-  source "$BREW_PREFIX/opt/nvm/nvm.sh"
+  source "$BREW_PREFIX/opt/nvm/nvm.sh" --no-use
 
   update_prompt
 }
