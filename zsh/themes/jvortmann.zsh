@@ -15,18 +15,24 @@ then
   node_version_info() { }
 fi
 
-local _user_and_host="${BLUE}%n@%m${RESET}"
-local _cwd="${GREEN}%1~${RESET}"
-local _ruby_info="${RED}$(ruby_version_info)${RESET}"
-local _node_info="${GREEN}$(node_version_info)${RESET}"
+precmd () {
+  set_prompt
+}
 
-# display exitcode on the right when >0
-local _return_code=" %(0?..${RED}%? ↵${RESET})"
+set_prompt() {
+  _user_and_host="${BLUE}%n@%m${RESET}"
+  _cwd="${GREEN}%1~${RESET}"
+  _ruby_info="${RED}$(ruby_version_info)${RESET}"
+  _node_info="${GREEN}$(node_version_info)${RESET}"
 
-PROMPT='${_user_and_host} ${_cwd} $(git_prompt_string) ∴ ${RESET}'
+  # display exitcode on the right when >0
+  _return_code=" %(0?..${RED}%? ↵${RESET})"
 
-if type gdate > /dev/null; then
-  RPROMPT='${_ruby_info}${_node_info}(${LAST_COMMAND_TIME}ms)${_return_code}${RESET}'
-else
-  RPROMPT='${_ruby_info}${_node_info}${return_code}${RESET}'
-fi
+  PROMPT='${_user_and_host} ${_cwd} $(git_prompt_string) ∴ ${RESET}'
+
+  if type gdate > /dev/null; then
+    RPROMPT='${_ruby_info}${_node_info}(${LAST_COMMAND_TIME}ms)${_return_code}${RESET}'
+  else
+    RPROMPT='${_ruby_info}${_node_info}${return_code}${RESET}'
+  fi
+}
