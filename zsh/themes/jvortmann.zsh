@@ -17,10 +17,10 @@ if [ $? -ne 0 ]; then
   ruby_version_info() { }
 fi
 
-PROMPT='${_user_and_host} ${_cwd} $(git_prompt_string) ∴ ${RESET}'
-
 # display exitcode on the right when >0
-local _return_code=" %(?..${RED}%? ↵${RESET})"
+local _return_code=" %(0?..${RED}%? ↵${RESET})"
+
+PROMPT='${_user_and_host} ${_cwd} $(git_prompt_string) ∴ ${RESET}'
 
 if type gdate > /dev/null; then
   RPROMPT='${_ruby_info}(${LAST_COMMAND_TIME}ms)${_return_code}${RESET}'
