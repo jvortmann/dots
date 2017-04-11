@@ -15,11 +15,7 @@ then
   node_version_info() { }
 fi
 
-precmd () {
-  set_prompt
-}
-
-set_prompt() {
+update_prompt() {
   _user_and_host="${BLUE}%n@%m${RESET}"
   _cwd="${GREEN}%1~${RESET}"
   _ruby_info="${RED}$(ruby_version_info)${RESET}"
@@ -36,3 +32,5 @@ set_prompt() {
     RPROMPT='${_ruby_info}${_node_info}${return_code}${RESET}'
   fi
 }
+
+update_prompt
