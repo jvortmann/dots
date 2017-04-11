@@ -8,14 +8,14 @@ fi
 # Enable dynamic prompt
 setopt prompt_subst
 
+if ! declare -f ruby_version_info > /dev/null
+then
+  ruby_version_info() { }
+fi
+
 local _user_and_host="${BLUE}%n@%m${RESET}"
 local _cwd="${GREEN}%1~${RESET}"
 local _ruby_info="${RED}$(ruby_version_info)${RESET}"
-
-declare -f ruby_version_info > /dev/null
-if [ $? -ne 0 ]; then
-  ruby_version_info() { }
-fi
 
 # display exitcode on the right when >0
 local _return_code=" %(0?..${RED}%? ↵${RESET})"
