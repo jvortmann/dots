@@ -5,9 +5,6 @@ if [ -z "$ZSH_THEME" ]; then
   export ZSH_THEME=jvortmann
 fi
 
-# Enable dynamic prompt
-setopt prompt_subst
-
 if ! declare -f ruby_version_info > /dev/null
 then
   ruby_version_info() { }

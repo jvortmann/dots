@@ -23,3 +23,7 @@ zmodload zsh/regex
 # setup cd options
 DIRSTACKSIZE=8
 setopt AUTOPUSHD PUSHDMINUS PUSHDSILENT PUSHDTOHOME
+
+# Enable dynamic prompt
+setopt PROMPT_SUBST
+autoload -U colors # Enable colors in prompt
