@@ -13,9 +13,15 @@ then
   ruby_version_info() { }
 fi
 
+if ! declare -f node_version_info > /dev/null
+then
+  node_version_info() { }
+fi
+
 local _user_and_host="${BLUE}%n@%m${RESET}"
 local _cwd="${GREEN}%1~${RESET}"
 local _ruby_info="${RED}$(ruby_version_info)${RESET}"
+local _node_info="${GREEN}$(node_version_info)${RESET}"
 
 # display exitcode on the right when >0
 local _return_code=" %(0?..${RED}%? ↵${RESET})"
@@ -23,7 +29,7 @@ local _return_code=" %(0?..${RED}%? ↵${RESET})"
 PROMPT='${_user_and_host} ${_cwd} $(git_prompt_string) ∴ ${RESET}'
 
 if type gdate > /dev/null; then
-  RPROMPT='${_ruby_info}(${LAST_COMMAND_TIME}ms)${_return_code}${RESET}'
+  RPROMPT='${_ruby_info}${_node_info}(${LAST_COMMAND_TIME}ms)${_return_code}${RESET}'
 else
-  RPROMPT='${_ruby_info}${return_code}${RESET}'
+  RPROMPT='${_ruby_info}${_node_info}${return_code}${RESET}'
 fi
