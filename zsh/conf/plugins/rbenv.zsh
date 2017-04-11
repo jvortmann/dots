@@ -8,12 +8,13 @@ if [ -d "$HOME/.rbenv" ]; then
 fi
 
 # prompt function
-rbenv_prompt_info() {
-  local name
-  name=$(rbenv version-name 2> /dev/null) || return
-  if [[ $name == "system" ]]; then
-    echo ""
+ruby_version_info() {
+  local name=$(rbenv version-name 2> /dev/null)
+  local origin=$(rbenv version-origin 2> /dev/null)
+
+  if [[ $origin =~ "ruby-version" && $name != "system" ]]; then
+    echo "[ruby:$name]"
   else
-    echo " [$name]"
+    echo ""
   fi
 }
