@@ -17,6 +17,5 @@ git/user
 git/github
 node_modules
 .tern*
-.yarn_path_cache
 yarn.lock
-.rbenv_init_cache
+.*_cache
