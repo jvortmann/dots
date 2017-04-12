@@ -5,8 +5,23 @@ export NVM_DIR=~/.nvm
 nvm_activate() {
   source "$BREW_PREFIX/opt/nvm/nvm.sh" --no-use
 
+  nvm_add_path
+
   update_prompt
 }
+
+nvm_path() {
+  echo "${$(nvm which default)%/node}"
+}
+
+nvm_add_path(){
+  export NVM_PATH_CACHEFILE="$ZSH_HOME/conf/plugins/.nvm_path_cache"
+
+  cache "$NVM_PATH_CACHEFILE" "1d" "nvm_path"
+
+  export PATH="$(< $NVM_PATH_CACHEFILE):$PATH"
+}
+
 # prompt function
 node_version_info() {
   if [[ -d "node_modules" ]] || [[ -r ".nvmrc" ]]
