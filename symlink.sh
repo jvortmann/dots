@@ -5,7 +5,7 @@ echo; echo ">> Creating ~/.config folder"
 mkdir -p ~/.config/
 
 echo; echo ">> Setting symlinks for dots folder"
-ln -sfhv $(pwd) ~/.dots
+ln -sfhv "$(pwd)" ~/.dots
 
 echo; echo ">> Setting symlinks for default configurations"
 ln -sfhv ~/.dots/ag/agignore ~/.agignore
