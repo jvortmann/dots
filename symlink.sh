@@ -17,6 +17,9 @@ ln -sfhv ~/.dots/gem/gemrc ~/.gemrc
 ln -sfhv ~/.dots/irb/irbrc ~/.irbrc
 ln -sfhv ~/.dots/guard/guard.rb ~/.guard.rb
 
+echo; echo ">> Setting symlinks for eslint configurations"
+ln -sfhv ~/.dots/eslint/eslintrc ~/.eslintrc
+
 echo; echo ">> Setting symlinks for tmux configurations"
 ln -sfhv ~/.dots/tmux/tmux.conf ~/.tmux.conf
 
