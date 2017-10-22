@@ -13,4 +13,3 @@ cache() {
     eval "$else_command"
   fi
 }
-
