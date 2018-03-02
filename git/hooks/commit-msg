@@ -1,0 +1,11 @@
+#!/bin/bash
+
+regex="^(feature|fix|doc|style|refactor|test|chore): [A-Z].+[^.]$"
+message=$(cat "$1")
+
+if [[ ! $message =~ $regex ]]; then
+  echo "[POLICY] Your message is not formatted correctly";
+  exit 1
+else
+  exit 0
+fi

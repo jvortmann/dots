@@ -34,6 +34,7 @@
 [core]
   pager = less -FRX~
   whitespace=fix,-indent-with-non-tab,trailing-space,space-before-tab,cr-at-eol
+  hooksPath = ~/.config/git/hooks/
 
 [diff]
   ignoreSubmodules = dirty
