@@ -4168,6 +4168,8 @@
 	<false/>
 	<key>DisableFullscreenTransparency</key>
 	<true/>
+	<key>DisableMetalWhenUnplugged</key>
+	<false/>
 	<key>EnableRendezvous</key>
 	<false/>
 	<key>ExperimentalKeyHandling</key>
@@ -4357,7 +4359,7 @@
 	<key>NSWindow Frame SessionsPreferences</key>
 	<string>269 139 606 456 0 0 1440 878 </string>
 	<key>NSWindow Frame SharedPreferences</key>
-	<string>339 439 918 381 0 0 1680 1028 </string>
+	<string>339 498 796 473 0 0 1680 1050 </string>
 	<key>NSWindow Frame iTerm Window 0</key>
 	<string>0 0 1680 1050 0 0 1680 1028 </string>
 	<key>New Bookmarks</key>
@@ -7500,11 +7502,11 @@
 	<key>SUFeedAlternateAppNameKey</key>
 	<string>iTerm</string>
 	<key>SUFeedURL</key>
-	<string>https://iterm2.com/appcasts/testing.xml?shard=96</string>
+	<string>https://iterm2.com/appcasts/nightly.xml?shard=96</string>
 	<key>SUHasLaunchedBefore</key>
 	<true/>
 	<key>SULastCheckTime</key>
-	<date>2017-12-06T07:54:59Z</date>
+	<date>2018-02-28T14:11:27Z</date>
 	<key>SUSendProfileInfo</key>
 	<false/>
 	<key>SavePasteHistory</key>
@@ -8375,7 +8377,7 @@
 	<key>findRegex_iTerm</key>
 	<false/>
 	<key>iTerm Version</key>
-	<string>3.1.5.beta.2</string>
+	<string>3.2.20180228-nightly</string>
 	<key>kCPKSelectionViewPreferredModeKey</key>
 	<integer>0</integer>
 	<key>kCPKSelectionViewShowHSBTextFieldsKey</key>
