@@ -7,6 +7,32 @@ size_limit=72
 
 if [[ ! $message =~ $regex || $size -gt $size_limit ]]; then
   echo "[POLICY] Your message is not formatted correctly";
+  echo
+  echo "Info: Your message has ${size} chars and the limit is ${size_limit} chars."
+  echo
+  echo "Check you CONTRIBUTING information."
+  echo
+  echo "The format is as follows:";
+  echo "type: Capitalized, short summary of changes (72 chars tops, no period at the end)"
+  echo
+  echo "The types are the following:"
+  echo "- feature: Change behavior, interface or adds new functionality"
+  echo "- fix: Fix bugs"
+  echo "- doc: Change to documentation, README, CHANGELOG etc"
+  echo "- style: Format, missing semi-colons, changes in whitespace, coding style in general"
+  echo "- refactor: Refactor production code, no functionality or behavior change"
+  echo "- test: Add missing tests, refactoring tests; no production code change"
+  echo "- chore: Update gems; no production code change"
+  echo
+  echo "Examples:"
+  echo "feature: Add search user by email"
+  echo "chore: Update Rails to 5.1"
+  echo
+  echo "Additionally, it is possible to include a longer description of the"
+  echo "problem/solution by opening the the editor (commit without -m or use -e)"
+  echo
+  echo
+
   exit 1
 else
   exit 0
