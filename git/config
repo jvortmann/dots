@@ -64,8 +64,8 @@
   co = checkout
   cf = "!git ss | grep '^U.\\|^.U' --color"
   ccf = "!git cf | wc -l"
-  b = branch --format='%(align:1,middle)%(color: white)%(HEAD)%(end) %(if)%(upstream)%(then)%(color:green)%(refname:short)%(else)%(color:cyan)%(refname:lstrip=1)%(end)%(if)%(symref)%(then)%(color: reset) -> %(symref)%(end) %(color:yellow)%(upstream:track)'
-  bl = branch --format='%(align:1,middle)%(color: white)%(HEAD)%(end)%(color:yellow) %(objectname:short) %(align:18,left)%(color:blue)%(committername)%(end)%(align:15,middle)%(color:green)%(committerdate:short)%(end)%(if)%(upstream)%(then)%(color:green)%(refname:short)%(else)%(color:cyan)%(refname:lstrip=1)%(end)%(if)%(symref)%(then)%(color: reset) -> %(symref)%(end) %(color:yellow)%(upstream:track)'
+  b = branch --format='%(align:1,middle)%(color: white)%(HEAD)%(end) %(if)%(upstream)%(then)%(color:green)%(refname:short)%(else)%(color:cyan)%(refname:lstrip=2)%(end)%(if)%(symref)%(then)%(color: reset) -> %(symref)%(end) %(color:yellow)%(upstream:track)'
+  bl = branch --format='%(align:1,middle)%(color: white)%(HEAD)%(end)%(color:yellow) %(objectname:short) %(align:18,left)%(color:blue)%(committername)%(end)%(align:15,middle)%(color:green)%(committerdate:short)%(end)%(if)%(upstream)%(then)%(color:green)%(refname:short)%(else)%(color:cyan)%(refname:lstrip=2)%(end)%(if)%(symref)%(then)%(color: reset) -> %(symref)%(end) %(color:yellow)%(upstream:track)'
   px = push
   pl = pull
   r = remote
