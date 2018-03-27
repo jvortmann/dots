@@ -25,8 +25,6 @@ alias f=foreman
 alias g=git
 
 # grep
-alias rg='grep -r'
-alias rgi='grep -ri'
 alias grep='grep --color=auto -i'
 
 # here
