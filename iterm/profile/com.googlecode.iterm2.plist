@@ -4359,7 +4359,7 @@
 	<key>NSWindow Frame SessionsPreferences</key>
 	<string>269 139 606 456 0 0 1440 878 </string>
 	<key>NSWindow Frame SharedPreferences</key>
-	<string>339 498 796 473 0 0 1680 1050 </string>
+	<string>431 534 918 512 0 0 1920 1058 </string>
 	<key>NSWindow Frame iTerm Window 0</key>
 	<string>0 0 1680 1050 0 0 1680 1028 </string>
 	<key>New Bookmarks</key>
@@ -7440,6 +7440,10 @@
 	<integer>0</integer>
 	<key>NoSyncPermissionToShowTip</key>
 	<false/>
+	<key>NoSyncSuppressBroadcastInputWarning</key>
+	<true/>
+	<key>NoSyncSuppressBroadcastInputWarning_selection</key>
+	<integer>0</integer>
 	<key>NoSyncTimeOfFirstLaunchOfVersionWithTip</key>
 	<real>495479820.09266901</real>
 	<key>OnlyWhenMoreTabs</key>
@@ -7506,10 +7510,12 @@
 	<key>SUHasLaunchedBefore</key>
 	<true/>
 	<key>SULastCheckTime</key>
-	<date>2018-02-28T14:11:27Z</date>
+	<date>2018-03-19T14:06:25Z</date>
 	<key>SUSendProfileInfo</key>
 	<false/>
 	<key>SavePasteHistory</key>
+	<true/>
+	<key>Selection Respects Soft Boundaries</key>
 	<true/>
 	<key>Show Toolbelt</key>
 	<false/>
@@ -7542,6 +7548,8 @@
 	<false/>
 	<key>URLHandlersByGuid</key>
 	<dict/>
+	<key>Use background pattern indicator</key>
+	<true/>
 	<key>UseAdaptiveFrameRate</key>
 	<true/>
 	<key>UseBorder</key>
@@ -8377,7 +8385,7 @@
 	<key>findRegex_iTerm</key>
 	<false/>
 	<key>iTerm Version</key>
-	<string>3.2.20180228-nightly</string>
+	<string>3.2.20180305-nightly</string>
 	<key>kCPKSelectionViewPreferredModeKey</key>
 	<integer>0</integer>
 	<key>kCPKSelectionViewShowHSBTextFieldsKey</key>
