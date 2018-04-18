@@ -12,7 +12,7 @@ ruby_version_info() {
   local name=$(rbenv version-name 2> /dev/null)
   local origin=$(rbenv version-origin 2> /dev/null)
 
-  if [[ $origin =~ "ruby-version" && $name != "system" ]]; then
+  if [[ $origin =~ "ruby-version" && $name != "" && $name != "system" ]]; then
     echo "[ruby:$name]"
   else
     echo ""
