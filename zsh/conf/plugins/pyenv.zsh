@@ -14,7 +14,7 @@ python_version_info() {
   local name=$(pyenv version-name 2> /dev/null)
   local origin=$(pyenv version-origin 2> /dev/null)
 
-  if [[ $origin =~ "python-version" && $name != "system" ]]; then
+  if [[ $origin =~ "python-version" && $name != "" && $name != "system" ]]; then
     echo "[python:$name]"
   else
     echo ""
