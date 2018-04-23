@@ -13,6 +13,7 @@ _GIT_PROMPT_BEHIND="%{$RED%}↓NUM%{$RESET%}"
 _GIT_PROMPT_MERGING="%{$RED%}Ϟ%{$RESET%}"
 _GIT_PROMPT_UNTRACKED="%{$BLUE%}●%{$RESET%}"
 _GIT_PROMPT_MODIFIED="%{$YELLOW%}●%{$RESET%}"
+_GIT_PROMPT_DELETED="%{$RED%}●%{$RESET%}"
 _GIT_PROMPT_STAGED="%{$GREEN%}●%{$RESET%}"
 
 # Show Git branch/tag, or name-rev if on detached head
@@ -45,6 +46,10 @@ git_status() {
 
   if git status --porcelain | grep '^UU' --quiet; then
     GIT_STATE=$GIT_STATE$_GIT_PROMPT_MERGING
+  fi
+
+  if git status --porcelain | grep '^D' --quiet; then
+    GIT_STATE=$GIT_STATE$_GIT_PROMPT_DELETED
   fi
 
   if git status --porcelain | grep '^??' --quiet; then
