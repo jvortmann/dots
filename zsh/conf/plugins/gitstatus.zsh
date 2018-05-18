@@ -50,7 +50,7 @@ git_status() {
     GIT_STATE=$GIT_STATE$_GIT_PROMPT_MERGING
   fi
 
-  if echo $STATUS | grep '^D' --quiet; then
+  if echo $STATUS | grep '^.D' --quiet; then
     GIT_STATE=$GIT_STATE$_GIT_PROMPT_DELETED
   fi
 
