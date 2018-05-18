@@ -36,6 +36,7 @@ git_status() {
 
   local NUM_AHEAD="$(git log --oneline @{u}.. 2> /dev/null | wc -l | tr -d ' ')"
   local NUM_BEHIND="$(git log --oneline ..@{u} 2> /dev/null | wc -l | tr -d ' ')"
+  local STATUS="$(git status --porcelain)"
 
   if [ "$NUM_AHEAD" -gt 0 ]; then
     GIT_STATE=$GIT_STATE${_GIT_PROMPT_AHEAD//NUM/$NUM_AHEAD}
@@ -45,23 +46,23 @@ git_status() {
     GIT_STATE=$GIT_STATE${_GIT_PROMPT_BEHIND//NUM/$NUM_BEHIND}
   fi
 
-  if git status --porcelain | grep '^UU' --quiet; then
+  if echo $STATUS | grep '^UU' --quiet; then
     GIT_STATE=$GIT_STATE$_GIT_PROMPT_MERGING
   fi
 
-  if git status --porcelain | grep '^D' --quiet; then
+  if echo $STATUS | grep '^D' --quiet; then
     GIT_STATE=$GIT_STATE$_GIT_PROMPT_DELETED
   fi
 
-  if git status --porcelain | grep '^??' --quiet; then
+  if echo $STATUS | grep '^??' --quiet; then
     GIT_STATE=$GIT_STATE$_GIT_PROMPT_UNTRACKED
   fi
 
-  if git status --porcelain | grep '^.[MRC]' --quiet; then
+  if echo $STATUS | grep '^.[MRC]' --quiet; then
     GIT_STATE=$GIT_STATE$_GIT_PROMPT_MODIFIED
   fi
 
-  if git status --porcelain | grep '^[AMRC].' --quiet; then
+  if echo $STATUS | grep '^[AMRC].' --quiet; then
     GIT_STATE=$GIT_STATE$_GIT_PROMPT_STAGED
   fi
 
