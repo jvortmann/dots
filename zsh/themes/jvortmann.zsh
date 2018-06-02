@@ -31,7 +31,7 @@ update_prompt() {
   _ruby_info="${RED}$(ruby_version_info)${RESET}"
   _node_info="${GREEN}$(node_version_info)${RESET}"
   _python_info="${BLUE}$(python_version_info)${RESET}"
-  _elixir_info="${PURPLE}$(elixir_version_info)${RESET}"
+  _elixir_info="${MAGENTA}$(elixir_version_info)${RESET}"
 
   # display exitcode on the right when >0
   _return_code=" %(0?..${RED}%? ↵${RESET})"
