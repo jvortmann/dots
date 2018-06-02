@@ -12,7 +12,7 @@ elixir_version_info() {
   local name=$(exenv version-name 2> /dev/null)
   local origin=$(exenv version-origin 2> /dev/null)
 
-  if [[ $origin =~ "elixir-version" && $name != "" && $name != "system" ]]; then
+  if [[ $origin =~ "exenv-version" && $name != "" && $name != "system" ]]; then
     echo "[elixir:$name]"
   else
     echo ""
