@@ -4168,8 +4168,10 @@
 	<false/>
 	<key>DisableFullscreenTransparency</key>
 	<true/>
+	<key>DisableMetalWhenIdle</key>
+	<true/>
 	<key>DisableMetalWhenUnplugged</key>
-	<false/>
+	<true/>
 	<key>EnableRendezvous</key>
 	<false/>
 	<key>ExperimentalKeyHandling</key>
@@ -4353,13 +4355,13 @@
 		<integer>1</integer>
 	</dict>
 	<key>NSWindow Frame SUStatusFrame</key>
-	<string>640 690 400 129 0 0 1680 1050 </string>
+	<string>615 658 400 129 0 0 1680 1028 </string>
 	<key>NSWindow Frame SUUpdateAlert</key>
-	<string>625 201 620 392 0 0 1680 1028 </string>
+	<string>530 493 620 392 0 0 1680 1050 </string>
 	<key>NSWindow Frame SessionsPreferences</key>
 	<string>269 139 606 456 0 0 1440 878 </string>
 	<key>NSWindow Frame SharedPreferences</key>
-	<string>339 566 1018 447 0 0 1680 1028 </string>
+	<string>310 601 1018 447 0 0 1920 1058 </string>
 	<key>NSWindow Frame iTerm Window 0</key>
 	<string>0 0 1680 1050 0 0 1680 1028 </string>
 	<key>New Bookmarks</key>
@@ -7491,6 +7493,8 @@
 			<string>kNextWindowPointerAction</string>
 		</dict>
 	</dict>
+	<key>PreferIntegratedGPU</key>
+	<false/>
 	<key>PrefsCustomFolder</key>
 	<string>/Users/jv/prj/configs/dots/iterm/profile</string>
 	<key>PromptOnQuit</key>
@@ -7510,7 +7514,7 @@
 	<key>SUHasLaunchedBefore</key>
 	<true/>
 	<key>SULastCheckTime</key>
-	<date>2018-05-04T19:24:39Z</date>
+	<date>2018-06-02T13:39:06Z</date>
 	<key>SUSendProfileInfo</key>
 	<false/>
 	<key>SavePasteHistory</key>
@@ -7551,7 +7555,7 @@
 	<key>Use background pattern indicator</key>
 	<true/>
 	<key>UseAdaptiveFrameRate</key>
-	<true/>
+	<false/>
 	<key>UseBorder</key>
 	<false/>
 	<key>UseCompactLabel</key>
@@ -8387,7 +8391,7 @@
 	<key>findRegex_iTerm</key>
 	<false/>
 	<key>iTerm Version</key>
-	<string>3.2.20180503-nightly</string>
+	<string>3.2.20180529-nightly</string>
 	<key>kCPKSelectionViewPreferredModeKey</key>
 	<integer>0</integer>
 	<key>kCPKSelectionViewShowHSBTextFieldsKey</key>
