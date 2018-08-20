@@ -10,6 +10,9 @@ echo; echo ">> Setting ssh config file"
 cat > "$HOME/.ssh/config" <<EOF
 # vim: ft=sshconfig
 
+Host *
+  ServerAliveInterval 120
+
 Host heroku
   HostName heroku.com
   User git
