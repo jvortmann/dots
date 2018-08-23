@@ -16,6 +16,7 @@ tap 'universal-ctags/universal-ctags'
 tap 'juanibiapina/zas'
 
 # Install command line tools
+brew 'aria2'
 brew 'awscli'
 brew 'bats'
 brew 'coreutils'
