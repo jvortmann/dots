@@ -4,34 +4,61 @@ regex="^(feature|fix|doc|style|refactor|test|chore): [A-Z].+[^.]$"
 message=$(head -n1 "$1")
 size=${#message}
 size_limit=72
+spelling_errors=$(echo "$message" | ispell -a | grep -v "Ispell Version" | sed '/^\s*$/d' | sort | uniq)
 
-if [[ ! $message =~ $regex || $size -gt $size_limit ]]; then
-  echo "[POLICY] Your message is not formatted correctly";
+if [[ ! $message =~ $regex || $size -gt $size_limit || $spelling_errors != "*" ]]; then
+  echo "[POLICY] Your message is not correct";
   echo
-  echo "Info: Your message has ${size} chars and the limit is ${size_limit} chars."
+  echo "Check the CONTRIBUTING information."
   echo
-  echo "Check you CONTRIBUTING information."
-  echo
-  echo "The format is as follows:";
-  echo "type: Capitalized, short summary of changes (72 chars tops, no period at the end)"
-  echo
-  echo "The types are the following:"
-  echo "- feature: Change behavior, interface or adds new functionality"
-  echo "- fix: Fix bugs"
-  echo "- doc: Change to documentation, README, CHANGELOG etc"
-  echo "- style: Format, missing semi-colons, changes in whitespace, coding style in general"
-  echo "- refactor: Refactor production code, no functionality or behavior change"
-  echo "- test: Add missing tests, refactoring tests; no production code change"
-  echo "- chore: Update gems; no production code change"
-  echo
-  echo "Examples:"
-  echo "feature: Add search user by email"
-  echo "chore: Update Rails to 5.1"
-  echo
-  echo "Additionally, it is possible to include a longer description of the"
-  echo "problem/solution by opening the the editor (commit without -m or use -e)"
-  echo
-  echo
+  echo "[CHECKS]"
+  echo -n "- size: "
+  if [[ $size -gt $size_limit ]]; then
+    echo "[FAIL]"
+    echo
+    echo "Your message has ${size} chars and the limit is ${size_limit} chars."
+    echo
+    echo "Additionally, it is possible to include a longer description of the"
+    echo "problem/solution by opening the the editor (commit without -m or use -e)"
+    echo
+  else
+    echo "[PASS]"
+  fi
+
+  echo -n "- format: "
+  if [[ ! $message =~ $regex ]]; then
+    echo "[FAIL]"
+    echo
+    echo "The format is as follows:";
+    echo "{type}: Capitalized, short summary of changes (72 chars tops, no period at the end)"
+    echo
+    echo "The types are the following:"
+    echo "- feature: Change behavior, interface or adds new functionality"
+    echo "- fix: Fix bugs"
+    echo "- doc: Change to documentation, README, CHANGELOG etc"
+    echo "- style: Format, missing semi-colons, changes in whitespace, coding style in general"
+    echo "- refactor: Refactor production code, no functionality or behavior change"
+    echo "- test: Add missing tests, refactoring tests; no production code change"
+    echo "- chore: Update gems; no production code change"
+    echo
+    echo "Examples:"
+    echo "feature: Add user search by email"
+    echo "chore: Update Rails to 5.1"
+    echo
+  else
+    echo "[PASS]"
+  fi
+
+  echo -n "- spelling: "
+  if [[ $spelling_errors != "*" ]]; then
+    echo "[FAIL]"
+    echo
+    echo "Your message has the following spelling errors:"
+    echo "$spelling_errors" | grep -v "^\\*" | cut -f2 -d" "
+    echo
+  else
+    echo "[PASS]"
+  fi
 
   exit 1
 else
