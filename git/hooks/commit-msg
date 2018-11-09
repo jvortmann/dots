@@ -4,9 +4,9 @@ regex="^(feature|fix|doc|style|refactor|test|chore): [A-Z].+[^.]$"
 message=$(head -n1 "$1")
 size=${#message}
 size_limit=72
-spelling_errors=$(echo "$message" | ispell -a | grep -v "Ispell Version" | sed '/^\s*$/d' | sort | uniq)
+spelling_errors=$(echo "$message" | ispell -l | grep -v "refactor")
 
-if [[ ! $message =~ $regex || $size -gt $size_limit || $spelling_errors != "*" ]]; then
+if [[ ! $message =~ $regex || $size -gt $size_limit || $spelling_errors ]]; then
   echo "[POLICY] Your message is not correct";
   echo
   echo "Check the CONTRIBUTING information."
@@ -50,11 +50,11 @@ if [[ ! $message =~ $regex || $size -gt $size_limit || $spelling_errors != "*" ]
   fi
 
   echo -n "- spelling: "
-  if [[ $spelling_errors != "*" ]]; then
+  if [[ $spelling_errors ]]; then
     echo "[FAIL]"
     echo
     echo "Your message has the following spelling errors:"
-    echo "$spelling_errors" | grep -v "^\\*" | cut -f2 -d" "
+    echo "$spelling_errors"
     echo
   else
     echo "[PASS]"
