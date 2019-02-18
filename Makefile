@@ -1,4 +1,5 @@
 .PHONY: all kitty
+
 all: kitty
 
 dots_folder = ${HOME}/.dots
@@ -14,6 +15,6 @@ config_folder:
 
 kitty: ${config_folder}/kitty
 
-${config_folder}/kitty: ${dots_folder} ${config_folder}
+${config_folder}/kitty: ${config_folder}
 	@echo "Settings symlink to kitty config"
 	@ln -sfnv ${dots_folder}/kitty ${config_folder}/kitty
