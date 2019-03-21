@@ -4,7 +4,7 @@ regex="^(feature|fix|doc|style|refactor|test|chore): [A-Z].+[^.]$"
 message=$(head -n1 "$1")
 size=${#message}
 size_limit=72
-spelling_errors=$(echo "$message" | ispell -l | grep -v "refactor")
+spelling_errors=$(echo "$message" | ispell -l | grep -v "refactor\|doc")
 
 if [[ ! $message =~ $regex || $size -gt $size_limit || $spelling_errors ]]; then
   echo "[POLICY] Your message is not correct";
