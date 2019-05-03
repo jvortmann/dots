@@ -4,3 +4,4 @@ fpath=(/usr/local/share/zsh/site-functions /usr/local/share/zsh-completions $fpa
 
 export BREW_PREFIX=$(brew --prefix)
 export HOMEBREW_NO_AUTO_UPDATE=1
+export HOMEBREW_NO_INSTALL_CLEANUP=1
