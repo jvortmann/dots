@@ -6,6 +6,16 @@ size=${#message}
 size_limit=72
 spelling_available=$(which ispell)
 
+colorize () {
+  if [[ $1 == green ]]; then
+    echo $(tput setaf 2)$2$(tput sgr0)
+  elif [[ $1 == red ]]; then
+    echo $(tput setaf 1)$2$(tput sgr0)
+  elif [[ $1 == yellow ]]; then
+    echo $(tput setaf 3)$2$(tput sgr0)
+  fi
+}
+
 if [[ ! $message =~ $regex || $size -gt $size_limit || $spelling_errors ]]; then
   echo "[POLICY] Your message is not correct";
   echo
@@ -14,7 +24,7 @@ if [[ ! $message =~ $regex || $size -gt $size_limit || $spelling_errors ]]; then
   echo "[CHECKS]"
   echo -n "- size: "
   if [[ $size -gt $size_limit ]]; then
-    echo "[FAIL]"
+    colorize red "[FAIL]"
     echo
     echo "Your message has ${size} chars and the limit is ${size_limit} chars."
     echo
@@ -22,12 +32,12 @@ if [[ ! $message =~ $regex || $size -gt $size_limit || $spelling_errors ]]; then
     echo "problem/solution by opening the the editor (commit without -m or use -e)"
     echo
   else
-    echo "[PASS]"
+    colorize green "[PASS]"
   fi
 
   echo -n "- format: "
   if [[ ! $message =~ $regex ]]; then
-    echo "[FAIL]"
+    colorize red "[FAIL]"
     echo
     echo "The format is as follows:";
     echo "{type}: Capitalized, short summary of changes (72 chars tops, no period at the end)"
@@ -46,7 +56,7 @@ if [[ ! $message =~ $regex || $size -gt $size_limit || $spelling_errors ]]; then
     echo "chore: Update Rails to 5.1"
     echo
   else
-    echo "[PASS]"
+    colorize green "[PASS]"
   fi
 
   echo -n "- spelling: "
@@ -54,16 +64,16 @@ if [[ ! $message =~ $regex || $size -gt $size_limit || $spelling_errors ]]; then
     spelling_errors=$(echo "$message" | ispell -l | grep -v "refactor\|doc")
 
     if [[ $spelling_errors ]]; then
-      echo "[FAIL]"
+      colorize red "[FAIL]"
       echo
       echo "Your message has the following spelling errors:"
       echo "$spelling_errors"
       echo
     else
-      echo "[PASS]"
+      colorize green "[PASS]"
     fi
   else
-    echo "[NOT AVAILABLE]"
+    colorize yellow "[NOT AVAILABLE]"
     echo
     echo "Install ispell to enable spelling validation:"
     echo "brew install ispell"
