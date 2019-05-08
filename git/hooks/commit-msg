@@ -4,7 +4,7 @@ regex="^(feature|fix|doc|style|refactor|test|chore): [A-Z].+[^.]$"
 message=$(head -n1 "$1")
 size=${#message}
 size_limit=72
-spelling_errors=$(echo "$message" | ispell -l | grep -v "refactor\|doc")
+spelling_available=$(which ispell)
 
 if [[ ! $message =~ $regex || $size -gt $size_limit || $spelling_errors ]]; then
   echo "[POLICY] Your message is not correct";
@@ -50,14 +50,24 @@ if [[ ! $message =~ $regex || $size -gt $size_limit || $spelling_errors ]]; then
   fi
 
   echo -n "- spelling: "
-  if [[ $spelling_errors ]]; then
-    echo "[FAIL]"
-    echo
-    echo "Your message has the following spelling errors:"
-    echo "$spelling_errors"
-    echo
+  if [[ $spelling_available ]]; then
+    spelling_errors=$(echo "$message" | ispell -l | grep -v "refactor\|doc")
+
+    if [[ $spelling_errors ]]; then
+      echo "[FAIL]"
+      echo
+      echo "Your message has the following spelling errors:"
+      echo "$spelling_errors"
+      echo
+    else
+      echo "[PASS]"
+    fi
   else
-    echo "[PASS]"
+    echo "[NOT AVAILABLE]"
+    echo
+    echo "Install ispell to enable spelling validation:"
+    echo "brew install ispell"
+    echo
   fi
 
   exit 1
