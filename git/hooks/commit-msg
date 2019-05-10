@@ -1,11 +1,5 @@
 #!/bin/bash
 
-regex="^(feature|fix|doc|style|refactor|test|chore): [A-Z].+[^.]$"
-message=$(head -n1 "$1")
-size=${#message}
-size_limit=72
-spelling_available=$(command -v ispell)
-
 colorize () {
   if [[ $1 == green ]]; then
     echo "$(tput setaf 2)$2$(tput sgr0)"
@@ -15,6 +9,25 @@ colorize () {
     echo "$(tput setaf 3)$2$(tput sgr0)"
   fi
 }
+
+spell_available() {
+  command -v ispell
+}
+
+spell_check() {
+  if [[ $(spell_available) ]]; then
+    echo "$1" | ispell -l | grep -v "refactor\|doc"
+  fi
+
+  echo ""
+}
+
+regex="^(feature|fix|doc|style|refactor|test|chore): [A-Z].+[^.]$"
+message=$(head -n1 "$1")
+size=${#message}
+size_limit=72
+spelling_available=$(spell_available)
+spelling_errors=$(spell_check "$message")
 
 if [[ ! $message =~ $regex || $size -gt $size_limit || $spelling_errors ]]; then
   echo "[POLICY] Your message is not correct";
@@ -61,8 +74,6 @@ if [[ ! $message =~ $regex || $size -gt $size_limit || $spelling_errors ]]; then
 
   echo -n "- spelling: "
   if [[ $spelling_available ]]; then
-    spelling_errors=$(echo "$message" | ispell -l | grep -v "refactor\|doc")
-
     if [[ $spelling_errors ]]; then
       colorize red "[FAIL]"
       echo
