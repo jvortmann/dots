@@ -4,7 +4,7 @@ regex="^(feature|fix|doc|style|refactor|test|chore): [A-Z].+[^.]$"
 message=$(head -n1 "$1")
 size=${#message}
 size_limit=72
-spelling_available=$(which ispell)
+spelling_available=$(command -v ispell)
 
 colorize () {
   if [[ $1 == green ]]; then
