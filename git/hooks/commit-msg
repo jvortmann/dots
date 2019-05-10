@@ -30,11 +30,11 @@ spelling_available=$(spell_available)
 spelling_errors=$(spell_check "$message")
 
 if [[ ! $message =~ $regex || $size -gt $size_limit || $spelling_errors ]]; then
-  echo "[POLICY] Your message is not correct";
+  colorize yellow "[POLICY] Your message is not correct"
   echo
   echo "Check the CONTRIBUTING information."
   echo
-  echo "[CHECKS]"
+  colorize yellow "[CHECKS]"
   echo -n "- size: "
   if [[ $size -gt $size_limit ]]; then
     colorize red "[FAIL]"
