@@ -8,11 +8,11 @@ spelling_available=$(which ispell)
 
 colorize () {
   if [[ $1 == green ]]; then
-    echo $(tput setaf 2)$2$(tput sgr0)
+    echo "$(tput setaf 2)$2$(tput sgr0)"
   elif [[ $1 == red ]]; then
-    echo $(tput setaf 1)$2$(tput sgr0)
+    echo "$(tput setaf 1)$2$(tput sgr0)"
   elif [[ $1 == yellow ]]; then
-    echo $(tput setaf 3)$2$(tput sgr0)
+    echo "$(tput setaf 3)$2$(tput sgr0)"
   fi
 }
 
