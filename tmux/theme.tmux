@@ -2,31 +2,23 @@
 
 #### COLOUR (Solarized dark)
 # default statusbar colors
-set-option -g status-bg black #base02
-set-option -g status-fg yellow #yellow
-set-option -g status-attr default
+set-option -g status-style bg=black,fg=yellow #,attr=default
 
 # default window title colors
-set-window-option -g window-status-fg brightblue #base0
-set-window-option -g window-status-bg default
-#set-window-option -g window-status-attr dim
+set-window-option -g window-status-style bg=default,fg=brightblue #,attr=dim
 
 # active window title colors
-set-window-option -g window-status-current-fg black
-set-window-option -g window-status-current-bg brightblue
-set-window-option -g window-status-current-attr dim
+set-window-option -g window-status-current-style bg=brightblue,fg=black #,attr=dim
 
 # window with activity colors
-set-window-option -g window-status-activity-bg brightred
-set-window-option -g window-status-activity-fg black
+set-window-option -g window-status-activity-style bg=brightred,fg=black
 
 # pane border
-set-option -g pane-border-fg black #base02
-set-option -g pane-active-border-fg brightgreen #base01
+set-option -g pane-border-style fg=black #base02
+set-option -g pane-active-border-style fg=brightgreen #base01
 
 # message text
-set-option -g message-bg black #base02
-set-option -g message-fg brightred #orange
+set-option -g message-style bg=black,fg=brightred
 
 # pane number display
 set-option -g display-panes-active-colour blue #blue
@@ -37,27 +29,27 @@ set-window-option -g clock-mode-colour green #green
 
 #### COLOUR (Solarized light)
 ## default statusbar colors
-#set-option -g status-bg white #base2
-#set-option -g status-fg yellow #yellow
-#set-option -g status-attr default
+#set-option -g status-style bg=white #base2
+#set-option -g status-style fg=yellow #yellow
+#set-option -g status-style attr=default
 #
 ## default window title colors
-#set-window-option -g window-status-fg brightyellow #base00
-#set-window-option -g window-status-bg default
-##set-window-option -g window-status-attr dim
+#set-window-option -g window-status-style fg=brightyellow #base00
+#set-window-option -g window-status-style bg=default
+##set-window-option -g window-status-style attr=dim
 #
 ## active window title colors
-#set-window-option -g window-status-current-fg brightred #orange
-#set-window-option -g window-status-current-bg default
-##set-window-option -g window-status-current-attr bright
+#set-window-option -g window-status-current-style fg=brightred #orange
+#set-window-option -g window-status-current-style bg=default
+##set-window-option -g window-status-current-style attr=bright
 #
 ## pane border
-#set-option -g pane-border-fg white #base2
-#set-option -g pane-active-border-fg brightcyan #base1
+#set-option -g pane-border-style fg=white #base2
+#set-option -g pane-active-border-style fg=brightcyan #base1
 #
 ## message text
-#set-option -g message-bg white #base2
-#set-option -g message-fg brightred #orange
+#set-option -g message-style bg=white #base2
+#set-option -g message-style fg=brightred #orange
 #
 ## pane number display
 #set-option -g display-panes-active-colour blue #blue
