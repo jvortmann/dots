@@ -11,7 +11,7 @@ set-window-option -g window-status-style bg=default,fg=brightblue #,attr=dim
 set-window-option -g window-status-current-style bg=brightblue,fg=black #,attr=dim
 
 # window with activity colors
-set-window-option -g window-status-activity-style bg=brightred,fg=black
+set-window-option -g window-status-activity-style bg=black,fg=brightred
 
 # pane border
 set-option -g pane-border-style fg=black #base02
