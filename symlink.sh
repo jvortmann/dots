@@ -12,6 +12,9 @@ ln -sfnv ~/.dots/ag/agignore ~/.agignore
 ln -sfnv ~/.dots/input/inputrc ~/.inputrc
 ln -sfnv ~/.dots/ctags/ctags ~/.ctags
 
+echo; echo ">> Setting symlink for 'asdf' language version manager"
+ln -sfnv ~/.dots/asdf/asdfrc ~/.asdfrc
+
 echo; echo ">> Setting symlinks for ruby configurations"
 ln -sfnv ~/.dots/gem/gemrc ~/.gemrc
 ln -sfnv ~/.dots/irb/irbrc ~/.irbrc
