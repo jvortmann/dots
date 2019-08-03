@@ -1,7 +1,6 @@
 #!/bin/bash
 
 echo; echo ">> Creating ~/.config folder"
-
 mkdir -p ~/.config/
 
 echo; echo ">> Setting symlinks for dots folder"
