@@ -20,18 +20,13 @@ then
   python_version_info() { }
 fi
 
-if ! declare -f elixir_version_info > /dev/null
-then
-  elixir_version_info() { }
-fi
-
 update_prompt() {
   _user_and_host="${BLUE}%n@%m${RESET}"
   _cwd="${GREEN}%1~${RESET}"
   _ruby_info="${RED}$(ruby_version_info)${RESET}"
   _node_info="${GREEN}$(node_version_info)${RESET}"
   _python_info="${BLUE}$(python_version_info)${RESET}"
-  _elixir_info="${MAGENTA}$(elixir_version_info)${RESET}"
+  _elixir_info="${MAGENTA}$(version_info elixir)${RESET}"
 
   # display exitcode on the right when >0
   _return_code=" %(0?..${RED}%? ↵${RESET})"
