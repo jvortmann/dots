@@ -17,6 +17,7 @@ tap 'juanibiapina/zas'
 
 # Install command line tools
 brew 'aria2'
+brew 'asdf'
 brew 'awscli'
 brew 'bats'
 brew 'bitwarden-cli'
