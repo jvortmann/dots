@@ -5,6 +5,26 @@ if [ -z "$ZSH_THEME" ]; then
   export ZSH_THEME=jvortmann
 fi
 
+elapsed_info() {
+  if type gdate > /dev/null; then
+    echo "(${LAST_COMMAND_TIME}ms)"
+  fi
+}
+
+language_info() {
+  if declare -f version_info > /dev/null; then
+    local _ruby_info="${RED}$(version_info ruby)${RESET}"
+    local _python_info="${BLUE}$(version_info python)${RESET}"
+    local _elixir_info="${MAGENTA}$(version_info elixir)${RESET}"
+    local _rust_info="${ORANGE}$(version_info rust)${RESET}"
+    local _go_info="${CYAN}$(version_info golang)${RESET}"
+
+    echo "${_ruby_info}${_rust_info}${_elixir_info}${_python_info}${_go_info}"
+  else
+    echo ""
+  fi
+}
+
 update_prompt() {
   # left prompt
   _user_and_host="${BLUE}%n@%m${RESET}"
@@ -14,26 +34,6 @@ update_prompt() {
   _return_code="%(0?..${RED}%?↵${RESET})"
 
   PROMPT='${_user_and_host} ${_cwd} $(git_prompt_string) ∴ ${RESET}'
-
-  _rprompt=""
-
-  if declare -f version_info > /dev/null; then
-    _ruby_info="${RED}$(version_info ruby)${RESET}"
-    _python_info="${BLUE}$(version_info python)${RESET}"
-    _elixir_info="${MAGENTA}$(version_info elixir)${RESET}"
-    _rust_info="${ORANGE}$(version_info rust)${RESET}"
-    _go_info="${CYAN}$(version_info golang)${RESET}"
-
-    _language_tags="${_ruby_info}${_rust_info}${_elixir_info}${_python_info}${_go_info}"
-
-    _rprompt="$_rprompt$_language_tags"
-  fi
-
-  if type gdate > /dev/null; then
-    _rprompt="$_rprompt(\${LAST_COMMAND_TIME}ms)"
-  fi
-
-  RPROMPT="$_rprompt$_return_code"
+  RPROMPT='$(language_info)$(elapsed_info)$_return_code'
 }
-
 update_prompt
