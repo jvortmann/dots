@@ -25,7 +25,7 @@ update_prompt() {
     if type gdate > /dev/null; then
       RPROMPT='${_ruby_info}${_rust_info}${_elixir_info}${_python_info}${_go_info}(${LAST_COMMAND_TIME}ms)${_return_code}${RESET}'
     else
-      RPROMPT='${_ruby_info}${_rust_info}${_python_info}${_go_info}${_return_code}${RESET}'
+      RPROMPT='${_ruby_info}${_rust_info}${_elixir_info}${_python_info}${_go_info}${_return_code}${RESET}'
     fi
   else
     if type gdate > /dev/null; then
