@@ -39,3 +39,5 @@ echo; echo ">> Configuring Tmux"
 ./setup-ssh-key.sh "$computer_name" "$user_email" # creates ssh keys named after computer name using user email
 
 ./setup-ssh-config.sh "$computer_name" # creates ssh config using computer name
+
+./setup_tools.sh
