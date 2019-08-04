@@ -5,11 +5,6 @@ if [ -z "$ZSH_THEME" ]; then
   export ZSH_THEME=jvortmann
 fi
 
-if ! declare -f ruby_version_info > /dev/null
-then
-  ruby_version_info() { }
-fi
-
 update_prompt() {
   _user_and_host="${BLUE}%n@%m${RESET}"
   _cwd="${GREEN}%1~${RESET}"
