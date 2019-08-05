@@ -1,22 +1,37 @@
 #ignoring .DS_Store files
 *.DS_Store
+
+# vim files
 *.swp
 *.swo
 tags
 gem.tags
 !tags/
-*.sass-cache
-vendor/bundle
-dump.rdb
-fish_history
-fishd.*
-fish/generated_completions
 Session.vim
 session/
-git/user
-git/github
+
+# front
+vendor/bundle
+*.sass-cache
 node_modules
 .tern*
 yarn.lock
 .*_cache
+
+# redis
+dump.rdb
+
+# shell
+fish_history
+fishd.*
+fish/generated_completions
+
+# git
+git/user
+git/github
+
+# other
 .vagrant
+
+# python
+__pycache__
