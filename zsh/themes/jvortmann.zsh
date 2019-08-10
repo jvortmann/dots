@@ -14,7 +14,7 @@ elapsed_info() {
 language_info() {
   if declare -f version_info > /dev/null; then
     local _ruby_info="${RED}$(version_info ruby)${RESET}"
-    local _python_info="${BLUE}$(version_info python)${RESET}"
+    local _python_info="${HI_BLUE}$(version_info python)${RESET}"
     local _elixir_info="${PURPLE}$(version_info elixir)${RESET}"
     local _erlang_info="${MAGENTA}$(version_info erlang)${RESET}"
     local _rust_info="${LIGHT_BROWN}$(version_info rust)${RESET}"
