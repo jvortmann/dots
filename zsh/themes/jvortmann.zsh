@@ -18,7 +18,7 @@ language_info() {
     local _elixir_info="${PURPLE}$(version_info elixir)${RESET}"
     local _erlang_info="${MAGENTA}$(version_info erlang)${RESET}"
     local _rust_info="${ORANGE}$(version_info rust)${RESET}"
-    local _go_info="${CYAN}$(version_info golang)${RESET}"
+    local _go_info="${LIGHT_BLUE}$(version_info golang)${RESET}"
 
     echo "${_ruby_info}${_rust_info}${_elixir_info}${_erlang_info}${_python_info}${_go_info}"
   else
