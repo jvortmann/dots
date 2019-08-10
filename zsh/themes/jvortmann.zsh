@@ -19,8 +19,9 @@ language_info() {
     local _erlang_info="${MAGENTA}$(version_info erlang)${RESET}"
     local _rust_info="${LIGHT_BROWN}$(version_info rust)${RESET}"
     local _go_info="${LIGHT_BLUE}$(version_info golang)${RESET}"
+    local _js_info="${HI_YELLOW}$(version_info nodejs)${RESET}"
 
-    echo "${_ruby_info}${_rust_info}${_elixir_info}${_erlang_info}${_python_info}${_go_info}"
+    echo "${_ruby_info}${_rust_info}${_elixir_info}${_erlang_info}${_js_info}${_python_info}${_go_info}"
   else
     echo ""
   fi

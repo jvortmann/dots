@@ -3,6 +3,7 @@
 RED="%{$(tput setaf 1)%}"
 GREEN="%{$(tput setaf 2)%}"
 YELLOW="%{$(tput setaf 3)%}"
+HI_YELLOW="%{$(tput setaf 220)%}"
 BLUE="%{$(tput setaf 4)%}"
 HI_BLUE="%{$(tput setaf 32)%}"
 LIGHT_BLUE="%{$(tput setaf 39)%}"
