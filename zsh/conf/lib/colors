@@ -7,6 +7,7 @@ BLUE="%{$(tput setaf 4)%}"
 MAGENTA="%{$(tput setaf 5)%}"
 CYAN="%{$(tput setaf 6)%}"
 ORANGE="%{$(tput setaf 9)%}"
+LIGHT_BROWN="%{$(tput setaf 215)%}"
 PURPLE="%{$(tput setaf 99)%}"
 LIGHT_BLUE="%{$(tput setaf 39)%}"
 
