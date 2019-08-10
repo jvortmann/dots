@@ -15,11 +15,12 @@ language_info() {
   if declare -f version_info > /dev/null; then
     local _ruby_info="${RED}$(version_info ruby)${RESET}"
     local _python_info="${BLUE}$(version_info python)${RESET}"
-    local _elixir_info="${MAGENTA}$(version_info elixir)${RESET}"
+    local _elixir_info="${PURPLE}$(version_info elixir)${RESET}"
+    local _erlang_info="${MAGENTA}$(version_info erlang)${RESET}"
     local _rust_info="${ORANGE}$(version_info rust)${RESET}"
     local _go_info="${CYAN}$(version_info golang)${RESET}"
 
-    echo "${_ruby_info}${_rust_info}${_elixir_info}${_python_info}${_go_info}"
+    echo "${_ruby_info}${_rust_info}${_elixir_info}${_erlang_info}${_python_info}${_go_info}"
   else
     echo ""
   fi
