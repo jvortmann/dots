@@ -4,11 +4,6 @@ tap 'homebrew/versions'
 # Add services
 tap 'homebrew/services'
 
-# Install cask with versions and fonts
-tap 'caskroom/cask'
-tap 'caskroom/versions'
-tap 'caskroom/fonts'
-
 # Install universal ctags (a ctags fork that is being maintained)
 tap 'universal-ctags/universal-ctags'
 
