@@ -7,9 +7,6 @@ tap 'homebrew/services'
 # Install universal ctags (a ctags fork that is being maintained)
 tap 'universal-ctags/universal-ctags'
 
-# Add zas tap
-tap 'juanibiapina/zas'
-
 # Install command line tools
 brew 'aria2'
 brew 'asdf'
@@ -48,7 +45,6 @@ brew 'tree'
 brew 'universal-ctags'
 brew 'watch'
 brew 'wget'
-brew 'zas'
 brew 'zsh'
 brew 'zsh-autosuggestions'
 brew 'zsh-completions'
