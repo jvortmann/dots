@@ -72,6 +72,7 @@
   shout = "!s() { git shame $1 | say; }; s"
   ss = status -s
   st = status
+  sw = switch
   t = !git this
   this = !git init && git add . && git commit -m \"Initial commit.\"
   unstage = reset HEAD --
