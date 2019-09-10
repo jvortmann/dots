@@ -51,33 +51,33 @@
   a = add
   aa = add --all
   alias = !git config --list | grep 'alias\\.' | sed 's/alias\\.\\([^=]*\\)=\\(.*\\)/\\1\\\t=> \\2/' | sort
-  l = log
-  lg = log --graph --pretty=format:'%C(yellow)%h %Cblue%aN %Cgreen%ar %Creset%s%Cred%d%Creset'
-  ls = log --stat
-  last = log -1 HEAD
-  w = log --name-status #short whatchanged
-  s = show
-  d = diff
-  ds = diff --staged
-  st = status
-  ss = status -s
-  co = checkout
-  cf = "!git ss | grep '^U.\\|^.U' --color"
-  ccf = "!git cf | wc -l"
+  amend = !git log -n 1 --pretty=tformat:%s%n%n%b | git commit -F - --amend
   b = branch --format='%(align:1,middle)%(color: white)%(HEAD)%(end) %(if)%(upstream)%(then)%(color:green)%(refname:short)%(else)%(if:notequals="refs/heads")%(refname:rstrip=-2)%(then)%(color:cyan)%(refname:lstrip=2)%(else)%(color:yellow)%(refname:lstrip=2) %(color:red)[no upstream]%(end)%(end)%(if)%(symref)%(then)%(color: reset) -> %(symref)%(end) %(color:yellow)%(upstream:track)'
   bl = branch --format='%(align:1,middle)%(color: white)%(HEAD)%(end)%(color:yellow) %(objectname:short) %(align:18,left)%(color:blue)%(committername)%(end)%(align:15,middle)%(color:green)%(committerdate:short)%(end)%(if)%(upstream)%(then)%(color:green)%(refname:short)%(else)%(if:notequals="refs/heads")%(refname:rstrip=-2)%(then)%(color:cyan)%(refname:lstrip=2)%(else)%(color:yellow)%(refname:lstrip=2) %(color:red)[no upstream]%(end)%(end)%(if)%(symref)%(then)%(color: reset) -> %(symref)%(end) %(color:yellow)%(upstream:track)'
-  px = push
-  pl = pull
-  r = remote
-  unstage = reset HEAD --
-  this = !git init && git add . && git commit -m \"Initial commit.\"
-  t = !git this
-  amend = !git log -n 1 --pretty=tformat:%s%n%n%b | git commit -F - --amend
-  x  = commit -m
-  xa = commit -a -m
+  ccf = "!git cf | wc -l"
+  cf = "!git ss | grep '^U.\\|^.U' --color"
+  co = checkout
+  d = diff
+  ds = diff --staged
   ignore = "!i() { touch .gitignore && echo $1 >> .gitignore; }; i"
+  l = log
+  last = log -1 HEAD
+  lg = log --graph --pretty=format:'%C(yellow)%h %Cblue%aN %Cgreen%ar %Creset%s%Cred%d%Creset'
+  ls = log --stat
+  pl = pull
+  px = push
+  r = remote
+  s = show
   shame = "!s() { git blame $1 -p | grep 'author ' | cut -d' ' -f2-10 | sort | uniq -c | sort | tail -n1 | cut -c6-30 ; }; s"
   shout = "!s() { git shame $1 | say; }; s"
+  ss = status -s
+  st = status
+  t = !git this
+  this = !git init && git add . && git commit -m \"Initial commit.\"
+  unstage = reset HEAD --
+  w = log --name-status #short whatchanged
+  x  = commit -m
+  xa = commit -a -m
 
 [push]
   default = simple
