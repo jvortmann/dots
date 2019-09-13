@@ -1,5 +1,8 @@
 # vim: ft=zsh
 
+# asdf
+alias a='asdf'
+
 # bundler
 alias b='bundle'
 alias be='bundle exec'
