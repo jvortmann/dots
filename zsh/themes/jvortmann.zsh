@@ -21,8 +21,9 @@ language_info() {
     local _ruby_info="${RED}$(version_info ruby)${RESET}"
     local _rust_info="${LIGHT_BROWN}$(version_info rust)${RESET}"
     local _java_info="${BROWN}$(version_info java)${RESET}"
+    local _clojure_info="${ORANGE}$(version_info clojure)${RESET}"
 
-    echo "${_ruby_info}${_rust_info}${_elixir_info}${_erlang_info}${_java_info}${_js_info}${_python_info}${_go_info}"
+    echo "${_ruby_info}${_rust_info}${_elixir_info}${_erlang_info}${_java_info}${_clojure_info}${_js_info}${_python_info}${_go_info}"
   else
     echo ""
   fi
