@@ -11,6 +11,7 @@ MAGENTA="%{$(tput setaf 5)%}"
 CYAN="%{$(tput setaf 6)%}"
 ORANGE="%{$(tput setaf 9)%}"
 LIGHT_BROWN="%{$(tput setaf 215)%}"
+BROWN="%{$(tput setaf 173)%}"
 PURPLE="%{$(tput setaf 99)%}"
 
 BOLD="%{$(tput bold)%}"

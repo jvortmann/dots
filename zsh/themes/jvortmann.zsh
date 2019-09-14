@@ -20,8 +20,9 @@ language_info() {
     local _python_info="${HI_BLUE}$(version_info python)${RESET}"
     local _ruby_info="${RED}$(version_info ruby)${RESET}"
     local _rust_info="${LIGHT_BROWN}$(version_info rust)${RESET}"
+    local _java_info="${BROWN}$(version_info java)${RESET}"
 
-    echo "${_ruby_info}${_rust_info}${_elixir_info}${_erlang_info}${_js_info}${_python_info}${_go_info}"
+    echo "${_ruby_info}${_rust_info}${_elixir_info}${_erlang_info}${_java_info}${_js_info}${_python_info}${_go_info}"
   else
     echo ""
   fi
