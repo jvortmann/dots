@@ -15,9 +15,6 @@ alias ...='cd ../..'
 alias ....='cd ../../..'
 alias lcd='dirs -v'
 
-# cleanconfig
-alias clean_config="sed -e '/^#/ d' -e '/^ *$/ d'"
-
 # copy
 alias cp='cp -v'
 
@@ -48,10 +45,6 @@ alias mv='mv -v'
 # make
 alias m='make'
 
-# postgresql
-alias pg_start="pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start"
-alias pg_stop="pg_ctl -D /usr/local/var/postgres stop -s -m fast"
-
 # prj
 alias gp='cd ~/prj'
 alias gc='cd ~/prj/current'
@@ -67,8 +60,7 @@ alias rks='rake spec'
 # rspec
 alias rd='rspec --format d'
 
-# silver searcher
-alias ss='ag'
+# search
 alias s='smart-grep'
 
 # tmux
