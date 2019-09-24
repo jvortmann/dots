@@ -63,6 +63,8 @@ alias rd='rspec --format d'
 # search
 alias s='smart-grep'
 
+alias sig="say -v 'Anna' "
+
 # tmux
 alias t=tmux
 alias tm=tmuxstart
