@@ -1,22 +1,22 @@
 # vim: ft=zsh
 
 # asdf
-alias a='asdf'
+alias a="asdf"
 
 # bundler
-alias b='bundle'
-alias be='bundle exec'
-alias ber='bundle exec rake'
-alias beg='bundle exec guard'
+alias b="bundle"
+alias be="bundle exec"
+alias ber="bundle exec rake"
+alias beg="bundle exec guard"
 
 # cd
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
-alias lcd='dirs -v'
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias lcd="dirs -v"
 
 # copy
-alias cp='cp -v'
+alias cp="cp -v"
 
 # foreman
 alias f=foreman
@@ -25,43 +25,43 @@ alias f=foreman
 alias g=git
 
 # grep
-alias grep='grep --color=auto -i'
+alias grep="grep --color=auto -i"
 
 # here
-alias here='localhost'
+alias here="localhost"
 
 # hub
 alias h=hub
 
 # ls
-alias ls='ls -G'
-alias ll='ls -alFh'
-alias la='ls -Ah'
-alias l='ls -CFh'
+alias ls="ls -G"
+alias ll="ls -alFh"
+alias la="ls -Ah"
+alias l="ls -CFh"
 
 # move
-alias mv='mv -v'
+alias mv="mv -v"
 
 # make
-alias m='make'
+alias m="make"
 
 # prj
-alias gp='cd ~/prj'
-alias gc='cd ~/prj/current'
+alias gp="cd ~/prj"
+alias gc="cd ~/prj/current"
 
 # rails
 alias r=rails
 
 # rake
-alias rk='rake'
-alias rkt='RAILS_ENV=test rake'
-alias rks='rake spec'
+alias rk="rake"
+alias rkt="RAILS_ENV=test rake"
+alias rks="rake spec"
 
 # rspec
-alias rd='rspec --format d'
+alias rd="rspec --format d"
 
 # search
-alias s='smart-grep'
+alias s="smart-grep"
 
 alias sig="say -v 'Anna' "
 
