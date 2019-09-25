@@ -13,6 +13,7 @@ ORANGE="%{$(tput setaf 9)%}"
 LIGHT_BROWN="%{$(tput setaf 215)%}"
 BROWN="%{$(tput setaf 173)%}"
 PURPLE="%{$(tput setaf 99)%}"
+DEEP_PURPLE="%{$(tput setaf 26)%}"
 
 BOLD="%{$(tput bold)%}"
 RESET="%{$(tput sgr0)%}"
