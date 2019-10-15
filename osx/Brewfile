@@ -85,3 +85,5 @@ cask 'whatsapp'
 
 # Install fonts
 cask 'font-source-code-pro-for-powerline'
+cask 'font-fira-code'
+cask 'font-fira-mono'
