@@ -84,4 +84,4 @@ cask 'vlc'
 cask 'whatsapp'
 
 # Install fonts
-cask 'font-sauce-code-powerline'
+cask 'font-source-code-pro-for-powerline'
