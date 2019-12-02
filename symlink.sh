@@ -28,5 +28,8 @@ ln -sfnv ~/.dots/tmux/tmux.conf ~/.tmux.conf
 echo; echo ">> Setting symlinks for alacritty configurations"
 ln -sfnv ~/.dots/alacritty ~/.config/alacritty
 
+echo; echo ">> Setting symlinks for ripgrep configurations"
+ln -sfnv ~/.dots/rg ~/.config/rg
+
 echo; echo ">> Setting symlinks for git"
 ln -sfnv ~/.dots/git ~/.config/git
