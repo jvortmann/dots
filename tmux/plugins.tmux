@@ -7,6 +7,7 @@ set -g @plugin 'tmux-plugins/tmux-pain-control'
 set -g @plugin 'tmux-plugins/tmux-resurrect'
 set -g @plugin 'tmux-plugins/tmux-continuum'
 set -g @plugin 'tmux-plugins/vim-tmux-focus-events'
+set -g @plugin 'wfxr/tmux-fzf-url'
 
 # restore sessions when tmux server starts
 set -g @continuum-restore 'on'
