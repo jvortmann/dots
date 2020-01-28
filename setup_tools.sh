@@ -1,6 +1,6 @@
 echo ">> Setup of tools"
 
-tools='asdf'
+tools='asdf iex'
 
 for tool in $tools; do
   setup_file="$HOME/.dots/$tool/setup.sh"

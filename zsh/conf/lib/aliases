@@ -33,6 +33,10 @@ alias here="localhost"
 # hub
 alias h=hub
 
+# iex
+alias iex="iex --erl \"-kernel shell_history enabled\""
+alias e=iex
+
 # ls
 alias ls="ls -G"
 alias ll="ls -alFh"
