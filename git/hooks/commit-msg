@@ -22,7 +22,7 @@ spell_check() {
   echo ""
 }
 
-regex="^(feature|fix|doc|style|refactor|test|chore): [A-Z].+[^.]$"
+regex="^((feature|fix|doc|style|refactor|test|chore): [A-Z].+[^.]|(Merge|Revert).*)$"
 message=$(head -n1 "$1")
 size=${#message}
 size_limit=72
