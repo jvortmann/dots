@@ -5,8 +5,10 @@
 *.swp
 *.swo
 *tags
+!*.ctags
 gem.tags
 !tags/
+!ctags/
 Session.vim
 session/
 
