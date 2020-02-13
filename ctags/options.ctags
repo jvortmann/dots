@@ -1,7 +1,13 @@
 --recurse=yes
 --exclude=.git
 --exclude=bower_components
---exclude=vendor/assets
+--exclude=config/webpack
+--exclude=coverage
+--exclude=docs
 --exclude=node_modules
+--exclude=public
 --exclude=puppet
 --exclude=spec/javascript/helpers
+--exclude=tmp
+--exclude=vendor
+--exclude=vendor/assets
