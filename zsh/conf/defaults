@@ -29,3 +29,19 @@ setopt AUTOPUSHD PUSHDMINUS PUSHDSILENT PUSHDTOHOME
 # Enable dynamic prompt
 setopt PROMPT_SUBST
 autoload -U colors # Enable colors in prompt
+
+# configure pager
+export LESS_TERMCAP_mb=$(tput setaf 6) # cyan
+export LESS_TERMCAP_md=$(tput setaf 2) # green
+export LESS_TERMCAP_me=$(tput sgr0)
+export LESS_TERMCAP_mr=$(tput rev)
+export LESS_TERMCAP_mh=$(tput dim)
+export LESS_TERMCAP_so=$(tput setaf 0; tput setab 3) # yellow box
+export LESS_TERMCAP_se=$(tput rmso; tput sgr0)
+export LESS_TERMCAP_us=$(tput smul; tput setaf 1) # red
+export LESS_TERMCAP_ue=$(tput rmul; tput sgr0)
+export LESS_TERMCAP_ZN=$(tput ssubm)
+export LESS_TERMCAP_ZV=$(tput rsubm)
+export LESS_TERMCAP_ZO=$(tput ssupm)
+export LESS_TERMCAP_ZW=$(tput rsupm)
+export PAGER=less
