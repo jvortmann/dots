@@ -1,6 +1,6 @@
 # vim: ft=zsh
 
-fpath=(/usr/local/share/zsh/site-functions /usr/local/share/zsh-completions $fpath)
+fpath=($ZSH_HOME/completions /usr/local/share/zsh/site-functions /usr/local/share/zsh-completions $fpath)
 
 # Load and run compinit
 autoload -U compinit
