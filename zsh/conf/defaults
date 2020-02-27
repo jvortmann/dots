@@ -31,4 +31,5 @@ setopt PROMPT_SUBST
 autoload -U colors # Enable colors in prompt
 
 # configure pager
-export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+export MANPAGER="sh -c 'col -bpx | bat -l man -p'"
+export BAT_PAGER="less --RAW-CONTROL-CHARS"
