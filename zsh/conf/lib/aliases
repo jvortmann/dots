@@ -10,7 +10,7 @@ alias ber="bundle exec rake"
 alias beg="bundle exec guard"
 
 # make cat an alias to bat
-alias cat=bat
+alias cat=bat --paging=never
 
 # cd
 alias ..="cd .."
