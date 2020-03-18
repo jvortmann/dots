@@ -24,6 +24,8 @@ for file ($ZSH_HOME/conf/settings/*) source $file
 
 source $ZSH_HOME/conf/theme.zsh
 
+source $ZSH_HOME/conf/completion.zsh
+
 if type gdate > /dev/null; then
   #unsetopt XTRACE
   #exec 2>&3 3>&-
