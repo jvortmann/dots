@@ -1,7 +1,23 @@
 # vim: ft=zsh
 
-zmodload zsh/zprof
+#zmodload zsh/zprof
+
+# Enable startup profiler https://stackoverflow.com/questions/4351244/can-i-profile-my-zshrc-zshenv/4351664#4351664
+PROFILE_STARTUP=false
+if [[ "$PROFILE_STARTUP" == true ]]; then
+    zmodload zsh/datetime
+    setopt promptsubst
+    PS4='+$EPOCHREALTIME %N:%i> '
+    exec 3>&2 2>/tmp/zsh_startlog.$$
+    setopt xtrace prompt_subst
+fi
 
 export ZSH_HOME="$HOME/.dots/zsh"
 export SHELL="$(which zsh)"
 source $ZSH_HOME/init.zsh
+
+# Finish startup profiling
+if [[ "$PROFILE_STARTUP" == true ]]; then
+    unsetopt xtrace
+    exec 2>&3 3>&-
+fi
