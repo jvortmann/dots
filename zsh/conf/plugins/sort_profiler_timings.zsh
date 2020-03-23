@@ -25,5 +25,5 @@ sort_profiler_timings() {
     fi
   done < ${1:-/dev/stdin}
 
-  print -l ${(@On)lines}
+  print -l ${(@On)lines} | awk '{printf "%\047dms -> %-s\n", $1, $0}'
 }
