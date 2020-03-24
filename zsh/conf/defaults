@@ -32,4 +32,3 @@ autoload -U colors # Enable colors in prompt
 
 # configure pager
 export MANPAGER="sh -c 'col -bpx | bat -l man -p'"
-export BAT_PAGER="less --RAW-CONTROL-CHARS"
