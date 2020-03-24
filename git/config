@@ -32,20 +32,13 @@
   untracked = blue
 
 [core]
-  pager = less -FRX~
+  pager = delta --theme='Solarized (dark)'
   whitespace=fix,-indent-with-non-tab,trailing-space,space-before-tab,cr-at-eol
   hooksPath = ~/.config/git/hooks/
 
 [diff]
   ignoreSubmodules = dirty
   compactionHeuristic = true
-
-[pager]
-  diff = diff-so-fancy | less -FRX~
-  show = diff-so-fancy | less -FRX~
-
-[diff-so-fancy]
-  markEmptyLines = false
 
 [alias]
   a = add
