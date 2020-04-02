@@ -10,9 +10,9 @@ elapsed_info() {
     if [ $LAST_COMMAND_TIME -lt 1000 ]; then
       printf "(%dms)" $LAST_COMMAND_TIME
     elif [ $LAST_COMMAND_TIME -lt 60000 ]; then
-      printf "(%.2fs)" $(echo "scale=2; ${LAST_COMMAND_TIME} / 1000" | bc)
+      printf "(%.2fs)" $(bc -l <<< "${LAST_COMMAND_TIME} / 1000")
     elif [ $LAST_COMMAND_TIME -lt 360000 ]; then
-      printf "(%.2fm)" $(echo "scale=2; ${LAST_COMMAND_TIME} / 60000" | bc)
+      printf "(%.2fm)" $(bc -l <<< "${LAST_COMMAND_TIME} / 60000")
     fi
   fi
 }
