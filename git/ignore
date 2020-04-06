@@ -9,8 +9,6 @@ tags
 gem.tags
 !tags/
 !ctags/
-Session.vim
-session/
 
 # front
 vendor/bundle
