@@ -14,7 +14,7 @@ IRB.conf[:HISTORY_FILE] = "#{ENV['HOME']}/.irb_history"
 IRB.conf.merge!(PROMPT_MODE: :SIMPLE, AUTO_INDENT: true)
 
 begin
-  require('awesome_print')
-  AwesomePrint.irb!
+  require "amazing_print"
+  AmazingPrint.irb!
 rescue LoadError
 end
