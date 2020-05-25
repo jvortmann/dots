@@ -63,6 +63,8 @@ tap 'neovim/neovim'
 brew 'neovim'
 
 # Install Apps
+tap 'homebrew/cask'
+tap 'homebrew/cask-versions'
 cask 'alacritty'
 cask 'alfred'
 cask 'appcleaner'
