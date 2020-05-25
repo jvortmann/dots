@@ -20,7 +20,7 @@ echo; echo ">> Installing apps"
 ./install-apps.sh       # install apps, command line utilities and fonts
 
 echo; echo ">> Downloading widgets"
-./download-widgets.sh   # download widgets to ~/Downloads
+./download-apps.sh   # download apps to ~/Downloads
 
 echo; echo ">> Configuring macOS"
 ./configure-osx.sh "$computer_name" # configure a Mac machine
