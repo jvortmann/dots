@@ -91,7 +91,6 @@ cask 'whatsapp'
 
 # Install fonts
 tap 'homebrew/cask-fonts'
-cask 'font-source-code-pro-for-powerline'
 cask 'font-source-code-pro'
 cask 'font-fira-code'
 cask 'font-fira-mono'
