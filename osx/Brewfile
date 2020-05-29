@@ -47,7 +47,7 @@ brew 'siege'
 brew 'tmux'
 brew 'tmux-xpanes'
 brew 'tree'
-brew 'universal-ctags'
+brew 'universal-ctags', args: ["HEAD"]
 brew 'watch'
 brew 'wget'
 brew 'xsv'
