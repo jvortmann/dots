@@ -62,7 +62,7 @@ git_status() {
     GIT_STATE=$GIT_STATE$_GIT_PROMPT_MODIFIED
   fi
 
-  if echo $STATUS | grep '^[AMRC].' --quiet; then
+  if echo $STATUS | grep '^[AMRCD].' --quiet; then
     GIT_STATE=$GIT_STATE$_GIT_PROMPT_STAGED
   fi
 
