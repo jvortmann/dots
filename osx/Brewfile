@@ -47,6 +47,7 @@ brew 'shellcheck'
 brew 'siege'
 brew 'tmux'
 brew 'tmux-xpanes'
+brew 'tokei'
 brew 'tree'
 brew 'universal-ctags', args: ["HEAD"]
 brew 'watch'
