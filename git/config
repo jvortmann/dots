@@ -32,9 +32,13 @@
   untracked = blue
 
 [core]
-  pager = delta --theme='Solarized (dark)'
+  pager = delta
   whitespace=fix,-indent-with-non-tab,trailing-space,space-before-tab,cr-at-eol
   hooksPath = ~/.config/git/hooks/
+
+[delta]
+  syntax-theme = Solarized (dark)
+  line-numbers = true
 
 [diff]
   ignoreSubmodules = dirty
