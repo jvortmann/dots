@@ -70,3 +70,11 @@ To setup git user and email after the symlink is in place:
 ```sh
 ./setup-git-user.sh "User Name" "user@email.com" # configure git user and email
 ```
+
+### Setup Tools
+
+To setup the available tools (e.g. asdf, iex):
+
+```sh
+./setup_tools.sh # runs the setup file for each available tool
+```
