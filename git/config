@@ -5,6 +5,9 @@
 [include]
   path = github
 
+[init]
+  defaultBranch = main
+
 [color]
   status = auto
   branch = auto
