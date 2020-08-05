@@ -73,7 +73,7 @@
   st = status
   sw = switch
   t = !git this
-  this = !git init && git add . && git commit -m \"Initial commit.\"
+  this = !git init && git add . && git commit -m \"chore: Initial commit\"
   unstage = reset HEAD --
   w = log --name-status #short whatchanged
   x  = commit -m
