@@ -62,6 +62,9 @@ window:
   #   - SimpleFullscreen
   startup_mode: SimpleFullscreen
 
+  # Allow terminal applications to change Alacritty's window title.
+  dynamic_title: false
+
   # Window title
   title: Alacritty
 
@@ -253,9 +256,6 @@ colors:
 
   # When set to `true`, selected text will be copied to the primary clipboard.
   #save_to_clipboard: false
-
-# Allow terminal applications to change Alacritty's window title.
-dynamic_title: false
 
 #cursor:
   # Cursor style
