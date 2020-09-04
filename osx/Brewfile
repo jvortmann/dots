@@ -87,6 +87,7 @@ cask 'spotify'
 cask 'telegram'
 cask 'the-unarchiver'
 cask 'transmission'
+cask 'visual-studio-code'
 cask 'vlc'
 cask 'whatsapp'
 
