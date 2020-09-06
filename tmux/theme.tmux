@@ -2,30 +2,32 @@
 
 #### COLOUR (Solarized dark)
 # default statusbar colors
-set-option -g status-style bg=black,fg=yellow #,attr=default
+#set-option -g status-style bg=black,fg=yellow #,attr=default
 
 # default window title colors
-set-window-option -g window-status-style bg=default,fg=brightblue #,attr=dim
+#set-window-option -g window-status-style bg=default,fg=brightblue #,attr=dim
 
 # active window title colors
-set-window-option -g window-status-current-style bg=brightblue,fg=black #,attr=dim
+#set-window-option -g window-status-current-style bg=brightblue,fg=black #,attr=dim
 
 # window with activity colors
-set-window-option -g window-status-activity-style bg=black,fg=brightred
+#set-window-option -g window-status-activity-style bg=black,fg=brightred
 
 # pane border
-set-option -g pane-border-style fg=black #base02
-set-option -g pane-active-border-style fg=brightgreen #base01
+#set-option -g pane-border-style fg=black #base02
+#set-option -g pane-active-border-style fg=brightgreen #base01
 
 # message text
-set-option -g message-style bg=black,fg=brightred
+#set-option -g message-style bg=black,fg=brightred
 
 # pane number display
-set-option -g display-panes-active-colour blue #blue
-set-option -g display-panes-colour brightred #orange
+#set-option -g display-panes-active-colour blue #blue
+#set-option -g display-panes-colour brightred #orange
 
 # clock
-set-window-option -g clock-mode-colour green #green
+#set-window-option -g clock-mode-colour green #green
+
+
 
 #### COLOUR (Solarized light)
 ## default statusbar colors
