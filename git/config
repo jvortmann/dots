@@ -41,7 +41,12 @@
 
 [delta]
   syntax-theme = Solarized (dark)
-  line-numbers = true
+  features = line-numbers decorations
+
+[delta "decorations"]
+    commit-decoration-style = bold yellow box ul
+    file-style = bold yellow ul
+    file-decoration-style = none
 
 [diff]
   ignoreSubmodules = dirty
