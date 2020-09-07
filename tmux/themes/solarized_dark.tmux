@@ -2,32 +2,23 @@
 
 #### COLOUR (Solarized dark)
 # status line
-set-option -g status-left-length 32
-set-option -g status-left "[#S]"
-set-option -g status-right "\"#(hostname -s)\" %H:%M %d-%b-%y"
+set-option -g status-left-length 50
+set-option -g status-left "#[bg=green,fg=black]#{?client_prefix,#[bg=blue],} #S #[fg=green,bg=black]#{?client_prefix,#[fg=yellow],}"
+set-option -g status-right "#[fg=blue,bg=default,nobold,nounderscore,noitalics] #(hostname -s) %a %d/%m/%y %R "
 
-# default statusbar colors
-set-option -g status-style bg=black,fg=yellow #,attr=default
+# windows
+set-window-option -g window-status-current-format "#[fg=black,bg=green] #I #W "
+set-window-option -g window-status-format "#[fg=default]#[bg=default] #I #W "
+set-window-option -g window-status-activity-style "bg=black,fg=brightred"
 
-# default window title colors
-set-window-option -g window-status-style bg=default,fg=brightblue #,attr=dim
-
-# active window title colors
-set-window-option -g window-status-current-style bg=brightblue,fg=black #,attr=dim
-
-# window with activity colors
-set-window-option -g window-status-activity-style bg=black,fg=brightred
-
-# pane border
-set-option -g pane-border-style fg=black #base02
-set-option -g pane-active-border-style fg=brightgreen #base01
+# panes
+set-option -g pane-border-style "fg=black"
+set-option -g pane-active-border-style "fg=green"
+set-option -g display-panes-active-colour "green"
+set-option -g display-panes-colour "blue"
 
 # message text
-set-option -g message-style bg=black,fg=brightred
-
-# pane number display
-set-option -g display-panes-active-colour blue #blue
-set-option -g display-panes-colour brightred #orange
+set-option -g message-style "bg=black,fg=brightred"
 
 # clock
-set-window-option -g clock-mode-colour green #green
+set-window-option -g clock-mode-colour "green"
