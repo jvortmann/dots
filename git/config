@@ -40,7 +40,7 @@
   hooksPath = ~/.config/git/hooks/
 
 [delta]
-  syntax-theme = Dracula
+  syntax-theme = Solarized (dark)
   features = line-numbers decorations
 
 [delta "decorations"]
