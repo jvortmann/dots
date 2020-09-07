@@ -1,6 +1,11 @@
 # vim: ft=conf
 
 #### COLOUR (Solarized dark)
+# status line
+set-option -g status-left-length 32
+set-option -g status-left "[#S]"
+set-option -g status-right "\"#(hostname -s)\" %H:%M %d-%b-%y"
+
 # default statusbar colors
 set-option -g status-style bg=black,fg=yellow #,attr=default
 
