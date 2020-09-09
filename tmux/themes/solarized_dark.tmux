@@ -5,6 +5,7 @@
 set-option -g status-left-length 50
 set-option -g status-left "#[bg=green,fg=black]#{?client_prefix,#[bg=yellow],} #S #[fg=green,bg=black]#{?client_prefix,#[fg=yellow],}"
 set-option -g status-right "#[fg=blue,bg=default,nobold,nounderscore,noitalics] #(hostname -s) %a %d/%m/%y %R "
+set-option -g status-style "fg=default"
 
 # windows
 set-window-option -g window-status-current-format "#[fg=black,bg=blue] #I #W "
