@@ -8,9 +8,9 @@ set-option -g status-right "#[fg=blue,bg=default,nobold,nounderscore,noitalics] 
 set-option -g status-style "fg=default"
 
 # windows
-set-window-option -g window-status-current-format "#[fg=black,bg=blue] #I #W "
-set-window-option -g window-status-format "#[fg=default]#[bg=default] #I #W "
-set-window-option -g window-status-activity-style "bg=black,fg=yellow"
+set-window-option -g window-status-current-format "#[fg=green,bg=black] #I #W "
+set-window-option -g window-status-format "#[fg=default,bg=default] #I #W "
+set-window-option -g window-status-activity-style "bg=default,fg=yellow"
 
 # panes
 set-option -g pane-border-style "fg=black"
