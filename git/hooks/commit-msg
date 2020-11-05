@@ -22,7 +22,7 @@ spell_check() {
   echo ""
 }
 
-regex="^(((feature|fix|doc|style|refactor|test|chore): )?[A-Z].+[^.]|(Merge|Revert).*)$"
+regex="^(((feature|feat|fix|doc|style|refactor|test|chore): )?[A-Z].+[^.]|(Merge|Revert).*)$"
 message=$(head -n1 "$1")
 size=${#message}
 size_limit=72
@@ -56,7 +56,7 @@ if [[ ! $message =~ $regex || $size -gt $size_limit || $spelling_errors ]]; then
     echo "({type}: )?Capitalized, short summary of changes (72 chars tops, no period at the end)"
     echo
     echo "The types are the following:"
-    echo "- feature: Change behavior, interface or adds new functionality"
+    echo "- feature|feat: Change behavior, interface or adds new functionality"
     echo "- fix: Fix bugs"
     echo "- doc: Change to documentation, README, CHANGELOG etc"
     echo "- style: Format, missing semi-colons, changes in whitespace, coding style in general"
