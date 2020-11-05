@@ -61,8 +61,8 @@ if [[ ! $message =~ $regex || $size -gt $size_limit || $spelling_errors ]]; then
     echo "- doc: Change to documentation, README, CHANGELOG etc"
     echo "- style: Format, missing semi-colons, changes in whitespace, coding style in general"
     echo "- refactor: Refactor production code, no functionality or behavior change"
-    echo "- test: Add missing tests, refactoring tests; no production code change"
-    echo "- chore: Update gems; no production code change"
+    echo "- test: Add missing tests, improve test organization and description; no production code change"
+    echo "- chore: Update gems; no direct production code change"
     echo
     echo "Examples:"
     echo "feature: Add user search by email"
