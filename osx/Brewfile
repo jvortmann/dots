@@ -1,10 +1,10 @@
 # Add services
+tap 'homebrew/cask'
+tap 'homebrew/cask-fonts'
+tap 'homebrew/cask-versions'
 tap 'homebrew/services'
-
-# Add mongo tap for the community edition
 tap 'mongodb/brew'
-
-# Install universal ctags (a ctags fork that is being maintained)
+tap 'neovim/neovim'
 tap 'universal-ctags/universal-ctags'
 
 # Install command line tools
@@ -66,12 +66,9 @@ brew 'zsh-history-substring-search'
 brew 'zsh-syntax-highlighting'
 
 # Install neovim
-tap 'neovim/neovim'
 brew 'neovim'
 
 # Install Apps
-tap 'homebrew/cask'
-tap 'homebrew/cask-versions'
 cask 'alacritty'
 cask 'alfred3'
 cask 'appcleaner'
@@ -100,7 +97,6 @@ cask 'vlc'
 cask 'whatsapp'
 
 # Install fonts
-tap 'homebrew/cask-fonts'
 cask 'font-source-code-pro'
 cask 'font-fira-code'
 cask 'font-fira-mono'
