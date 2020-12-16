@@ -69,6 +69,8 @@ brew 'zsh-syntax-highlighting'
 brew 'neovim'
 
 # Install Apps
+cask_args appdir: "/Applications", require_sha: true
+
 cask 'alacritty'
 cask 'alfred3'
 cask 'appcleaner'
