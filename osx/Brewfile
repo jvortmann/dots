@@ -4,7 +4,6 @@ tap 'homebrew/cask-fonts'
 tap 'homebrew/cask-versions'
 tap 'homebrew/services'
 tap 'mongodb/brew'
-tap 'neovim/neovim'
 
 # Install command line tools
 brew 'aria2'
