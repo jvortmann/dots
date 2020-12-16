@@ -19,7 +19,7 @@ cd osx/
 echo; echo ">> Installing apps"
 ./install-apps.sh       # install apps, command line utilities and fonts
 
-echo; echo ">> Downloading widgets"
+echo; echo ">> Downloading apps"
 ./download-apps.sh   # download apps to ~/Downloads
 
 echo; echo ">> Configuring macOS"
