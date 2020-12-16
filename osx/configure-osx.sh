@@ -175,15 +175,6 @@ defaults write -app Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2De
 #Add a context menu item for showing the Web Inspector in web views
 defaults write -g WebKitDeveloperExtras -bool true
 
-# iTerm
-echo; echo ">> Configuring iTerm"
-# Don’t display the annoying prompt when quitting iTerm
-defaults write -app iterm PromptOnQuit -bool false
-defaults write -app iterm SmartPlacement -bool true
-defaults write -app iterm DisableFullscreenTransparency -bool true
-defaults write -app iterm AdjustWindowForFontSizeChange -bool false
-defaults write -app iterm QuitWhenAllWindowsClosed -bool true
-
 
 # Transmission
 echo; echo ">> Configuring Transmission"
