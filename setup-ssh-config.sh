@@ -15,6 +15,7 @@ Include config.d/*
 EOF
 
 echo; echo ">> Setting ssh '$computer_name' config file"
+mkdir "$HOME/.ssh/config.d"
 cat > "$HOME/.ssh/config.d/$computer_name" <<EOF
 # vim: ft=sshconfig
 
