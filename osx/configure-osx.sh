@@ -67,12 +67,6 @@ defaults write com.apple.universalaccess HIDScrollZoomModifierMask -int 262144
 defaults write com.apple.BezelServices kDim -bool true
 defaults write com.apple.BezelServices kDimTime -int 300
 
-# use capslock as control
-keyboard_ids=$(ioreg -n IOHIDKeyboard -r | grep -E 'VendorID\>|ProductID\>' | awk '{ print $4 }' | paste -s -d'-\n' -)
-echo $keyboard_ids | xargs -I{} sh -c 'defaults -currentHost read -g "com.apple.keyboard.modifiermapping.{}-0" | grep "Dst = 2" > /dev/null'
-if [[ $? -ne 0 ]]; then
-  echo $keyboard_ids | xargs -I{} defaults -currentHost write -g "com.apple.keyboard.modifiermapping.{}-0" -array "<dict><key>HIDKeyboardModifierMappingDst</key><integer>2</integer><key>HIDKeyboardModifierMappingSrc</key><integer>0</integer></dict>"
-fi
 
 # Use proper units
 echo; echo ">> Configuring measurement units"
