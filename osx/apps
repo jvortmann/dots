@@ -1,6 +1,6 @@
-AirmailBeta     | (app: appcenter.ms)   | open      | https://install.appcenter.ms/orgs/airmail-devs-organization/apps/airmail-beta/distribution_groups/all-users-of-airmail-beta/
-BiasFX          | (app: bias-fx)        | open      | https://www.positivegrid.com/download/
-NeuralDSP       | (app: neural-dsp)     | open      | https://neuraldsp.com/my-account/downloads
-Diablo-III      | (app: blizzard.com)   | open      | https://www.blizzard.com/en-us/download/confirmation?platform=macos&locale=en_US&product=d3
-ProtonBridge    | (app: protonmail.com) | download  | https://protonmail.com/download/Bridge-Installer.dmg
-Zoom            | (app: zoom.us)        | download  | https://zoom.us/client/latest/Zoom.pkg
+AirmailBeta  | open     | https://install.appcenter.ms/orgs/airmail-devs-organization/apps/airmail-beta/distribution_groups/all-users-of-airmail-beta/
+BiasFX       | open     | https://www.positivegrid.com/download/
+NeuralDSP    | open     | https://neuraldsp.com/my-account/downloads
+Diablo-III   | open     | https://www.blizzard.com/en-us/download/confirmation?platform=macos&locale=en_US&product=d3
+ProtonBridge | download | https://protonmail.com/download/Bridge-Installer.dmg
+Zoom         | download | https://zoom.us/client/latest/Zoom.pkg
