@@ -65,7 +65,7 @@ brew 'zsh-history-substring-search'
 brew 'zsh-syntax-highlighting'
 
 # Install Apps
-cask_args appdir: "/Applications", require_sha: true
+cask_args require_sha: true
 cask 'alacritty'
 cask 'alfred3'
 cask 'appcleaner'
