@@ -6,8 +6,16 @@ fi
 
 computer_name="$1"
 
-echo; echo ">> Setting ssh config file"
+echo; echo ">> Setting ssh config"
 cat > "$HOME/.ssh/config" <<EOF
+# vim: ft=sshconfig
+
+# If you have customizations, put them in ~/.ssh/config.d/
+Include config.d/*
+EOF
+
+echo; echo ">> Setting ssh '$computer_name' config file"
+cat > "$HOME/.ssh/config.d/$computer_name" <<EOF
 # vim: ft=sshconfig
 
 Host *
