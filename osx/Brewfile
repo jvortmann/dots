@@ -1,8 +1,6 @@
 # Add services
-tap 'homebrew/cask'
 tap 'homebrew/cask-fonts'
 tap 'homebrew/cask-versions'
-tap 'homebrew/services'
 
 # Install command line tools
 brew 'aria2'
