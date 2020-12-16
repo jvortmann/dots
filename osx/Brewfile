@@ -94,7 +94,7 @@ cask 'whatsapp'
 
 mas '1Password 7', id: 1333542190 
 mas 'BeFocusedPro', id: 961632517
-mas 'Bitwarden' id: 1352778147
+mas 'Bitwarden', id: 1352778147
 mas 'GarageBand', id: 682658836
 mas 'Gyphi', id: 668208984
 mas 'Harvest', id: 506189836
