@@ -40,6 +40,7 @@ brew 'mas'
 brew 'mdcat'
 brew 'mongodb/brew/mongodb-community'
 brew 'mutagen-io/mutagen/mutagen'
+brew 'neovim'
 brew 'openssl'
 brew 'parallel'
 brew 'pastel'
@@ -66,12 +67,8 @@ brew 'zsh-completions'
 brew 'zsh-history-substring-search'
 brew 'zsh-syntax-highlighting'
 
-# Install neovim
-brew 'neovim'
-
 # Install Apps
 cask_args appdir: "/Applications", require_sha: true
-
 cask 'alacritty'
 cask 'alfred3'
 cask 'appcleaner'
