@@ -5,6 +5,7 @@ ln -sfnv ~/.dots/asdf/asdfrc ~/.asdfrc
 echo; echo ">> [ASDF] Adding plugins"
 asdf plugin-add clojure
 asdf plugin-add elixir
+asdf plugin-add elm
 asdf plugin-add erlang
 asdf plugin-add golang
 asdf plugin-add java
