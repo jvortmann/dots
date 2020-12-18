@@ -33,6 +33,7 @@ git/github
 
 # other
 .vagrant
+Brewfile.lock.json
 
 # python
 __pycache__
