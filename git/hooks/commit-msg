@@ -22,7 +22,11 @@ spell_check() {
   echo ""
 }
 
-regex="^(((feature|feat|fix|doc|style|refactor|test|chore): )?[A-Z].+|(Merge|Revert).*)[^.]$"
+optional_tag="((feature|feat|fix|doc|style|refactor|test|chore): )?"
+capital_letter="[A-Z]"
+merge_or_revert="(Merge|Revert).*"
+anything_not_empty=".+"
+regex="^(${optional_tag}${capital_letter}${anything_not_empty}|${merge_or_revert})[^.]$"
 message=$(head -n1 "$1")
 size=${#message}
 size_limit=72
