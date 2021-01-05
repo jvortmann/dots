@@ -15,7 +15,7 @@ spell_available() {
 }
 
 spell_check() {
-  if [[ $(spell_available) ]]; then
+  if [[ ! $message =~ $merge_or_revert && $(spell_available) ]]; then
     echo "$1" | ispell -l | grep -v "refactor\|doc"
   fi
 
