@@ -26,7 +26,8 @@ optional_tag="((feature|feat|fix|doc|style|refactor|test|chore): )?"
 capital_letter="[A-Z]"
 merge_or_revert="(Merge|Revert).*"
 anything_not_empty=".+"
-positive_pattern="^(${optional_tag}${capital_letter}${anything_not_empty}|${merge_or_revert})[^.]$"
+not_full_stop="[^.]"
+positive_pattern="^(${optional_tag}${capital_letter}${anything_not_empty}|${merge_or_revert})${not_full_stop}$"
 
 message=$(head -n1 "$1")
 size=${#message}
