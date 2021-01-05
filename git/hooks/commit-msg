@@ -26,14 +26,15 @@ optional_tag="((feature|feat|fix|doc|style|refactor|test|chore): )?"
 capital_letter="[A-Z]"
 merge_or_revert="(Merge|Revert).*"
 anything_not_empty=".+"
-regex="^(${optional_tag}${capital_letter}${anything_not_empty}|${merge_or_revert})[^.]$"
+positive_pattern="^(${optional_tag}${capital_letter}${anything_not_empty}|${merge_or_revert})[^.]$"
+
 message=$(head -n1 "$1")
 size=${#message}
 size_limit=72
 spelling_available=$(spell_available)
 spelling_errors=$(spell_check "$message")
 
-if [[ ! $message =~ $regex || $size -gt $size_limit || $spelling_errors ]]; then
+if [[ ! $message =~ $positive_pattern || $size -gt $size_limit || $spelling_errors ]]; then
   colorize yellow "[POLICY] Your message is not correct"
   echo
   echo "Check the CONTRIBUTING information."
@@ -53,7 +54,7 @@ if [[ ! $message =~ $regex || $size -gt $size_limit || $spelling_errors ]]; then
   fi
 
   echo -n "- format: "
-  if [[ ! $message =~ $regex ]]; then
+  if [[ ! $message =~ $positive_pattern ]]; then
     colorize red "[FAIL]"
     echo
     echo "The format is as follows: (optional)?";
