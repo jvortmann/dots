@@ -1,7 +1,0 @@
---langdef=haskell
---langmap=haskell:.hs
---regex-haskell=/^module[ \t]*([A-Z][a-zA-Z0-9'_.]*)/\1/m,module/
---regex-haskell=/^(new)?type[ \t]*([A-Z][a-zA-Z0-9'_]*)./\2/t,type/
---regex-haskell=/^class[ \t]*([A-Z][a-zA-Z0-9'_]*)/\1/c,class/
---regex-haskell=/^data[ \t]*([A-Z][a-zA-Z0-9'_]*)/\1/d,data/
---regex-haskell=/^([a-z_][a-zA-Z0-9'_]*).*=/\1/v,function/
