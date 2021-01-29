@@ -27,7 +27,7 @@ capital_letter="[A-Z]"
 anything_not_empty=".+"
 not_full_stop="[^.]"
 merge_or_revert="^(Merge|Revert)${anything_not_empty}"
-positive_pattern="^(${optional_tag}${capital_letter}${anything_not_empty})${not_full_stop}$"
+allowed_pattern="^(${optional_tag}${capital_letter}${anything_not_empty})${not_full_stop}$"
 
 prohibited_endings="(ing|ed)"
 prohibited_first_word="[[:alpha:]]+${prohibited_endings}[[:space:]]"
@@ -39,7 +39,7 @@ size_limit=72
 spelling_available=$(spell_available)
 spelling_errors=$(spell_check "$message")
 
-if [[ ! $message =~ $merge_or_revert && ($message =~ $prohibited_pattern || ! $message =~ $positive_pattern || $size -gt $size_limit || $spelling_errors) ]]; then
+if [[ ! $message =~ $merge_or_revert && ($message =~ $prohibited_pattern || ! $message =~ $allowed_pattern || $size -gt $size_limit || $spelling_errors) ]]; then
   colorize yellow "[POLICY] Your message is not correct"
   echo
   echo "Check the CONTRIBUTING information."
@@ -59,7 +59,7 @@ if [[ ! $message =~ $merge_or_revert && ($message =~ $prohibited_pattern || ! $m
   fi
 
   echo -n "- format: "
-  if [[ $message =~ $prohibited_pattern || ! $message =~ $positive_pattern ]]; then
+  if [[ $message =~ $prohibited_pattern || ! $message =~ $allowed_pattern ]]; then
     colorize red "[FAIL]"
     echo
     echo "The format is as follows: (optional)?";
