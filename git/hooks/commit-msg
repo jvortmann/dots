@@ -24,10 +24,10 @@ spell_check() {
 
 optional_tag="((feature|feat|fix|doc|style|refactor|test|chore): )?"
 capital_letter="[A-Z]"
-merge_or_revert="(Merge|Revert).*"
+merge_or_revert="^(Merge|Revert).*"
 anything_not_empty=".+"
 not_full_stop="[^.]"
-positive_pattern="^(${optional_tag}${capital_letter}${anything_not_empty}|${merge_or_revert})${not_full_stop}$"
+positive_pattern="^(${optional_tag}${capital_letter}${anything_not_empty})${not_full_stop}$"
 
 message=$(head -n1 "$1")
 size=${#message}
@@ -35,7 +35,7 @@ size_limit=72
 spelling_available=$(spell_available)
 spelling_errors=$(spell_check "$message")
 
-if [[ ! $message =~ $positive_pattern || $size -gt $size_limit || $spelling_errors ]]; then
+if [[ ! $message =~ $merge_or_revert && (! $message =~ $positive_pattern || $size -gt $size_limit || $spelling_errors) ]]; then
   colorize yellow "[POLICY] Your message is not correct"
   echo
   echo "Check the CONTRIBUTING information."
