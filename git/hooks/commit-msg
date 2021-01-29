@@ -65,6 +65,9 @@ if [[ ! $message =~ $merge_or_revert && ($message =~ $prohibited_pattern || ! $m
     echo "The format is as follows: (optional)?";
     echo "({type}: )?Imperative and capitalized (no -ing, -ed ending), short summary of changes (72 chars tops, no period at the end)"
     echo
+    echo "Long reference: 'https://dev.to/cvortmann/what-makes-a-good-commit-message-181i'"
+    echo "Short reference: 'https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html'"
+    echo
     echo "The types are the following:"
     echo "- feature|feat: Change behavior, interface or adds new functionality"
     echo "- fix: Fix bugs"
