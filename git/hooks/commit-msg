@@ -29,13 +29,17 @@ not_full_stop="[^.]"
 merge_or_revert="^(Merge|Revert)${anything_not_empty}"
 positive_pattern="^(${optional_tag}${capital_letter}${anything_not_empty})${not_full_stop}$"
 
+prohibited_endings="(ing|ed)"
+prohibited_first_word="[[:alpha:]]+${prohibited_endings}[[:space:]]"
+prohibited_pattern="^(${optional_tag}${prohibited_first_word}${anything_not_empty})"
+
 message=$(head -n1 "$1")
 size=${#message}
 size_limit=72
 spelling_available=$(spell_available)
 spelling_errors=$(spell_check "$message")
 
-if [[ ! $message =~ $merge_or_revert && (! $message =~ $positive_pattern || $size -gt $size_limit || $spelling_errors) ]]; then
+if [[ ! $message =~ $merge_or_revert && ($message =~ $prohibited_pattern || ! $message =~ $positive_pattern || $size -gt $size_limit || $spelling_errors) ]]; then
   colorize yellow "[POLICY] Your message is not correct"
   echo
   echo "Check the CONTRIBUTING information."
@@ -55,11 +59,11 @@ if [[ ! $message =~ $merge_or_revert && (! $message =~ $positive_pattern || $siz
   fi
 
   echo -n "- format: "
-  if [[ ! $message =~ $positive_pattern ]]; then
+  if [[ $message =~ $prohibited_pattern || ! $message =~ $positive_pattern ]]; then
     colorize red "[FAIL]"
     echo
     echo "The format is as follows: (optional)?";
-    echo "({type}: )?Capitalized, short summary of changes (72 chars tops, no period at the end)"
+    echo "({type}: )?Imperative and capitalized (no -ing, -ed ending), short summary of changes (72 chars tops, no period at the end)"
     echo
     echo "The types are the following:"
     echo "- feature|feat: Change behavior, interface or adds new functionality"
@@ -73,6 +77,7 @@ if [[ ! $message =~ $merge_or_revert && (! $message =~ $positive_pattern || $siz
     echo "Examples:"
     echo "feature: Add user search by email"
     echo "chore: Update Rails to 5.1"
+    echo "Rename method"
     echo
   else
     colorize green "[PASS]"
