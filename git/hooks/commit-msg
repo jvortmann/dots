@@ -31,7 +31,8 @@ allowed_pattern="^(${optional_tag}${capital_letter}${anything_not_empty})${not_f
 
 prohibited_endings="(ing|ed)"
 prohibited_first_word="[[:alpha:]]+${prohibited_endings}[[:space:]]"
-prohibited_pattern="^(${optional_tag}${prohibited_first_word}${anything_not_empty})"
+single_word="[[:alpha:]]+$"
+prohibited_pattern="^(${optional_tag}(${prohibited_first_word}${anything_not_empty}|${single_word}))"
 
 message=$(head -n1 "$1")
 size=${#message}
