@@ -71,6 +71,7 @@ cask_args require_sha: true
 cask 'alacritty'
 cask 'alfred3'
 cask 'appcleaner'
+cask 'basecamp'
 cask 'dash4'
 cask 'docker'
 cask 'epoccam'
