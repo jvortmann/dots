@@ -86,6 +86,7 @@
   w = log --name-status #short whatchanged
   x  = commit -m
   xa = commit -a -m
+  revert-pr = "!r() { git switch -c revert-$1 && git revert -m1 $2; }; r"
 
 [push]
   default = simple
