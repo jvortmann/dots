@@ -1,0 +1,71 @@
+Summarize changes in around 50 characters or less
+
+More detailed explanatory text, if necessary. Wrap it to about 72
+characters or so. In some contexts, the first line is treated as the
+subject of the commit and the rest of the text as the body. The
+blank line separating the summary from the body is critical (unless
+you omit the body entirely); various tools like `log`, `shortlog`
+and `rebase` can get confused if you run the two together.
+
+Explain the problem that this commit is solving. Focus on why you
+are making this change as opposed to how (the code explains that).
+Are there side effects or other unintuitive consequences of this
+change? Here's the place to explain them.
+
+Further paragraphs come after blank lines.
+
+ - Bullet points are okay, too
+
+ - Typically a hyphen or asterisk is used for the bullet, preceded
+   by a single space, with blank lines in between, but conventions
+   vary here
+
+---
+
+Github: #414
+Changelog: feature|refactor|fix|doc|style|test|chore
+Refactoring: removeDeadCode
+See-also: 6ed2658fb9c4a9e93e3216f32071c030f14d7d28
+
+# • Trailer Information:
+#
+# Since git 2.29¹ we are able to use trailer information to group
+# commits using custom groups. That can be use to print a
+# Changelog-like output if we use a trailer like:
+#
+# Example output of running `git shortlog --group=trailer:Changelog`
+#
+# fix (2):
+#       Fix taxes weights
+#       Setup circuit breaker
+#
+# test (3):
+#       Improve description for pairs scenario
+#       Move variables to let
+#       Split specs in 2 contexts
+#
+# feature (1):
+#       Add final price calculation
+#
+# refactoring (5):
+#       Remove unnecessary last_name parameter from user
+#       Extract methods for AnualTaxes
+#       Extract constructor methods for Taxes
+#       Remove unused methods from User
+#
+# style (2):
+#       Reformat User
+#       Remove extra empty lines
+#
+# chore (2):
+#       Update kaminari
+#       Update rspec
+#
+# This allows to get a Changelog-like output without the need of extra tools
+# nor making the Subject look weird with `feat:` or `chore:`.
+#
+# • Links:
+#
+# Adapted from: https://chris.beams.io/posts/git-commit/
+# More info on: https://dev.to/cvortmann/what-makes-a-good-commit-message-181i
+# [1]: https://github.blog/2020-10-19-git-2-29-released/#user-content-new-git-shortlog-tricks

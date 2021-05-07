@@ -39,6 +39,9 @@
   whitespace=fix,-indent-with-non-tab,trailing-space,space-before-tab,cr-at-eol
   hooksPath = ~/.config/git/hooks/
 
+[commit]
+  template = ~/.config/git/message
+
 [delta]
   syntax-theme = Solarized (dark)
   features = line-numbers decorations
