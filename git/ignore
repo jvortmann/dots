@@ -37,3 +37,6 @@ Brewfile.lock.json
 
 # python
 __pycache__
+
+# zsh completions
+zsh/completions/*.ignore
