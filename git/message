@@ -22,7 +22,7 @@ Further paragraphs come after blank lines.
 
 ---
 
-Github: #414
+Github-issue: #414
 Changelog: feature|refactor|fix|doc|style|test|chore
 Refactoring: removeDeadCode
 See-also: 6ed2658fb9c4a9e93e3216f32071c030f14d7d28
