@@ -88,6 +88,7 @@
   unstage = reset HEAD --
   w = log --name-status #short whatchanged
   x  = commit -m
+  xc  = commit
   xa = commit -a -m
   revert-pr = "!r() { git switch -c revert-$1 && git revert -m1 $2; }; r"
 
