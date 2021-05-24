@@ -89,6 +89,7 @@
   w = log --name-status #short whatchanged
   x  = commit -m
   xc  = commit
+  xcc = commit -F .git/COMMIT_EDITMSG
   xa = commit -a -m
   revert-pr = "!r() { git switch -c revert-$1 && git revert -m1 $2; }; r"
 
