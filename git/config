@@ -72,7 +72,7 @@
   ignore = "!i() { touch .gitignore && echo $1 >> .gitignore; }; i"
   l = log
   last = log -1 HEAD
-  lg = log --graph --pretty=format:'%C(yellow)%h %Cblue%aN %Cgreen%ar %Creset%s%Cred%d%Creset'
+  lg = log --graph --date=auto:relative --pretty=format:'%C(yellow)%h %Cblue%aN %Cgreen%ad %Creset%s%Cred%d%Creset'
   ls = log --stat
   pl = pull
   px = push
