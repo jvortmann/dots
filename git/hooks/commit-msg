@@ -34,11 +34,12 @@ prohibited_first_word="[[:alpha:]]+${prohibited_endings}[[:space:]]"
 single_word="[[:alpha:]]+$"
 prohibited_pattern="^(${optional_tag}(${prohibited_first_word}${anything_not_empty}|${single_word}))"
 
+message=$(sed /---/q "$1")
 message_title=$(head -n1 "$1")
 size=${#message_title}
 size_limit=72
 spelling_available=$(spell_available)
-spelling_errors=$(spell_check "$message_title")
+spelling_errors=$(spell_check "$message")
 
 if [[ ! $message_title =~ $merge_or_revert && ($message_title =~ $prohibited_pattern || ! $message_title =~ $allowed_pattern || $size -gt $size_limit || $spelling_errors) ]]; then
   colorize yellow "[POLICY] Your message title is not correct"
