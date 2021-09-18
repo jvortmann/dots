@@ -15,7 +15,7 @@ spell_available() {
 }
 
 spell_check() {
-  if [[ ! $message =~ $merge_or_revert && $(spell_available) ]]; then
+  if [[ ! $message_title =~ $merge_or_revert && $(spell_available) ]]; then
     echo "$1" | ispell -l | grep -v "refactor\|doc"
   fi
 
@@ -34,14 +34,14 @@ prohibited_first_word="[[:alpha:]]+${prohibited_endings}[[:space:]]"
 single_word="[[:alpha:]]+$"
 prohibited_pattern="^(${optional_tag}(${prohibited_first_word}${anything_not_empty}|${single_word}))"
 
-message=$(head -n1 "$1")
-size=${#message}
+message_title=$(head -n1 "$1")
+size=${#message_title}
 size_limit=72
 spelling_available=$(spell_available)
-spelling_errors=$(spell_check "$message")
+spelling_errors=$(spell_check "$message_title")
 
-if [[ ! $message =~ $merge_or_revert && ($message =~ $prohibited_pattern || ! $message =~ $allowed_pattern || $size -gt $size_limit || $spelling_errors) ]]; then
-  colorize yellow "[POLICY] Your message is not correct"
+if [[ ! $message_title =~ $merge_or_revert && ($message_title =~ $prohibited_pattern || ! $message_title =~ $allowed_pattern || $size -gt $size_limit || $spelling_errors) ]]; then
+  colorize yellow "[POLICY] Your message title is not correct"
   echo
   echo "Check the CONTRIBUTING information."
   echo
@@ -50,7 +50,7 @@ if [[ ! $message =~ $merge_or_revert && ($message =~ $prohibited_pattern || ! $m
   if [[ $size -gt $size_limit ]]; then
     colorize red "[FAIL]"
     echo
-    echo "Your message has ${size} chars and the limit is ${size_limit} chars."
+    echo "Your message title has ${size} chars and the limit is ${size_limit} chars."
     echo
     echo "Additionally, it is possible to include a longer description of the"
     echo "problem/solution by opening the the editor (commit without -m or use -e)"
@@ -60,7 +60,7 @@ if [[ ! $message =~ $merge_or_revert && ($message =~ $prohibited_pattern || ! $m
   fi
 
   echo -n "- format: "
-  if [[ $message =~ $prohibited_pattern || ! $message =~ $allowed_pattern ]]; then
+  if [[ $message_title =~ $prohibited_pattern || ! $message_title =~ $allowed_pattern ]]; then
     colorize red "[FAIL]"
     echo
     echo "The format is as follows: (optional)?";
@@ -92,7 +92,7 @@ if [[ ! $message =~ $merge_or_revert && ($message =~ $prohibited_pattern || ! $m
     if [[ $spelling_errors ]]; then
       colorize red "[FAIL]"
       echo
-      echo "Your message has the following spelling errors:"
+      echo "Your message title has the following spelling errors:"
       echo "$spelling_errors"
       echo
     else
