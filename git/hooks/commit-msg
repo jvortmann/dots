@@ -11,12 +11,12 @@ colorize () {
 }
 
 spell_available() {
-  command -v ispell
+  command -v aspell
 }
 
 spell_check() {
   if [[ ! $message_title =~ $merge_or_revert && $(spell_available) ]]; then
-    echo "$1" | ispell -l | grep -v "refactor\|doc"
+    echo "$1" | aspell list --ignore-case
   fi
 
   echo ""
@@ -102,8 +102,8 @@ if [[ ! $message_title =~ $merge_or_revert && ($message_title =~ $prohibited_pat
   else
     colorize yellow "[NOT AVAILABLE]"
     echo
-    echo "Install ispell to enable spelling validation:"
-    echo "brew install ispell"
+    echo "Install aspell to enable spelling validation:"
+    echo "brew install aspell"
     echo
   fi
 
