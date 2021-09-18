@@ -16,7 +16,7 @@ spell_available() {
 
 spell_check() {
   if [[ ! $message_title =~ $merge_or_revert && $(spell_available) ]]; then
-    echo "$1" | aspell list --ignore-case
+    echo "$1" | aspell list --ignore-case --add-wordlists=<(cat ~/.vim/spell/*)
   fi
 
   echo ""
