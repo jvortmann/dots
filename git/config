@@ -87,10 +87,10 @@
   this = !git init && git add . && git commit -m \"chore: Initial commit\"
   unstage = reset HEAD --
   w = log --name-status #short whatchanged
-  xm = commit -m
   x  = commit
-  xc = commit -F .git/COMMIT_EDITMSG --cleanup=strip
   xa = commit -a
+  xc = commit -F .git/COMMIT_EDITMSG --cleanup=strip
+  xm = commit -m
   revert-pr = "!r() { git switch -c revert-$1 && git revert -m1 $2; }; r"
   rebuild-branch = "!r() { git switch -c $3 && git rev-list -m --first-parent --no-merges $2~1..$1 --reverse | git cherry-pick --stdin; }; r"
 
