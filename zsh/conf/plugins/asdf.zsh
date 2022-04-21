@@ -1,6 +1,6 @@
 # vim: ft=zsh
 
-source "/usr/local/opt/asdf/asdf.sh"
+source "/usr/local/opt/asdf/libexec/asdf.sh"
 
 version_info() {
   local language_name=$1
