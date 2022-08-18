@@ -103,7 +103,7 @@
   rebase = preserve
 
 [branch]
-  autosetuprebase = always
+  autoSetupRebase = always
 
 [tag]
   sort = version:refname
