@@ -100,7 +100,7 @@
   autoSetupRemote = true
 
 [pull]
-  rebase = preserve
+  rebase = true
 
 [branch]
   autoSetupRebase = always
