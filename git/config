@@ -109,3 +109,5 @@
   sort = version:refname
 [status]
   submodulesubmary = 1
+[submodule]
+  recurse = true
