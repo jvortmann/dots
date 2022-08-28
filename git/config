@@ -99,6 +99,7 @@
 [push]
   default = simple
   autoSetupRemote = true
+  recurseSubmodule = on-demand
 
 [pull]
   rebase = true
