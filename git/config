@@ -111,7 +111,7 @@
   sort = version:refname
 
 [status]
-  submodulesubmary = 1
+  submoduleSummary = 1
 
 [submodule]
   recurse = true
