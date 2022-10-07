@@ -113,3 +113,7 @@
   submodulesubmary = 1
 [submodule]
   recurse = true
+
+[rebase]
+  updateRefs = true
+  autoSquash = true
