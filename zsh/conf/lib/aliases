@@ -21,9 +21,6 @@ alias lcd="dirs -v"
 # copy
 alias cp="cp -v"
 
-# foreman
-alias f=foreman
-
 # git
 alias g=git
 
@@ -67,17 +64,12 @@ alias rks="rake spec"
 # rspec
 alias rd="rspec --format d"
 
-# search
-alias s="smart-grep"
-
+# say in german
 alias sig="say -v 'Anna' "
 
 # tmux
 alias t=tmux
 alias tm=tmuxstart
-
-# tsuru
-alias tu=tsuru
 
 # vim | nvim
 alias vim=nvim
