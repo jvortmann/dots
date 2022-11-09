@@ -41,7 +41,7 @@ spelling_available=$(spell_available)
 spelling_errors=$(spell_check "$message")
 
 if [[ ! $message_title =~ $merge_or_revert && ($message_title =~ $prohibited_pattern || ! $message_title =~ $allowed_pattern || $size -gt $size_limit || $spelling_errors) ]]; then
-  colorize yellow "[POLICY] Your message title is not correct"
+  colorize yellow "[POLICY] Your message is not correct"
   echo
   echo "Check the CONTRIBUTING information."
   echo
@@ -59,7 +59,7 @@ if [[ ! $message_title =~ $merge_or_revert && ($message_title =~ $prohibited_pat
     colorize green "[PASS]"
   fi
 
-  echo -n "- format: "
+  echo -n "- title format: "
   if [[ $message_title =~ $prohibited_pattern || ! $message_title =~ $allowed_pattern ]]; then
     colorize red "[FAIL]"
     echo
