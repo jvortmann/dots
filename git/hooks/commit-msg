@@ -15,7 +15,7 @@ spell_available() {
 }
 
 spell_check() {
-  if [[ ! $message_title =~ $merge_or_revert && $(spell_available) ]]; then
+  if [[ ! $message_title =~ $git_generated && $(spell_available) ]]; then
     echo "$1" | aspell list --ignore-case --add-wordlists=<(cat ~/.vim/spell/*)
   fi
 
@@ -25,7 +25,7 @@ spell_check() {
 capital_letter="[A-Z]"
 anything_not_empty=".+"
 not_full_stop="[^.]"
-merge_or_revert="^(Merge|Revert)${anything_not_empty}"
+git_generated="^(Merge|Revert|((fixup|amend)!))${anything_not_empty}"
 allowed_pattern="^(${capital_letter}${anything_not_empty})${not_full_stop}$"
 
 prohibited_endings="(ing|ed)"
@@ -40,7 +40,7 @@ size_limit=72
 spelling_available=$(spell_available)
 spelling_errors=$(spell_check "$message")
 
-if [[ ! $message_title =~ $merge_or_revert && ($message_title =~ $prohibited_pattern || ! $message_title =~ $allowed_pattern || $size -gt $size_limit || $spelling_errors) ]]; then
+if [[ ! $message_title =~ $git_generated && ($message_title =~ $prohibited_pattern || ! $message_title =~ $allowed_pattern || $size -gt $size_limit || $spelling_errors) ]]; then
   colorize yellow "[POLICY] Your message is not correct"
   echo
   echo "Check the CONTRIBUTING information."
