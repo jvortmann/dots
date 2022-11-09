@@ -22,17 +22,16 @@ spell_check() {
   echo ""
 }
 
-optional_tag="((feature|feat|fix|doc|style|refactor|test|chore): )?"
 capital_letter="[A-Z]"
 anything_not_empty=".+"
 not_full_stop="[^.]"
 merge_or_revert="^(Merge|Revert)${anything_not_empty}"
-allowed_pattern="^(${optional_tag}${capital_letter}${anything_not_empty})${not_full_stop}$"
+allowed_pattern="^(${capital_letter}${anything_not_empty})${not_full_stop}$"
 
 prohibited_endings="(ing|ed)"
 prohibited_first_word="[[:alpha:]]+${prohibited_endings}[[:space:]]"
 single_word="[[:alpha:]]+$"
-prohibited_pattern="^(${optional_tag}(${prohibited_first_word}${anything_not_empty}|${single_word}))"
+prohibited_pattern="^(${prohibited_first_word}${anything_not_empty}|${single_word})"
 
 message=$(sed /---/q "$1")
 message_title=$(head -n1 "$1")
@@ -64,24 +63,15 @@ if [[ ! $message_title =~ $merge_or_revert && ($message_title =~ $prohibited_pat
   if [[ $message_title =~ $prohibited_pattern || ! $message_title =~ $allowed_pattern ]]; then
     colorize red "[FAIL]"
     echo
-    echo "The format is as follows: (optional)?";
-    echo "({type}: )?Imperative and capitalized (no -ing, -ed ending), short summary of changes (72 chars tops, no period at the end)"
+    echo "The title format is as follows:";
+    echo "Imperative and capitalized (no -ing, -ed ending), short summary of changes (72 chars tops, no period at the end)"
     echo
     echo "Long reference: 'https://dev.to/cvortmann/what-makes-a-good-commit-message-181i'"
     echo "Short reference: 'https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html'"
     echo
-    echo "The types are the following:"
-    echo "- feature|feat: Change behavior, interface or adds new functionality"
-    echo "- fix: Fix bugs"
-    echo "- doc: Change to documentation, README, CHANGELOG etc"
-    echo "- style: Format, missing semi-colons, changes in whitespace, coding style in general"
-    echo "- refactor: Refactor production code, no functionality or behavior change"
-    echo "- test: Add missing tests, improve test organization and description; no production code change"
-    echo "- chore: Update gems; no direct production code change"
-    echo
     echo "Examples:"
-    echo "feature: Add user search by email"
-    echo "chore: Update Rails to 5.1"
+    echo "Add user search by email"
+    echo "Update Rails to 5.1"
     echo "Rename method"
     echo
   else
