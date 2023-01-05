@@ -19,6 +19,10 @@ set-option -g pane-active-border-style "fg=gray"
 set-option -g display-panes-active-colour "blue"
 set-option -g display-panes-colour "green"
 
+# popup
+set-option -g popup-border-style "fg=gray"
+set-option -g popup-style "fg=default"
+
 ## message text
 set-option -g message-style "bg=default,fg=brightred"
 
