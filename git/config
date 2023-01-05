@@ -43,8 +43,8 @@
   template = ~/.config/git/message
 
 [delta]
-  syntax-theme = Solarized (dark)
-  features = line-numbers decorations
+  features = line-numbers decorations navigate
+  light = false
 
 [delta "decorations"]
     commit-decoration-style = bold yellow box ul
