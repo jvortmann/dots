@@ -2,36 +2,25 @@
 
 #### COLOUR (Solarized light)
 # status line
-set-option -g status-left-length 32
-set-option -g status-left "[#S]"
-set-option -g status-right "\"#(hostname -s)\" %H:%M %d-%b-%y"
+set-option -g status-left-length 50
+set-option -g status-style "bg=white,fg=yellow"
+set-option -g status-left "#{?client_prefix,#[fg=blue],} #S #{?client_prefix,#[fg=blue],}"
 
-## default statusbar colors
-set-option -g status-style bg=white #base2
-set-option -g status-style fg=yellow #yellow
-set-option -g status-style attr=default
+set-option -g status-right "#[fg=green,bg=default,nobold,nounderscore,noitalics] #(hostname -s) %a %d/%m/%y %R "
 
-## default window title colors
-set-window-option -g window-status-style fg=brightyellow #base00
-set-window-option -g window-status-style bg=default
-#set-window-option -g window-status-style attr=dim
+# windows
+set-window-option -g window-status-format "#[fg=default,bg=default] #I #W "
+set-window-option -g window-status-current-format "#[fg=blue,bg=gray] #I #W "
+set-window-option -g window-status-activity-style "bg=default,fg=green"
 
-## active window title colors
-set-window-option -g window-status-current-style fg=brightred #orange
-set-window-option -g window-status-current-style bg=default
-#set-window-option -g window-status-current-style attr=bright
-
-## pane border
-set-option -g pane-border-style fg=white #base2
-set-option -g pane-active-border-style fg=brightcyan #base1
+# panes
+set-option -g pane-border-style "fg=white"
+set-option -g pane-active-border-style "fg=gray"
+set-option -g display-panes-active-colour "blue"
+set-option -g display-panes-colour "green"
 
 ## message text
-set-option -g message-style bg=white #base2
-set-option -g message-style fg=brightred #orange
-
-## pane number display
-set-option -g display-panes-active-colour blue #blue
-set-option -g display-panes-colour brightred #orange
+set-option -g message-style "bg=default,fg=brightred"
 
 ## clock
-set-window-option -g clock-mode-colour green #green
+set-window-option -g clock-mode-colour "blue"
