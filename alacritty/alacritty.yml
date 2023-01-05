@@ -186,7 +186,7 @@ font:
 draw_bold_text_with_bright_colors: false
 
 # Colors (Solarized Dark)
-colors:
+color-theme-solarized-dark: &color-theme-solarized-dark
   # Default colors
   primary:
     background: '0x002b36' # base03
@@ -218,6 +218,8 @@ colors:
     magenta: '0x6c71c4' # violet
     cyan:    '0x93a1a1' # base1
     white:   '0xfdf6e3' # base3
+
+colors: *color-theme-solarized-dark
 
 # Colors (Challender Deep)
 #colors:
