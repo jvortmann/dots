@@ -1,1 +1,1 @@
-export BAT_THEME="Catppuccin-dark"
+export BAT_THEME="Solarized (dark)"
