@@ -3,7 +3,7 @@
 # status line
 set-option -g status-left-length 50
 set-option -g status-style "bg=black,fg=green"
-set-option -g status-left "#[bg=green,fg=black]#{?client_prefix,#[bg=yellow],} #S #[fg=green,bg=black]#{?client_prefix,#[fg=yellow],}"
+set-option -g status-left "#[bg=yellow,fg=black]#{?client_prefix,#[bg=green],} #S #[fg=yellow,bg=black]#{?client_prefix,#[fg=green],}"
 set-option -g status-right "#[fg=blue,bg=default,nobold,nounderscore,noitalics] #(hostname -s) %a %d/%m/%y %R "
 
 # windows
@@ -18,7 +18,7 @@ set-option -g display-panes-active-colour "green"
 set-option -g display-panes-colour "blue"
 
 # popup
-set-option -g popup-border-style "fg=gray"
+set-option -g popup-border-style "fg=brightwhite"
 set-option -g popup-style "fg=default"
 
 # message text
