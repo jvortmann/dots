@@ -186,7 +186,7 @@ font:
 draw_bold_text_with_bright_colors: false
 
 import:
-  - ~/.dots/alacritty/themes/solarized-dark.yml
+  - ~/.dots/alacritty/themes/catppuccin-dark.yml
 
   # Dim colors
   #
