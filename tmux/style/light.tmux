@@ -1,6 +1,5 @@
 # vim: ft=tmux
 
-#### COLOUR (Solarized light)
 # status line
 set-option -g status-left-length 50
 set-option -g status-style "bg=white,fg=yellow"
