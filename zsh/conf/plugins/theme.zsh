@@ -46,3 +46,21 @@ swap-theme()
     swap-theme-to-dark
   fi
 }
+
+swap-theme-to-catppuccin()
+{
+  gsed -i"" -E "s/^(.*themes\/)(.*)-(.*).yml/\1catppuccin-\3.yml/" ~/.dots/alacritty/alacritty.yml
+  gsed -i"" -E "s/Solarized \((.*)\)/Catppuccin-\1/" ~/.dots/zsh/conf/plugins/bat.zsh
+  gsed -i"" -E "s/(colorscheme )Solarized8/\1catppuccin/" ~/.config/nvim/conf/guioptions
+
+  swap-theme-refresh
+}
+
+swap-theme-to-solarized()
+{
+  gsed -i"" -E "s/^(.*themes\/)(.*)-(.*).yml/\1solarized-\3.yml/" ~/.dots/alacritty/alacritty.yml
+  gsed -i"" -E "s/Catppuccin-(.*)\"/Solarized (\1)\"/" ~/.dots/zsh/conf/plugins/bat.zsh
+  gsed -i"" -E "s/(colorscheme )catppuccin/\1Solarized8/" ~/.config/nvim/conf/guioptions
+
+  swap-theme-refresh
+}
