@@ -1,3 +1,3 @@
 # vim: ft=tmux
 
-source "$HOME/.dots/tmux/themes/solarized_dark.tmux"
+source "$HOME/.dots/tmux/style/dark.tmux"
