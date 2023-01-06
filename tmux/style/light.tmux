@@ -1,4 +1,4 @@
-# vim: ft=conf
+# vim: ft=tmux
 
 #### COLOUR (Solarized light)
 # status line
