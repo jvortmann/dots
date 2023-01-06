@@ -1,6 +1,6 @@
 echo ">> Setup of tools"
 
-tools='asdf ctags karabiner'
+tools='asdf bat ctags karabiner'
 
 for tool in $tools; do
   setup_file="$HOME/.dots/$tool/setup.sh"
