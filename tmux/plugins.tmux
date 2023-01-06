@@ -1,4 +1,4 @@
-# vim: ft=conf
+# vim: ft=tmux
 
 # List of plugins
 set -g @plugin 'christoomey/vim-tmux-navigator'
