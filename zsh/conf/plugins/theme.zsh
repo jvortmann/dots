@@ -34,7 +34,7 @@ swap-theme-refresh()
   tmux source ~/.dots/tmux/switch-popup.tmux
   source ~/.dots/zsh/conf/plugins/bat.zsh
   source ~/.dots/zsh/conf/plugins/fzf.zsh
-  echo "reopen Vim or run ':source ~/.config/nvim/conf/guioptions' to refresh"
+  echo "run 'swap-theme-refresh' on vim's window and reopen Vim or run ':source ~/.config/nvim/conf/guioptions' to refresh"
 }
 
 swap-theme()
