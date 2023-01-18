@@ -1,0 +1,3 @@
+--map-syntax "*.avsc:JSON"
+--map-syntax "*.bats:Bourne Again Shell (bash)"
+--theme="Solarized (dark)"
