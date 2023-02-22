@@ -4,7 +4,7 @@ fpath=($ZSH_HOME/completions /usr/local/share/zsh/site-functions /usr/local/shar
 
 # Load and run compinit
 autoload -U compinit
-compinit -i
+#compinit -i
 
 unsetopt MENU_COMPLETE   # do not autoselect the first completion entry
 setopt AUTO_MENU         # show completion menu on succesive tab press
