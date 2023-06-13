@@ -12,14 +12,7 @@ setopt AUTO_MENU         # show completion menu on succesive tab press
 setopt COMPLETE_IN_WORD  # in word completion
 setopt ALWAYS_TO_END
 
-autoload -U select-word-style
-zle -N select-word-style
-bindkey '\ez' select-word-style
-
 WORDCHARS='~!#$%^&*(){}[]<>?.+;-' # for the "normal" style
-select-word-style normal
-zstyle ':zle:*ward-word' word-style space
-zstyle ':zle:backward-kill-word' word-style space
 
 zmodload -i zsh/complist
 
