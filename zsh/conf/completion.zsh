@@ -12,7 +12,7 @@ setopt AUTO_MENU         # show completion menu on succesive tab press
 setopt COMPLETE_IN_WORD  # in word completion
 setopt ALWAYS_TO_END
 
-WORDCHARS='~!#$%^&*(){}[]<>?.+;-' # for the "normal" style
+WORDCHARS='~!#$%^&*(){}[]<>?.+;' # for the "normal" style
 
 zmodload -i zsh/complist
 
