@@ -45,6 +45,7 @@
 [delta]
   features = line-numbers decorations navigate
   light = false
+  true-color = always
 
 [delta "decorations"]
   commit-decoration-style = bold yellow box ul
