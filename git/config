@@ -122,5 +122,8 @@
   updateRefs = true
   autoSquash = true
 
+[merge]
+  conflictstyle = diff3
+
 [interactive]
   diffFilter = delta --color-only
