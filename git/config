@@ -55,6 +55,7 @@
 [diff]
   ignoreSubmodules = dirty
   compactionHeuristic = true
+  colorMoved = default
 
 [alias]
   a = add
