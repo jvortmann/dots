@@ -38,10 +38,13 @@ alias iex="iex --erl \"-kernel shell_history enabled\""
 alias e=iex
 
 # ls
-alias ls="ls -G"
-alias ll="ls -alFh"
-alias la="ls -Ah"
-alias l="ls -CFh"
+alias ls='lsd'
+#alias ls="ls -G"
+alias l="ls"
+alias ll="ls -l"
+alias la="ls -a"
+alias lla="ls -la"
+alias lt="ls --tree"
 
 # move
 alias mv="mv -v"
