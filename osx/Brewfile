@@ -102,3 +102,5 @@ mas 'Todoist', id: 585829637
 cask 'font-source-code-pro'
 cask 'font-fira-code'
 cask 'font-fira-mono'
+cask 'font-fira-code-nerd-font'
+cask 'font-fira-mono-nerd-font'
