@@ -182,7 +182,7 @@ defaults write -app transmission WarningDonate -bool false
 defaults write -app transmission WarningLegal -bool false
 
 echo; echo ">> Killing affected apps"
-for app in "Dock" "Finder" "SystemUIServer" "Safari" "Transmission" "iTerm"; do
+for app in "Dock" "Finder" "SystemUIServer" "Safari" "Transmission"; do
   killall "${app}" > /dev/null 2>&1
 done
 echo "Done. Note that some of these changes require a logout/restart to take effect."
