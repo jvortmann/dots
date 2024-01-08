@@ -1,23 +1,32 @@
-[colors.bright]
-black = "0x565575"
-blue = "0x65b2ff"
-cyan = "0x63f2f1"
-green = "0x62d196"
-magenta = "0x906cff"
-red = "0xff5458"
-white = "0xa6b3cc"
-yellow = "0xffb378"
+# Colors (Challenger Deep)
 
-[colors.normal]
-black = "0x100e23"
-blue = "0x91ddff"
-cyan = "0xaaffe4"
-green = "0x95ffa4"
-magenta = "0xc991e1"
-red = "0xff8080"
-white = "0xcbe3e7"
-yellow = "0xffe9aa"
-
+# Default colors
 [colors.primary]
-background = "0x1b182c"
-foreground = "0xcbe3e7"
+background = '#1e1c31'
+foreground = '#cbe1e7'
+
+[colors.cursor]
+text = '#ff271d'
+cursor = '#fbfcfc'
+
+# Normal colors
+[colors.normal]
+black   = '#141228'
+red     = '#ff5458'
+green   = '#62d196'
+yellow  = '#ffb378'
+blue    = '#65b2ff'
+magenta = '#906cff'
+cyan    = '#63f2f1'
+white   = '#a6b3cc'
+
+# Bright colors
+[colors.bright]
+black   = '#565575'
+red     = '#ff8080'
+green   = '#95ffa4'
+yellow  = '#ffe9aa'
+blue    = '#91ddff'
+magenta = '#c991e1'
+cyan    = '#aaffe4'
+white   = '#cbe3e7'
