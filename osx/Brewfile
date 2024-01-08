@@ -109,6 +109,7 @@ mas 'Pages', id: 409201541
 mas 'Pixelmator Classic', id: 407963104
 mas 'Todoist', id: 585829637
 mas 'Xcode', id: 497799835
+mas 'NordVPN', id: 905953485
 
 # Install fonts
 cask 'font-source-code-pro'
