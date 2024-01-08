@@ -4,6 +4,7 @@ tap 'homebrew/cask-versions'
 
 # Install command line tools
 brew 'asdf'
+brew 'aspell'
 brew 'awscli'
 brew 'bash'
 brew 'bat'
@@ -26,11 +27,8 @@ brew 'gpg'
 brew 'hexyl'
 brew 'htop'
 brew 'httpie'
-brew 'hub'
 brew 'imagemagick'
-brew 'ispell'
 brew 'jq'
-brew 'leiningen'
 brew 'lsd'
 brew 'luajit'
 brew 'mas'
@@ -57,6 +55,7 @@ brew 'watch'
 brew 'wget'
 brew 'xsv'
 brew 'yt-dlp'
+brew 'zlib'
 brew 'zsh'
 brew 'zsh-autosuggestions'
 brew 'zsh-completions'
@@ -67,17 +66,23 @@ brew 'zsh-syntax-highlighting'
 cask_args require_sha: true
 cask 'alacritty'
 cask 'appcleaner'
-cask 'dteoh-devdocs'
-cask 'docker'
+cask 'chromium'
 cask 'drawio'
+cask 'dteoh-devdocs'
+cask 'firefox-developer-edition'
+cask 'google-chrome'
+cask 'google-drive'
+cask 'guitar-pro'
+cask 'ilok-license-manager'
 cask 'itsycal'
 cask 'karabiner-elements'
 cask 'keybase'
 cask 'keycastr'
+cask 'mimestream'
 cask 'notion'
 cask 'obsidian'
+cask 'proton-drive'
 cask 'raycast'
-cask 'scaleft'
 cask 'sequel-pro'
 cask 'skype'
 cask 'slack'
@@ -87,17 +92,22 @@ cask 'the-unarchiver'
 cask 'transmission'
 cask 'visual-studio-code'
 cask 'vlc'
-cask 'whatsapp-alpha'
+cask 'whatsapp-beta'
+cask 'zoom'
 
-mas '1Password 7', id: 1333542190
 mas 'BeFocusedPro', id: 961632517
 mas 'Bitwarden', id: 1352778147
 mas 'GarageBand', id: 682658836
 mas 'Gyphi', id: 668208984
+mas 'Kindle', id: 302584613
 mas 'Harvest', id: 506189836
 mas 'Just Press Record', id: 979561272
+mas 'Keynote', id: 409183694
+mas 'Numbers', id: 409203825
+mas 'Pages', id: 409201541
 mas 'Pixelmator Classic', id: 407963104
 mas 'Todoist', id: 585829637
+mas 'Xcode', id: 497799835
 
 # Install fonts
 cask 'font-source-code-pro'
