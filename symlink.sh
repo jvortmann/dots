@@ -7,7 +7,6 @@ echo; echo ">> Setting symlinks for dots folder"
 ln -sfnv "$(pwd)" ~/.dots
 
 echo; echo ">> Setting symlinks for default configurations"
-ln -sfnv ~/.dots/ag/agignore ~/.agignore
 ln -sfnv ~/.dots/input/inputrc ~/.inputrc
 ln -sfnv ~/.dots/ctags/ctags ~/.ctags
 
