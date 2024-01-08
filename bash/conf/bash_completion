@@ -1,5 +1,0 @@
-# set the bash-completion path
-# needs bash-completion installed
-if [ -f `brew --prefix`/etc/bash_completion ]; then
-	. `brew --prefix`/etc/bash_completion
-fi
