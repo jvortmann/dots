@@ -103,20 +103,22 @@ cask 'vlc'
 cask 'whatsapp-beta'
 cask 'zoom'
 
-mas 'BeFocusedPro', id: 961632517
-mas 'Bitwarden', id: 1352778147
-mas 'GarageBand', id: 682658836
-mas 'Gyphi', id: 668208984
-mas 'Kindle', id: 302584613
-mas 'Harvest', id: 506189836
-mas 'Just Press Record', id: 979561272
-mas 'Keynote', id: 409183694
-mas 'Numbers', id: 409203825
-mas 'Pages', id: 409201541
-mas 'Pixelmator Classic', id: 407963104
-mas 'Todoist', id: 585829637
-mas 'Xcode', id: 497799835
-mas 'NordVPN', id: 905953485
+mas "AdBlock", id: 1402042596
+mas "BeFocusedPro", id: 961632517
+mas "Bitwarden", id: 1352778147
+mas "GIPHY CAPTURE", id: 668208984
+mas "GarageBand", id: 682658836
+mas "Harvest", id: 506189836
+mas "Just Press Record", id: 1033342465
+mas "Keynote", id: 409183694
+mas "Kindle", id: 302584613
+mas "NordVPN", id: 905953485
+mas "Numbers", id: 409203825
+mas "Pages", id: 409201541
+mas "Pixelmator Classic", id: 407963104
+mas "Save to Reader", id: 1640236961
+mas "Todoist", id: 585829637
+mas "Xcode", id: 497799835
 
 # Install fonts
 cask 'font-source-code-pro'
