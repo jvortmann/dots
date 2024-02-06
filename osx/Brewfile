@@ -73,6 +73,7 @@ brew 'zsh-syntax-highlighting'
 
 # Install Apps
 cask_args require_sha: true
+cask '1password'
 cask 'alacritty'
 cask 'appcleaner'
 cask 'chromium'
@@ -87,6 +88,7 @@ cask 'itsycal'
 cask 'karabiner-elements'
 cask 'keybase'
 cask 'keycastr'
+cask 'linear-linear'
 cask 'mimestream'
 cask 'notion'
 cask 'obsidian'
