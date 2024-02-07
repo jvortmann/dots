@@ -4,7 +4,8 @@ COMMIT_MSG_FILE=$1
 #COMMIT_SOURCE=$2
 #SHA1=$3
 
-# This adds the Jira issue identification as a trailer to the commit message automatically
+# This adds the Work item issue identification as a trailer to the commit message automatically (generic on tool, works with Jira, Github, Linear, etc)
+# For github need to somehow identify it and change the id to #id if that is not in the branch name
 BRANCH=$(git branch --no-color --show-current)
 
 ISSUE_WITH_SLASH=$(echo "$BRANCH" | cut -f1 -d/ -s)
@@ -12,6 +13,6 @@ ISSUE_WITH_DASH=$(echo "$BRANCH" | cut -f1,2 -d- -s)
 
 ISSUE=${ISSUE_WITH_SLASH:-$ISSUE_WITH_DASH}
 if [[ "$ISSUE" =~ [[:upper:]]+-[[:digit:]]+.* ]]; then
-  #git interpret-trailers --in-place --where before --no-divider --trailer "Jira-issue-action: close|fix|resolve $ISSUE" "$COMMIT_MSG_FILE"
-  git interpret-trailers --in-place --where before --no-divider --trailer "Jira-issue: $ISSUE" "$COMMIT_MSG_FILE"
+  git interpret-trailers --in-place --where before --no-divider --trailer "Work-item-action: close|fix|resolve $ISSUE" "$COMMIT_MSG_FILE"
+  git interpret-trailers --in-place --where before --no-divider --trailer "Work-item-id: $ISSUE" "$COMMIT_MSG_FILE"
 fi

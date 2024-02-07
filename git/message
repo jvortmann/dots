@@ -22,8 +22,6 @@ Further paragraphs come after blank lines.
 
 ---
 
-Github-issue: #414
-Github-action: close|fix|resolve #414
 Change-type: feature|refactor|fix|docs|style|test|ci|deps|config|chore
 Refactoring: removeDeadCode
 See-also: 6ed2658fb9c4a9e93e3216f32071c030f14d7d28
