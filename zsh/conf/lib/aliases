@@ -21,6 +21,10 @@ alias lcd="dirs -v"
 # copy
 alias cp="cp -v"
 
+# docker
+alias dcu="docker-compose up -d"
+alias dcd="docker-compose down"
+
 # git
 alias g=git
 
