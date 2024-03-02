@@ -25,7 +25,7 @@ spell_check() {
 capital_letter="[A-Z]"
 anything_not_empty=".+"
 not_full_stop="[^.]"
-git_generated="^(Merge|Revert|((fixup|amend)!))${anything_not_empty}"
+git_generated="^(Merge|Revert|Reapply|((fixup|amend)!))${anything_not_empty}"
 allowed_pattern="^(${capital_letter}${anything_not_empty})${not_full_stop}$"
 
 prohibited_endings="(ing|ed)"
