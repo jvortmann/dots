@@ -110,6 +110,7 @@
 
 [branch]
   autoSetupRebase = always
+  sort = -committerdate
 
 [tag]
   sort = version:refname
