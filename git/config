@@ -91,6 +91,7 @@
   stash = stash --all
   sw = switch
   unstage = restore --staged
+  u = unstage
   w = log --name-status #short whatchanged
   x  = commit
   xa = x -a
