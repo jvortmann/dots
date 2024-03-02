@@ -72,7 +72,6 @@ alias sig="say -v 'Anna' "
 
 # tmux
 alias t=tmux
-alias tm=tmuxstart
 
 # vim | nvim
 alias vim=nvim
