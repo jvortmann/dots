@@ -139,3 +139,6 @@
 
 [fetch]
   writeCommitGraph = true
+
+[include]
+  path = maintenance

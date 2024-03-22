@@ -30,6 +30,7 @@ _*.zsh
 # git
 git/user
 git/github
+git/maintenance
 
 # other
 .vagrant
