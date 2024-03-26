@@ -412,3 +412,4 @@ semantic_escape_chars = ",│`|:\"' ()[]{}<>\t"
 dynamic_title = false
 startup_mode = "SimpleFullscreen"
 title = "Alacritty"
+padding = { x = 5, y = 5 }
