@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+if [[ ${BASH_VERSINFO[0]} -lt 4 ]]; then exit; fi
 
 COMMIT_MSG_FILE=$1
 #COMMIT_SOURCE=$2
@@ -8,11 +10,8 @@ COMMIT_MSG_FILE=$1
 # For github need to somehow identify it and change the id to #id if that is not in the branch name
 BRANCH=$(git branch --no-color --show-current)
 
-ISSUE_WITH_SLASH=$(echo "$BRANCH" | cut -f1 -d/ -s)
-ISSUE_WITH_DASH=$(echo "$BRANCH" | cut -f1,2 -d- -s)
-
-ISSUE=${ISSUE_WITH_SLASH:-$ISSUE_WITH_DASH}
-if [[ "$ISSUE" =~ [[:upper:]]+-[[:digit:]]+.* ]]; then
+ISSUE=$(echo "$BRANCH" | sed -rn "s#([[:lower:]]+/)?([[:alpha:]]+-[[:digit:]]+)[/-].*#\2#p")
+if [[ -n "$ISSUE" ]]; then
   #git interpret-trailers --in-place --where before --no-divider --trailer "Work-item-action: close|fix|resolve $ISSUE" "$COMMIT_MSG_FILE"
-  git interpret-trailers --in-place --where before --no-divider --trailer "Work-item-id: $ISSUE" "$COMMIT_MSG_FILE"
+  git interpret-trailers --in-place --where before --no-divider --trailer "Work-item-id: ${ISSUE^^}" "$COMMIT_MSG_FILE"
 fi
