@@ -1,7 +1,5 @@
 # vim: ft=zsh
 
-source "/usr/local/opt/asdf/libexec/asdf.sh"
-
 version_info() {
   local language_name=$1
   local version_from_tool_versions=$(grep "$language_name" "$PWD/.tool-versions" &> /dev/null | cut -d' ' -f2)
