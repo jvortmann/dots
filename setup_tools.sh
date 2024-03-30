@@ -3,6 +3,7 @@ echo ">> Setup of tools"
 tools='
 bat
 ctags
+colima
 karabiner
 '
 
