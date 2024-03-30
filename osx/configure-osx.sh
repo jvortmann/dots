@@ -169,20 +169,8 @@ defaults write -app Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2De
 #Add a context menu item for showing the Web Inspector in web views
 defaults write -g WebKitDeveloperExtras -bool true
 
-
-# Transmission
-echo; echo ">> Configuring Transmission"
-# Don’t prompt for confirmation before downloading
-defaults write -app transmission DownloadAsk -bool false
-# Trash original torrent files
-defaults write -app transmission DeleteOriginalTorrent -bool true
-# Hide the donate message
-defaults write -app transmission WarningDonate -bool false
-# Hide the legal disclaimer
-defaults write -app transmission WarningLegal -bool false
-
 echo; echo ">> Killing affected apps"
-for app in "Dock" "Finder" "SystemUIServer" "Safari" "Transmission"; do
+for app in "Dock" "Finder" "SystemUIServer" "Safari"; do
   killall "${app}" > /dev/null 2>&1
 done
 echo "Done. Note that some of these changes require a logout/restart to take effect."
