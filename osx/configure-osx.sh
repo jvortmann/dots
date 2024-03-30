@@ -16,6 +16,14 @@ sudo scutil --set HostName "$computer_name"
 sudo scutil --set LocalHostName "$computer_name"
 sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "$computer_name"
 
+# Keyboard layoyt (com.apple.HIToolbox) - might not work to set the layout, need to go to settings
+defaults write com.apple.HIToolbox AppleCurrentKeyboardLayoutInputSourceID "com.apple.keylayout.US";
+defaults write com.apple.HIToolbox AppleDictationAutoEnable -int 0
+defaults write com.apple.HIToolbox AppleEnabledInputSources '({ "Bundle ID" = "com.apple.CharacterPaletteIM"; InputSourceKind = "Non Keyboard Input Method"; }, { InputSourceKind = "Keyboard Layout"; "KeyboardLayout ID" = 0; "KeyboardLayout Name" = "U.S."; })'
+defaults write com.apple.HIToolbox AppleInputSourceHistory '({ InputSourceKind = "Keyboard Layout"; "KeyboardLayout ID" = 0; "KeyboardLayout Name" = "U.S."; })'
+defaults write com.apple.HIToolbox AppleSavedCurrentInputSource '{ InputSourceKind = "Keyboard Layout"; "KeyboardLayout ID" = 0; "KeyboardLayout Name" = "U.S."; }'
+defaults write com.apple.HIToolbox AppleSelectedInputSources '({ InputSourceKind = "Keyboard Layout"; "KeyboardLayout ID" = 0; "KeyboardLayout Name" = "U.S."; })'
+
 # Trackpad/Mouse settings
 # tap to click
 # it is not really working
