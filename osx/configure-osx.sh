@@ -127,14 +127,46 @@ defaults write -g InitialKeyRepeat -int 10
 defaults write -g KeyRepeat -float 1.2
 defaults write -g ApplePressAndHoldEnabled -bool false
 
+# Universal access (com.apple.universalaccess)
+defaults write com.apple.universalaccess HIDScrollZoomModifierMask  262144
+defaults write com.apple.universalaccess closeViewDesiredZoomFactor "1.833938598632812"
+defaults write com.apple.universalaccess closeViewHotkeysEnabled 1
 # set control to zoom
-defaults write com.apple.universalaccess closeViewScrollWheelToggle -bool true
-defaults write com.apple.universalaccess HIDScrollZoomModifierMask -int 262144
+defaults write com.apple.universalaccess closeViewScrollWheelToggle 1
+defaults write com.apple.universalaccess closeViewSplitScreenRatio "0.2"
+defaults write com.apple.universalaccess closeViewTrackpadGestureZoomEnabled 1
+defaults write com.apple.universalaccess closeViewZoomDisplayID 0
+defaults write com.apple.universalaccess closeViewZoomFactor 1
+defaults write com.apple.universalaccess closeViewZoomFactorBeforeTermination 1
+defaults write com.apple.universalaccess closeViewZoomedIn 0
+defaults write com.apple.universalaccess customFonts 1
+defaults write com.apple.universalaccess grayscale 0
+defaults write com.apple.universalaccess headMouseSensitivity "0.5"
+defaults write com.apple.universalaccess headMouseTolerance 0
+defaults write com.apple.universalaccess hoverTextEnabled 0
+defaults write com.apple.universalaccess hudNotifiedConstrast 0
+defaults write com.apple.universalaccess keyboardAccessFocusRingTimeout 15
+defaults write com.apple.universalaccess liveSpeechEnabled 0
+defaults write com.apple.universalaccess login 0
+defaults write com.apple.universalaccess mouseDriverCursorSize 1
+defaults write com.apple.universalaccess slowKey 0
+defaults write com.apple.universalaccess slowKeyDelay 250
+defaults write com.apple.universalaccess stickyKey 0
+defaults write com.apple.universalaccess switchAutoScanElementInterval "0.5"
+defaults write com.apple.universalaccess switchAutoScanPanelInterval "0.5"
+defaults write com.apple.universalaccess switchCoalescePressesDuration 0
+defaults write com.apple.universalaccess switchFirstElementDelay 0
+defaults write com.apple.universalaccess switchHideUITimeout 15
+defaults write com.apple.universalaccess switchHoldBeforeRepeatDuration 3
+defaults write com.apple.universalaccess switchMinimumPressDuration 0
+defaults write com.apple.universalaccess switchSweepingCursorSpeed 5
+defaults write com.apple.universalaccess useStickyKeysShortcutKeys 0
+defaults write com.apple.universalaccess "com.apple.custommenu.apps" '( NSGlobalDomain )'
+defaults write com.apple.universalaccess "UserAssignableHotKeys" '( { enabled = 1; key = 120; modifier = 8650752; sybmolichotkey = 7; }, { enabled = 1; key = 99; modifier = 8650752; sybmolichotkey = 8; }, { enabled = 1; key = 118; modifier = 8650752; sybmolichotkey = 9; }, { enabled = 1; key = 96; modifier = 8650752; sybmolichotkey = 10; }, { enabled = 1; key = 97; modifier = 8650752; sybmolichotkey = 11; })'
 
 # set background lighting properly
 defaults write com.apple.BezelServices kDim -bool true
 defaults write com.apple.BezelServices kDimTime -int 300
-
 
 # Use proper units
 echo; echo ">> Configuring measurement units"
