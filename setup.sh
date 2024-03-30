@@ -28,8 +28,7 @@ echo; echo ">> Configuring macOS"
 echo; echo ">> Leaving /osx"
 cd -
 
-echo; echo ">> Configuring zsh"
-./setup-zsh.sh   # creates the config folders and set zsh as default shell
+./setup_tools.sh
 
 echo; echo ">> Configuring Tmux"
 ./setup-tmux.sh   # creates the plugin manager folder and clone it
@@ -39,5 +38,3 @@ echo; echo ">> Configuring Tmux"
 ./setup-ssh-key.sh "$computer_name" "$user_email" # creates ssh keys named after computer name using user email
 
 ./setup-ssh-config.sh "$computer_name" # creates ssh config using computer name
-
-./setup_tools.sh

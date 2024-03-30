@@ -6,6 +6,7 @@ ctags
 colima
 karabiner
 mise
+zsh
 '
 
 for tool in $tools; do
