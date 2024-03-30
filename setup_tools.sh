@@ -7,6 +7,7 @@ colima
 karabiner
 mise
 zsh
+tmux
 '
 
 for tool in $tools; do

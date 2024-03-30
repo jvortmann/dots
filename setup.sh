@@ -30,9 +30,6 @@ cd -
 
 ./setup_tools.sh
 
-echo; echo ">> Configuring Tmux"
-./setup-tmux.sh   # creates the plugin manager folder and clone it
-
 ./setup-git-user.sh "$user_name" "$user_email" # creates the file with git user and email
 
 ./setup-ssh-key.sh "$computer_name" "$user_email" # creates ssh keys named after computer name using user email

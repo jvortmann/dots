@@ -1,4 +1,5 @@
 #!/bin/bash
+echo; echo ">> Configuring Tmux"
 
 echo "Cloning Tmux Plugin Manager to ~/.tmux/plugins"
 mkdir -pv ~/.tmux/plugins/
