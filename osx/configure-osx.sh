@@ -24,6 +24,8 @@ defaults write com.apple.HIToolbox AppleInputSourceHistory '({ InputSourceKind =
 defaults write com.apple.HIToolbox AppleSavedCurrentInputSource '{ InputSourceKind = "Keyboard Layout"; "KeyboardLayout ID" = 0; "KeyboardLayout Name" = "U.S."; }'
 defaults write com.apple.HIToolbox AppleSelectedInputSources '({ InputSourceKind = "Keyboard Layout"; "KeyboardLayout ID" = 0; "KeyboardLayout Name" = "U.S."; })'
 
+defaults write com.apple.Spotlight MenuItemHidden -int 1
+
 # Trackpad/Mouse settings
 # tap to click
 # it is not really working
