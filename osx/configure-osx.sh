@@ -27,6 +27,27 @@ defaults write com.apple.HIToolbox AppleSelectedInputSources '({ InputSourceKind
 # Spotlight (com.apple.Spotlight)
 defaults write com.apple.Spotlight MenuItemHidden -int 1
 
+# assign apps to spaces
+spaces=($(defaults read com.apple.spaces | grep SpaceID -A3 | grep uuid | tail -n 9 | cut -f2 -d= | tr -d ' ;'))
+defaults delete com.apple.spaces "app-bindings"
+defaults write com.apple.spaces "app-bindings" -dict-add "com.dteoh.devdocs-macos" AllSpaces
+defaults write com.apple.spaces "app-bindings" -dict-add "org.alacritty" "${spaces[0]}"
+defaults write com.apple.spaces "app-bindings" -dict-add "org.mozilla.firefoxdeveloperedition" "${spaces[1]}"
+defaults write com.apple.spaces "app-bindings" -dict-add "com.apple.safari" "${spaces[1]}"
+defaults write com.apple.spaces "app-bindings" -dict-add "com.linear" "${spaces[2]}"
+defaults write com.apple.spaces "app-bindings" -dict-add "com.todoist.mac.todoist" "${spaces[2]}"
+defaults write com.apple.spaces "app-bindings" -dict-add "ru.keepcoder.telegram" "${spaces[3]}"
+defaults write com.apple.spaces "app-bindings" -dict-add "com.apple.mobilesms" "${spaces[3]}"
+defaults write com.apple.spaces "app-bindings" -dict-add "net.whatsapp.whatsapp" "${spaces[3]}"
+defaults write com.apple.spaces "app-bindings" -dict-add "ch.protonmail.desktop" "${spaces[4]}"
+defaults write com.apple.spaces "app-bindings" -dict-add "com.mimestream.mimestream" "${spaces[4]}"
+defaults write com.apple.spaces "app-bindings" -dict-add "com.apple.music" "${spaces[5]}"
+defaults write com.apple.spaces "app-bindings" -dict-add "com.arobas-music.guitarpro8" "${spaces[6]}"
+defaults write com.apple.spaces "app-bindings" -dict-add "com.neuraldsp.archetypepetrucci" "${spaces[7]}"
+defaults write com.apple.spaces "app-bindings" -dict-add "md.obsidian" "${spaces[7]}"
+defaults write com.apple.spaces "app-bindings" -dict-add "notion.id" "${spaces[7]}"
+defaults write com.apple.spaces "app-bindings" -dict-add "com.tinyspeck.slackmacgap" "${spaces[8]}"
+
 # Trackpad/Mouse settings
 # Trackpad settings (com.apple.AppleMultitouchTrackpad)
 defaults write com.apple.AppleMultitouchTrackpad ActuateDetents 1
