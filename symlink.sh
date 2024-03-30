@@ -10,10 +10,6 @@ echo; echo ">> Setting symlinks for default configurations"
 ln -sfnv ~/.dots/input/inputrc ~/.inputrc
 ln -sfnv ~/.dots/ctags/ctags ~/.ctags
 
-echo; echo ">> Setting symlink for 'mise' language version manager"
-mkdir -p ~/.config/mise/
-ln -sfnv ~/.dots/mise/config.toml ~/.config/mise/config.toml
-
 echo; echo ">> Setting symlinks for ruby configurations"
 ln -sfnv ~/.dots/gem/gemrc ~/.gemrc
 ln -sfnv ~/.dots/irb/irbrc ~/.irbrc

@@ -5,6 +5,7 @@ bat
 ctags
 colima
 karabiner
+mise
 '
 
 for tool in $tools; do
