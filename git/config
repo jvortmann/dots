@@ -5,6 +5,9 @@
 [include]
   path = github
 
+[include]
+  path = maintenance
+
 [init]
   defaultBranch = main
 
@@ -139,6 +142,3 @@
 
 [fetch]
   writeCommitGraph = true
-
-[include]
-  path = maintenance
