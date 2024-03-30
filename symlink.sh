@@ -8,7 +8,6 @@ ln -sfnv "$(pwd)" ~/.dots
 
 echo; echo ">> Setting symlinks for default configurations"
 ln -sfnv ~/.dots/input/inputrc ~/.inputrc
-ln -sfnv ~/.dots/ctags/ctags ~/.ctags
 
 echo; echo ">> Setting symlinks for ruby configurations"
 ln -sfnv ~/.dots/gem/gemrc ~/.gemrc
