@@ -142,3 +142,6 @@
 
 [fetch]
   writeCommitGraph = true
+
+[url "github:"]
+  insteadOf = https://github.com/
