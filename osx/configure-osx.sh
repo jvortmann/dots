@@ -49,69 +49,33 @@ defaults write com.apple.spaces "app-bindings" -dict-add "notion.id" "${spaces[7
 defaults write com.apple.spaces "app-bindings" -dict-add "com.tinyspeck.slackmacgap" "${spaces[8]}"
 
 # Trackpad/Mouse settings
-# Trackpad settings (com.apple.AppleMultitouchTrackpad)
-defaults write com.apple.AppleMultitouchTrackpad ActuateDetents 1
-defaults write com.apple.AppleMultitouchTrackpad Clicking 1
-defaults write com.apple.AppleMultitouchTrackpad DragLock 0
-defaults write com.apple.AppleMultitouchTrackpad Dragging 0
-defaults write com.apple.AppleMultitouchTrackpad FirstClickThreshold 1
-defaults write com.apple.AppleMultitouchTrackpad ForceSuppressed 0
-defaults write com.apple.AppleMultitouchTrackpad HIDScrollZoomModifierMask 262144
-defaults write com.apple.AppleMultitouchTrackpad SecondClickThreshold 1
-defaults write com.apple.AppleMultitouchTrackpad TrackpadCornerSecondaryClick 0
-defaults write com.apple.AppleMultitouchTrackpad TrackpadFiveFingerPinchGesture 2
-defaults write com.apple.AppleMultitouchTrackpad TrackpadFourFingerHorizSwipeGesture 2
-defaults write com.apple.AppleMultitouchTrackpad TrackpadFourFingerPinchGesture 2
-defaults write com.apple.AppleMultitouchTrackpad TrackpadFourFingerVertSwipeGesture 2
-defaults write com.apple.AppleMultitouchTrackpad TrackpadHandResting 1
-defaults write com.apple.AppleMultitouchTrackpad TrackpadHorizScroll 1
-defaults write com.apple.AppleMultitouchTrackpad TrackpadMomentumScroll 1
-defaults write com.apple.AppleMultitouchTrackpad TrackpadPinch 1
-defaults write com.apple.AppleMultitouchTrackpad TrackpadRightClick 1
-defaults write com.apple.AppleMultitouchTrackpad TrackpadRotate 1
-defaults write com.apple.AppleMultitouchTrackpad TrackpadScroll 1
-defaults write com.apple.AppleMultitouchTrackpad TrackpadThreeFingerDrag 0
-defaults write com.apple.AppleMultitouchTrackpad TrackpadThreeFingerHorizSwipeGesture 2
-defaults write com.apple.AppleMultitouchTrackpad TrackpadThreeFingerTapGesture 0
-defaults write com.apple.AppleMultitouchTrackpad TrackpadThreeFingerVertSwipeGesture 2
-defaults write com.apple.AppleMultitouchTrackpad TrackpadTwoFingerDoubleTapGesture 1
-defaults write com.apple.AppleMultitouchTrackpad TrackpadTwoFingerFromRightEdgeSwipeGesture 3
-defaults write com.apple.AppleMultitouchTrackpad USBMouseStopsTrackpad 0
+# tap to click
+# it is not really working
+#defaults -currentHost write -g com.apple.mouse.tapBehavior -bool true
+#defaults write -g com.apple.mouse.tapBehavior -bool true
+#defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
+#defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
 
-# Mouse settings (com.apple.AppleMultitouchMouse)
-defaults write com.apple.AppleMultitouchMouse MouseButtonDivision 55
-defaults write com.apple.AppleMultitouchMouse MouseButtonMode OneButton
-defaults write com.apple.AppleMultitouchMouse MouseHorizontalScroll 1
-defaults write com.apple.AppleMultitouchMouse MouseMomentumScroll 1
-defaults write com.apple.AppleMultitouchMouse MouseOneFingerDoubleTapGesture 0
-defaults write com.apple.AppleMultitouchMouse MouseTwoFingerDoubleTapGesture 3
-defaults write com.apple.AppleMultitouchMouse MouseTwoFingerHorizSwipeGesture 2
-defaults write com.apple.AppleMultitouchMouse MouseVerticalScroll 1
+# swipe
+echo; echo ">> Configuring trackpad gestures"
+defaults -currentHost write -g com.apple.trackpad.fiveFingerPinchSwipeGesture -int 2
 
-# Bluetooth Trackpad settings (com.apple.AppleMultitouchMouse)
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking 1
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad DragLock 0
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Dragging 0
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad HIDScrollZoomModifierMask 262144
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadCornerSecondaryClick 0
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadFiveFingerPinchGesture 2
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadFourFingerHorizSwipeGesture 2
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadFourFingerPinchGesture 2
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadFourFingerVertSwipeGesture 2
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadHandResting 1
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadHorizScroll 1
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadMomentumScroll 1
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadPinch 1
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadRightClick 1
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadRotate 1
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadScroll 1
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeFingerDrag 0
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeFingerHorizSwipeGesture 2
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeFingerTapGesture 0
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeFingerVertSwipeGesture 2
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadTwoFingerDoubleTapGesture 1
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadTwoFingerFromRightEdgeSwipeGesture 3
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad USBMouseStopsTrackpad 0
+defaults -currentHost write -g com.apple.trackpad.fourFingerHorizSwipeGesture -int 2
+defaults -currentHost write -g com.apple.trackpad.fourFingerPinchSwipeGesture -int 2
+defaults -currentHost write -g com.apple.trackpad.fourFingerVertSwipeGesture -int 2
+
+defaults -currentHost write -g com.apple.trackpad.threeFingerDragGesture -int 0
+defaults -currentHost write -g com.apple.trackpad.threeFingerHorizSwipeGesture -int 2
+defaults -currentHost write -g com.apple.trackpad.threeFingerTapGesture -int 2
+defaults -currentHost write -g com.apple.trackpad.threeFingerVertSwipeGesture -int 2
+
+defaults -currentHost write -g com.apple.trackpad.twoFingerDoubleTapGesture -int 1
+defaults -currentHost write -g com.apple.trackpad.twoFingerFromRightEdgeSwipeGesture -int 3
+
+defaults -currentHost write -g com.apple.trackpad.enableSecondaryClick -bool true
+defaults -currentHost write -g com.apple.trackpad.pinchGesture -bool true
+defaults -currentHost write -g com.apple.trackpad.rotateGesture -bool true
+defaults -currentHost write -g com.apple.trackpad.scrollBehavior -int 2
 
 # Keyboard settings
 # Enable full keyboard access for all controls
