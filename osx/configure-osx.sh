@@ -24,8 +24,6 @@ defaults write com.apple.HIToolbox AppleInputSourceHistory '({ InputSourceKind =
 defaults write com.apple.HIToolbox AppleSavedCurrentInputSource '{ InputSourceKind = "Keyboard Layout"; "KeyboardLayout ID" = 0; "KeyboardLayout Name" = "U.S."; }'
 defaults write com.apple.HIToolbox AppleSelectedInputSources '({ InputSourceKind = "Keyboard Layout"; "KeyboardLayout ID" = 0; "KeyboardLayout Name" = "U.S."; })'
 
-defaults write com.apple.Spotlight MenuItemHidden -int 1
-
 # assign apps to spaces
 spaces=($(defaults read com.apple.spaces | grep SpaceID -A3 | grep uuid | tail -n 9 | cut -f2 -d= | tr -d ' ;'))
 defaults delete com.apple.spaces "app-bindings"
