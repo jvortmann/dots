@@ -14,4 +14,4 @@ echo; echo ">> Installing Apps"
 brew bundle --verbose --no-lock
 
 echo; echo ">> Installing Basher"
-git clone https://github.com/basherpm/basher.git ~/.basher
+test -d ~/.basher || git clone https://github.com/basherpm/basher.git ~/.basher
