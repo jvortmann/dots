@@ -1,5 +1,8 @@
 #!/bin/bash
 
+xcode-select --install
+sudo xcodebuild -license accept
+
 command -v brew > /dev/null || (echo; echo ">> Homebrew" && /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)")
 
 echo; echo ">> Installing Apps"
