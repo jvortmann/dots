@@ -8,8 +8,6 @@ else
   export HOMEBREW_PREFIX="/opt/homebrew";
   export HOMEBREW_CELLAR="/opt/homebrew/Cellar";
   export HOMEBREW_REPOSITORY="/opt/homebrew";
-  export LDFLAGS="-L/opt/homebrew/opt/readline/lib"
-  export CPPFLAGS="-I/opt/homebrew/opt/readline/include"
 fi
 
 export HOMEBREW_NO_AUTO_UPDATE=1
