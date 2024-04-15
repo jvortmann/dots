@@ -20,12 +20,7 @@ swap-theme-from-to()
   gsed -i"" -E "s/$1/$2/" ~/.config/bat/config
   gsed -i"" -E "s/(--color=)$1/\1$2/" ~/.dots/zsh/conf/plugins/fzf.zsh
   gsed -i"" -E "s/(set background=)$1/\1$2/" ~/.config/nvim/conf/guioptions
-  if [[ $1 == "light" ]];
-  then
-    gsed -i"" -E "s/(light = )true/\1false/" ~/.dots/git/config
-  else
-    gsed -i"" -E "s/(light = )false/\1true/" ~/.dots/git/config
-  fi
+  gsed -i"" -E "s/$1( = true)/$2\1/" ~/.dots/git/config
 }
 
 swap-theme-refresh()
