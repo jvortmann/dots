@@ -48,7 +48,7 @@
 
 [delta]
   features = line-numbers decorations navigate
-  light = false
+  dark = true
   true-color = always
 
 [delta "decorations"]
