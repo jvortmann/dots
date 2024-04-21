@@ -9,7 +9,7 @@ disk: 30
 
 # Size of the memory in GiB to be allocated to the virtual machine.
 # Default: 2
-memory: 16
+memory: 32
 
 # Architecture of the virtual machine (x86_64, aarch64, host).
 # Default: host
@@ -153,7 +153,7 @@ cpuType: host
 # Default: []
 provision:
   - mode: system
-    script: sysctl -w vm.max_map_count=262144
+    script: sysctl -w vm.max_map_count=262144 -w kernel.shmmax=2147483648
 
 # Modify ~/.ssh/config automatically to include a SSH config for the virtual machine.
 # SSH config will still be generated in ~/.colima/ssh_config regardless.
