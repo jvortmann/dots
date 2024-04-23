@@ -2,12 +2,12 @@ echo ">> Setup of tools"
 
 tools='
 bat
-ctags
 colima
+ctags
 karabiner
 mise
-zsh
 tmux
+zsh
 '
 
 for tool in $tools; do
