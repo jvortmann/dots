@@ -4,6 +4,7 @@ tools='
 bat
 colima
 ctags
+fd
 karabiner
 mise
 tmux
