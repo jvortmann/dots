@@ -24,7 +24,7 @@ version_info() {
   local language_name=$1
   local version_from_mise=$(mise current $language_name 2>/dev/null)
   local version_from_tool_versions=$(grep "$language_name" "$PWD/.tool-versions" &> /dev/null | cut -d' ' -f2)
-  local version_from_language_version=$(ls -a "$PWD" | grep ".$language_name-version" | xargs cat &> /dev/null | cut -d'-' -f2)
+  local version_from_language_version=$(grep ".*" ".$language_name-version" 2> /dev/null)
 
   if [[ -n $version_from_mise ]]; then
     version_info_tag $language_name $version_from_mise
