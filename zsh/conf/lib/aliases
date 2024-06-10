@@ -42,7 +42,7 @@ alias iex="iex --erl \"-kernel shell_history enabled\""
 alias e=iex
 
 # ls
-alias ls='lsd'
+alias ls='eza --icons=auto'
 #alias ls="ls -G"
 alias l="ls"
 alias ll="ls -l"
