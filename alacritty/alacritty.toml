@@ -33,5 +33,3 @@ title = "Alacritty"
 padding = { x = 3, y = 3 }
 dynamic_padding = true
 decorations = "ButtonLess"
-opacity = 0.9
-blur = true
