@@ -24,6 +24,7 @@ alias cp="cp -v"
 # docker
 alias dcu="docker-compose up -d"
 alias dcd="docker-compose down"
+alias dcr="dcd && dcu"
 
 # git
 alias g=git
