@@ -3,8 +3,9 @@
 cpu: 6
 
 # Size of the disk in GiB to be allocated to the virtual machine.
-# NOTE: changing this has no effect after the virtual machine has been created.
-# Default: 60
+# NOTE: value can only be increased after virtual machine has been created.
+#
+# Default: 100
 disk: 60
 
 # Size of the memory in GiB to be allocated to the virtual machine.
@@ -12,10 +13,14 @@ disk: 60
 memory: 32
 
 # Architecture of the virtual machine (x86_64, aarch64, host).
+#
+# NOTE: value cannot be changed after virtual machine is created.
 # Default: host
 arch: host
 
 # Container runtime to be used (docker, containerd).
+#
+# NOTE: value cannot be changed after virtual machine is created.
 # Default: docker
 runtime: docker
 
@@ -73,6 +78,14 @@ network:
   dnsHosts:
     host.docker.internal: host.lima.internal
 
+  # Replicate host IP addresses in the VM. This enables port forwarding to specific
+  # host IP addresses.
+  #   e.g. `docker run --port 10.0.1.2:8080:8080 alpine` would only forward to the
+  #   specified IP address.
+  #
+  # Default: false
+  hostAddresses: false
+
 # ===================================================================== #
 # ADVANCED CONFIGURATION
 # ===================================================================== #
@@ -105,12 +118,17 @@ docker: {}
 #
 # vz is macOS virtualization framework and requires macOS 13
 #
+# NOTE: value cannot be changed after virtual machine is created.
 # Default: qemu
 vmType: vz
 
 # Utilise rosetta for amd64 emulation (requires m1 mac and vmType `vz`)
 # Default: false
 rosetta: false
+
+# Enable nested virtualization for the virtual machine (requires m3 mac and vmType `vz`)
+# Default: false
+nestedVirtualization: false
 
 # Volume mount driver for the virtual machine (virtiofs, 9p, sshfs).
 #
@@ -121,6 +139,7 @@ rosetta: false
 # sshfs is faster than 9p but the least reliable of the options (when there are lots
 # of concurrent reads or writes).
 #
+# NOTE: value cannot be changed after virtual machine is created.
 # Default: virtiofs (for vz), sshfs (for qemu)
 mountType: virtiofs
 
@@ -156,9 +175,15 @@ provision:
     script: sysctl -w vm.max_map_count=262144 -w kernel.shmmax=2147483648
 
 # Modify ~/.ssh/config automatically to include a SSH config for the virtual machine.
-# SSH config will still be generated in ~/.colima/ssh_config regardless.
+# SSH config will still be generated in $COLIMA_HOME/ssh_config regardless.
 # Default: true
 sshConfig: true
+
+# The port number for the SSH server for the virtual machine.
+# When set to 0, a random available port is used.
+#
+# Default: 0
+sshPort: 0
 
 # Configure volume mounts for the virtual machine.
 # Colima mounts user's home directory by default to provide a familiar
