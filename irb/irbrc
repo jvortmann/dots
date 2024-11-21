@@ -17,3 +17,5 @@ begin
   AmazingPrint.irb!
 rescue LoadError
 end
+
+def pbcopy(arg)= IO.popen('pbcopy', 'w') { _1.puts(arg) }
