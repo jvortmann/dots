@@ -84,7 +84,7 @@ network:
   #   specified IP address.
   #
   # Default: false
-  hostAddresses: false
+  hostAddresses: true
 
 # ===================================================================== #
 # ADVANCED CONFIGURATION
