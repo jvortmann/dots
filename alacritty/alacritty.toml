@@ -1,3 +1,4 @@
+[general]
 import = [
   "/Users/jv/.dots/alacritty/themes/solarized-dark.toml",
   "/Users/jv/.dots/alacritty/keybindings.toml"
