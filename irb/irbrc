@@ -2,7 +2,6 @@
 
 require 'rubygems'
 require 'pp'
-require 'irb/ext/save-history'
 require 'irb/completion'
 
 alias q exit
