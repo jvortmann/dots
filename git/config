@@ -87,6 +87,7 @@
   pl = pull --rebase --prune
   px = push
   r = rebase
+  rc = rebase --continue
   rbm = rebase main
   rebuild-branch = "!r() { git switch -c $3 && git rev-list -m --first-parent --no-merges $1~1..$2 --reverse | git cherry-pick --stdin; }; r"
   revert-pr = "!r() { git switch -c revert-$1 && git revert -m1 $2; }; r"
