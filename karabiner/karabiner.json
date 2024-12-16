@@ -25,6 +25,16 @@
           }
         ]
       },
+      "devices": [
+        {
+          "identifiers": {
+            "is_keyboard": true,
+            "product_id": 801,
+            "vendor_id": 76
+          },
+          "treat_as_built_in_keyboard": true
+        }
+      ],
       "name": "Default profile",
       "selected": true,
       "virtual_hid_keyboard": {
