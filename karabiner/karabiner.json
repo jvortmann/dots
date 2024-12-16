@@ -22,16 +22,6 @@
                 "type": "basic"
               }
             ]
-          },
-          {
-            "description": "Left control change to Fn when hold.",
-            "manipulators": [
-              {
-                "from": { "key_code": "left_control" },
-                "to": [{ "key_code": "fn" }],
-                "type": "basic"
-              }
-            ]
           }
         ]
       },
