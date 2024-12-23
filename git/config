@@ -47,6 +47,7 @@
   template = ~/.config/git/message
 
 [delta]
+  navigate = true
   features = line-numbers decorations navigate
   dark = true
   true-color = always
