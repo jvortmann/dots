@@ -1,0 +1,40 @@
+# vim ft=ghostty
+# Colors (Solarized Light)
+
+# Reference normal/bright colors
+# palette = 0/8 = black
+# palette = 1/9 = red
+# palette = 2/10 = green
+# palette = 3/11 = yellow
+# palette = 4/12 = blue
+# palette = 5/13 = magenta
+# palette = 6/14 = cyan
+# palette = 7/1 = white
+
+# Default colors
+background = #fdf6e3
+foreground = #586e75
+
+# Normal colors
+palette = "0=#073642"
+palette = "1=#dc322f"
+palette = "2=#859900"
+palette = "3=#b58900"
+palette = "4=#268bd2"
+palette = "5=#d33682"
+palette = "6=#2aa198"
+palette = "7=#eee8d5"
+
+# Bright colors
+palette = "8=#002b36"
+palette = "9=#cb4b16"
+palette = "10=#586e75"
+palette = "11=#657b83"
+palette = "12=#839496"
+palette = "13=#6c71c4"
+palette = "14=#93a1a1"
+palette = "15=#fdf6e3"
+
+cursor-color  = #586e75
+selection-foreground  = #fdf6e3
+selection-background  = #93a1a1

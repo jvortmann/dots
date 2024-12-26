@@ -15,6 +15,7 @@ swap-theme-to-light()
 swap-theme-from-to()
 {
   gsed -i"" -E "s/^(.*themes\/.*)-$1.toml/\1-$2.toml/" ~/.dots/alacritty/alacritty.toml
+  gsed -i"" -E "s/^(theme = .*)-$1$/\1-$2/" ~/.dots/ghostty/config
   gsed -i"" -E "s/$1/$2/" ~/.dots/tmux/theme.tmux
   gsed -i"" -E "s/(--color=)$1/\1$2/" ~/.dots/tmux/switch-popup.tmux
   gsed -i"" -E "s/$1/$2/" ~/.config/bat/config
@@ -33,7 +34,7 @@ swap-theme-refresh()
 
 swap-theme()
 {
-  if grep -q "themes\/.*-dark.toml" ~/.dots/alacritty/alacritty.toml;
+  if grep -q "theme = .*-dark" ~/.dots/ghostty/config;
   then
     swap-theme-to-light
   else

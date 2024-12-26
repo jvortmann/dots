@@ -1,0 +1,23 @@
+# vim ft=ghostty
+
+theme = solarized-dark
+
+# window configuration
+window-decoration = false
+window-save-state = always
+#window-padding-balance = true
+window-padding-color = extend-always
+window-padding-y = 0
+
+# mac os specific configuration
+macos-non-native-fullscreen = true
+fullscreen = true
+
+# general configuration
+copy-on-select = true
+
+# font configuration
+font-size = 18
+font-family = "FiraCode Nerd Font"
+font-style = Light
+
