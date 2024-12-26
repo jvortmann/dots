@@ -20,7 +20,10 @@ sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.serve
 spaces=($(defaults read com.apple.spaces | grep SpaceID -A3 | grep uuid | tail -n 9 | cut -f2 -d= | tr -d ' ;'))
 defaults delete com.apple.spaces "app-bindings"
 defaults write com.apple.spaces "app-bindings" -dict-add "com.dteoh.devdocs-macos" AllSpaces
+defaults write com.apple.spaces "app-bindings" -dict-add "com.anthropic.claudefordesktop" AllSpaces
+defaults write com.apple.spaces "app-bindings" -dict-add "com.openai.chat" AllSpaces
 defaults write com.apple.spaces "app-bindings" -dict-add "org.alacritty" "${spaces[0]}"
+defaults write com.apple.spaces "app-bindings" -dict-add "com.mitchellh.ghostty" "${spaces[0]}"
 defaults write com.apple.spaces "app-bindings" -dict-add "org.mozilla.firefoxdeveloperedition" "${spaces[1]}"
 defaults write com.apple.spaces "app-bindings" -dict-add "com.apple.safari" "${spaces[1]}"
 defaults write com.apple.spaces "app-bindings" -dict-add "com.linear" "${spaces[2]}"
@@ -31,8 +34,9 @@ defaults write com.apple.spaces "app-bindings" -dict-add "net.whatsapp.whatsapp"
 defaults write com.apple.spaces "app-bindings" -dict-add "ch.protonmail.desktop" "${spaces[4]}"
 defaults write com.apple.spaces "app-bindings" -dict-add "com.mimestream.mimestream" "${spaces[4]}"
 defaults write com.apple.spaces "app-bindings" -dict-add "com.apple.music" "${spaces[5]}"
+defaults write com.apple.spaces "app-bindings" -dict-add "io.readwise.read" "${spaces[6]}"
 defaults write com.apple.spaces "app-bindings" -dict-add "com.arobas-music.guitarpro8" "${spaces[6]}"
-defaults write com.apple.spaces "app-bindings" -dict-add "com.neuraldsp.archetypepetrucci" "${spaces[7]}"
+defaults write com.apple.spaces "app-bindings" -dict-add "com.neuraldsp.archetypepetruccix" "${spaces[7]}"
 defaults write com.apple.spaces "app-bindings" -dict-add "md.obsidian" "${spaces[7]}"
 defaults write com.apple.spaces "app-bindings" -dict-add "notion.id" "${spaces[7]}"
 defaults write com.apple.spaces "app-bindings" -dict-add "com.tinyspeck.slackmacgap" "${spaces[8]}"
