@@ -2,7 +2,8 @@
 echo; echo ">> Configuring Tmux"
 
 echo; echo ">> Setting symlinks for tmux configurations"
-ln -sfnv ~/.dots/tmux/tmux.conf ~/.tmux.conf
+mkdir -p ~/.config/tmux/
+ln -sfnv ~/.dots/tmux/tmux.conf ~/.config/tmux/tmux.conf
 
 echo "Cloning Tmux Plugin Manager to ~/.tmux/plugins"
 mkdir -pv ~/.tmux/plugins/
