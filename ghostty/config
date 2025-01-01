@@ -5,9 +5,8 @@ theme = solarized-dark
 # window configuration
 window-decoration = false
 window-save-state = always
-#window-padding-balance = true
+window-padding-balance = true
 window-padding-color = extend-always
-window-padding-y = 0
 
 # mac os specific configuration
 macos-non-native-fullscreen = true
@@ -20,4 +19,3 @@ copy-on-select = true
 font-size = 18
 font-family = "FiraCode Nerd Font"
 font-style = Light
-
