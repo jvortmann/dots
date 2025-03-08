@@ -47,7 +47,7 @@ defaults write com.apple.spaces "app-bindings" -dict-add "com.tinyspeck.slackmac
 #defaults -currentHost write -g com.apple.mouse.tapBehavior -bool true
 #defaults write -g com.apple.mouse.tapBehavior -bool true
 #defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
-#defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
+defaults write com.apple.AppleMultitouchTrackpad Clicking -int 1
 
 # swipe
 echo; echo ">> Configuring trackpad gestures"
