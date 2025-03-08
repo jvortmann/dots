@@ -130,6 +130,8 @@ defaults write com.apple.dock mru-spaces -bool false
 defaults write com.apple.dock magnification -bool false
 # Enable app expose
 defaults write com.apple.dock showAppExposeGestureEnabled -bool true
+# Disable click wallpaper to show desktop 0 → Only in Stage Manager, 1 → Always
+defaults write com.apple.WindowManager EnableStandardClickToShowDesktop -int 0
 
 # Enable highlight hover effect for the grid view of a stack
 defaults write com.apple.dock mouse-over-hilte-stack -bool true
