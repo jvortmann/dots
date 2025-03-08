@@ -60,6 +60,7 @@ brew 'universal-ctags', args: ["HEAD"]
 brew 'wader/homebrew-tap/fq'
 brew 'watch'
 brew 'wget'
+brew 'xh'
 brew 'xsv'
 brew 'yt-dlp'
 brew 'zlib'
