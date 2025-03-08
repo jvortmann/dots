@@ -91,7 +91,10 @@ defaults write com.apple.universalaccess HIDScrollZoomModifierMask -int 262144
 # set background lighting properly
 defaults write com.apple.BezelServices kDim -bool true
 defaults write com.apple.BezelServices kDimTime -int 300
-
+# Enable Ctrl+{number} to switch to corresponding space
+for i in {1..9}; do
+  defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add $((118 + i)) "<dict><key>enabled</key><true/></dict>"
+done
 
 # Use proper units
 echo; echo ">> Configuring measurement units"
