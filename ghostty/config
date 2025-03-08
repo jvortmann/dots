@@ -6,7 +6,6 @@ theme = solarized-dark
 window-decoration = false
 window-save-state = always
 window-padding-balance = true
-window-padding-color = extend-always
 
 # mac os specific configuration
 macos-non-native-fullscreen = true
