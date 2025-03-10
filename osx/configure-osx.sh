@@ -139,6 +139,13 @@ defaults write com.apple.dock mouse-over-hilite-stack -bool true
 defaults write com.apple.dock tilesize -int 43
 # Enable spring loading for all Dock items
 defaults write com.apple.dock enable-spring-load-actions-on-all-items -bool true
+# Disable recent apps
+defaults write com.apple.dock show-recents -bool false
+# Auto hide dock
+defaults write com.apple.dock autohide -bool true
+# Make auto hide animation faster
+defaults write com.apple.dock autohide-delay -int 0
+defaults write com.apple.dock autohide-time-modifier -float 0.25
 
 # require password after screen lock
 defaults write com.apple.screensaver askForPassword -int 1
