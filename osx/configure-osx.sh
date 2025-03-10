@@ -160,7 +160,7 @@ defaults write -g AppleInterfaceStyle -string 'Dark'
 defaults write -g NSWindowResizeTime -float 0.001
 # decrease delay on spring loaded folder to the second level
 defaults write -g com.apple.springing.enabled -bool true
-defaults write -g com.apple.springing.delay -float 0.5
+defaults write -g com.apple.springing.delay -float 0.2
 
 # Show connected servers on desktop
 # External Hard Drive
