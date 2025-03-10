@@ -134,7 +134,7 @@ defaults write com.apple.dock showAppExposeGestureEnabled -bool true
 defaults write com.apple.WindowManager EnableStandardClickToShowDesktop -int 0
 
 # Enable highlight hover effect for the grid view of a stack
-defaults write com.apple.dock mouse-over-hilte-stack -bool true
+defaults write com.apple.dock mouse-over-hilite-stack -bool true
 # Set the icon size of Dock items
 defaults write com.apple.dock tilesize -int 43
 # Enable spring loading for all Dock items
