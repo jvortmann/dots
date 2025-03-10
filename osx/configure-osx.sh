@@ -180,6 +180,11 @@ defaults write com.apple.finder EmptyTrashSecurely -bool true
 # Finder windows
 defaults write com.apple.finder ShowStatusBar -bool false
 defaults write com.apple.finder ShowPathbar -bool true
+# Show folders first
+defaults write com.apple.finder "_FXSortFoldersFirst" -bool "true"
+defaults write com.apple.finder "_FXSortFoldersFirstOnDesktop" -bool "true"
+# search current folder by default
+defaults write com.apple.finder "FXDefaultSearchScope" -string "SCcf"
 # Enable AirDrop over Ethernet and on unsupported Macs running Lion
 defaults write com.apple.NetworkBrowser BrowseAllInterfaces -bool true
 
