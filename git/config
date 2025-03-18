@@ -68,7 +68,7 @@
   alias = !git config --list | grep 'alias\\.' | sed 's/alias\\.\\([^=]*\\)=\\(.*\\)/\\1\\\t=> \\2/' | sort
   amend = !git log -n 1 --pretty=tformat:%s%n%n%b | git commit -F - --amend
   b = branch --format='%(align:1,middle)%(color: white)%(HEAD)%(end) %(if)%(upstream)%(then)%(color:green)%(refname:short)%(else)%(if:notequals="refs/heads")%(refname:rstrip=-2)%(then)%(color:cyan)%(refname:lstrip=2)%(else)%(color:yellow)%(refname:lstrip=2) %(color:red)[no upstream]%(end)%(end)%(if)%(symref)%(then)%(color: reset) -> %(symref)%(end) %(color:yellow)%(upstream:track)'
-  bdg = !git b | rg gone | xargs git branch -D
+  bdg = !git b | rg gone | cut -f3 -d' ' | xargs git branch -D
   bl = branch --format='%(align:1,middle)%(color: white)%(HEAD)%(end)%(color:yellow) %(objectname:short) %(align:18,left)%(color:blue)%(committername)%(end)%(align:15,middle)%(color:green)%(committerdate:short)%(end)%(if)%(upstream)%(then)%(color:green)%(refname:short)%(else)%(if:notequals="refs/heads")%(refname:rstrip=-2)%(then)%(color:cyan)%(refname:lstrip=2)%(else)%(color:yellow)%(refname:lstrip=2) %(color:red)[no upstream]%(end)%(end)%(if)%(symref)%(then)%(color: reset) -> %(symref)%(end) %(color:yellow)%(upstream:track)'
   bs = bisect
   cc = "!git code-changes"
