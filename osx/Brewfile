@@ -130,8 +130,9 @@ mas "Todoist", id: 585829637
 mas "Xcode", id: 497799835
 
 # Install fonts
-cask 'font-source-code-pro'
+cask 'font-commit-mono-nerd-font'
 cask 'font-fira-code'
-cask 'font-fira-mono'
 cask 'font-fira-code-nerd-font'
+cask 'font-fira-mono'
 cask 'font-fira-mono-nerd-font'
+cask 'font-source-code-pro'
