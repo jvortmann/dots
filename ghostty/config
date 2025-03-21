@@ -15,6 +15,6 @@ fullscreen = true
 copy-on-select = true
 
 # font configuration
-font-size = 18
+font-size = 16
 font-family = "FiraCode Nerd Font"
 font-style = Light
