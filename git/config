@@ -74,11 +74,19 @@
   cc = "!git code-changes"
   ccf = "!git cf | wc -l"
   cf = "!git ss | grep '^U.\\|^.U' --color"
+  ci = x --trailer="change:ci"
+  cnf = x --trailer="change:config"
   co = checkout
   code-changes = "!git log --format=format: --name-only | egrep -v '^$' | sort | uniq -c | sort -rg | head -10"
   cp = cherry-pick
   d = diff
+  deps = x --trailer="change:deps"
+  docs = x --trailer="change:docs"
   ds = diff --staged
+  f = feature
+  feat = feature
+  feature = x --trailer="change:feature"
+  fix = x --trailer="change:fix"
   ignore = "!i() { touch .gitignore && echo $1 >> .gitignore; }; i"
   l = log
   last = log -1 HEAD
@@ -92,6 +100,8 @@
   rbm = rebase main
   rc = rebase --continue
   rebuild-branch = "!r() { git switch -c $3 && git rev-list -m --first-parent --no-merges $1~1..$2 --reverse | git cherry-pick --stdin; }; r"
+  refact = refactor
+  refactor = x --trailer="change:refactor"
   revert-pr = "!r() { git switch -c revert-$1 && git revert -m1 $2; }; r"
   rt = restore
   s = show
@@ -101,7 +111,9 @@
   ss = status -s
   st = status
   stash = stash --all
+  style = x --trailer="change:style"
   sw = switch
+  test = x --trailer="change:test"
   u = unstage
   unstage = restore --staged
   up = !git m && git pl && git sw - && git rbm
