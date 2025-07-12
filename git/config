@@ -103,8 +103,8 @@
   stash = stash --all
   sw = switch
   u = unstage
-  up = !git m && git pl && git sw - && git rbm
   unstage = restore --staged
+  up = !git m && git pl && git sw - && git rbm
   w = log --name-status #short whatchanged
   x  = commit
   xa = x -a
