@@ -166,3 +166,13 @@
 
 [fetch]
   writeCommitGraph = true
+
+[trailer "work-item"]
+  key = Work-item-id
+  ifexists = replace
+  where = start
+
+[trailer "change"]
+  key = Change-type
+  ifexists = replace
+  where = start
