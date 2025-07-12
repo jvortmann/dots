@@ -107,6 +107,24 @@
   up = !git m && git pl && git sw - && git rbm
   w = log --name-status #short whatchanged
   x  = commit
+  # Show commits for work item grouped by change-type
+  work-item-summary = "!f() { \
+    echo \"Commits for Work-item-id: $1 grouped by Change-type:\"; \
+    echo \"================================================================\"; \
+    \
+    for type in feature fix refactor docs style test ci deps config chore; do \
+      commits=$(git log --grep=\"Work-item-id: $1\" --grep=\"Change-type: $type\" --all-match --format=\"%h %s\" 2>/dev/null); \
+      if [ -n \"$commits\" ]; then \
+        echo; \
+        echo \"[$type]\"; \
+        echo \"$commits\"; \
+      fi; \
+    done; \
+  }; f"
+  wis = work-item-summary
+  # List work item with change-type
+  work-item-list = "!f() { git log --grep=\"Work-item-id: $1\" --format=\"%C(yellow)%h%C(reset) %s %C(green)[%(trailers:key=Change-type,valueonly,separator=)]%C(reset)\"; }; f"
+  wil = work-item-list
   xa = x -a
   xc = x -F .git/COMMIT_EDITMSG --cleanup=strip
   xcn = xc -F .git/COMMIT_EDITMSG --cleanup=strip -n
