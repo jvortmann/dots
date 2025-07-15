@@ -100,8 +100,9 @@
   rbm = rebase main
   rc = rebase --continue
   rebuild-branch = "!r() { git switch -c $3 && git rev-list -m --first-parent --no-merges $1~1..$2 --reverse | git cherry-pick --stdin; }; r"
-  refact = refactor
   refactor = x --trailer="change:refactor"
+  refact = refactor
+  rf = refactor
   revert-pr = "!r() { git switch -c revert-$1 && git revert -m1 $2; }; r"
   rt = restore
   s = show
