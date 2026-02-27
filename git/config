@@ -95,12 +95,12 @@
   lg = "!f() { git log --color=always --graph --date=relative -100 --pretty=format:'%C(yellow)%h§%Cblue%aN§%Cgreen%ad§%Creset%s%Cred%d%Creset' \"$@\" | column -t -s\"§\" 2>/dev/null | less -RXF; }; f"
   llg = "!f() { git log --color=always --graph --date=relative -100 --pretty=format:'%C(yellow)%h§%Cblue%aN§%Cgreen%ad§%C(yellow)[%(trailers:valueonly=true,separator=|,key=Work-item-id,key=Change-type,key=PR-id,key=PR)]§%Creset%s %Cred%d%Creset' \"$@\" | column -t -s\"§\" 2>/dev/null | less -RXF; }; f"
   ls = log --stat
-  m = switch main
+  m = !git switch main 2>/dev/null || git switch develop
   pf = push --force-with-lease --force-if-includes
   pl = pull --rebase --prune
   px = push
   r = rebase
-  rbm = rebase main
+  rbm = !git rebase main 2>/dev/null || git rebase develop
   rc = rebase --continue
   rebuild-branch = "!r() { git switch -c $3 && git rev-list -m --first-parent --no-merges $1~1..$2 --reverse | git cherry-pick --stdin; }; r"
   refactor = x --trailer="change:refactor"
