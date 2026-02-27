@@ -37,3 +37,22 @@ version_info() {
 version_info_tag() {
   echo "[$1:$2]"
 }
+
+tool_color() {
+  local tool=$1
+
+  case $tool in
+    clojure) echo "$ORANGE" ;;
+    deno)    echo "$GREEN" ;;
+    elixir)  echo "$PURPLE" ;;
+    erlang)  echo "$MAGENTA" ;;
+    go)      echo "$LIGHT_BLUE" ;;
+    java)    echo "$BROWN" ;;
+    lua)     echo "$DEEP_PURPLE" ;;
+    node)    echo "$HI_YELLOW" ;;
+    python)  echo "$HI_BLUE" ;;
+    ruby)    echo "$RED" ;;
+    rust)    echo "$LIGHT_BROWN" ;;
+    *)       echo "" ;;
+  esac
+}
