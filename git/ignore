@@ -43,3 +43,8 @@ zsh/completions/*.ignore
 
 # irb
 .irb_history
+
+**/.claude/settings.local.json
+
+# fd
+.fdignore
