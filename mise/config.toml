@@ -3,6 +3,10 @@ go = "latest"
 rust = "latest"
 ruby = "latest"
 node = "latest"
+elixir = "latest"
+erlang = "latest"
+python = "latest"
 
 [settings]
 idiomatic_version_file_enable_tools = ["elixir", "go", "java", "node", "python", "ruby", "terraform", "yarn"]
+activate_aggressive = true
