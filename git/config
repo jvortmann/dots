@@ -83,6 +83,8 @@
   cp = cherry-pick
   d = diff
   deps = x --trailer="change:deps"
+  default-branch="!git symbolic-ref refs/remotes/origin/HEAD | xargs basename"
+  db = default-branch
   docs = x --trailer="change:docs"
   ds = diff --staged
   f = feature
