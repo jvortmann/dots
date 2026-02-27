@@ -1,1 +1,4 @@
 !tmp/**.*
+**/node_modules/**/*
+.git/
+*.keep
