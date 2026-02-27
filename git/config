@@ -130,12 +130,12 @@
     echo \"Commits for Work-item-id: $1 grouped by Change-type:\"; \
     echo \"================================================================\"; \
     \
-    for type in feature fix refactor docs style test ci deps config chore; do \
+    for type in pr-merge feature fix refactor docs style test ci deps config chore; do \
       commits=$(git log --grep=\"Work-item-id: $1\" --grep=\"Change-type: $type\" --all-match --format=\"%h %s\" 2>/dev/null); \
       if [ -n \"$commits\" ]; then \
-        echo; \
         echo \"[$type]\"; \
         echo \"$commits\"; \
+        echo; \
       fi; \
     done; \
   }; f"
