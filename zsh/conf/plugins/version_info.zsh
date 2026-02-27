@@ -8,7 +8,7 @@ language_info() {
   local tool version
 
   while read -r tool version; do
-    result+="$(colorize_tool $tool $version)"
+    result+="$(format_version $tool $version)"
   done <<< "$tools"
 
   echo "$result"
@@ -37,7 +37,7 @@ active_tools() {
   fi
 }
 
-colorize_tool() {
+format_version() {
   local tool=$1
   local version=$2
   local color=$(tool_color $tool)
