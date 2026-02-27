@@ -38,6 +38,29 @@ version_info_tag() {
   echo "[$1:$2]"
 }
 
+active_tools() {
+  if command -v mise &> /dev/null; then
+    local all_tools=$(mise ls --current 2>/dev/null)
+    local local_tools=$(grep -v ".config/mise/config.toml" <<< "$all_tools" | awk '{print $1, $2}')
+
+    if [[ -n $local_tools ]]; then
+      echo "$local_tools"
+    else
+      awk '{print $1, $2}' <<< "$all_tools"
+    fi
+  elif [[ -f "$PWD/.tool-versions" ]]; then
+    awk '{print $1, $2}' "$PWD/.tool-versions"
+  else
+    local tool version
+    for tool in clojure deno elixir erlang go java lua node python ruby rust; do
+      if [[ -f "$PWD/.${tool}-version" ]]; then
+        version=$(< "$PWD/.${tool}-version")
+        [[ -n $version ]] && echo "$tool $version"
+      fi
+    done
+  fi
+}
+
 colorize_tool() {
   local tool=$1
   local version=$2
