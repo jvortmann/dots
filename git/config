@@ -71,10 +71,12 @@
   bdg = !git b | rg gone | cut -f3 -d' ' | xargs git branch -D
   bl = branch --format='%(align:1,middle)%(color: white)%(HEAD)%(end)%(color:yellow) %(objectname:short) %(align:18,left)%(color:blue)%(committername)%(end)%(align:15,middle)%(color:green)%(committerdate:short)%(end)%(if)%(upstream)%(then)%(color:green)%(refname:short)%(else)%(if:notequals="refs/heads")%(refname:rstrip=-2)%(then)%(color:cyan)%(refname:lstrip=2)%(else)%(color:yellow)%(refname:lstrip=2) %(color:red)[no upstream]%(end)%(end)%(if)%(symref)%(then)%(color: reset) -> %(symref)%(end) %(color:yellow)%(upstream:track)'
   bs = bisect
+  bug = fix
   cc = "!git code-changes"
   ccf = "!git cf | wc -l"
   cf = "!git ss | grep '^U.\\|^.U' --color"
   ci = x --trailer="change:ci"
+  conf = x --trailer="change:config"
   cnf = x --trailer="change:config"
   co = checkout
   code-changes = "!git log --format=format: --name-only | egrep -v '^$' | sort | uniq -c | sort -rg | head -10"
