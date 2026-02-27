@@ -38,6 +38,14 @@ version_info_tag() {
   echo "[$1:$2]"
 }
 
+colorize_tool() {
+  local tool=$1
+  local version=$2
+  local color=$(tool_color $tool)
+
+  echo "${color}[${tool}:${version}]${RESET}"
+}
+
 tool_color() {
   local tool=$1
 
