@@ -109,6 +109,7 @@
   revert-pr = "!r() { git switch -c revert-$1 && git revert -m1 $2; }; r"
   rt = restore
   s = show
+  sb = "!s() { git b --color=always | rg -v \"^\\*\" | fzf --ansi | cut -f3 -d' ' | xargs git switch ; }; s"
   sf = "!s() { git show $1:$2 ; }; s"
   shame = "!s() { git blame $1 -p | grep 'author ' | cut -d' ' -f2-10 | sort | uniq -c | sort | tail -n1 | cut -c6-30 ; }; s"
   shout = "!s() { git shame $1 | say; }; s"
