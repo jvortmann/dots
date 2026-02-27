@@ -92,7 +92,8 @@
   ignore = "!i() { touch .gitignore && echo $1 >> .gitignore; }; i"
   l = log
   last = log -1 HEAD
-  lg = log --graph --date=auto:relative --pretty=format:'%C(yellow)%h %Cblue%aN %Cgreen%ad %Creset%s%Cred%d%Creset'
+  lg = "!f() { git log --color=always --graph --date=relative -100 --pretty=format:'%C(yellow)%h§%Cblue%aN§%Cgreen%ad§%Creset%s%Cred%d%Creset' \"$@\" | column -t -s\"§\" 2>/dev/null | less -RXF; }; f"
+  llg = "!f() { git log --color=always --graph --date=relative -100 --pretty=format:'%C(yellow)%h§%Cblue%aN§%Cgreen%ad§%C(yellow)[%(trailers:valueonly=true,separator=|,key=Work-item-id,key=Change-type,key=PR-id,key=PR)]§%Creset%s %Cred%d%Creset' \"$@\" | column -t -s\"§\" 2>/dev/null | less -RXF; }; f"
   ls = log --stat
   m = switch main
   pf = push --force-with-lease
