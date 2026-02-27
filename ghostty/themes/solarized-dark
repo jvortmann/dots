@@ -35,6 +35,7 @@ palette = "13=#6c71c4"
 palette = "14=#93a1a1"
 palette = "15=#fdf6e3"
 
-cursor-color  = #839496
-selection-foreground  = #002b36
-selection-background  = #93a1a1
+cursor-color = #839496
+cursor-text = #002b36
+selection-foreground = #002b36
+selection-background = #93a1a1
