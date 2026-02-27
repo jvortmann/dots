@@ -2,11 +2,11 @@ echo ">> Setup of tools"
 
 tools='
 bat
-colima
 ctags
 fd
 karabiner
 mise
+orbstack
 tmux
 zsh
 '
