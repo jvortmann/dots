@@ -240,3 +240,42 @@ function test_bypass_accepts_amend_commit_message() {
   assert_successful_code
   assert_equals "" "$output"
 }
+
+# ------------------------------------------------------------------------------
+# Combined
+# ------------------------------------------------------------------------------
+
+function test_combined_reports_all_failing_checks_at_once() {
+  if [[ "$ASPELL_AVAILABLE" != "true" ]]; then
+    bashunit::skip "aspell not available" && return
+  fi
+
+  local output
+  output=$(run_hook "adding the speling of a very long message that is definitely going to exceed the limit.")
+
+  assert_general_error
+  assert_contains "- size" "$output"
+  assert_contains "- title format" "$output"
+  assert_contains "- spelling" "$output"
+  assert_contains "87 chars" "$output"
+  assert_contains "speling" "$output"
+}
+
+function test_combined_shows_pass_for_checks_that_succeed() {
+  if [[ "$ASPELL_AVAILABLE" != "true" ]]; then
+    bashunit::skip "aspell not available" && return
+  fi
+
+  local output
+  output=$(run_hook "Fix the speling of words")
+
+  assert_general_error
+  assert_contains "- size" "$output"
+  assert_contains "- title format" "$output"
+  assert_contains "- spelling" "$output"
+
+  # size and format pass, only spelling fails
+  assert_matches "size.*\[PASS\]" "$output"
+  assert_matches "title format.*\[PASS\]" "$output"
+  assert_matches "spelling.*\[FAIL\]" "$output"
+}
