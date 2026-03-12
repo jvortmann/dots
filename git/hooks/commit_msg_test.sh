@@ -2,12 +2,22 @@
 
 HOOK="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/commit-msg"
 
+ASPELL_AVAILABLE=$(command -v aspell > /dev/null 2>&1 && echo "true" || echo "false")
+
 run_hook() {
   local msg_file
   msg_file=$(bashunit::temp_file "commit_msg")
-  echo "$1" > "$msg_file"
+  printf '%s' "$1" > "$msg_file"
 
   bash "$HOOK" "$msg_file" 2>&1
+}
+
+run_hook_without_aspell() {
+  local msg_file
+  msg_file=$(bashunit::temp_file "commit_msg")
+  printf '%s' "$1" > "$msg_file"
+
+  PATH="/usr/bin:/bin" bash "$HOOK" "$msg_file" 2>&1
 }
 
 # ------------------------------------------------------------------------------
@@ -119,4 +129,70 @@ function test_size_rejects_title_at_73_characters() {
   assert_contains "[FAIL]" "$output"
   assert_contains "73 chars" "$output"
   assert_contains "limit is 72" "$output"
+}
+
+# ------------------------------------------------------------------------------
+# Spelling
+# ------------------------------------------------------------------------------
+
+function test_spelling_rejects_misspelled_word_in_title() {
+  if [[ "$ASPELL_AVAILABLE" != "true" ]]; then
+    bashunit::skip "aspell not available" && return
+  fi
+
+  local output
+  output=$(run_hook "Fix the speling of words")
+
+  assert_general_error
+  assert_contains "spelling" "$output"
+  assert_contains "[FAIL]" "$output"
+  assert_contains "speling" "$output"
+}
+
+function test_spelling_rejects_misspelled_word_in_body_before_separator() {
+  if [[ "$ASPELL_AVAILABLE" != "true" ]]; then
+    bashunit::skip "aspell not available" && return
+  fi
+
+  local message="Fix the words
+
+This has a speling error
+---
+Change-type: fix"
+
+  local output
+  output=$(run_hook "$message")
+
+  assert_general_error
+  assert_contains "spelling" "$output"
+  assert_contains "[FAIL]" "$output"
+  assert_contains "speling" "$output"
+}
+
+function test_spelling_ignores_misspelled_word_in_trailers_after_separator() {
+  if [[ "$ASPELL_AVAILABLE" != "true" ]]; then
+    bashunit::skip "aspell not available" && return
+  fi
+
+  local message="Fix the words
+
+This has no error
+---
+Change-type: speling"
+
+  local output
+  output=$(run_hook "$message")
+
+  assert_successful_code
+  assert_equals "" "$output"
+}
+
+function test_spelling_shows_not_available_when_aspell_is_missing() {
+  local output
+  output=$(run_hook_without_aspell "fix the words")
+
+  assert_general_error
+  assert_contains "spelling" "$output"
+  assert_contains "[NOT AVAILABLE]" "$output"
+  assert_contains "Install aspell" "$output"
 }
