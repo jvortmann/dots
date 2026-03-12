@@ -13,7 +13,7 @@ colorize() {
 
 # Comment stripping
 strip_comments() {
-  sed '/^#/d' "$1"
+  git stripspace --strip-comments < "$1"
 }
 
 # Message parsing
