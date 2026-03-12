@@ -182,7 +182,7 @@ This has no error
 
 ---
 
-Change-type: speling"
+See-also: speling"
 
   local output
   output=$(run_hook "$message")
@@ -200,7 +200,7 @@ function test_spelling_ignores_trailers_without_separator() {
 
 This has no error
 
-Change-type: speling"
+See-also: speling"
 
   local output
   output=$(run_hook "$message")
@@ -324,4 +324,54 @@ function test_combined_shows_pass_for_checks_that_succeed() {
   assert_matches "size.*\[PASS\]" "$output"
   assert_matches "title format.*\[PASS\]" "$output"
   assert_matches "spelling.*\[FAIL\]" "$output"
+}
+
+# ------------------------------------------------------------------------------
+# Trailers
+# ------------------------------------------------------------------------------
+
+function test_trailers_accepts_valid_change_type() {
+  local message="Fix the words
+
+Change-type: fix"
+
+  local output
+  output=$(run_hook "$message")
+
+  assert_successful_code
+  assert_equals "" "$output"
+}
+
+function test_trailers_rejects_invalid_change_type() {
+  local message="Fix the words
+
+Change-type: invalid"
+
+  local output
+  output=$(run_hook "$message")
+
+  assert_general_error
+  assert_contains "change-type" "$output"
+  assert_contains "[FAIL]" "$output"
+  assert_contains "invalid" "$output"
+}
+
+function test_trailers_accepts_message_without_change_type() {
+  local message="Fix the words
+
+Work-item-id: AUD-1234"
+
+  local output
+  output=$(run_hook "$message")
+
+  assert_successful_code
+  assert_equals "" "$output"
+}
+
+function test_trailers_accepts_message_without_any_trailers() {
+  local output
+  output=$(run_hook "Fix the words")
+
+  assert_successful_code
+  assert_equals "" "$output"
 }

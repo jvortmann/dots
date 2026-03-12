@@ -42,6 +42,24 @@ extract_body() {
   fi
 }
 
+# Trailer validation
+extract_trailers() {
+  git interpret-trailers --parse --no-divider < "$1" 2>/dev/null
+}
+
+valid_change_types="feature|refactor|fix|docs|style|test|ci|deps|config|chore"
+
+validate_change_type() {
+  local trailers
+  trailers=$(extract_trailers "$1")
+  local change_type
+  change_type=$(echo "$trailers" | grep '^Change-type:' | head -1 | sed 's/^Change-type:[[:space:]]*//')
+
+  if [[ -n $change_type && ! $change_type =~ ^($valid_change_types)$ ]]; then
+    echo "$change_type"
+  fi
+}
+
 # Spelling
 spell_available() {
   command -v aspell
@@ -78,8 +96,9 @@ size=${#message_title}
 size_limit=72
 spelling_available=$(spell_available)
 spelling_errors=$(spell_check "$message")
+change_type_error=$(validate_change_type "$clean_file")
 
-if [[ ! $message_title =~ $git_generated && ($message_title =~ $prohibited_pattern || ! $message_title =~ $allowed_pattern || $size -gt $size_limit || $spelling_errors) ]]; then
+if [[ ! $message_title =~ $git_generated && ($message_title =~ $prohibited_pattern || ! $message_title =~ $allowed_pattern || $size -gt $size_limit || $spelling_errors || $change_type_error) ]]; then
   colorize yellow "[POLICY] Your message is not correct"
   echo
   echo "Check the CONTRIBUTING information."
@@ -134,6 +153,17 @@ if [[ ! $message_title =~ $git_generated && ($message_title =~ $prohibited_patte
     echo "Install aspell to enable spelling validation:"
     echo "brew install aspell"
     echo
+  fi
+
+  echo -n "- change-type: "
+  if [[ $change_type_error ]]; then
+    colorize red "[FAIL]"
+    echo
+    echo "'${change_type_error}' is not a valid Change-type."
+    echo "Allowed values: ${valid_change_types}"
+    echo
+  else
+    colorize green "[PASS]"
   fi
 
   exit 1
