@@ -148,8 +148,8 @@
   work-item-list = "!f() { git log --grep=\"Work-item-id: $1\" --format=\"%C(yellow)%h%C(reset) %s %C(green)[%(trailers:key=Change-type,valueonly,separator=)]%C(reset)\"; }; f"
   wil = work-item-list
   xa = x -a
-  xc = x -F .git/COMMIT_EDITMSG --cleanup=strip
-  xcn = xc -F .git/COMMIT_EDITMSG --cleanup=strip -n
+  xc = !git stripspace --strip-comments < $(git rev-parse --git-dir)/COMMIT_EDITMSG | git commit -F - --cleanup=strip
+  xcn = xc -n
   xm = x -m
 
 [push]
