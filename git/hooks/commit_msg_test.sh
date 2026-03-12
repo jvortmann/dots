@@ -157,7 +157,9 @@ function test_spelling_rejects_misspelled_word_in_body_before_separator() {
   local message="Fix the words
 
 This has a speling error
+
 ---
+
 Change-type: fix"
 
   local output
@@ -177,7 +179,27 @@ function test_spelling_ignores_misspelled_word_in_trailers_after_separator() {
   local message="Fix the words
 
 This has no error
+
 ---
+
+Change-type: speling"
+
+  local output
+  output=$(run_hook "$message")
+
+  assert_successful_code
+  assert_equals "" "$output"
+}
+
+function test_spelling_ignores_trailers_without_separator() {
+  if [[ "$ASPELL_AVAILABLE" != "true" ]]; then
+    bashunit::skip "aspell not available" && return
+  fi
+
+  local message="Fix the words
+
+This has no error
+
 Change-type: speling"
 
   local output

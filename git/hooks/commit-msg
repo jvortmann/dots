@@ -16,6 +16,32 @@ strip_comments() {
   sed '/^#/d' "$1"
 }
 
+# Message parsing
+trailer_count() {
+  git interpret-trailers --parse --no-divider < "$1" 2>/dev/null | grep -c '.' || true
+}
+
+extract_title() {
+  head -n1 "$1"
+}
+
+extract_body() {
+  local count
+  count=$(trailer_count "$1")
+
+  if [[ $count -gt 0 ]]; then
+    local total separator_lines
+    total=$(awk 'END{print NR}' "$1")
+    separator_lines=1
+    if grep -q '^---$' "$1"; then
+      separator_lines=3
+    fi
+    head -n $((total - count - separator_lines)) "$1"
+  else
+    cat "$1"
+  fi
+}
+
 # Spelling
 spell_available() {
   command -v aspell
@@ -46,8 +72,8 @@ clean_file=$(mktemp)
 strip_comments "$1" > "$clean_file"
 trap 'rm -f "$clean_file"' EXIT
 
-message=$(sed /---/q "$1")
-message_title=$(head -n1 "$1")
+message=$(extract_body "$clean_file")
+message_title=$(extract_title "$clean_file")
 size=${#message_title}
 size_limit=72
 spelling_available=$(spell_available)
