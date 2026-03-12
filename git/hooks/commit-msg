@@ -11,6 +11,11 @@ colorize() {
   fi
 }
 
+# Comment stripping
+strip_comments() {
+  sed '/^#/d' "$1"
+}
+
 # Spelling
 spell_available() {
   command -v aspell
@@ -35,6 +40,11 @@ prohibited_endings="(ing|ed)"
 prohibited_first_word="[[:alpha:]]+${prohibited_endings}[[:space:]]"
 single_word="[[:alpha:]]+$"
 prohibited_pattern="^(${prohibited_first_word}${anything_not_empty}|${single_word})"
+
+# Main
+clean_file=$(mktemp)
+strip_comments "$1" > "$clean_file"
+trap 'rm -f "$clean_file"' EXIT
 
 message=$(sed /---/q "$1")
 message_title=$(head -n1 "$1")

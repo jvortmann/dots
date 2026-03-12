@@ -187,6 +187,30 @@ Change-type: speling"
   assert_equals "" "$output"
 }
 
+function test_spelling_ignores_git_comment_lines() {
+  if [[ "$ASPELL_AVAILABLE" != "true" ]]; then
+    bashunit::skip "aspell not available" && return
+  fi
+
+  local message="Fix the words
+
+Work-item-id: AUD-2906
+Change-type: fix
+
+# Please enter the commit message for your changes.
+# On branch main
+#
+# Changes to be committed:
+#	modified: foo.sh
+# "
+
+  local output
+  output=$(run_hook "$message")
+
+  assert_successful_code
+  assert_equals "" "$output"
+}
+
 function test_spelling_shows_not_available_when_aspell_is_missing() {
   local output
   output=$(run_hook_without_aspell "fix the words")
