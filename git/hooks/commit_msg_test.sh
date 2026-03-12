@@ -196,3 +196,47 @@ function test_spelling_shows_not_available_when_aspell_is_missing() {
   assert_contains "[NOT AVAILABLE]" "$output"
   assert_contains "Install aspell" "$output"
 }
+
+# ------------------------------------------------------------------------------
+# Git-generated message bypass
+# ------------------------------------------------------------------------------
+
+function test_bypass_accepts_merge_commit_message() {
+  local output
+  output=$(run_hook "Merge branch 'feature' into main")
+
+  assert_successful_code
+  assert_equals "" "$output"
+}
+
+function test_bypass_accepts_revert_commit_message() {
+  local output
+  output=$(run_hook "Revert \"Add user search by email\"")
+
+  assert_successful_code
+  assert_equals "" "$output"
+}
+
+function test_bypass_accepts_reapply_commit_message() {
+  local output
+  output=$(run_hook "Reapply \"Add user search by email\"")
+
+  assert_successful_code
+  assert_equals "" "$output"
+}
+
+function test_bypass_accepts_fixup_commit_message() {
+  local output
+  output=$(run_hook "fixup! Add user search by email")
+
+  assert_successful_code
+  assert_equals "" "$output"
+}
+
+function test_bypass_accepts_amend_commit_message() {
+  local output
+  output=$(run_hook "amend! Add user search by email")
+
+  assert_successful_code
+  assert_equals "" "$output"
+}
