@@ -11,6 +11,25 @@ colorize() {
   fi
 }
 
+report_check() {
+  local label="$1" status="$2" details="$3"
+
+  echo -n "- ${label}: "
+  if [[ $status == "pass" ]]; then
+    colorize green "[PASS]"
+  elif [[ $status == "fail" ]]; then
+    colorize red "[FAIL]"
+    echo
+    echo "$details"
+    echo
+  elif [[ $status == "not_available" ]]; then
+    colorize yellow "[NOT AVAILABLE]"
+    echo
+    echo "$details"
+    echo
+  fi
+}
+
 # Comment stripping
 strip_comments() {
   git stripspace --strip-comments < "$1"
@@ -42,134 +61,143 @@ extract_body() {
   fi
 }
 
-# Trailer validation
 extract_trailers() {
   git interpret-trailers --parse --no-divider < "$1" 2>/dev/null
 }
 
-valid_change_types() {
-  local template
-  template=$(eval echo "$(git config --get commit.template)")
-  grep '^Change-type:' "$template" | sed 's/^Change-type:[[:space:]]*//'
+# Validation checks — each returns non-empty on error
+is_git_generated() {
+  local git_generated="^(Merge|Revert|Reapply|((fixup|amend)!)).+"
+  [[ $1 =~ $git_generated ]]
 }
 
-validate_change_type() {
+check_size() {
+  local title="$1" size_limit=72
+  local size=${#title}
+
+  if [[ $size -gt $size_limit ]]; then
+    echo "Your message title has ${size} chars and the limit is ${size_limit} chars.
+
+Additionally, it is possible to include a longer description of the
+problem/solution by opening the the editor (commit without -m or use -e)"
+  fi
+}
+
+check_format() {
+  local title="$1"
+  local capital_letter="[A-Z]"
+  local anything_not_empty=".+"
+  local not_full_stop="[^.]"
+  local allowed_pattern="^(${capital_letter}${anything_not_empty})${not_full_stop}$"
+  local prohibited_endings="(ing|ed)"
+  local prohibited_first_word="[[:alpha:]]+${prohibited_endings}[[:space:]]"
+  local single_word="[[:alpha:]]+$"
+  local prohibited_pattern="^(${prohibited_first_word}${anything_not_empty}|${single_word})"
+
+  if [[ $title =~ $prohibited_pattern || ! $title =~ $allowed_pattern ]]; then
+    echo "The title format is as follows:
+Imperative and capitalized (no -ing, -ed ending), short summary of changes (72 chars tops, no period at the end)
+
+Long reference: 'https://dev.to/cvortmann/what-makes-a-good-commit-message-181i'
+Short reference: 'https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html'
+
+Examples:
+Add user search by email
+Update Rails to 5.1
+Rename method"
+  fi
+}
+
+check_spelling() {
+  local message="$1"
+
+  if ! command -v aspell > /dev/null; then
+    echo "NOT_AVAILABLE"
+    return
+  fi
+
+  local errors
+  errors=$(echo "$message" | aspell list --ignore-case --add-wordlists=<(cat ~/.vim/spell/*))
+
+  if [[ -n $errors ]]; then
+    echo "$errors"
+  fi
+}
+
+check_change_type() {
+  local file="$1"
   local trailers
-  trailers=$(extract_trailers "$1")
+  trailers=$(extract_trailers "$file")
   local change_type
   change_type=$(echo "$trailers" | grep '^Change-type:' | head -1 | sed 's/^Change-type:[[:space:]]*//')
-  local allowed
-  allowed=$(valid_change_types)
 
-  if [[ -n $change_type && ! $change_type =~ ^($allowed)$ ]]; then
+  if [[ -z $change_type ]]; then
+    return
+  fi
+
+  local template
+  template=$(eval echo "$(git config --get commit.template)")
+  local allowed
+  allowed=$(grep '^Change-type:' "$template" | sed 's/^Change-type:[[:space:]]*//')
+
+  if [[ ! $change_type =~ ^($allowed)$ ]]; then
     echo "$change_type"
   fi
 }
-
-# Spelling
-spell_available() {
-  command -v aspell
-}
-
-spell_check() {
-  if [[ ! $message_title =~ $git_generated && $(spell_available) ]]; then
-    echo "$1" | aspell list --ignore-case --add-wordlists=<(cat ~/.vim/spell/*)
-  fi
-
-  echo ""
-}
-
-# Title format patterns
-capital_letter="[A-Z]"
-anything_not_empty=".+"
-not_full_stop="[^.]"
-git_generated="^(Merge|Revert|Reapply|((fixup|amend)!))${anything_not_empty}"
-allowed_pattern="^(${capital_letter}${anything_not_empty})${not_full_stop}$"
-
-prohibited_endings="(ing|ed)"
-prohibited_first_word="[[:alpha:]]+${prohibited_endings}[[:space:]]"
-single_word="[[:alpha:]]+$"
-prohibited_pattern="^(${prohibited_first_word}${anything_not_empty}|${single_word})"
 
 # Main
 clean_file=$(mktemp)
 strip_comments "$1" > "$clean_file"
 trap 'rm -f "$clean_file"' EXIT
 
-message=$(extract_body "$clean_file")
 message_title=$(extract_title "$clean_file")
-size=${#message_title}
-size_limit=72
-spelling_available=$(spell_available)
-spelling_errors=$(spell_check "$message")
-change_type_error=$(validate_change_type "$clean_file")
 
-if [[ ! $message_title =~ $git_generated && ($message_title =~ $prohibited_pattern || ! $message_title =~ $allowed_pattern || $size -gt $size_limit || $spelling_errors || $change_type_error) ]]; then
+if is_git_generated "$message_title"; then
+  exit 0
+fi
+
+message=$(extract_body "$clean_file")
+size_error=$(check_size "$message_title")
+format_error=$(check_format "$message_title")
+spelling_result=$(check_spelling "$message")
+change_type_error=$(check_change_type "$clean_file")
+
+if [[ $size_error || $format_error || $spelling_result || $change_type_error ]]; then
   colorize yellow "[POLICY] Your message is not correct"
   echo
   echo "Check the CONTRIBUTING information."
   echo
   colorize yellow "[CHECKS]"
-  echo -n "- size: "
-  if [[ $size -gt $size_limit ]]; then
-    colorize red "[FAIL]"
-    echo
-    echo "Your message title has ${size} chars and the limit is ${size_limit} chars."
-    echo
-    echo "Additionally, it is possible to include a longer description of the"
-    echo "problem/solution by opening the the editor (commit without -m or use -e)"
-    echo
+
+  if [[ $size_error ]]; then
+    report_check "size" "fail" "$size_error"
   else
-    colorize green "[PASS]"
+    report_check "size" "pass"
   fi
 
-  echo -n "- title format: "
-  if [[ $message_title =~ $prohibited_pattern || ! $message_title =~ $allowed_pattern ]]; then
-    colorize red "[FAIL]"
-    echo
-    echo "The title format is as follows:";
-    echo "Imperative and capitalized (no -ing, -ed ending), short summary of changes (72 chars tops, no period at the end)"
-    echo
-    echo "Long reference: 'https://dev.to/cvortmann/what-makes-a-good-commit-message-181i'"
-    echo "Short reference: 'https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html'"
-    echo
-    echo "Examples:"
-    echo "Add user search by email"
-    echo "Update Rails to 5.1"
-    echo "Rename method"
-    echo
+  if [[ $format_error ]]; then
+    report_check "title format" "fail" "$format_error"
   else
-    colorize green "[PASS]"
+    report_check "title format" "pass"
   fi
 
-  echo -n "- spelling: "
-  if [[ $spelling_available ]]; then
-    if [[ $spelling_errors ]]; then
-      colorize red "[FAIL]"
-      echo
-      echo "Your message title has the following spelling errors:"
-      echo "$spelling_errors"
-      echo
-    else
-      colorize green "[PASS]"
-    fi
+  if [[ $spelling_result == "NOT_AVAILABLE" ]]; then
+    report_check "spelling" "not_available" "Install aspell to enable spelling validation:
+brew install aspell"
+  elif [[ $spelling_result ]]; then
+    report_check "spelling" "fail" "Your message title has the following spelling errors:
+${spelling_result}"
   else
-    colorize yellow "[NOT AVAILABLE]"
-    echo
-    echo "Install aspell to enable spelling validation:"
-    echo "brew install aspell"
-    echo
+    report_check "spelling" "pass"
   fi
 
-  echo -n "- change-type: "
   if [[ $change_type_error ]]; then
-    colorize red "[FAIL]"
-    echo
-    echo "'${change_type_error}' is not a valid Change-type."
-    echo "Allowed values: $(valid_change_types)"
-    echo
+    local allowed
+    allowed=$(grep '^Change-type:' "$(eval echo "$(git config --get commit.template)")" | sed 's/^Change-type:[[:space:]]*//')
+    report_check "change-type" "fail" "'${change_type_error}' is not a valid Change-type.
+Allowed values: ${allowed}"
   else
-    colorize green "[PASS]"
+    report_check "change-type" "pass"
   fi
 
   exit 1
