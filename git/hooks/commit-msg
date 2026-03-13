@@ -47,15 +47,21 @@ extract_trailers() {
   git interpret-trailers --parse --no-divider < "$1" 2>/dev/null
 }
 
-valid_change_types="feature|refactor|fix|docs|style|test|ci|deps|config|chore"
+valid_change_types() {
+  local template
+  template=$(eval echo "$(git config --get commit.template)")
+  grep '^Change-type:' "$template" | sed 's/^Change-type:[[:space:]]*//'
+}
 
 validate_change_type() {
   local trailers
   trailers=$(extract_trailers "$1")
   local change_type
   change_type=$(echo "$trailers" | grep '^Change-type:' | head -1 | sed 's/^Change-type:[[:space:]]*//')
+  local allowed
+  allowed=$(valid_change_types)
 
-  if [[ -n $change_type && ! $change_type =~ ^($valid_change_types)$ ]]; then
+  if [[ -n $change_type && ! $change_type =~ ^($allowed)$ ]]; then
     echo "$change_type"
   fi
 }
@@ -160,7 +166,7 @@ if [[ ! $message_title =~ $git_generated && ($message_title =~ $prohibited_patte
     colorize red "[FAIL]"
     echo
     echo "'${change_type_error}' is not a valid Change-type."
-    echo "Allowed values: ${valid_change_types}"
+    echo "Allowed values: $(valid_change_types)"
     echo
   else
     colorize green "[PASS]"
