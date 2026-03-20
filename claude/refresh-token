@@ -3,21 +3,24 @@
 #   sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.atrun.plist
 #
 # Usage:
-#   ./refresh-token           Check expiry, schedule refresh if needed
-#   ./refresh-token --force   Refresh immediately, then schedule next
+#   ./refresh-token               Check expiry, schedule refresh if needed
+#   ./refresh-token --force       Refresh immediately, then schedule next
+#   ./refresh-token --long-lived  Use `claude setup-token` and sync access tokens
 #   ./refresh-token --status      Show last runs and pending schedule
 #   ./refresh-token --unschedule  Cancel pending scheduled refresh
 #
 # Environment:
 #   CLAUDE_CODE_SECRET_NAME       (required) Keychain entry name
 #   CLAUDE_CODE_OAUTH_CLIENT_ID   (optional) Falls back to extracting from binary
-#   CLAUDE_TOKEN_SYNC_FILES       (optional) Space-separated files to sync tokens into
+#   CLAUDE_CODE_TOKEN_SYNC_FILES      (optional) Space-separated files to sync tokens into
+#   CLAUDE_CODE_TOKEN_SETTINGS_FILE   (optional) Shell file exporting CLAUDE_CODE_OAUTH_TOKEN
 set -euo pipefail
 
 OAUTH_URL="https://platform.claude.com/v1/oauth/token"
 OAUTH_SCOPES="user:profile user:inference user:sessions:claude_code user:mcp_servers user:file_upload"
-SECRET_NAME="${CLAUDE_CODE_SECRET_NAME:?CLAUDE_CODE_SECRET_NAME is not set}"
-SYNC_FILES="${CLAUDE_TOKEN_SYNC_FILES:-}"
+SECRET_NAME="${CLAUDE_CODE_SECRET_NAME:-}"
+SYNC_FILES="${CLAUDE_CODE_TOKEN_SYNC_FILES:-}"
+SETTINGS_FILE="${CLAUDE_CODE_TOKEN_SETTINGS_FILE:-}"
 SCRIPT_PATH="$(cd "$(dirname "$0")" && pwd)/$(basename "$0")"
 STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/claude-refresh"
 AT_JOB_FILE="$STATE_DIR/at-job-id"
@@ -31,6 +34,29 @@ log() {
   printf '%s\n' "$msg" >> "$LOG_FILE"
 }
 die() { log "ERROR: $1" >&2; exit 1; }
+
+show_help() {
+  cat <<EOF
+Usage:
+  ./refresh-token               Check expiry, schedule refresh if needed
+  ./refresh-token --force       Refresh immediately, then schedule next
+  ./refresh-token --long-lived  Use claude setup-token and sync access tokens
+  ./refresh-token --status      Show last runs and pending schedule
+  ./refresh-token --unschedule  Cancel pending scheduled refresh
+  ./refresh-token --help        Show this help text
+
+Environment:
+  CLAUDE_CODE_SECRET_NAME       Required keychain entry name
+  CLAUDE_CODE_OAUTH_CLIENT_ID   Optional; falls back to extracting from binary
+  CLAUDE_CODE_TOKEN_SYNC_FILES  Optional space-separated files to sync tokens into
+  CLAUDE_CODE_TOKEN_SETTINGS_FILE
+                                Optional shell file exporting CLAUDE_CODE_OAUTH_TOKEN
+EOF
+}
+
+require_secret_name() {
+  [ -n "$SECRET_NAME" ] || die "CLAUDE_CODE_SECRET_NAME is not set"
+}
 
 check_atrun() {
   local cache="$STATE_DIR/atrun-checked"
@@ -134,7 +160,7 @@ schedule_refresh() {
   env_vars="PATH='$PATH'"
   env_vars="$env_vars CLAUDE_CODE_SECRET_NAME='$SECRET_NAME'"
   [ -n "${CLAUDE_CODE_OAUTH_CLIENT_ID:-}" ] && env_vars="$env_vars CLAUDE_CODE_OAUTH_CLIENT_ID='$CLAUDE_CODE_OAUTH_CLIENT_ID'"
-  [ -n "$SYNC_FILES" ] && env_vars="$env_vars CLAUDE_TOKEN_SYNC_FILES='$SYNC_FILES'"
+  [ -n "$SYNC_FILES" ] && env_vars="$env_vars CLAUDE_CODE_TOKEN_SYNC_FILES='$SYNC_FILES'"
 
   local job_output
   job_output="$(echo "$env_vars $SCRIPT_PATH --force" | at -t "$schedule_posix" 2>&1)"
@@ -208,6 +234,80 @@ sync_file() {
 
   printf '%s\n' "$updated" > "$file"
   log "Synced $file"
+}
+
+sync_access_only() {
+  local file="$1" access="$2"
+  [ -f "$file" ] || return 0
+
+  local updated
+  updated="$(jq \
+    --arg a "$access" \
+    'walk(
+      if type == "object" then
+        (if has("access") then .access = $a else . end) |
+        (if has("accessToken") then .accessToken = $a else . end)
+      else .
+      end
+    )' "$file")" || die "Failed to update $file"
+
+  printf '%s\n' "$updated" > "$file"
+  log "Synced access token to $file"
+}
+
+update_settings_token() {
+  local file="$1" token="$2"
+  [ -n "$file" ] || die "CLAUDE_CODE_TOKEN_SETTINGS_FILE is required for --long-lived"
+  [ -f "$file" ] || die "Settings file not found: $file"
+
+  local temp_file found=false line
+  temp_file="$(mktemp)"
+
+  while IFS= read -r line || [ -n "$line" ]; do
+    if [ "$found" = false ] && [[ "$line" == export\ CLAUDE_CODE_OAUTH_TOKEN=* ]]; then
+      printf 'export CLAUDE_CODE_OAUTH_TOKEN="%s"\n' "$token" >> "$temp_file"
+      found=true
+    else
+      printf '%s\n' "$line" >> "$temp_file"
+    fi
+  done < "$file"
+
+  [ "$found" = true ] || {
+    rm -f "$temp_file"
+    die "CLAUDE_CODE_OAUTH_TOKEN export not found in $file"
+  }
+
+  mv "$temp_file" "$file"
+
+  log "Updated CLAUDE_CODE_OAUTH_TOKEN in $file"
+}
+
+extract_long_lived_token() {
+  local output="$1"
+  printf '%s' "$output" | rg -o 'sk-ant-oat01-[A-Za-z0-9_-]+' | head -1
+}
+
+setup_long_lived_token() {
+  log "Requesting long-lived token via claude setup-token..."
+
+  local output token
+  output="$(claude setup-token 2>&1)" || {
+    printf '%s\n' "$output" >&2
+    die "claude setup-token failed"
+  }
+
+  token="$(extract_long_lived_token "$output")"
+  [ -n "$token" ] || {
+    printf '%s\n' "$output" >&2
+    die "Could not extract token from claude setup-token output"
+  }
+
+  for file in $SYNC_FILES; do
+    sync_access_only "$file" "$token"
+  done
+
+  update_settings_token "$SETTINGS_FILE" "$token"
+  log "Long-lived token updated successfully"
 }
 
 do_refresh() {
@@ -288,6 +388,18 @@ show_status() {
 main() {
   mkdir -p "$STATE_DIR"
 
+  local mode="refresh"
+
+  if [ "${1:-}" = "--help" ] || [ "${1:-}" = "-h" ]; then
+    show_help
+    return
+  fi
+
+  if [ "${1:-}" = "--long-lived" ]; then
+    mode="long-lived"
+    shift
+  fi
+
   if [ "${1:-}" = "--status" ]; then
     show_status
     return
@@ -308,6 +420,14 @@ main() {
   if [ "${1:-}" = "--force" ]; then
     force=true
   fi
+
+  if [ "$mode" = "long-lived" ]; then
+    [ "$force" = false ] || die "--force cannot be combined with --long-lived"
+    setup_long_lived_token
+    return
+  fi
+
+  require_secret_name
 
   local client_id
   client_id="$(resolve_client_id)"
