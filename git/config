@@ -129,6 +129,8 @@
   w = log --name-status #short whatchanged
   wip = git commit -n -m "WIP"
   x  = commit
+  xe  = commit --template=
+  xp  = "!bash -c 'git commit --template=<(pbpaste)'"
   # Show commits for work item grouped by change-type
   work-item-summary = "!f() { \
     echo \"Commits for Work-item-id: $1 grouped by Change-type:\"; \
