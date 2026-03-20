@@ -1,0 +1,6 @@
+export DISABLE_AUTOUPDATER=1
+export CLAUDE_CODE_FORCE_REFRESH=1
+export CLAUDE_CONFIG_DIR="$XDG_RUNTIME_DIR/claude"
+export USE_BUILTIN_RIPGREP=0
+
+ln -sf /opt/homebrew/bin/claude $HOME/.local/bin/claude
