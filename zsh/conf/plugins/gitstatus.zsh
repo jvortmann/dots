@@ -71,6 +71,40 @@ git_status() {
   fi
 }
 
+# Emoji shown in place of the path when inside a linked git worktree, since
+# the worktree directory name only duplicates the branch shown in [ ].
+_GIT_WORKTREE_SYMBOL="🌱"
+
+# Path segment for the prompt. Inside a *linked* worktree, show the seedling
+# plus the main repository's name (the worktree root duplicates the branch
+# shown in [ ]); below the worktree root also append the current directory.
+# Otherwise fall back to the leaf directory.
+# A linked worktree is the one case where --git-dir and --git-common-dir differ.
+cwd_prompt_string() {
+  local dirs
+  dirs=("${(@f)$(git rev-parse --git-dir --git-common-dir --show-prefix 2> /dev/null)}")
+
+  # Resolve to absolute paths: git reports one relative and one absolute in
+  # subdirectories, which would otherwise look like a linked worktree.
+  local gitdir=${dirs[1]:A} common=${dirs[2]:A}
+
+  if [[ -n $dirs[1] && $gitdir != $common ]]; then
+    local repo
+    if [[ ${common:t} == .git ]]; then
+      repo=${common:h:t}
+    else
+      repo=${common:t:r}
+    fi
+    if [[ -n $dirs[3] ]]; then
+      echo "$_GIT_WORKTREE_SYMBOL ${repo//\%/%%} %1~"
+    else
+      echo "$_GIT_WORKTREE_SYMBOL ${repo//\%/%%}"
+    fi
+  else
+    echo "%1~"
+  fi
+}
+
 # If inside a Git repository, print its branch and state
 git_prompt_string() {
   local _GIT_BRANCH="$(git_branch)"

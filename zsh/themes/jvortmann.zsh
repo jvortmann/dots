@@ -20,12 +20,13 @@ elapsed_info() {
 update_prompt() {
   # left prompt
   _user_and_host="${BLUE}%n@%m${RESET}"
-  _cwd="${GREEN}%1~${RESET}"
 
   # display exitcode on the right when >0
   _return_code="%(0?..${RED}%?↵${RESET})"
 
-  PROMPT='${_user_and_host} ${_cwd} $(git_prompt_string) ∴ ${RESET}'
+  # cwd_prompt_string must be evaluated on every render (like git_prompt_string),
+  # so it is inlined in PROMPT rather than frozen into a variable here.
+  PROMPT='${_user_and_host} ${GREEN}$(cwd_prompt_string)${RESET} $(git_prompt_string) ∴ ${RESET}'
   RPROMPT='$(language_info)$(elapsed_info)$_return_code'
 }
 update_prompt
