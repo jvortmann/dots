@@ -61,6 +61,38 @@ alias m="make"
 alias gp="cd ~/prj"
 alias gc="cd ~/prj/current"
 
+# pi
+# Give each branch that starts with a work item id its own session, reopened on
+# every launch and created on the first one. Explicit session flags win.
+pi() {
+  local arg branch
+
+  # pi resolves subcommands from the first argument only, so anything that could
+  # be one runs untouched: that keeps subcommands added later working as well.
+  if (( $# > 0 )) && [[ $1 != [-@]* && $1 != *[[:space:]]* ]]; then
+    mise x node@latest -- pi "$@"
+    return
+  fi
+
+  for arg in "$@"; do
+    [[ $arg == -- ]] && break
+    case $arg in
+      --name|-n|--session|--session-id|--fork|--continue|-c|--resume|-r|--no-session)
+        mise x node@latest -- pi "$@"
+        return
+        ;;
+    esac
+  done
+
+  branch=$(git branch --show-current 2>/dev/null)
+
+  if [[ $branch =~ ^[A-Z][A-Z0-9]*-[0-9]+ ]]; then
+    mise x node@latest -- pi --session-id "$branch" --name "$branch" "$@"
+  else
+    mise x node@latest -- pi "$@"
+  fi
+}
+
 # rails
 alias r=rails
 
