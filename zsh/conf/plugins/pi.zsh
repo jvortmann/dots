@@ -1,0 +1,1 @@
+export PI_CODING_AGENT_DIR="$XDG_RUNTIME_DIR/pi"
