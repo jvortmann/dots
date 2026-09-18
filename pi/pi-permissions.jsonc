@@ -1,0 +1,83 @@
+{
+  "$schema": "./git/github.com/jvortmann/pi-permission-system/schemas/permissions.schema.json",
+  "defaultPolicy": {
+    "tools": "allow",
+    "bash": "ask",
+    "mcp": "ask",
+    "skills": "allow",
+    "special": "ask"
+  },
+  "tools": {
+    "read": "allow",
+    "grep": "allow",
+    "find": "allow",
+    "ls": "allow",
+    "edit": "allow",
+    "write": "allow",
+    "bash": "allow",
+    "mcp": "allow"
+  },
+  "bash": {
+    "git status*": "allow",
+    "git diff*": "allow",
+    "git log*": "allow",
+    "git show*": "allow",
+    "git branch*": "allow",
+    "git reflog*": "allow",
+    "git commit*": "deny",
+    "git reset*": "deny",
+    "git rebase*": "deny",
+    "git push --force*": "deny",
+    "git push -f*": "deny",
+    "git stash*": "deny",
+    "git checkout*": "deny",
+    "cat *": "allow",
+    "awk *": "allow",
+    "grep *": "allow",
+    "rg *": "allow",
+    "ls *": "allow",
+    "head *": "allow",
+    "tail *": "allow",
+    "wc *": "allow",
+    "find *": "allow",
+    "pwd": "allow",
+    "pwd *": "allow",
+    "echo *": "allow",
+    "which *": "allow",
+    "type *": "allow",
+    "mkdir -p *": "allow",
+    "pbcopy": "allow",
+    "pbcopy *": "allow",
+    "printf *": "allow",
+    "npm *": "allow",
+    "node *": "allow",
+    "npx *": "allow",
+    "sed *": "allow",
+    "make": "allow",
+    "make *": "allow",
+    "tmux *": "allow",
+    "jira *": "allow",
+    "gh *": "allow",
+    "rm -rf *": "deny",
+    "security dump-keychain*": "deny",
+    "security find-certificate*": "deny",
+    "security find-generic-password*": "deny",
+    "security find-identity*": "deny",
+    "security find-internet-password*": "deny",
+    "security find-key*": "deny"
+  },
+  "mcp": {
+    "mcp_status": "allow",
+    "mcp_list": "allow",
+    "mcp_search": "allow",
+    "mcp_describe": "allow",
+    "mcp_connect": "allow"
+  },
+  "skills": {
+    "*": "allow"
+  },
+  "special": {
+    "doom_loop": "deny",
+    "external_directory": "ask"
+  }
+}

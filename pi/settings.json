@@ -1,0 +1,70 @@
+{
+  "lastChangelogVersion": "0.85.1",
+  "defaultProvider": "anthropic",
+  "defaultModel": "claude-opus-5",
+  "defaultThinkingLevel": "xhigh",
+  "theme": "solarized-dark",
+  "sourceInfoStyle": "name-only",
+  "prompts": [
+    "prompts"
+  ],
+  "commands": [
+    "commands"
+  ],
+  "enabledModels": [
+    "anthropic/claude-fable-5-1",
+    "anthropic/claude-opus-5",
+    "anthropic/claude-sonnet-5",
+    "openai-codex/gpt-5.6-sol",
+    "openai-codex/gpt-5.6-terra",
+    "openai-codex/gpt-5.6-luna",
+    "anthropic-console/claude-fable-5-1",
+    "anthropic-console/claude-opus-5",
+    "anthropic-console/claude-sonnet-5"
+  ],
+  "packages": [
+    "npm:pi-mcp-adapter",
+    "npm:pi-fzf",
+    "git:git@github.com:jvortmann/pi-claude-commands",
+    "npm:pi-collapse-tools",
+    "npm:pi-markdown-preview",
+    "npm:@juanibiapina/pi-gob",
+    "git:github.com/ghoseb/pi-askuserquestion",
+    "git:github.com/jvortmann/anthropic-console-login",
+    "npm:@tintinweb/pi-subagents",
+    "npm:pi-permission-system",
+    "npm:@robhowley/pi-structured-return",
+    "npm:@tintinweb/pi-tasks",
+    "git:github.com/jvortmann/pi-image-preview@fix/resize-large-images-before-submission",
+    "git:github.com/jvortmann/pi-show-diffs@main"
+  ],
+  "compaction": {
+    "enabled": true,
+    "reserveTokens": 16384,
+    "keepRecentTokens": 20000
+  },
+  "retry": {
+    "enabled": true,
+    "maxRetries": 3,
+    "baseDelayMs": 2000
+  },
+  "transport": "sse",
+  "hideThinkingBlock": true,
+  "quietStartup": true,
+  "doubleEscapeAction": "none",
+  "treeFilterMode": "default",
+  "warnings": {
+    "anthropicExtraUsage": false
+  },
+  "enableInstallTelemetry": false,
+  "steeringMode": "one-at-a-time",
+  "followUpMode": "all",
+  "markdown": {
+    "mermaid": "streaming"
+  },
+  "tuiMode": "regular",
+  "terminal": {
+    "showTerminalProgress": true
+  },
+  "defaultProjectTrust": "ask"
+}
