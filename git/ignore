@@ -51,5 +51,17 @@ zsh/completions/*.ignore
 .wrangler
 
 # harnesses
-.pi
 **/.claude/settings.local.json
+.pi
+pi/settings*bak*
+pi/sessions/
+pi/cache/
+pi/fff/
+pi/npm/
+pi/git/
+pi/auth.json
+pi/mcp-cache.json
+pi/mcp-npx-cache.json
+pi/models-store.json
+pi/trust.json
+pi/prompts/primer/
