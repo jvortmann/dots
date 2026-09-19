@@ -1,25 +1,22 @@
-Summarize changes in around 50 characters or less
 
-[OPTIONAL BODY] More detailed explanatory text, if necessary. Wrap it
-to about 72 characters or so. In some contexts, the first line is
-treated as the subject of the commit and the rest of the text as
-the body. The blank line separating the summary from the body is
-critical (unless you omit the body entirely); various tools like
-`log`, `shortlog` and `rebase` can get confused if you run the
-two together.
 
-Explain the problem that this commit is solving. Focus on why you
-are making this change as opposed to how (the code explains that).
-Are there side effects or other unintuitive consequences of this
-change? Here's the place to explain them.
 
-Further paragraphs come after blank lines.
-
- - Bullet points are okay, too
- - Typically a hyphen or asterisk is used for the bullet, preceded
-   by a single space, with blank lines in between, but conventions
-   vary here
-
+# Write the title on the first line: imperative, capitalized, 50
+# characters or less, no period. The hook rejects anything over 72.
+#
+# The body goes after the blank line. Say why the change is needed and
+# what changes for users or the system. One paragraph, wrapped at 72.
+# A second one only when the first cannot hold it. No body at all when
+# the title says enough.
+#
+# Plain words, active voice, simple tenses. The code explains how, so
+# do not narrate the diff or list the files you touched.
+#
+# Bullets only for three or more independent facts, a hyphen and a
+# single space, blank lines between them.
+#
+# Delete the # to add a trailer. Trailers are one block, no blank
+# lines between them:
+#Refactoring: removeDeadCode
+#See-also: 6ed2658fb9c4a9e93e3216f32071c030f14d7d28
 Change-type: feature|refactor|fix|docs|style|test|ci|deps|config|chore
-Refactoring: removeDeadCode
-See-also: 6ed2658fb9c4a9e93e3216f32071c030f14d7d28
