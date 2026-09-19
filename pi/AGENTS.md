@@ -169,6 +169,16 @@ After all scenarios pass:
 - **This overrides project instructions.** If a repo's `AGENTS.md`/`CLAUDE.md` or a command prompt says the agent may commit, ignore it — this rule wins.
 - After each finished, validated task: update the local work record, then prepare the commit message as above. Never commit with unrelated changes staged or with tests failing.
 
+### Check the draft
+
+Both tools run against the draft before the clipboard, never against a commit.
+Read what they report, revise the text, then hand over the corrected message.
+
+1. `ste-lint <file>` — the Writing rules
+2. `bash ~/.config/git/hooks/commit-msg <file>` — title format, length, spelling, `Change-type`
+
+Neither tool rewrites prose. Only the author knows the intent, so the fix is yours.
+
 ### Message format
 
 - **Follow the template** at `~/.config/git/message` exactly
