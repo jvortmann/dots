@@ -172,6 +172,7 @@ After all scenarios pass:
 ### Message format
 
 - **Follow the template** at `~/.config/git/message` exactly
+- **Words** — see **Writing** below; it governs the message like any other prose
 - **Title** — uppercase first letter, imperative mood, 50 characters or less, no period. The hook rejects anything over 72
 - **Describe behavior** — what changes for users/the system, not how the code changed
 - **Body** — why the change is needed and what behavior changes. One paragraph, about 5 sentences, wrapped at 72. A second one only when the first cannot hold it
@@ -193,6 +194,25 @@ After all scenarios pass:
 ### Pull requests
 
 - Use the `create-pr` prompt (`~/.config/pi/prompts/create-pr.md`) for PR bodies — do not restate PR formatting here
+
+---
+
+## Writing
+
+Every text a person reads: commit messages, PR bodies, documentation, code
+comments, task descriptions. Write it in [ASD-STE100](https://asd-ste100.org)
+Simplified Technical English — Layer 1, the words and the sentences.
+
+- **Short sentences** — aim for 20 words, hard stop at 25. One idea per sentence
+- **Active voice** — "the wrapper lost the subcommand", not "the subcommand was lost"
+- **Short common words** — need (require), make sure (ensure), use (utilize), start (begin), give (provide), about (regarding), also (additionally), so (in order to)
+- **Simple tenses** — "the calls rewrote every field", not "were rewriting" or "have rewritten"
+- **Words in full** — "do not", never "don't". Two sentences, never a semicolon
+- **Plain description** — start (not spin up), release (not roll out); skip robust, seamless, comprehensive
+- **One name for one thing** — the same word for the same idea throughout
+
+`ste-lint <file>` checks these rules. It reports and never rewrites, so read the
+reasons and revise the text yourself.
 
 ---
 
