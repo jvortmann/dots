@@ -210,19 +210,12 @@ Neither tool rewrites prose. Only the author knows the intent, so the fix is you
 ## Writing
 
 Every text a person reads: commit messages, PR bodies, documentation, code
-comments, task descriptions. Write it in [ASD-STE100](https://asd-ste100.org)
-Simplified Technical English — Layer 1, the words and the sentences.
+comments, task descriptions. Load the `asd-ste100` skill and follow it. It
+carries the rules, the worked rewrites, and the calls where a rule fights the
+text.
 
-- **Short sentences** — aim for 20 words, hard stop at 25. One idea per sentence
-- **Active voice** — "the wrapper lost the subcommand", not "the subcommand was lost"
-- **Short common words** — need (require), make sure (ensure), use (utilize), start (begin), give (provide), about (regarding), also (additionally), so (in order to)
-- **Simple tenses** — "the calls rewrote every field", not "were rewriting" or "have rewritten"
-- **Words in full** — "do not", never "don't". Two sentences, never a semicolon
-- **Plain description** — start (not spin up), release (not roll out); skip robust, seamless, comprehensive
-- **One name for one thing** — the same word for the same idea throughout
-
-`ste-lint <file>` checks these rules. It reports and never rewrites, so read the
-reasons and revise the text yourself.
+`ste-lint <file>` checks the same rules. It reports and never rewrites, so read
+the reasons and revise the text yourself.
 
 ---
 
