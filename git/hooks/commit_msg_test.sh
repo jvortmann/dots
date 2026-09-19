@@ -149,6 +149,18 @@ function test_spelling_rejects_misspelled_word_in_title() {
   assert_contains "speling" "$output"
 }
 
+function test_spelling_accepts_british_variant() {
+  if [[ "$ASPELL_AVAILABLE" != "true" ]]; then
+    bashunit::skip "aspell not available" && return
+  fi
+
+  local output
+  output=$(run_hook "Organise the modules by behaviour")
+
+  assert_successful_code
+  assert_equals "" "$output"
+}
+
 function test_spelling_rejects_misspelled_word_in_body_before_separator() {
   if [[ "$ASPELL_AVAILABLE" != "true" ]]; then
     bashunit::skip "aspell not available" && return

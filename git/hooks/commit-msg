@@ -117,7 +117,7 @@ check_spelling() {
   fi
 
   local errors
-  errors=$(echo "$message" | aspell list --ignore-case --add-wordlists=<(cat ~/.vim/spell/*))
+  errors=$(echo "$message" | aspell list --ignore-case --extra-dicts=en_GB --add-wordlists=<(cat ~/.vim/spell/*.add))
 
   if [[ -n $errors ]]; then
     echo "$errors"
