@@ -31,6 +31,17 @@ Writing that needs a voice, such as an essay, is also out of scope.
 - **Plain description** — `start` over `spin up`, `release` over `roll out`. Drop `robust`, `seamless` and `comprehensive`
 - **One name for one thing** — the same word for the same idea throughout
 
+## What the checker misses
+
+`ste-lint` reads words and sentences. These faults pass it, so catch them
+yourself.
+
+- Open with the change itself. `This commit` and `This change` say nothing.
+- State the fact and stop. `Note that` and `Overall` only announce another sentence.
+- Two items beat a triad: `fast and clean`, not `fast, clean and reliable`.
+- One claim per sentence. `not only ... but also` packs two into one.
+- Backticks mark an identifier. A commit body takes no heading, bold or emoji.
+
 ## Rewrite
 
 ```
