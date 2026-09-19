@@ -192,7 +192,6 @@ ${spelling_result}"
   fi
 
   if [[ $change_type_error ]]; then
-    local allowed
     allowed=$(grep '^Change-type:' "$(eval echo "$(git config --get commit.template)")" | sed 's/^Change-type:[[:space:]]*//')
     report_check "change-type" "fail" "'${change_type_error}' is not a valid Change-type.
 Allowed values: ${allowed}"
