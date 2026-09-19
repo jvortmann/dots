@@ -172,9 +172,11 @@ After all scenarios pass:
 ### Message format
 
 - **Follow the template** at `~/.config/git/message` exactly
-- **Title** — start with an uppercase letter, ~50 characters or less, imperative mood
+- **Title** — uppercase first letter, imperative mood, 50 characters or less, no period. The hook rejects anything over 72
 - **Describe behavior** — what changes for users/the system, not how the code changed
-- **Body (optional)** — explain why the change is needed and what behavior changes; omit when the title says enough
+- **Body** — why the change is needed and what behavior changes. One paragraph, about 5 sentences, wrapped at 72. A second one only when the first cannot hold it
+- **No body at all when the title says enough** — the normal case for config, dependency and tooling changes
+- **No bullets by default** — a list needs three or more independent facts; never one bullet per touched file, function or step
 - **No implementation noise** — no touched-file lists, no step-by-step code changes; add implementation detail only as a last resort for a complex change
 - **Trailers** — by default only use trailer keys already in the template; for existing keys use only the values/structure shown there; if a new trailer is ever needed, match the template's format
 - **Change-type** — use one value from the template; pick the most specific; `chore` is a last resort:
