@@ -368,6 +368,58 @@ Change-type: invalid"
   assert_contains "invalid" "$output"
 }
 
+function test_trailers_report_invalid_change_type_without_a_shell_error() {
+  local message="Fix the words
+
+Change-type: invalid"
+
+  local output
+  output=$(run_hook "$message")
+
+  assert_general_error
+  assert_not_contains "can only be used in a function" "$output"
+}
+
+function test_trailers_rejects_an_agent_co_author() {
+  local message="Fix the words
+
+Co-authored-by: Claude <noreply@anthropic.com>
+Change-type: fix"
+
+  local output
+  output=$(run_hook "$message")
+
+  assert_general_error
+  assert_contains "agent trailer" "$output"
+  assert_contains "[FAIL]" "$output"
+}
+
+function test_trailers_rejects_a_generated_with_trailer() {
+  local message="Fix the words
+
+Generated with: Claude Code
+Change-type: fix"
+
+  local output
+  output=$(run_hook "$message")
+
+  assert_general_error
+  assert_contains "agent trailer" "$output"
+}
+
+function test_trailers_accepts_a_human_co_author() {
+  local message="Fix the words
+
+Co-authored-by: Ada Lovelace <ada@example.com>
+Change-type: fix"
+
+  local output
+  output=$(run_hook "$message")
+
+  assert_successful_code
+  assert_equals "" "$output"
+}
+
 function test_trailers_accepts_message_without_change_type() {
   local message="Fix the words
 

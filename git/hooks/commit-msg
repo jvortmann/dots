@@ -124,6 +124,15 @@ check_spelling() {
   fi
 }
 
+check_agent_trailers() {
+  local file="$1"
+  local agent_trailer="^(Co-authored-by:.*(Claude|Codex|Copilot|Cursor|ChatGPT|Gemini)|Generated with)"
+
+  # Not extract_trailers: `Generated with` has a space in the key, so git does
+  # not parse it as a trailer and it would never be seen.
+  grep -iE "$agent_trailer" "$file"
+}
+
 check_change_type() {
   local file="$1"
   local trailers
@@ -161,8 +170,9 @@ size_error=$(check_size "$message_title")
 format_error=$(check_format "$message_title")
 spelling_result=$(check_spelling "$message")
 change_type_error=$(check_change_type "$clean_file")
+agent_trailer_error=$(check_agent_trailers "$clean_file")
 
-if [[ $size_error || $format_error || $spelling_result || $change_type_error ]]; then
+if [[ $size_error || $format_error || $spelling_result || $change_type_error || $agent_trailer_error ]]; then
   colorize yellow "[POLICY] Your message is not correct"
   echo
   echo "Check the CONTRIBUTING information."
@@ -197,6 +207,13 @@ ${spelling_result}"
 Allowed values: ${allowed}"
   else
     report_check "change-type" "pass"
+  fi
+
+  if [[ $agent_trailer_error ]]; then
+    report_check "agent trailer" "fail" "An agent does not co-author a commit. Delete:
+${agent_trailer_error}"
+  else
+    report_check "agent trailer" "pass"
   fi
 
   exit 1
