@@ -27,6 +27,7 @@ Writing that needs a voice, such as an essay, is also out of scope.
 - **Short common words** — `need` over `require`, `make sure` over `ensure`, `use` over `utilize`, `start` over `begin`, `give` over `provide`, `about` over `regarding`, `also` over `additionally`, `so` over `in order to`
 - **Simple tenses** — "the calls rewrote every field" over `were rewriting` or `have rewritten`
 - **Words in full** — `do not` over `don't`. Two sentences over a `;`
+- **American spelling** — `behavior` over `behaviour`, `analyze` over `analyse`
 - **Plain description** — `start` over `spin up`, `release` over `roll out`. Drop `robust`, `seamless` and `comprehensive`
 - **One name for one thing** — the same word for the same idea throughout
 
