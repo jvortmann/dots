@@ -380,6 +380,34 @@ Change-type: invalid"
   assert_not_contains "can only be used in a function" "$output"
 }
 
+function test_trailers_rejects_a_leftover_change_type_placeholder() {
+  local message="Fix the words
+
+Change-type: fix
+Change-type: feature|refactor|fix|docs|style|test|ci|deps|config|chore"
+
+  local output
+  output=$(run_hook "$message")
+
+  assert_general_error
+  assert_contains "change-type" "$output"
+  assert_contains "[FAIL]" "$output"
+}
+
+function test_trailers_rejects_two_valid_change_types() {
+  local message="Fix the words
+
+Change-type: fix
+Change-type: feature"
+
+  local output
+  output=$(run_hook "$message")
+
+  assert_general_error
+  assert_contains "change-type" "$output"
+  assert_contains "one Change-type" "$output"
+}
+
 function test_trailers_rejects_an_agent_co_author() {
   local message="Fix the words
 

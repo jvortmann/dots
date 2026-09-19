@@ -137,10 +137,10 @@ check_change_type() {
   local file="$1"
   local trailers
   trailers=$(extract_trailers "$file")
-  local change_type
-  change_type=$(echo "$trailers" | grep '^Change-type:' | head -1 | sed 's/^Change-type:[[:space:]]*//')
+  local change_types
+  change_types=$(echo "$trailers" | grep '^Change-type:' | sed 's/^Change-type:[[:space:]]*//')
 
-  if [[ -z $change_type ]]; then
+  if [[ -z $change_types ]]; then
     return
   fi
 
@@ -149,9 +149,19 @@ check_change_type() {
   local allowed
   allowed=$(grep '^Change-type:' "$template" | sed 's/^Change-type:[[:space:]]*//')
 
-  if [[ ! $change_type =~ ^($allowed)$ ]]; then
-    echo "$change_type"
+  # A pasted message that keeps the template placeholder carries two, so the
+  # count is a fault of its own before any value is read.
+  if [[ $(echo "$change_types" | grep -c .) -gt 1 ]]; then
+    echo "DUPLICATE"
+    return
   fi
+
+  local change_type
+  while read -r change_type; do
+    if [[ ! $change_type =~ ^($allowed)$ ]]; then
+      echo "$change_type"
+    fi
+  done <<< "$change_types"
 }
 
 # Main
@@ -201,7 +211,10 @@ ${spelling_result}"
     report_check "spelling" "pass"
   fi
 
-  if [[ $change_type_error ]]; then
+  if [[ $change_type_error == "DUPLICATE" ]]; then
+    report_check "change-type" "fail" "A commit carries one Change-type. Delete the extra line,
+most likely the placeholder left from the commit template."
+  elif [[ $change_type_error ]]; then
     allowed=$(grep '^Change-type:' "$(eval echo "$(git config --get commit.template)")" | sed 's/^Change-type:[[:space:]]*//')
     report_check "change-type" "fail" "'${change_type_error}' is not a valid Change-type.
 Allowed values: ${allowed}"
