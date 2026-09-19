@@ -6,7 +6,9 @@ node = "latest"
 elixir = "latest"
 erlang = "latest"
 python = "latest"
+"npm:agent-ste" = "latest"
 
 [settings]
 idiomatic_version_file_enable_tools = ["elixir", "go", "java", "node", "python", "ruby", "terraform", "yarn"]
 activate_aggressive = true
+npm.shell_out = true
