@@ -184,11 +184,10 @@ Neither tool rewrites prose. Only the author knows the intent, so the fix is you
 - **Follow the template** at `~/.config/git/message` exactly
 - **Words** — see **Writing** below; it governs the message like any other prose
 - **Title** — uppercase first letter, imperative mood, 50 characters or less, no period. The hook rejects anything over 72
-- **Describe behavior** — what changes for users/the system, not how the code changed
-- **Body** — why the change is needed and what behavior changes. One paragraph, about 5 sentences, wrapped at 72. A second one only when the first cannot hold it
+- **Body** — why the change is needed and what changes for users or the system. The diff already shows how, so do not restate it. One paragraph, about 5 sentences, wrapped at 72. A second one only when the first cannot hold it
 - **No body at all when the title says enough** — the normal case for config, dependency and tooling changes
 - **No bullets by default** — a list needs three or more independent facts; never one bullet per touched file, function or step
-- **No implementation noise** — no touched-file lists, no step-by-step code changes; add implementation detail only as a last resort for a complex change
+- **Name a mechanism only when it surprises** — why the obvious approach failed, or a constraint the reader cannot see. If you cannot name the surprise, leave it out
 - **Trailers** — by default only use trailer keys already in the template; for existing keys use only the values/structure shown there; if a new trailer is ever needed, match the template's format
 - **Change-type** — use one value from the template; pick the most specific; `chore` is a last resort:
     - New behavior/capability → `feature`
