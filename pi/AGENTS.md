@@ -203,7 +203,7 @@ Neither tool rewrites prose. Only the author knows the intent, so the fix is you
 
 ### Pull requests
 
-- Use the `create-pr` prompt (`~/.config/pi/prompts/create-pr.md`) for PR bodies — do not restate PR formatting here
+- Use the `create-pr` prompt for PR bodies where it is available — do not restate PR formatting here
 
 ---
 
