@@ -1,17 +1,17 @@
 
-
-
-
 Change-type: feature|refactor|fix|docs|style|test|ci|deps|config|chore
 #Refactoring: removeDeadCode
 #See-also: 6ed2658fb9c4a9e93e3216f32071c030f14d7d28
 #
-# Title on line 1: imperative, capitalized, 50 characters or less, no
-# period. The hook rejects anything over 72.
+# Paste the message on line 1, or write it there.
 #
-# Body on line 3: why the change is needed and what changes for users
-# or the system. One paragraph, wrapped at 72. A second one only when
-# the first cannot hold it. No body at all when the title says enough.
+# Title on the first line: imperative, capitalized, 50 characters or
+# less, no period. The hook rejects anything over 72.
+#
+# Body after a blank line: why the change is needed and what changes
+# for users or the system. One paragraph, wrapped at 72. A second one
+# only when the first cannot hold it. No body at all when the title
+# says enough.
 #
 # Plain words, active voice, simple tenses. The code explains how, so
 # do not narrate the diff or list the files you touched.
