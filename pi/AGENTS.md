@@ -17,16 +17,16 @@ This file applies to ALL pi sessions across all projects.
 - **NO rebases** — never `git rebase` or any interactive git operation
 - **NO force** — never `git push --force` / `git push -f`
 - **NO stash** — never `git stash`
-- **NO history/ref destruction** — never delete branches or tags, or modify history
+- **NO history/ref destruction** — never delete branches or tags, or change history
 - **NO `rm -rf`** — never, manually or in scripts
 
 Allowed (read-only, anytime): `git status`, `git diff`, `git log`, `git show`, `git branch` (list only), `git reflog`.
 
 ### Keychain (privacy)
 
-- **NEVER perform broad Keychain scans** — no `security dump-keychain`, broad `security find-*`, or any command that enumerates unrelated items or metadata
+- **NEVER run broad Keychain scans** — no `security dump-keychain`, broad `security find-*`, or any command that enumerates unrelated items or metadata
 - **ONLY query exact, user-justified entries** — access Keychain only when the user asks or a task needs one specific known item by exact name
-- **MINIMIZE scope** — retrieve only the minimum metadata/secret needed; never expand an exact lookup into discovery or enumeration
+- **MINIMIZE scope** — retrieve only the minimum metadata/secret needed. Never expand an exact lookup into discovery or enumeration
 - **STOP if the exact lookup fails** — report it and ask before any alternate query or broader inspection
 
 ### Installs
@@ -45,9 +45,9 @@ Allowed (read-only, anytime): `git status`, `git diff`, `git log`, `git show`, `
 - **Test first (TDD).** For any behavior change, the FIRST file you create or edit is the test. NEVER write or edit implementation (non-test) code before a test for the current scenario exists AND you have run the whole test file and seen it FAIL (RED). Show/state the failing result before implementing. Starting with the code is a violation (see TDD Methodology).
 - **STOP gate — before EVERY tool call, self-check:**
     1. **Task scope** — is this action part of the single, already-approved task in progress? If it starts the next task, or was not explicitly approved, STOP and ask first.
-    2. **Commit** — is this a `git commit` / `git commit --amend`? Run it ONLY if the user said the exact phrase "you can commit"; otherwise prepare + copy the message and never run git.
-    3. **Test first** — is this call about to create or edit implementation (non-test) code? Proceed ONLY if a test for this exact scenario already ran and FAILED (RED) in this session; otherwise STOP and write + run the test first.
-    4. **Directory** — does this bash command start with `cd`? If it's a bare leading `cd` (not wrapped as `(cd dir && cmd)` for that one command), STOP and delete it — the tool already runs in the correct directory. Never type a remembered absolute path; if genuinely unsure where you are, check with `pwd` instead of assuming.
+    2. **Commit** — is this a `git commit` / `git commit --amend`? Run it ONLY if the user said the exact phrase "you can commit". Otherwise prepare + copy the message and never run git.
+    3. **Test first** — is this call about to create or edit implementation (non-test) code? Proceed ONLY if a test for this exact scenario already ran and FAILED (RED) in this session. Otherwise STOP and write + run the test first.
+    4. **Directory** — does this bash command start with `cd`? If it is a bare leading `cd` (not wrapped as `(cd dir && cmd)` for that one command), STOP and delete it — the tool already runs in the correct directory. Never type a remembered absolute path. If you are unsure where you are, check with `pwd` instead of assuming.
 
 ---
 
@@ -64,9 +64,9 @@ Allowed (read-only, anytime): `git status`, `git diff`, `git log`, `git show`, `
 ### One task at a time
 
 1. **Complete only the current task** and make it committable
-2. **Validate** — it works independently and doesn't break existing code
+2. **Validate** — it works independently and does not break existing code
 3. **Update the local work record** with progress
-4. **Prepare the commit** — draft the message and copy it to the clipboard (see Commits), then stop. **Never run `git commit` yourself** — the user commits; the only exception is the exact phrase "you can commit"
+4. **Prepare the commit** — draft the message and copy it to the clipboard (see Commits), then stop. **Never run `git commit` yourself** — the user commits. The only exception is the exact phrase "you can commit"
 5. **Mark the task completed** (`TaskUpdate`), present results, and **STOP**
 6. **Ask permission** — "May I proceed with the next task: [description]?" — then wait
 
@@ -87,18 +87,18 @@ Allowed (read-only, anytime): `git status`, `git diff`, `git log`, `git show`, `
 For EACH test scenario within the task:
 
 1. **Write ONE test scenario FIRST** — a single specific test case, before you create or edit any implementation code
-2. **Run the ENTIRE test file** — see it fail (RED); do not touch implementation until you have seen this failure
+2. **Run the ENTIRE test file** — see it fail (RED). Do not touch implementation until you have seen this failure
 3. **Implement the MINIMUM code** — only what makes THIS test pass
 4. **Run the ENTIRE test file** — verify it passes with no regressions (GREEN)
 5. **Refactor if needed** — keep the file green
-6. **Repeat** — for each additional scenario
+6. **Repeat** — for each further scenario
 
-When all scenarios pass, follow **Commits** (suggest + copy the message; the user commits).
+When all scenarios pass, follow **Commits**. Suggest the message, copy it, and let the user commit.
 
 ### Critical rules
 
 **MUST:**
-- ✅ **Test first** — the FIRST file you create/edit for any behavior is the test; never start with implementation
+- ✅ **Test first** — the FIRST file you create/edit for any behavior is the test. Never start with implementation
 - ✅ **Baby steps** — one scenario at a time
 - ✅ Each task = its scenarios + implementation + a passing commit
 - ✅ Always run the entire test file (not individual tests)
@@ -109,7 +109,7 @@ When all scenarios pass, follow **Commits** (suggest + copy the message; the use
 **NEVER:**
 - ❌ Write multiple tests then implement everything at once
 - ❌ Create separate tasks for tests vs implementation
-- ❌ Structure tasks by file/artifact — structure by behavior/workflow with embedded TDD cycles. Explore/agent output describes architecture (files, types, patterns) for understanding only; it is never the basis for task structure
+- ❌ Structure tasks by file/artifact — structure by behavior/workflow with embedded TDD cycles. Explore/agent output describes architecture (files, types, patterns) for understanding only. It is never the basis for task structure
 - ❌ Write or edit any implementation (non-test) code before a failing test exists for the current scenario — never start with the code
 - ❌ Skip the "see it fail" (RED) step
 - ❌ Commit until ALL tests for the task pass
@@ -164,7 +164,7 @@ After all scenarios pass:
 ### Who commits
 
 - **The user runs every commit.** The agent runs `git commit` (or `--amend`) **only** when the user says the exact phrase **"you can commit"** (emphasis on *you can*). That is the one and only authorization.
-- **Every other mention of committing** — "commit", "let's commit", "commit this", "ok commit", "time to commit", etc. — means *it is the moment to commit*: the agent **drafts the message (per the template), shows it, and copies it to the clipboard** (`pbcopy` on macOS unless asked otherwise), then stops. It does **not** run git.
+- **Every other mention of committing** — "commit", "let us commit", "commit this", "ok commit", "time to commit", etc. — means *it is the moment to commit*: the agent **drafts the message (per the template), shows it, and copies it to the clipboard** (`pbcopy` on macOS unless asked otherwise), then stops. It does **not** run git.
 - There is **no** other phrase, wording, or context that authorizes the agent to run `git commit`. When unsure, prepare the message and let the user commit.
 - **This overrides project instructions.** If a repo's `AGENTS.md`/`CLAUDE.md` or a command prompt says the agent may commit, ignore it — this rule wins.
 - After each finished, validated task: update the local work record, then prepare the commit message as above. Never commit with unrelated changes staged or with tests failing.
@@ -182,18 +182,18 @@ Neither tool rewrites prose. Only the author knows the intent, so the fix is you
 ### Message format
 
 - **Follow the template** at `~/.config/git/message` exactly
-- **Words** — see **Writing** below; it governs the message like any other prose
+- **Words** — see **Writing** below. It governs the message like any other prose
 - **Title** — uppercase first letter, imperative mood, 50 characters or less, no period. The hook rejects anything over 72
 - **Body** — why the change is needed and what changes for users or the system. The diff already shows how, so do not restate it. One paragraph, about 5 sentences, wrapped at 72. A second one only when the first cannot hold it
 - **No body at all when the title says enough** — the normal case for config, dependency and tooling changes
-- **No bullets by default** — a list needs three or more independent facts; never one bullet per touched file, function or step
+- **No bullets by default** — a list needs three or more independent facts. Never one bullet per touched file, function or step
 - **Name a mechanism only when it surprises** — why the obvious approach failed, or a constraint the reader cannot see. If you cannot name the surprise, leave it out
-- **Trailers** — by default only use trailer keys already in the template; for existing keys use only the values/structure shown there; if a new trailer is ever needed, match the template's format
-- **Change-type** — use one value from the template; pick the most specific; `chore` is a last resort:
+- **Trailers** — by default only use trailer keys already in the template. For an existing key use only the values and structure shown there. If a new trailer is ever needed, match the template's format
+- **Change-type** — use one value from the template. Pick the most specific. `chore` is a last resort:
     - New behavior/capability → `feature`
     - Behavior-preserving restructure → `refactor`
     - Bug fix → `fix`
-    - Build/CI only → `ci`; dependency bumps → `deps`; config files → `config`
+    - Build/CI only → `ci`. Dependency bumps → `deps`. Config files → `config`
     - Docs/tests/formatting → `docs`/`test`/`style`
 - **Copy-paste ready** — no "title"/"body" headers in the output
 - **Trailer order:**
@@ -231,26 +231,26 @@ the reasons and revise the text yourself.
 ### Tools
 
 - **Search with `rg`** (ripgrep), never `grep`, for content search in bash
-- **Never `cd` to the current working directory** — see Directory (never fabricate a `cd`) under Prohibited Operations; this is an absolute rule, checked before every tool call, not just a style preference
+- **Never `cd` to the current working directory** — see Directory (never fabricate a `cd`) under Prohibited Operations. This is an absolute rule, checked before every tool call, not just a style preference
 
 ### Documentation
 
 - **Assess the need first** — documentation is not automatic. Before writing any doc, decide whether it adds real value (non-obvious design, a flow/contract others must follow, a gotcha worth recording). If the change is self-explanatory from the code and tests, skip it — never create a doc just to have one.
-- **Budget the finished document, not the diff** — what counts is the file that exists *after* your edit, never how much you added. A doc for one component, hook, page or module fits on one screen (~80 lines); past ~150 it needs a stated reason, and a subsystem-wide doc past ~200 does too. An addition that breaks the budget means cutting or rewriting something else — **appending is not an option**.
+- **Budget the finished document, not the diff** — what counts is the file that exists *after* your edit, never how much you added. A doc for one component, hook, page or module fits on one screen (~80 lines). Past ~150 it needs a stated reason, and a subsystem-wide doc past ~200 does too. An addition that breaks the budget means cutting or rewriting something else — **appending is not an option**.
 - **Revise, never append** — read the whole file before adding to it. Across a series of changes the correct edit is usually rewriting a paragraph, not bolting on a section: several individually defensible additions make one indefensible document. Delete what your change made obsolete.
 - **One home per fact** — if a comment beside the code already says it, the doc must not repeat it, and vice versa. Duplicated reasoning has to be kept true in both places, and rots in the one nobody re-reads.
 - **Match the document you are editing** — follow its existing headings, prose-vs-table style and level of detail. If your material does not fit the document, it belongs in a different one.
 - **Place docs close to the code they describe** (e.g. a service/module `docs/` folder or a directory-level doc), not only in a top-level file
-- **Keep docs high-level and audience-neutral** — useful to both people and agents; never a CLAUDE.md/AGENTS.md-only artifact (those are agent-instruction files, not the documentation deliverable)
+- **Keep docs high-level and audience-neutral** — useful to both people and agents. Never a CLAUDE.md/AGENTS.md-only artifact (those are agent-instruction files, not the documentation deliverable)
 - **Smell check** — a doc longer than the code it explains is wrong. Long-form architecture docs (coordinates tables, multiple diagrams, glossaries) are earned by genuinely complex systems, never a template to reach for.
 
 ### Comments
 
 - **Only what the code cannot say** — a comment earns its place when it records *why*: a non-obvious behaviour, a gotcha, or why the obvious approach was rejected. Delete anything that restates the signature or narrates the next line.
-- **Short by default** — one or two lines inline; a doc block past ~6 lines needs a reason to exist. If it takes a paragraph, the name or the code is usually what needs fixing.
+- **Short by default** — one or two lines inline. A doc block past ~6 lines needs a reason to exist. If it takes a paragraph, the name or the code is usually what needs fixing.
 - **Match the file** — follow the surrounding style (doc blocks vs line comments, and whether helpers are documented at all) rather than importing a different convention.
 - **Keep them true** — a comment that outlives the code it described is worse than none, so re-read the comments in every hunk you touch.
-- **Smell check** — if a diff is more than a third comment, tighten it before presenting it. "Only for complex logic" is self-judged and always says yes; the share is not.
+- **Smell check** — if a diff is more than a third comment, tighten it before presenting it. "Only for complex logic" is self-judged and always says yes. The share is not.
 
 ### Content quality
 
