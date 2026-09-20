@@ -2,7 +2,7 @@
 
 This file applies to ALL pi sessions across all projects.
 
-**Precedence.** These personal rules take precedence over any project or repository instructions (`AGENTS.md`, `CLAUDE.md`, command prompts, skills). Where a project file is looser — for example it lets the agent create commits — **this file wins**: the commit-authorization rule below ("you can commit") always applies, in every repo, no matter what the project files say.
+**Precedence.** These personal rules take precedence over any project or repository instructions (`AGENTS.md`, `CLAUDE.md`, command prompts, skills). Where a project file is looser — for example it lets the agent create commits — **this file wins**. The commit-authorization rule below ("you can commit") always applies, in every repo, whatever the project files say.
 
 ---
 
@@ -158,7 +158,7 @@ After all scenarios pass:
 
 ### Session start
 
-- Read `~/.config/git/message` once at the start of every coding session and keep it in mind for the whole session (no need to re-read per commit)
+- Read `~/.config/git/message` once at the start of every coding session. Keep it in mind for the whole session, and do not re-read it per commit
 - Valid Change-types: `feature`, `refactor`, `fix`, `docs`, `style`, `test`, `ci`, `deps`, `config`, `chore`
 
 ### Who commits
@@ -184,7 +184,7 @@ Neither tool rewrites prose. Only the author knows the intent, so the fix is you
 - **Follow the template** at `~/.config/git/message` exactly
 - **Words** — see **Writing** below. It governs the message like any other prose
 - **Title** — uppercase first letter, imperative mood, 50 characters or less, no period. The hook rejects anything over 72
-- **Body** — why the change is needed and what changes for users or the system. The diff already shows how, so do not restate it. One paragraph, about 5 sentences, wrapped at 72. A second one only when the first cannot hold it
+- **Body** — why the change exists and what changes for users or the system. The diff already shows how, so do not restate it. One paragraph, about 5 sentences, wrapped at 72. A second one only when the first cannot hold it
 - **No body at all when the title says enough** — the normal case for config, dependency and tooling changes
 - **No bullets by default** — a list needs three or more independent facts. Never one bullet per touched file, function or step
 - **Name a mechanism only when it surprises** — why the obvious approach failed, or a constraint the reader cannot see. If you cannot name the surprise, leave it out
@@ -235,21 +235,21 @@ the reasons and revise the text yourself.
 
 ### Documentation
 
-- **Assess the need first** — documentation is not automatic. Before writing any doc, decide whether it adds real value (non-obvious design, a flow/contract others must follow, a gotcha worth recording). If the change is self-explanatory from the code and tests, skip it — never create a doc just to have one.
-- **Budget the finished document, not the diff** — what counts is the file that exists *after* your edit, never how much you added. A doc for one component, hook, page or module fits on one screen (~80 lines). Past ~150 it needs a stated reason, and a subsystem-wide doc past ~200 does too. An addition that breaks the budget means cutting or rewriting something else — **appending is not an option**.
-- **Revise, never append** — read the whole file before adding to it. Across a series of changes the correct edit is usually rewriting a paragraph, not bolting on a section: several individually defensible additions make one indefensible document. Delete what your change made obsolete.
-- **One home per fact** — if a comment beside the code already says it, the doc must not repeat it, and vice versa. Duplicated reasoning has to be kept true in both places, and rots in the one nobody re-reads.
-- **Match the document you are editing** — follow its existing headings, prose-vs-table style and level of detail. If your material does not fit the document, it belongs in a different one.
+- **Assess the need first** — documentation is not automatic. Before writing any doc, decide whether it adds real value. That means a non-obvious design, a flow or contract others must follow, or a gotcha worth recording. If the code and the tests already explain the change, skip it. Never create a doc just to have one.
+- **Budget the finished document, not the diff** — what counts is the file that exists *after* your edit. How much you added counts for nothing. A doc for one component, hook, page or module fits on one screen (~80 lines). Past ~150 it needs a stated reason, and a subsystem-wide doc past ~200 does too. An addition that breaks the budget means cutting or rewriting something else — **appending is not an option**.
+- **Revise, never append** — read the whole file before adding to it. Across a series of changes the correct edit usually rewrites a paragraph instead of bolting on a section. Several defensible additions make one indefensible document. Delete what your change made obsolete.
+- **One home per fact** — if a comment beside the code already says it, the doc must not repeat it. The same holds in reverse. Duplication makes you keep one reasoning true in two places, and it rots in the one nobody re-reads.
+- **Match the document in front of you** — follow its existing headings, prose-vs-table style and level of detail. If your material does not fit the document, it belongs in a different one.
 - **Place docs close to the code they describe** (e.g. a service/module `docs/` folder or a directory-level doc), not only in a top-level file
 - **Keep docs high-level and audience-neutral** — useful to both people and agents. Never a CLAUDE.md/AGENTS.md-only artifact (those are agent-instruction files, not the documentation deliverable)
-- **Smell check** — a doc longer than the code it explains is wrong. Long-form architecture docs (coordinates tables, multiple diagrams, glossaries) are earned by genuinely complex systems, never a template to reach for.
+- **Smell check** — a doc longer than the code it explains is wrong. A genuinely complex system earns a long-form architecture doc, with its coordinates tables, diagrams and glossaries. Nothing else does.
 
 ### Comments
 
-- **Only what the code cannot say** — a comment earns its place when it records *why*: a non-obvious behaviour, a gotcha, or why the obvious approach was rejected. Delete anything that restates the signature or narrates the next line.
+- **Only what the code cannot say** — a comment earns its place when it records *why*. That is a non-obvious behavior, a gotcha, or the reason you rejected the obvious approach. Delete anything that restates the signature or narrates the next line.
 - **Short by default** — one or two lines inline. A doc block past ~6 lines needs a reason to exist. If it takes a paragraph, the name or the code is usually what needs fixing.
-- **Match the file** — follow the surrounding style (doc blocks vs line comments, and whether helpers are documented at all) rather than importing a different convention.
-- **Keep them true** — a comment that outlives the code it described is worse than none, so re-read the comments in every hunk you touch.
+- **Match the file** — follow the surrounding style instead of importing a different convention. That covers doc blocks against line comments, and whether the file comments its helpers at all.
+- **Keep them true** — a comment that outlives the code it described is worse than none. Re-read the comments in every hunk you touch.
 - **Smell check** — if a diff is more than a third comment, tighten it before presenting it. "Only for complex logic" is self-judged and always says yes. The share is not.
 
 ### Content quality
