@@ -71,6 +71,7 @@
   bdg = !git b | rg gone | cut -f3 -d' ' | xargs git branch -D
   bl = branch --format='%(align:1,middle)%(color: white)%(HEAD)%(end)%(color:yellow) %(objectname:short) %(align:18,left)%(color:blue)%(committername)%(end)%(align:15,middle)%(color:green)%(committerdate:short)%(end)%(if)%(upstream)%(then)%(color:green)%(refname:short)%(else)%(if:notequals="refs/heads")%(refname:rstrip=-2)%(then)%(color:cyan)%(refname:lstrip=2)%(else)%(color:yellow)%(refname:lstrip=2) %(color:red)[no upstream]%(end)%(end)%(if)%(symref)%(then)%(color: reset) -> %(symref)%(end) %(color:yellow)%(upstream:track)'
   bs = bisect
+  bsw = "!git b | fzf | cut -f3 -d' ' | xargs git switch"
   bug = fix
   cc = "!git code-changes"
   ccf = "!git cf | wc -l"
@@ -83,7 +84,8 @@
   cp = cherry-pick
   d = diff
   deps = x --trailer="change:deps"
-  default-branch="!git symbolic-ref refs/remotes/origin/HEAD | xargs basename"
+  default-remote = "!git branch -a | rg HEAD | cut -d'>' -f2 | tr -d ' '"
+  default-branch="!git default-remote | xargs basename"
   db = default-branch
   docs = x --trailer="change:docs"
   ds = diff --staged
@@ -95,6 +97,7 @@
   l = log
   last = log -1 HEAD
   lg = "!f() { git log --color=always --graph --date=relative -100 --pretty=tformat:'%C(yellow)%h§%Cblue%aN§%Cgreen%ad§%Creset%s%Cred%d%Creset' \"$@\" | column -t -s\"§\" 2>/dev/null | less -RXF; }; f"
+  lgb = log --date=auto:relative --pretty=tformat:'%C(yellow)%h %Cblue%aN %Cgreen%ad %Creset%s%n%b'
   llg = "!f() { git log --color=always --graph --date=relative -100 --pretty=tformat:'%C(yellow)%h§%Cblue%aN§%Cgreen%ad§%C(yellow)[%(trailers:valueonly=true,separator=|,key=Work-item-id,key=Change-type,key=PR-id,key=PR)]§%Creset%s %Cred%d%Creset' \"$@\" | column -t -s\"§\" 2>/dev/null | less -RXF; }; f"
   ls = log --stat
   m = !git db | xargs git switch
@@ -131,6 +134,7 @@
   x  = commit
   xe  = commit --template=
   xp  = "!bash -c 'git commit --template=<(pbpaste)'"
+  xpn  = "!bash -c 'git commit --template=<(pbpaste) -n'"
   # Show commits for work item grouped by change-type
   work-item-summary = "!f() { \
     echo \"Commits for Work-item-id: $1 grouped by Change-type:\"; \
