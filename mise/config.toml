@@ -7,6 +7,7 @@ elixir = "latest"
 erlang = "latest"
 python = "latest"
 "npm:agent-ste" = "latest"
+"npm:@earendil-works/pi-coding-agent" = "latest"
 
 [settings]
 idiomatic_version_file_enable_tools = ["elixir", "go", "java", "node", "python", "ruby", "terraform", "yarn"]
