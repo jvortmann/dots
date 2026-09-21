@@ -1,5 +1,4 @@
 # Install command line tools
-brew 'anomalyco/tap/opencode'
 brew 'aspell'
 brew 'awscli'
 brew 'bash'
