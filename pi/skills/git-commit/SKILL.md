@@ -50,6 +50,9 @@ corrected message, never a warning.
 - When the change needs more than one commit, give a message for each and say
   which one sits on the clipboard. Only one can.
 - When a file carries unrelated work as well, say so, and name `git add -p`.
+- When the spelling check rejects a tool name, a flag or an identifier, keep
+  the word and name it in the reply. The user adds it with `zg`. Rewording a
+  message to please a dictionary trades the precise name for a vague one.
 
 ## The trailers the hook adds
 
