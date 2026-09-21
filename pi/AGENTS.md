@@ -42,7 +42,7 @@ Allowed (read-only, anytime): `git status`, `git diff`, `git log`, `git show`, `
 
 - **One task at a time.** Exactly ONE task in progress. Do it, show the result, and STOP. Do not start, prep, or edit files for the next task — not even "just finishing the next step" — until the user explicitly approves. Batching tasks is a violation.
 - **Commits.** Run `git commit` ONLY on the exact phrase "you can commit". Every other mention of committing = draft + copy the message, never run git (see Commits → Who commits).
-- **Test first (TDD).** For any behavior change, the FIRST file you create or edit is the test. NEVER write or edit implementation (non-test) code before a test for the current scenario exists AND you have run the whole test file and seen it FAIL (RED). Show/state the failing result before implementing. Starting with the code is a violation (see TDD Methodology).
+- **Test first (TDD).** For any behavior change, the FIRST file you create or edit is the test. NEVER write or edit implementation (non-test) code before a test for the current scenario exists AND you have run the whole test file and seen it FAIL (RED). Show/state the failing result before implementing. Starting with the code is a violation (see the `tdd` skill).
 - **STOP gate — before EVERY tool call, self-check:**
     1. **Task scope** — is this action part of the single, already-approved task in progress? If it starts the next task, or was not explicitly approved, STOP and ask first.
     2. **Commit** — is this a `git commit` / `git commit --amend`? Run it ONLY if the user said the exact phrase "you can commit". Otherwise prepare + copy the message and never run git.
@@ -82,75 +82,9 @@ Allowed (read-only, anytime): `git status`, `git diff`, `git log`, `git show`, `
 
 **MANDATORY: BABY STEPS for EVERY implementation task.**
 
-### Baby-steps cycle (per task)
-
-For EACH test scenario within the task:
-
-1. **Write ONE test scenario FIRST** — a single specific test case, before you create or edit any implementation code
-2. **Run the ENTIRE test file** — see it fail (RED). Do not touch implementation until you have seen this failure
-3. **Implement the MINIMUM code** — only what makes THIS test pass
-4. **Run the ENTIRE test file** — verify it passes with no regressions (GREEN)
-5. **Refactor if needed** — keep the file green
-6. **Repeat** — for each further scenario
-
-When all scenarios pass, follow **Commits**. Suggest the message, copy it, and let the user commit.
-
-### Critical rules
-
-**MUST:**
-- ✅ **Test first** — the FIRST file you create/edit for any behavior is the test. Never start with implementation
-- ✅ **Baby steps** — one scenario at a time
-- ✅ Each task = its scenarios + implementation + a passing commit
-- ✅ Always run the entire test file (not individual tests)
-- ✅ Write minimum code to pass (no premature implementation)
-- ✅ See the test FAIL before implementing (RED → GREEN → REFACTOR)
-- ✅ A task may hold multiple scenarios (success, error, edge cases)
-
-**NEVER:**
-- ❌ Write multiple tests then implement everything at once
-- ❌ Create separate tasks for tests vs implementation
-- ❌ Structure tasks by file/artifact — structure by behavior/workflow with embedded TDD cycles. Explore/agent output describes architecture (files, types, patterns) for understanding only. It is never the basis for task structure
-- ❌ Write or edit any implementation (non-test) code before a failing test exists for the current scenario — never start with the code
-- ❌ Skip the "see it fail" (RED) step
-- ❌ Commit until ALL tests for the task pass
-- ❌ Make formatting/style changes unless explicitly requested
-
-### Example of CORRECT baby steps
-
-```
-Task: Add flexible updateAudience()
-
-Baby Step 1:
-  1. Write test: "updates only description"
-  2. Run tests → See it FAIL (RED)
-  3. Add minimal code to handle description field
-  4. Run tests → See it PASS (GREEN)
-
-Baby Step 2:
-  1. Write test: "updates only membershipDurationDays"
-  2. Run tests → See it FAIL (RED)
-  3. Add minimal code to handle membershipDurationDays field
-  4. Run tests → See it PASS (GREEN)
-
-Baby Step 3:
-  1. Write test: "updates multiple fields together"
-  2. Run tests → See it FAIL (RED)
-  3. Refactor to handle combinations elegantly
-  4. Run tests → See it PASS (GREEN)
-
-After all scenarios pass:
-  5. Suggest the commit message (correct Change-type) and copy it to the clipboard
-  6. The user commits — never run git commit yourself (only the exact phrase "you can commit" authorizes it)
-```
-
-### Test style
-
-- **Never use function names** in test descriptions — describe behavior, not implementation
-  - ✅ "accepts valid ISO 8601 timestamp strings"
-  - ❌ "validateTimestamp returns valid for ISO strings"
-- **Never use truthy/falsy checks** — always explicit true/false
-  - ✅ `t.true(typeof result.error === "string" && result.error.length > 0)`
-  - ❌ `t.truthy(result.error)`
+Load the `tdd` skill before you write or change any implementation code. It
+carries the RED and GREEN cycle, the rules around it, a worked example and the
+test style. When the work seems to fall outside a cycle, ask rather than decide.
 
 ---
 
