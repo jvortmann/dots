@@ -64,6 +64,9 @@ alias gc="cd ~/prj/current"
 # pi
 # Give each branch that starts with a work item id its own session, reopened on
 # every launch and created on the first one. Explicit session flags win.
+#
+# Every call forces node@latest: pi needs a recent node, and a project that pins
+# an older one would otherwise run pi under it and fail on a missing export.
 pi() {
   local arg branch
 
