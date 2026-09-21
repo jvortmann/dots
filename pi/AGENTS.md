@@ -167,24 +167,11 @@ the reasons and revise the text yourself.
 - **Search with `rg`** (ripgrep), never `grep`, for content search in bash
 - **Never `cd` to the current working directory** — see Directory (never fabricate a `cd`) under Prohibited Operations. This is an absolute rule, checked before every tool call, not just a style preference
 
-### Documentation
+### Documentation and comments
 
-- **Assess the need first** — documentation is not automatic. Before writing any doc, decide whether it adds real value. That means a non-obvious design, a flow or contract others must follow, or a gotcha worth recording. If the code and the tests already explain the change, skip it. Never create a doc just to have one.
-- **Budget the finished document, not the diff** — what counts is the file that exists *after* your edit. How much you added counts for nothing. A doc for one component, hook, page or module fits on one screen (~80 lines). Past ~150 it needs a stated reason, and a subsystem-wide doc past ~200 does too. An addition that breaks the budget means cutting or rewriting something else — **appending is not an option**.
-- **Revise, never append** — read the whole file before adding to it. Across a series of changes the correct edit usually rewrites a paragraph instead of bolting on a section. Several defensible additions make one indefensible document. Delete what your change made obsolete.
-- **One home per fact** — if a comment beside the code already says it, the doc must not repeat it. The same holds in reverse. Duplication makes you keep one reasoning true in two places, and it rots in the one nobody re-reads.
-- **Match the document in front of you** — follow its existing headings, prose-vs-table style and level of detail. If your material does not fit the document, it belongs in a different one.
-- **Place docs close to the code they describe** (e.g. a service/module `docs/` folder or a directory-level doc), not only in a top-level file
-- **Keep docs high-level and audience-neutral** — useful to both people and agents. Never a CLAUDE.md/AGENTS.md-only artifact (those are agent-instruction files, not the documentation deliverable)
-- **Smell check** — a doc longer than the code it explains is wrong. A genuinely complex system earns a long-form architecture doc, with its coordinates tables, diagrams and glossaries. Nothing else does.
-
-### Comments
-
-- **Only what the code cannot say** — a comment earns its place when it records *why*. That is a non-obvious behavior, a gotcha, or the reason you rejected the obvious approach. Delete anything that restates the signature or narrates the next line.
-- **Short by default** — one or two lines inline. A doc block past ~6 lines needs a reason to exist. If it takes a paragraph, the name or the code is usually what needs fixing.
-- **Match the file** — follow the surrounding style instead of importing a different convention. That covers doc blocks against line comments, and whether the file comments its helpers at all.
-- **Keep them true** — a comment that outlives the code it described is worse than none. Re-read the comments in every hunk you touch.
-- **Smell check** — if a diff is more than a third comment, tighten it before presenting it. "Only for complex logic" is self-judged and always says yes. The share is not.
+Load the `documentation` skill when you write, review or edit a README, a
+document or a code comment. It decides whether the text earns its place, and
+it holds the budget.
 
 ### Content quality
 
