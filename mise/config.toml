@@ -1,11 +1,12 @@
 [tools]
 go = "latest"
 rust = "latest"
-ruby = "latest"
-node = "latest"
+java = "latest"
+ruby = ["latest", "3.4.5"]
+node = ["latest", "20.19.4"]
 elixir = "latest"
 erlang = "latest"
-python = "latest"
+python = ["latest", "3.10.17"]
 "npm:agent-ste" = "latest"
 "npm:@earendil-works/pi-coding-agent" = "latest"
 
