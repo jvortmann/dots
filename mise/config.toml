@@ -13,3 +13,7 @@ idiomatic_version_file_enable_tools = ["elixir", "go", "java", "node", "python",
 activate_aggressive = true
 npm.shell_out = true
 disable_update_warning = true
+auto_update = false
+exec_auto_install = false
+not_found_auto_install = false
+prefer_offline = true
