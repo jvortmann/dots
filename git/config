@@ -49,8 +49,8 @@
 [delta]
   navigate = true
   features = line-numbers decorations navigate
-  dark = true
   true-color = always
+  syntax-theme = "Solarized (dark)"
 
 [delta "decorations"]
   commit-decoration-style = bold yellow box ul

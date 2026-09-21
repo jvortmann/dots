@@ -20,8 +20,8 @@ swap-theme-from-to()
   gsed -i"" -E "s/(--color=)$1/\1$2/" ~/.dots/tmux/switch-popup.tmux
   gsed -i"" -E "s/$1/$2/" ~/.config/bat/config
   gsed -i"" -E "s/(--color=)$1/\1$2/" ~/.dots/zsh/conf/plugins/fzf.zsh
-  gsed -i"" -E "s/(set background=)$1/\1$2/" ~/.config/nvim/conf/guioptions
-  gsed -i"" -E "s/$1( = true)/$2\1/" ~/.dots/git/config
+  gsed -i"" -E "s/(vim\.opt\.background = )'$1'/\1'$2'/" ~/.config/nvim/lua/config/guioptions.lua
+  gsed -i"" -E "s/(syntax-theme = \"[^\"]*\()$1(\)\")/\1$2\2/" ~/.dots/git/config
 }
 
 swap-theme-refresh()
