@@ -1,7 +1,7 @@
 # vim: ft=zsh
 
 # Base path
-if [[ $(uname -m) = "x86_64" ]]; then
+if [[ $CPUTYPE = "x86_64" ]]; then
   export PATH="/usr/local/bin:/usr/local/sbin${PATH+:$PATH}";
   export MANPATH="/usr/local/share/man${MANPATH+:$MANPATH}:";
   export INFOPATH="/usr/local/share/info:${INFOPATH:-}";

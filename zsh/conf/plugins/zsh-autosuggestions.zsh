@@ -1,6 +1,6 @@
 # vim: ft=zsh
 
-if [[ $(uname -m) = "x86_64" ]]; then
+if [[ $CPUTYPE = "x86_64" ]]; then
   if [ -r /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
     source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
   fi

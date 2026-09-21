@@ -1,6 +1,6 @@
 # vim: ft=zsh
 
-if [[ $(uname -m) = "x86_64" ]]; then
+if [[ $CPUTYPE = "x86_64" ]]; then
   if [ -r /usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh ]; then
     source /usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh
   fi
