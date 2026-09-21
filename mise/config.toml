@@ -2,7 +2,7 @@
 go = "latest"
 rust = "latest"
 java = "latest"
-ruby = ["latest", "3.4.5"]
+ruby = ["latest", "3"]
 node = ["latest", "20.19.4"]
 elixir = "latest"
 erlang = "latest"
