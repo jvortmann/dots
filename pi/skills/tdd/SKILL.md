@@ -30,23 +30,25 @@ For each test scenario in the task:
 When every scenario passes, draft the commit message and let the user commit.
 Load the `git-commit` skill for that part.
 
-## Rules that hold the cycle together
+## MUST
 
-- The first file you create or edit for any behavior is the test.
-- One scenario at a time. Never write several tests and then build everything.
-- See the test fail before you write the code. A test that never failed proves
-  nothing.
-- Run the whole test file, never a single test.
-- Write the minimum that passes. Leave the rest for the next scenario.
-- One task holds its scenarios, its implementation, and one passing commit. A
-  separate task for tests and another for implementation splits the cycle in
-  half.
-- Structure a task by behavior or workflow, never by file or artifact. Output
-  from an exploring agent describes the architecture for understanding only.
-  It is never the basis for task structure.
-- A task can hold several scenarios: the success, the errors, the edges.
-- Never commit until every test for the task passes.
-- Never make a formatting or style change the user did not ask for.
+- ✅ **Test first** — the first file you create or edit for any behavior is the test
+- ✅ **Baby steps** — one scenario at a time
+- ✅ **See it fail** — a test that never failed proves nothing
+- ✅ **Run the whole test file**, never a single test
+- ✅ **Write the minimum that passes** — leave the rest for the next scenario
+- ✅ **One task holds** its scenarios, its implementation, and one passing commit
+- ✅ **A task can hold several scenarios** — the success, the errors, the edges
+
+## NEVER
+
+- ❌ **Write several tests, then build everything** — write one, see it fail, build that one
+- ❌ **Split tests and implementation into separate tasks** — the cycle lives inside one task
+- ❌ **Structure a task by file or artifact** — structure it by behavior or workflow. Output from an exploring agent describes the architecture for understanding only, and it is never the basis for task structure
+- ❌ **Write implementation code before a failing test exists** — the test comes first, every time
+- ❌ **Skip the RED step**
+- ❌ **Commit before every test for the task passes**
+- ❌ **Make a formatting or style change** the user did not ask for
 
 ## A worked example
 
