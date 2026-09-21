@@ -2,11 +2,11 @@
 go = "latest"
 rust = "latest"
 java = "latest"
-ruby = ["latest", "3"]
-node = ["latest", "20.19.4"]
+ruby = "latest"
+node = "latest"
 elixir = "latest"
 erlang = "latest"
-python = ["latest", "3.10.17"]
+python = "latest"
 "npm:agent-ste" = "latest"
 "npm:@earendil-works/pi-coding-agent" = "latest"
 
