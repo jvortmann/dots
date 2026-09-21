@@ -16,8 +16,16 @@ language_info() {
 
 active_tools() {
   if command -v mise &> /dev/null; then
-    local all_tools=$(mise ls --current 2>/dev/null)
-    local local_tools=$(grep -v ".config/mise/config.toml" <<< "$all_tools" | awk '{print $1, $2}')
+    # mise prints the resolved path, so inside the dots repository the global
+    # config shows as ~/prj/... and never as ~/.config/mise/config.toml.
+    local global_config=~/.config/mise/config.toml
+    global_config=${global_config:A}
+    global_config=${global_config/#$HOME/\~}
+
+    # One row per language: a backend tool such as npm: carries a colon and
+    # never changes per project, and a tool with two versions repeats.
+    local all_tools=$(mise ls --current 2>/dev/null | awk '$1 !~ /:/ && !seen[$1]++')
+    local local_tools=$(grep -v -F -e "$global_config" -e ".config/mise/config.toml" <<< "$all_tools" | awk '{print $1, $2}')
 
     if [[ -n $local_tools ]]; then
       echo "$local_tools"
