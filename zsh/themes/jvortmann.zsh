@@ -6,14 +6,12 @@ if [ -z "$ZSH_THEME" ]; then
 fi
 
 elapsed_info() {
-  if type gdate > /dev/null; then
-    if [ $LAST_COMMAND_TIME -lt 1000 ]; then
-      printf "(%dms)" $LAST_COMMAND_TIME
-    elif [ $LAST_COMMAND_TIME -lt 60000 ]; then
-      printf "(%.2fs)" $(($LAST_COMMAND_TIME/1000.))
-    elif [ $LAST_COMMAND_TIME -lt 360000 ]; then
-      printf "(%.2fm)" $(($LAST_COMMAND_TIME/60000.))
-    fi
+  if [ $LAST_COMMAND_TIME -lt 1000 ]; then
+    printf "(%dms)" $LAST_COMMAND_TIME
+  elif [ $LAST_COMMAND_TIME -lt 60000 ]; then
+    printf "(%.2fs)" $(($LAST_COMMAND_TIME/1000.))
+  elif [ $LAST_COMMAND_TIME -lt 360000 ]; then
+    printf "(%.2fm)" $(($LAST_COMMAND_TIME/60000.))
   fi
 }
 

@@ -3,9 +3,9 @@
 # Configure PATH
 source $ZSH_HOME/conf/path
 
-if type gdate > /dev/null; then
-  START="$(gdate "+%s%3N")"
-fi
+# EPOCHREALTIME is a shell parameter, so timing costs no process at all.
+zmodload -F zsh/datetime p:EPOCHREALTIME
+START=$EPOCHREALTIME
 
 # Read default settings
 source $ZSH_HOME/conf/defaults
@@ -23,6 +23,5 @@ source $ZSH_HOME/conf/theme.zsh
 
 source $ZSH_HOME/conf/completion.zsh
 
-if type gdate > /dev/null; then
-  LAST_COMMAND_TIME=$(($(gdate "+%s%3N")-$START))
-fi
+typeset -gi LAST_COMMAND_TIME
+(( LAST_COMMAND_TIME = (EPOCHREALTIME - START) * 1000 ))
