@@ -3,7 +3,7 @@
   "defaultProvider": "anthropic",
   "defaultModel": "claude-opus-5",
   "defaultThinkingLevel": "xhigh",
-  "theme": "solarized-dark",
+  "theme": "solarized-light/solarized-dark",
   "sourceInfoStyle": "name-only",
   "prompts": [
     "prompts"
