@@ -25,6 +25,7 @@ defaults write com.apple.spaces "app-bindings" -dict-add "com.openai.chat" AllSp
 defaults write com.apple.spaces "app-bindings" -dict-add "com.mitchellh.ghostty" "${spaces[0]}"
 defaults write com.apple.spaces "app-bindings" -dict-add "org.mozilla.firefoxdeveloperedition" "${spaces[1]}"
 defaults write com.apple.spaces "app-bindings" -dict-add "com.apple.safari" "${spaces[1]}"
+defaults write com.apple.spaces "app-bindings" -dict-add "net.imput.helium" "${spaces[1]}"
 defaults write com.apple.spaces "app-bindings" -dict-add "com.linear" "${spaces[2]}"
 defaults write com.apple.spaces "app-bindings" -dict-add "com.todoist.mac.todoist" "${spaces[2]}"
 defaults write com.apple.spaces "app-bindings" -dict-add "ru.keepcoder.telegram" "${spaces[3]}"
