@@ -1,6 +1,6 @@
 ---
 name: documentation
-description: Decide whether a document or a comment should exist, then hold it to a budget. Load it when you write, review or edit a README, a document, a doc folder or a code comment. Step one is deciding the text is needed at all, so load it before you start writing, not after.
+description: Load whenever prose for a reader is about to be written, changed or reviewed, every time. The name of the file makes no difference, and neither does the reason. A readme, a plan, a note, a plain text file, a comment in code and a description in a task all count. Load it before the first word, because the first decision is whether the text should exist at all. It carries that decision and the budget that holds the text short.
 ---
 
 # Documentation and comments
