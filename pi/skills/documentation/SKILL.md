@@ -20,12 +20,18 @@ place? Most do not. Write the ones that do, and keep them short.
 
 ## A document
 
-- **Budget the finished file, not the diff** — what counts is the file that
-  exists *after* your edit. How much you added counts for nothing. A doc for
-  one component, hook, page or module fits on one screen, about 80 lines. Past
-  ~150 it needs a stated reason, and a subsystem-wide doc past ~200 does too.
-  An addition that breaks the budget means cutting or rewriting something
-  else. Appending is not an option.
+- **Budget the prose in the finished file, not the diff** — what counts is the
+  file that exists *after* your edit. How much you added counts for nothing.
+  The prose for one component, hook, page or module fits on one screen, about
+  80 lines. Past ~150 it needs a stated reason, and a subsystem-wide doc past
+  ~200 does too. An addition that breaks the budget means cutting or rewriting
+  something else. Appending is not an option.
+- **Reference material is not prose** — a table with a row for each option, a
+  worked example the reader runs, a log of decisions, sample output. Each one
+  grows with the subject, and it is often why the reader opened the file. The
+  length of such a block is no fault. Two rules hold it honest instead. Every
+  row and every example earns its place alone. A reader who skips the whole
+  block still follows the text around it.
 - **Revise, never append** — across a series of changes the correct edit
   usually rewrites a paragraph instead of bolting on a section. Several
   defensible additions make one indefensible document.
@@ -61,9 +67,10 @@ places, and it rots in the one nobody re-reads.
 
 ## Smell checks
 
-- A doc longer than the code it explains is wrong. A genuinely complex system
-  earns a long-form architecture doc, with its coordinates tables, diagrams
-  and glossaries. Nothing else does.
+- Prose longer than the code it explains is wrong. Measure a table, an example
+  or a diagram by its use instead, because a reference block has no natural
+  length. A genuinely complex system also earns a long-form architecture doc,
+  with its coordinates tables, diagrams and glossaries.
 - A diff that is more than a third comment needs tightening before you present
   it. "Only for complex logic" is self-judged and always says yes. The share
   is not.
