@@ -4,9 +4,12 @@ tools='
 bat
 ctags
 fd
+ghostty
+iex
 karabiner
 mise
 orbstack
+pi
 tmux
 zsh
 '
