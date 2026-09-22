@@ -1,6 +1,6 @@
 ---
 name: git-commit
-description: Draft a commit message, check it with ste-lint and the commit-msg hook, then copy it to the clipboard. Use when asked to commit, on the word `commit`, and when a finished task needs its message.
+description: Load whenever there is a commit message to work on, every time. Who runs the commit makes no difference, and neither do the words of the request. Writing one, revising one, or handing one over all count, as does a finished task that needs its message and a draft that ste-lint or the commit-msg hook rejected. It carries the rule that the user runs every commit, the two checks a draft must pass, and the handover.
 ---
 
 # Git commit
