@@ -22,7 +22,6 @@ defaults delete com.apple.spaces "app-bindings"
 defaults write com.apple.spaces "app-bindings" -dict-add "com.dteoh.devdocs-macos" AllSpaces
 defaults write com.apple.spaces "app-bindings" -dict-add "com.anthropic.claudefordesktop" AllSpaces
 defaults write com.apple.spaces "app-bindings" -dict-add "com.openai.chat" AllSpaces
-defaults write com.apple.spaces "app-bindings" -dict-add "org.alacritty" "${spaces[0]}"
 defaults write com.apple.spaces "app-bindings" -dict-add "com.mitchellh.ghostty" "${spaces[0]}"
 defaults write com.apple.spaces "app-bindings" -dict-add "org.mozilla.firefoxdeveloperedition" "${spaces[1]}"
 defaults write com.apple.spaces "app-bindings" -dict-add "com.apple.safari" "${spaces[1]}"

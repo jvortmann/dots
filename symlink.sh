@@ -17,9 +17,6 @@ ln -sfnv ~/.dots/guard/guard.rb ~/.guard.rb
 echo; echo ">> Setting symlinks for eslint configurations"
 ln -sfnv ~/.dots/eslint/eslintrc ~/.eslintrc
 
-echo; echo ">> Setting symlinks for alacritty configurations"
-ln -sfnv ~/.dots/alacritty ~/.config/alacritty
-
 echo; echo ">> Setting symlinks for ripgrep configurations"
 ln -sfnv ~/.dots/rg ~/.config/rg
 
