@@ -43,9 +43,14 @@ corrected message, never a warning.
 
 ## Hand it over
 
-- Copy the corrected message with `pbcopy < "$M"`, then delete the file.
-- Show the same message in the reply, inside a fenced block, so the reader
-  sees what the clipboard holds.
+Every reply that works on a message prints the final text in a fenced block,
+every time. The clipboard is not the handover, because nobody can read it. A
+reply that says the message is ready, and does not show it, delivered nothing.
+
+- Print the text that passed both checks, and never an earlier draft.
+- Put the message alone inside the block, with no comment of yours in it, so
+  it copies clean.
+- Copy the same text with `pbcopy < "$M"`, then delete the file.
 - Name the files the commit touches, and stop there.
 - When the change needs more than one commit, give a message for each and say
   which one sits on the clipboard. Only one can.
