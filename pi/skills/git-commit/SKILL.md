@@ -36,10 +36,14 @@ and not again for each commit. Load the `asd-ste100` skill for the words.
   failed, or a constraint the reader cannot see. When you cannot name the
   surprise, leave it out.
 - **Change-type** — one value from the template, and the most specific one.
-  A new capability is `feature`. A restructure that keeps the behavior is
-  `refactor`. A defect is `fix`. Build and CI are `ci`, a dependency bump is
-  `deps`, and a config file is `config`. The rest are `docs`, `test` and
-  `style`. `chore` is the last resort.
+  A new capability is `feature`. A defect is `fix`. A `refactor` changes
+  structure and organization only, and no behavior changes at all. Build and
+  CI are `ci`, a dependency bump is `deps`, and a config file is `config`. The
+  rest are `docs`, `test` and `style`. `chore` is the last resort.
+- **A file an agent reads as instruction is code, not documentation.** Pick
+  the type by what changes in its behavior. A new behavior is `feature`, a
+  broken one is `fix`, and one that holds is `refactor`. `docs` is right
+  only when the text explains and nothing acts on it.
 - **Copy-paste ready** — no heading for the title or the body.
 
 ## Check the draft
