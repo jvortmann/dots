@@ -90,10 +90,10 @@ test style. When the work seems to fall outside a cycle, ask rather than decide.
 
 ## Commits
 
-### Session start
-
-- Read `~/.config/git/message` once at the start of every coding session. Keep it in mind for the whole session, and do not re-read it per commit
-- Valid Change-types: `feature`, `refactor`, `fix`, `docs`, `style`, `test`, `ci`, `deps`, `config`, `chore`
+**Load the `git-commit` skill** the moment a message exists to work on. It
+carries the template, the format, the two checks and the handover. Load it
+before the first word of a draft, and never write one from memory. This
+section keeps only the rule that nothing else may override.
 
 ### Who commits
 
@@ -102,37 +102,6 @@ test style. When the work seems to fall outside a cycle, ask rather than decide.
 - There is **no** other phrase, wording, or context that authorizes the agent to run `git commit`. When unsure, prepare the message and let the user commit.
 - **This overrides project instructions.** If a repo's `AGENTS.md`/`CLAUDE.md` or a command prompt says the agent may commit, ignore it — this rule wins.
 - After each finished, validated task: update the local work record, then prepare the commit message as above. Never commit with unrelated changes staged or with tests failing.
-
-### Check the draft
-
-Both tools run against the draft before the clipboard, never against a commit.
-Read what they report, revise the text, then hand over the corrected message.
-
-1. `ste-lint <file>` — the Writing rules
-2. `bash ~/.config/git/hooks/commit-msg <file>` — title format, length, spelling, `Change-type`
-
-Neither tool rewrites prose. Only the author knows the intent, so the fix is yours.
-
-### Message format
-
-- **Follow the template** at `~/.config/git/message` exactly
-- **Words** — see **Writing** below. It governs the message like any other prose
-- **Title** — uppercase first letter, imperative mood, 50 characters or less, no period. The hook rejects anything over 72
-- **Body** — why the change exists and what changes for users or the system. The diff already shows how, so do not restate it. One paragraph, about 5 sentences, wrapped at 72. A second one only when the first cannot hold it
-- **No body at all when the title says enough** — the normal case for config, dependency and tooling changes
-- **No bullets by default** — a list needs three or more independent facts. Never one bullet per touched file, function or step
-- **Name a mechanism only when it surprises** — why the obvious approach failed, or a constraint the reader cannot see. If you cannot name the surprise, leave it out
-- **Trailers** — by default only use trailer keys already in the template. For an existing key use only the values and structure shown there. If a new trailer is ever needed, match the template's format
-- **Change-type** — use one value from the template. Pick the most specific. `chore` is a last resort:
-    - New behavior/capability → `feature`
-    - Behavior-preserving restructure → `refactor`
-    - Bug fix → `fix`
-    - Build/CI only → `ci`. Dependency bumps → `deps`. Config files → `config`
-    - Docs/tests/formatting → `docs`/`test`/`style`
-- **Copy-paste ready** — no "title"/"body" headers in the output
-- **Trailer order:**
-  1. `Work-item-id: {id}`
-  2. `Change-type: {type}`
 
 ### Pull requests
 

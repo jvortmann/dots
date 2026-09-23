@@ -17,8 +17,30 @@ and stop.
 - Never prepare a commit that holds unrelated changes, or one with a failing
   test.
 
-The message rules live in `~/.config/pi/AGENTS.md` and in the template at
-`~/.config/git/message`. Load the `asd-ste100` skill for the words.
+## The message
+
+Follow the template at `~/.config/git/message`. Read it once in a session,
+and not again for each commit. Load the `asd-ste100` skill for the words.
+
+- **Title** — an uppercase first letter, the imperative mood, 50 characters
+  or less, and no period. The hook rejects a title past 72.
+- **Body** — why the change exists, and what changes for a user or for the
+  system. The diff shows how, so do not restate it. One paragraph of about
+  five sentences, wrapped at 72. A second one only when the first cannot hold
+  it.
+- **No body when the title says enough.** That is the usual case for a
+  config, a dependency and a tooling change.
+- **No bullets by default.** A list needs three or more independent facts.
+  Never one bullet for each file, each function or each step.
+- **Name a mechanism only when it surprises.** Why the obvious approach
+  failed, or a constraint the reader cannot see. When you cannot name the
+  surprise, leave it out.
+- **Change-type** — one value from the template, and the most specific one.
+  A new capability is `feature`. A restructure that keeps the behavior is
+  `refactor`. A defect is `fix`. Build and CI are `ci`, a dependency bump is
+  `deps`, and a config file is `config`. The rest are `docs`, `test` and
+  `style`. `chore` is the last resort.
+- **Copy-paste ready** — no heading for the title or the body.
 
 ## Check the draft
 
@@ -64,3 +86,6 @@ reply that says the message is ready, and does not show it, delivered nothing.
 A branch named after a work item gets a `Work-item-id` trailer from
 `prepare-commit-msg`. Do not write that trailer by hand into a drafted
 message, because the hook adds it at commit time.
+
+Use only the trailer keys the template carries, with the values and the shape
+it shows. `Work-item-id` comes before `Change-type`.
