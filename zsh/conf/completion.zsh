@@ -4,8 +4,15 @@ fpath=($ZSH_HOME/completions /usr/local/share/zsh/site-functions /usr/local/shar
 
 # Load and run compinit. -C trusts the dump and skips compaudit, which walks
 # every directory in fpath on each start and costs more than it catches here.
+# Homebrew touches its site-functions directory when it links a formula, and
+# that is the only thing here that moves a completion file. A directory newer
+# than the dump therefore earns the full run, which one stat detects.
 autoload -U compinit
-compinit -C
+if [[ ${HOMEBREW_PREFIX:-/opt/homebrew}/share/zsh/site-functions -nt ~/.zcompdump ]]; then
+  compinit
+else
+  compinit -C
+fi
 
 unsetopt MENU_COMPLETE   # do not autoselect the first completion entry
 setopt AUTO_MENU         # show completion menu on succesive tab press
