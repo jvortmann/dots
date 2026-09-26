@@ -93,6 +93,17 @@
   },
   "special": {
     "doom_loop": "deny",
-    "external_directory": "ask"
+    "external_directory": "ask",
+
+    // A subagent has no UI to answer an ask, so scratch work in /tmp stopped it
+    // cold. The extension compares paths as text and never resolves a link, so
+    // /tmp and its macOS target /private/tmp each need a rule. The same holds
+    // for $TMPDIR, where mktemp writes. Its folder differs per user, so the
+    // rule matches any of them. A tmp/ folder inside the working directory is
+    // not external and needs none.
+    "external_directory:/tmp/*": "allow",
+    "external_directory:/private/tmp/*": "allow",
+    "external_directory:/var/folders/*/T/*": "allow",
+    "external_directory:/private/var/folders/*/T/*": "allow"
   }
 }
