@@ -44,6 +44,12 @@ Delete a line the agent already follows without it. Test each sentence: does
 it change what the agent does? Keep one home for each fact, and prune a line
 that no longer applies.
 
+A guardrail is not a duplicate. A NEVER list can say again what the MUST list
+says. That repeated prohibition holds the agent to the process, so keep it on
+purpose. One home applies to facts and methods. In a
+review, name a guardrail you think is redundant, and remove it only when the
+user agrees.
+
 ## Keep it short
 
 Past about 80 lines of prose, ask whether each line earns its place. Move
