@@ -31,6 +31,31 @@ For each test scenario in the task:
 When every scenario passes, draft the commit message and let the user commit.
 Load the `git-commit` skill for that part.
 
+## One slice at a time
+
+Never write every test first and then every implementation. Tests written in
+bulk test the behavior you imagined, not the behavior you built. Each test
+should answer what the last cycle taught you.
+
+```
+WRONG, horizontal:
+  RED:   test1, test2, test3, test4
+  GREEN: impl1, impl2, impl3, impl4
+
+RIGHT, vertical:
+  RED -> GREEN: test1 -> impl1
+  RED -> GREEN: test2 -> impl2
+  RED -> GREEN: test3 -> impl3
+```
+
+Check each cycle before the next one:
+
+- [ ] The test describes behavior, not the implementation.
+- [ ] It uses the public interface only.
+- [ ] It would survive a refactor of the internals.
+- [ ] The code is the minimum for this test.
+- [ ] You added nothing for a later test.
+
 ## Read the RED
 
 A failure counts as RED only when all three hold:
