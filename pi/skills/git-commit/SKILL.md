@@ -83,6 +83,9 @@ reply that says the message is ready, and does not show it, delivered nothing.
   in the session the user reads directly. A subagent leaves the clipboard
   alone and puts the message in its report, because the clipboard belongs to
   the user.
+- When a subagent reports a message, the session the user reads does the
+  handover. Print it, run both checks again on that exact text, and copy it.
+  A report cannot prove its checks ran, and a hand-off can drop a newline.
 - Name the files the commit touches, and stop there.
 - When the change needs more than one commit, give a message for each and say
   which one sits on the clipboard. Only one can.
