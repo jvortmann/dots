@@ -77,6 +77,8 @@ becomes one commit.
 - Name a step by its outcome, what is true when it ends. Write "Expired
   tokens get a 401", not "Update the auth middleware".
 - Cut by behavior, not by file. A step holds its tests and its code together.
+  A map from an exploring agent shows the code, and it is never the shape of
+  the steps.
 - Give each step the check that proves it.
 - Say what a step does, and never paste its code. The code comes when the
   step runs.

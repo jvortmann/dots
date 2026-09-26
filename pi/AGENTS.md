@@ -150,6 +150,7 @@ it holds the budget.
 - **No trailing whitespace** — `sed -i '' -E 's/[[:blank:]]+$//' {file}`
 - **No extra blank lines** — except a single trailing newline
 - **Respect `.editorconfig`**
+- **Formatting and style go in their own commit**, before the real change, never inside it. A mixed diff hides the change. Make the style commit its own task, and the user still runs it
 
 ---
 

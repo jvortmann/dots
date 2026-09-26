@@ -1,6 +1,6 @@
 ---
 name: tdd
-description: Test-driven development in baby steps. Load it before you write or change any implementation code, every time, whatever the change looks like. It carries the RED and GREEN cycle, the rules that hold the cycle together, and a worked example, and it loads the testing skill for the test itself. When the work seems to fall outside a cycle, ask the user rather than decide alone.
+description: Load it before you write or change any implementation code, every time, whatever the change looks like. It carries test-driven development in baby steps, the RED and GREEN cycle, the rules that hold the cycle together, and a worked example, and it loads the testing skill for the test itself. When the work seems to fall outside a cycle, ask the user rather than decide alone.
 ---
 
 # TDD
@@ -51,7 +51,7 @@ the assertion.
 
 ## MUST
 
-- ✅ **Test first** — the first file you create or edit for any behavior is the test
+- ✅ **Test first** — the first file you create or edit for any behavior is the test, every time
 - ✅ **Baby steps** — one scenario at a time
 - ✅ **See it fail for the right reason** — a test that never failed proves nothing, and nor does a setup error
 - ✅ **Run the whole test file**, never a single test
@@ -63,11 +63,10 @@ the assertion.
 
 - ❌ **Write several tests, then build everything** — write one, see it fail, build that one
 - ❌ **Split tests and implementation into separate tasks** — the cycle lives inside one task
-- ❌ **Structure a task by file or artifact** — structure it by behavior or workflow. Output from an exploring agent describes the architecture for understanding only, and it is never the basis for task structure
 - ❌ **Write implementation code before a failing test exists** — the test comes first, every time
 - ❌ **Skip the RED step**
 - ❌ **Commit before every test for the task passes**
-- ❌ **Make a formatting or style change** the user did not ask for
+- ❌ **Mix a formatting or style change into the task** — it goes in its own commit, before the real change
 
 ## A worked example
 
@@ -76,7 +75,10 @@ Task: Add flexible updateAudience()
 
 Baby step 1:
   1. Write test: "updates only description"
-  2. Run tests -> see it FAIL (RED)
+     Predict: expected "new text", got "old text"
+  2. Run tests -> see it FAIL (RED), and read the failure
+     It printed the prediction, on the new assertion, and nothing else
+     failed, so it counts. "Cannot find module" would not count
   3. Add the minimum code for the description field
   4. Run tests -> see it PASS (GREEN)
 
