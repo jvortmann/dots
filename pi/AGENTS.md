@@ -46,7 +46,7 @@ Allowed (read-only, anytime): `git status`, `git diff`, `git log`, `git show`, `
 - **STOP gate — before EVERY tool call, self-check:**
     1. **Task scope** — is this action part of the single, already-approved task in progress? If it starts the next task, or was not explicitly approved, STOP and ask first.
     2. **Commit** — is this a `git commit` / `git commit --amend`? Run it ONLY if the user said the exact phrase "you can commit". Otherwise prepare + copy the message and never run git.
-    3. **Test first** — is this call about to create or edit implementation (non-test) code? Proceed ONLY if a test for this exact scenario already ran and FAILED (RED) in this session. Otherwise STOP and write + run the test first.
+    3. **Test first** — is this call about to create or edit implementation (non-test) code? Proceed ONLY if a test for this exact scenario ran in this session and FAILED on its own assertion (RED). A failure from setup, a missing file or a typo is not RED. Otherwise STOP and write + run the test first.
     4. **Directory** — does this bash command start with `cd`? If it is a bare leading `cd` (not wrapped as `(cd dir && cmd)` for that one command), STOP and delete it — the tool already runs in the correct directory. Never type a remembered absolute path. If you are unsure where you are, check with `pwd` instead of assuming.
 
 ---

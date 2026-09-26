@@ -58,6 +58,7 @@ RED:
 ```
 <the failure as the framework printed it>
 ```
+Why this RED counts: <the assertion that failed, and why its actual value shows the behavior is missing>
 GREEN:
 ```
 <the pass as the framework printed it>
@@ -87,7 +88,9 @@ Command: <what you ran>
 <each question, with what you found, or "none">
 ````
 
-A scenario without its RED output is not done, so report it as not done.
+A scenario without its RED output is not done, so report it as not done. A
+failure from setup, a missing file or a typo is not RED. When one comes
+first, report it too, then the run that failed on the assertion.
 
 ## What the report cannot prove
 

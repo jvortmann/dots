@@ -20,8 +20,9 @@ For each test scenario in the task:
 
 1. **Write ONE test scenario first** — a single test case, before you create
    or edit any implementation code.
-2. **Run the ENTIRE test file** — see it fail (RED). Do not touch the
-   implementation until that failure appears.
+2. **Run the ENTIRE test file** — see it fail (RED), then read the failure.
+   Do not touch the implementation until the right failure appears (see
+   below).
 3. **Write the MINIMUM code** — only what makes this one test pass.
 4. **Run the ENTIRE test file** — it passes and nothing else broke (GREEN).
 5. **Refactor if needed** — the file stays green.
@@ -30,11 +31,29 @@ For each test scenario in the task:
 When every scenario passes, draft the commit message and let the user commit.
 Load the `git-commit` skill for that part.
 
+## Read the RED
+
+A failure counts as RED only when all three hold:
+
+- **The new test fails on its own assertion.** The output names the expected
+  value and the actual value, and the actual value shows the behavior is
+  missing.
+- **It is the failure you predicted.** Say what you expect it to print before
+  you run it, and compare.
+- **Every other test in the file still passes.** A file that was already red
+  hides which failure is yours.
+
+Some failures prove nothing about the behavior, so they are not RED. Examples
+are a missing file, a syntax error, a typo, a setup error, a timeout,
+and another test failing. Fix the test, or add the smallest scaffold that lets
+it run, such as an empty function. Run the file again, until the failure is
+the assertion.
+
 ## MUST
 
 - ✅ **Test first** — the first file you create or edit for any behavior is the test
 - ✅ **Baby steps** — one scenario at a time
-- ✅ **See it fail** — a test that never failed proves nothing
+- ✅ **See it fail for the right reason** — a test that never failed proves nothing, and nor does a setup error
 - ✅ **Run the whole test file**, never a single test
 - ✅ **Write the minimum that passes** — leave the rest for the next scenario
 - ✅ **One task holds** its scenarios, its implementation, and one passing commit
