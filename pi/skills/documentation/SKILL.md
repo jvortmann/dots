@@ -6,7 +6,8 @@ description: Load whenever prose for a reader is about to be written, changed or
 # Documentation and comments
 
 A document and a comment answer the same question: does this text earn its
-place? Most do not. Write the ones that do, and keep them short.
+place? Most do not. Write the ones that do, and keep them short. Load the
+`asd-ste100` skill for the words.
 
 ## Process
 
