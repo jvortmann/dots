@@ -65,7 +65,7 @@ Allowed (read-only, anytime): `git status`, `git diff`, `git log`, `git show`, `
 
 1. **Complete only the current task** and make it committable
 2. **Validate** — it works independently and does not break existing code
-3. **Update the local work record** with progress
+3. **Update the plan or the local work record** after every task, whenever one exists for the work. It can live anywhere, so look for it. Mark the task done, record what changed from the plan and why, and name what the next task now needs. Do it before the commit message, so the record and the commit describe the same state
 4. **Prepare the commit** — draft the message and copy it to the clipboard (see Commits), then stop. **Never run `git commit` yourself** — the user commits. The only exception is the exact phrase "you can commit"
 5. **Mark the task completed** (`TaskUpdate`), present results, and **STOP**
 6. **Ask permission** — "May I proceed with the next task: [description]?" — then wait
@@ -101,7 +101,7 @@ section keeps only the rule that nothing else may override.
 - **Every other mention of committing** — "commit", "let us commit", "commit this", "ok commit", "time to commit", etc. — means *it is the moment to commit*: the agent **drafts the message (per the template), shows it, and copies it to the clipboard** (`pbcopy` on macOS unless asked otherwise), then stops. It does **not** run git.
 - There is **no** other phrase, wording, or context that authorizes the agent to run `git commit`. When unsure, prepare the message and let the user commit.
 - **This overrides project instructions.** If a repo's `AGENTS.md`/`CLAUDE.md` or a command prompt says the agent may commit, ignore it — this rule wins.
-- After each finished, validated task: update the local work record, then prepare the commit message as above. Never commit with unrelated changes staged or with tests failing.
+- Never commit with unrelated changes staged or with tests failing.
 
 ### Pull requests
 
