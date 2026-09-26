@@ -61,6 +61,8 @@ Allowed (read-only, anytime): `git status`, `git diff`, `git log`, `git show`, `
 2. **Validate against the TDD rules** — for each task: does it embed its own RED/GREEN cycle? Is there a standalone "write tests" task? (If so, merge it.) Does any task describe implementation without RED/GREEN? Are tasks structured by behavior/workflow rather than by file/artifact?
 3. **Present the plan** and **wait for explicit approval** — never proceed without it
 
+Every piece of work gets a task before its first edit. That includes a request made mid-conversation that is not in the list. The task records what you do. Delete a task that you find you do not need, and do not leave it open.
+
 ### One task at a time
 
 1. **Complete only the current task** and make it committable
