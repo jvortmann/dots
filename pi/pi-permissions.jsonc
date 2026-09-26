@@ -15,7 +15,14 @@
     "edit": "allow",
     "write": "allow",
     "bash": "allow",
-    "mcp": "allow"
+    "mcp": "allow",
+
+    // The two read-only folders below pass the directory check, so writing
+    // there needs its own guard. A later match wins over the allow above.
+    "write:/Users/*/Downloads/*": "ask",
+    "edit:/Users/*/Downloads/*": "ask",
+    "write:/Users/*/Library/Application Support/CleanShot/media/*": "ask",
+    "edit:/Users/*/Library/Application Support/CleanShot/media/*": "ask"
   },
   "bash": {
     "git status*": "allow",
@@ -119,6 +126,13 @@
     "external_directory:/tmp/*": "allow",
     "external_directory:/private/tmp/*": "allow",
     "external_directory:/var/folders/*/T/*": "allow",
-    "external_directory:/private/var/folders/*/T/*": "allow"
+    "external_directory:/private/var/folders/*/T/*": "allow",
+
+    // Screenshots and downloads are what a user most often hands an agent.
+    // Rule keys get no ~ expansion, and * stands for the user so the file
+    // works on any machine. The folder itself needs its own key for ls.
+    "external_directory:/Users/*/Downloads": "allow",
+    "external_directory:/Users/*/Downloads/*": "allow",
+    "external_directory:/Users/*/Library/Application Support/CleanShot/media/*": "allow"
   }
 }
