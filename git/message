@@ -2,6 +2,8 @@
 Change-type: feature|refactor|fix|docs|style|test|ci|deps|config|chore
 #Refactoring: removeDeadCode
 #See-also: 6ed2658fb9c4a9e93e3216f32071c030f14d7d28
+#GHSA-id: GHSA-rgxp-2hwp-jwgg
+#CVE-id: CVE-2026-25087
 #
 # Paste the message on line 1, or write it there.
 #

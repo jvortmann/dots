@@ -94,11 +94,19 @@ reply that says the message is ready, and does not show it, delivered nothing.
   the word and name it in the reply. The user adds it with `zg`. Rewording a
   message to please a dictionary trades the precise name for a vague one.
 
-## The trailers the hook adds
-
-A branch named after a work item gets a `Work-item-id` trailer from
-`prepare-commit-msg`. Do not write that trailer by hand into a drafted
-message, because the hook adds it at commit time.
+## Trailers
 
 Use only the trailer keys the template carries, with the values and the shape
-it shows. `Work-item-id` comes before `Change-type`.
+it shows. Keep them in this order: `Work-item-id`, `Change-type`, `See-also`,
+then the advisory ids.
+
+- **`Work-item-id`** comes from `prepare-commit-msg` on a branch named after a
+  work item. Do not write it by hand, because the hook adds it at commit time.
+- **`See-also`** points at an outside reference the change adapts or depends
+  on: a website, a commit hash, or a `file:line`. Write one line for each
+  reference.
+- **`GHSA-id` and `CVE-id`** go on a dependency change that fixes a security
+  advisory. Write one line for each id, as many as the fix clears. The two do
+  not come in pairs, because an advisory can have a GHSA id and no CVE id.
+  The body names the vulnerable range, the patched version, and how the
+  package reaches the tree.
