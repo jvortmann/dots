@@ -85,8 +85,9 @@ Every piece of work gets a task before its first edit. That includes a request m
 **MANDATORY: BABY STEPS for EVERY implementation task.**
 
 Load the `tdd` skill before you write or change any implementation code. It
-carries the RED and GREEN cycle, the rules around it, a worked example and the
-test style. When the work seems to fall outside a cycle, ask rather than decide.
+carries the RED and GREEN cycle, the rules around it and a worked example. It
+loads the `testing` skill for the test itself. When the work seems to fall
+outside a cycle, ask rather than decide.
 
 ---
 
