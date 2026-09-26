@@ -78,6 +78,18 @@ Every piece of work gets a task before its first edit. That includes a request m
 - ❌ Assume permission to continue
 - ❌ Batch multiple tasks together without checkpoints
 
+### As a subagent
+
+A `<sub_agent_context>` block in your prompt means you run as a subagent, and
+no person reads your steps. The rules above expect one, so for this run:
+
+- The invocation is the approval for the one task in your prompt. Skip the task
+  list and the request for approval.
+- Take nothing outside that task. Put what you notice beyond it in the report.
+- Where a rule or a skill tells you to ask, stop, and end with the question in
+  your report. Never guess an answer, and never decide alone.
+- The prohibitions above still hold, every one, without exception.
+
 ---
 
 ## TDD Methodology
