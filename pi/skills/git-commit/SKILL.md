@@ -13,6 +13,9 @@ and stop.
 ## Read the change first
 
 - `git status --short` and `git diff --cached` for what the commit carries.
+  Read them right before you draft, and write from that diff. Never write from
+  memory of your edits, because the user can commit or stage part of them in
+  the meantime.
 - `git log -5 --format='%B'` for the voice of the recent history.
 - Never prepare a commit that holds unrelated changes, or one with a failing
   test.
