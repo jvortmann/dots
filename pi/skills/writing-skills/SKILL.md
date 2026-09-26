@@ -89,5 +89,11 @@ A skill that loads when you name it proves only that the file exists.
 1. Run the pi loader, and check that the skill is on the list.
 2. Give an agent a real task that matches the description, without naming the
    skill.
-3. Read that agent's session file, and find the read of the SKILL.md. A skill
-   that the agent did not read did not fire.
+3. Read that agent's session file with the `pi-sessions` skill, and find the
+   read of the SKILL.md. A skill that the agent did not read did not fire.
+
+A subagent copies the system prompt of its parent as it stood when that
+session started. So a change to AGENTS.md or to a skill description reaches a
+subagent only after `/reload` or a new session. Probe such a change from a
+fresh session. When a skill loads, pi reads its body from disk, so a change there
+applies at once.
