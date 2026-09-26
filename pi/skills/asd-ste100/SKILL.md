@@ -1,6 +1,6 @@
 ---
 name: asd-ste100
-description: Write prose in ASD-STE100 Simplified Technical English. Load before writing or revising a commit message, PR body, README, documentation, code comment or task description, when asked to remove AI slop or to make text plain, and when ste-lint reports a fault to fix.
+description: Load whenever prose a person reads is about to be written or revised, every time. What the text is and why you write it make no difference. A commit message, a PR body, a readme, a comment in code, a task description, a request to remove AI slop, and a fault that ste-lint reported all count. It carries the ASD-STE100 rules for words and sentences, the faults the checker misses, and how to check a draft.
 ---
 
 # ASD-STE100
