@@ -28,8 +28,13 @@ For each test scenario in the task:
 5. **Refactor if needed** — the file stays green.
 6. **Repeat** — take the next scenario.
 
-When every scenario passes, draft the commit message and let the user commit.
-Load the `git-commit` skill for that part.
+When every scenario passes:
+
+7. **Load the `reproducible-locally` skill, and prove the change** — before you
+   call it done. Your reply opens with its outcome line, `verified` or
+   `not verified`. A behavior that no test covers goes under not verified,
+   never as "should work".
+8. **Load the `git-commit` skill, and draft the message** — the user commits.
 
 ## One slice at a time
 
