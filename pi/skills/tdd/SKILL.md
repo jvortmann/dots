@@ -1,6 +1,6 @@
 ---
 name: tdd
-description: Test-driven development in baby steps. Load it before you write or change any implementation code, every time, whatever the change looks like. It carries the RED and GREEN cycle, the rules that hold the cycle together, a worked example, and the test style. When the work seems to fall outside a cycle, ask the user rather than decide alone.
+description: Test-driven development in baby steps. Load it before you write or change any implementation code, every time, whatever the change looks like. It carries the RED and GREEN cycle, the rules that hold the cycle together, and a worked example, and it loads the testing skill for the test itself. When the work seems to fall outside a cycle, ask the user rather than decide alone.
 ---
 
 # TDD
@@ -78,13 +78,7 @@ After every scenario passes:
   6. The user commits. Never run `git commit` yourself
 ```
 
-## Test style
+## The test itself
 
-- **Describe the behavior, not the function.** A test name that carries a
-  function name describes the implementation, and it goes stale with it.
-  - Write `accepts valid ISO 8601 timestamp strings`
-  - Not `validateTimestamp returns valid for ISO strings`
-- **Assert true or false, never truthy or falsy.** A truthy check passes on a
-  value you did not intend.
-  - Write `t.true(typeof result.error === "string" && result.error.length > 0)`
-  - Not `t.truthy(result.error)`
+Load the `testing` skill before you write the first test. It carries what a
+good test asserts, where a mock belongs, and how to name and assert.
