@@ -460,6 +460,41 @@ Work-item-id: AUD-1234"
   assert_equals "" "$output"
 }
 
+function test_trailers_accepts_see_also_references() {
+  local message="Adapt the investigate skill
+
+The order of the work comes from an outside source.
+
+Change-type: feature
+See-also: https://github.com/juanibiapina/dotfiles
+See-also: 6ed2658fb9c4a9e93e3216f32071c030f14d7d28
+See-also: git/hooks/commit-msg:111"
+
+  local output
+  output=$(run_hook "$message")
+
+  assert_successful_code
+  assert_equals "" "$output"
+}
+
+function test_trailers_accepts_several_advisory_ids() {
+  local message="Bump the parser to the patched version
+
+The old range carries two advisories, and only one has both ids.
+
+Work-item-id: AUD-3410
+Change-type: deps
+GHSA-id: GHSA-rgxp-2hwp-jwgg
+CVE-id: CVE-2026-25087
+GHSA-id: GHSA-6v7p-g79w-8964"
+
+  local output
+  output=$(run_hook "$message")
+
+  assert_successful_code
+  assert_equals "" "$output"
+}
+
 function test_trailers_accepts_message_without_any_trailers() {
   local output
   output=$(run_hook "Fix the words")
