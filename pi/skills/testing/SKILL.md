@@ -34,7 +34,9 @@ implementation. Rewrite it against the interface.
 
 - It mocks a module you own.
 - It calls a private function.
-- It asserts how many times, or in which order, the code calls something.
+- It asserts how many times, or in which order, the code calls a module you
+  own. At the boundary such a check is fine, such as one charge sent to a
+  payment gateway.
 - Its name says how the code works, not what it does.
 
 ## Mock at the boundary only
