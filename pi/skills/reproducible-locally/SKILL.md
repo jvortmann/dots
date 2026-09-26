@@ -17,9 +17,12 @@ a file on disk.
 
 - A green build proves the build, and nothing more.
 - A passing suite proves the scenarios it runs. Say which scenario covers the
-  change. A suite with no test for the change proves nothing about it.
+  change, and show the run where it failed without the change. The RED of a
+  tdd cycle is that run. A test that passed before the change proves nothing
+  about it.
 - Clicking through an app, reading a dashboard, or reading the code back is
-  not proof.
+  not proof. Script the same check instead, so it prints output that anybody
+  can run again.
 - Reading a setting back after you wrote it proves the write, not the effect.
   Check the effect.
 
@@ -36,7 +39,8 @@ preview, in CI, and in a worktree.
 ## Report one outcome
 
 - **verified**: the scenario, the command you ran, what it asserts, and the
-  output it printed.
+  output it printed. List the places the changed code runs, and which of them
+  the proof covered.
 - **not verified**: what blocked the proof, and the smallest change that
   would make proof possible.
 
