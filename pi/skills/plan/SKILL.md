@@ -84,6 +84,14 @@ becomes one commit.
   step runs.
 - Make the last step a review of the documentation near the changed code.
 
+Split the steps by kind, because each step is one commit:
+
+- A formatting or style change is its own step, before the real change.
+- A refactor is its own step, apart from a feature or a fix.
+- The tests of a feature stay in the step of that feature.
+- Tests for behavior that already exists are a step of their own.
+- Order the steps so that each commit passes the tests and the build alone.
+
 ## Record progress
 
 The plan is also the record of the work. Keep two lists at its end:
