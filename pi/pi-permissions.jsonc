@@ -59,21 +59,36 @@
     // the denied command starts it, and `cd repo && git stash` would run. Each
     // rule therefore carries a `* ` twin that matches the command anywhere. A
     // command that only mentions a denied string is denied as well, quoted text
-    // included.
+    // included. A flag before the subcommand, as in `git -C repo commit`, also
+    // hides it, so each rule carries two more forms with `-*` in between.
     "git commit*": "deny",
     "* git commit*": "deny",
+    "git -* commit*": "deny",
+    "* git -* commit*": "deny",
     "git reset*": "deny",
     "* git reset*": "deny",
+    "git -* reset*": "deny",
+    "* git -* reset*": "deny",
     "git rebase*": "deny",
     "* git rebase*": "deny",
+    "git -* rebase*": "deny",
+    "* git -* rebase*": "deny",
     "git push --force*": "deny",
     "* git push --force*": "deny",
+    "git -* push --force*": "deny",
+    "* git -* push --force*": "deny",
     "git push -f*": "deny",
     "* git push -f*": "deny",
+    "git -* push -f*": "deny",
+    "* git -* push -f*": "deny",
     "git stash*": "deny",
     "* git stash*": "deny",
+    "git -* stash*": "deny",
+    "* git -* stash*": "deny",
     "git checkout*": "deny",
     "* git checkout*": "deny",
+    "git -* checkout*": "deny",
+    "* git -* checkout*": "deny",
     "rm -rf *": "deny",
     "* rm -rf *": "deny",
     "security dump-keychain*": "deny",
