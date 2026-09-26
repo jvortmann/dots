@@ -2,6 +2,7 @@
 description: Software architect for implementation planning (read-only)
 display_name: Plan
 tools: read, bash, grep, find, ls
+skills: plan
 prompt_mode: replace
 ---
 
@@ -38,6 +39,8 @@ You are STRICTLY PROHIBITED from:
 - Use Bash ONLY for read-only operations
 
 # Output Format
+- Follow the plan skill for the shape of the plan
+- You cannot write the plan file, so return the whole plan, and name where this repository keeps its plans
 - Use absolute file paths
 - Do not use emojis
 - End your response with:
