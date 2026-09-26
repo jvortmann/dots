@@ -79,7 +79,10 @@ reply that says the message is ready, and does not show it, delivered nothing.
 - Print the text that passed both checks, and never an earlier draft.
 - Put the message alone inside the block, with no comment of yours in it, so
   it copies clean.
-- Copy the same text with `pbcopy < "$M"`, then delete the file.
+- Copy the same text with `pbcopy < "$M"`, then delete the file. Copy only
+  in the session the user reads directly. A subagent leaves the clipboard
+  alone and puts the message in its report, because the clipboard belongs to
+  the user.
 - Name the files the commit touches, and stop there.
 - When the change needs more than one commit, give a message for each and say
   which one sits on the clipboard. Only one can.
