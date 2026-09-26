@@ -43,19 +43,23 @@ yt-dlp --flat-playlist --print "%(title)s %(url)s" "<playlist-url>"
 
 ## Download
 
+YouTube serves video up to 4K, but as separate streams: the video with no
+sound, and the audio. It offers no file that holds both, so `-f best` fails
+there. Joining the two streams needs ffmpeg. Without it, fetch each stream:
+
 ```sh
-yt-dlp -f best -o "/tmp/%(title)s.%(ext)s" "<url>"
-yt-dlp -f bestaudio -o "/tmp/%(title)s.%(ext)s" "<url>"
+yt-dlp -f bestvideo -o "/tmp/%(title)s.video.%(ext)s" "<url>"
+yt-dlp -f bestaudio -o "/tmp/%(title)s.audio.%(ext)s" "<url>"
 ```
 
-- `best` picks one file that holds both video and audio, so nothing has to
-  merge them. On YouTube that file is often only 360p. The higher qualities
-  come as separate video and audio, and joining them needs ffmpeg.
-  `yt-dlp -F "<url>"` lists the formats.
-- YouTube can answer two requests for one video differently. When a format
-  that worked a moment ago is not available, run the command again once.
+- Tell the user the video file has no sound. For one file with both, ask
+  before you install ffmpeg, then use `-f "bestvideo+bestaudio"`.
+- `-f best` works only on a site that offers a joined format.
+  `yt-dlp -F "<url>"` lists what a video offers.
 - `bestaudio` keeps the audio in its own format, such as `m4a` or `webm`.
   Changing it to `mp3` needs ffmpeg.
+- YouTube can answer two requests for one video differently. When a format
+  that worked a moment ago is not available, run the command again once.
 - `--no-playlist` takes one video from a playlist URL. `--playlist-items 1:5`
   takes a range.
 
