@@ -105,8 +105,10 @@ then the advisory ids.
 - **`See-also`** points at an outside reference the change adapts or depends
   on: a website, a commit hash, or a `file:line`. Write one line for each
   reference.
-- **`GHSA-id` and `CVE-id`** go on a dependency change that fixes a security
-  advisory. Write one line for each id, as many as the fix clears. The two do
-  not come in pairs, because an advisory can have a GHSA id and no CVE id.
+- **`GHSA-id`, `CVE-id` and `CWE-id`** go on a change that fixes a security
+  issue. GHSA and CVE name the advisory, and CWE names the class of weakness,
+  such as `CWE-502`. Write one line for each id, as many as the fix clears.
+  They do not come in sets, because an advisory can have a GHSA id and no
+  CVE id.
   The body names the vulnerable range, the patched version, and how the
   package reaches the tree.

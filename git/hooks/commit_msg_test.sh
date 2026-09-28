@@ -486,7 +486,9 @@ Work-item-id: AUD-3410
 Change-type: deps
 GHSA-id: GHSA-rgxp-2hwp-jwgg
 CVE-id: CVE-2026-25087
-GHSA-id: GHSA-6v7p-g79w-8964"
+CWE-id: CWE-502
+GHSA-id: GHSA-6v7p-g79w-8964
+CWE-id: CWE-400"
 
   local output
   output=$(run_hook "$message")
