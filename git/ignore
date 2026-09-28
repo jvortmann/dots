@@ -41,6 +41,9 @@ __pycache__
 # zsh completions
 zsh/completions/*.ignore
 
+# bashunit, the tests that failed on the last run
+.bashunit/
+
 # irb
 .irb_history
 
