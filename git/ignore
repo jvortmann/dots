@@ -62,6 +62,7 @@ pi/git/
 pi/auth.json
 pi/mcp-cache.json
 pi/mcp-npx-cache.json
+pi/mcp-project-approvals.json
 pi/models-store.json
 pi/trust.json
 pi/prompts/primer/
