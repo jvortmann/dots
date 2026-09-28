@@ -1,6 +1,7 @@
 #!/bin/bash
 
-CONFIG="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/tmux.conf"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && git rev-parse --show-toplevel)"
+CONFIG="$ROOT/tmux/tmux.conf"
 HOMEBREW_ZSH=/opt/homebrew/bin/zsh
 
 # Start a tmux server of its own, with an empty home so that no plugin loads

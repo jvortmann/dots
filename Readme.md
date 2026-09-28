@@ -52,8 +52,8 @@ need only a link.
 
 The files are live, because `~/.dots` points at this checkout. An edit applies
 at once for most tools, and at the next shell for zsh. `git/hooks/commit-msg` checks each
-commit message. Its tests are in `git/hooks/commit_msg_test.sh`, and run
-with bashunit.
+commit message. The tests are in `tests/`, in the same layout as the files
+they test. Run `bashunit` from the root to run all of them.
 
 This repository is public and shared. Keep secrets and machine-specific values
 out of it.

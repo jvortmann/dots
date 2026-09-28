@@ -1,6 +1,7 @@
 #!/bin/bash
 
-HOOK="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/commit-msg"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && git rev-parse --show-toplevel)"
+HOOK="$ROOT/git/hooks/commit-msg"
 
 ASPELL_AVAILABLE=$(command -v aspell > /dev/null 2>&1 && echo "true" || echo "false")
 

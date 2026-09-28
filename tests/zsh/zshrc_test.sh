@@ -1,6 +1,7 @@
 #!/bin/bash
 
-ZSHRC="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/zshrc"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && git rev-parse --show-toplevel)"
+ZSHRC="$ROOT/zsh/zshrc"
 HOMEBREW_ZSH=/opt/homebrew/bin/zsh
 
 # Start zsh the way a terminal does, as an interactive login shell with the
