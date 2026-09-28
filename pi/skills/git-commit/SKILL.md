@@ -39,8 +39,9 @@ and not again for each commit. Load the `asd-ste100` skill for the words.
   failed, or a constraint the reader cannot see. When you cannot name the
   surprise, leave it out.
 - **Change-type** — one value from the template, and the most specific one.
-  A new capability is `feature`. A defect is `fix`. A `refactor` changes
-  structure and organization only, and no behavior changes at all. Build and
+  A new capability is `feature`, and a defect is `fix`. A `refactor` changes
+  structure and organization only, and no behavior changes at all. The
+  `refactoring` skill holds the definition. Build and
   CI are `ci`, a dependency bump is `deps`, and a config file is `config`. The
   rest are `docs`, `test` and `style`. `chore` is the last resort.
 - **A file an agent reads as instruction is code, not documentation.** Pick
@@ -97,11 +98,14 @@ reply that says the message is ready, and does not show it, delivered nothing.
 ## Trailers
 
 Use only the trailer keys the template carries, with the values and the shape
-it shows. Keep them in this order: `Work-item-id`, `Change-type`, `See-also`,
-then the advisory ids.
+it shows. Keep them in this order: `Work-item-id`, `Change-type`, `Refactoring`,
+`See-also`, then the advisory ids.
 
 - **`Work-item-id`** comes from `prepare-commit-msg` on a branch named after a
   work item. Do not write it by hand, because the hook adds it at commit time.
+- **`Refactoring`** goes on a `refactor` commit, and names the catalog id of
+  each refactoring it applies, such as `extractFunction`. Write one line for
+  each. The ids are in the `refactoring` skill.
 - **`See-also`** points at an outside reference the change adapts or depends
   on: a website, a commit hash, or a `file:line`. Write one line for each
   reference.
