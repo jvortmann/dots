@@ -7,12 +7,16 @@ fpath=($ZSH_HOME/completions /usr/local/share/zsh/site-functions /usr/local/shar
 # Homebrew touches its site-functions directory when it links a formula, and
 # that is the only thing here that moves a completion file. A directory newer
 # than the dump therefore earns the full run, which one stat detects.
+# Each zsh version keeps its own dump. Homebrew zsh and /bin/zsh see different
+# completion functions, so a dump from one names files the other cannot load.
 autoload -U compinit
-if [[ ${HOMEBREW_PREFIX:-/opt/homebrew}/share/zsh/site-functions -nt ~/.zcompdump ]]; then
-  compinit
+_zcompdump=~/.zcompdump-$ZSH_VERSION
+if [[ ${HOMEBREW_PREFIX:-/opt/homebrew}/share/zsh/site-functions -nt $_zcompdump ]]; then
+  compinit -d $_zcompdump
 else
-  compinit -C
+  compinit -C -d $_zcompdump
 fi
+unset _zcompdump
 
 unsetopt MENU_COMPLETE   # do not autoselect the first completion entry
 setopt AUTO_MENU         # show completion menu on succesive tab press
