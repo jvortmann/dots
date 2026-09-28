@@ -13,7 +13,6 @@ if [[ "$PROFILE_STARTUP" == true ]]; then
 fi
 
 export ZSH_HOME="$HOME/.dots/zsh"
-export SHELL="$(which zsh)"
 source $ZSH_HOME/init.zsh
 
 # Finish startup profiling
