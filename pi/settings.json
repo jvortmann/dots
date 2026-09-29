@@ -14,14 +14,14 @@
   "enabledModels": [
     "anthropic/claude-fable-5-1",
     "anthropic/claude-opus-5-5",
-    "anthropic/claude-opus-5",
-    "anthropic/claude-sonnet-5",
-    "openai-codex/gpt-5.6-sol",
+    "anthropic/claude-sonnet-5-5",
+    "openai-codex/gpt-6-astra",
+    "openai-codex/gpt-6.1-sol",
+    "openai-codex/gpt-6-luna",
     "openai-codex/gpt-5.6-terra",
-    "openai-codex/gpt-5.6-luna",
     "anthropic-console/claude-fable-5-1",
-    "anthropic-console/claude-opus-5",
-    "anthropic-console/claude-sonnet-5"
+    "anthropic-console/claude-opus-5-5",
+    "anthropic-console/claude-sonnet-5-5"
   ],
   "packages": [
     "npm:pi-mcp-adapter",
