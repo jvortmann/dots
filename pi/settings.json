@@ -36,7 +36,7 @@
     "npm:pi-permission-system",
     "npm:@robhowley/pi-structured-return",
     "npm:@tintinweb/pi-tasks",
-    "git:github.com/jvortmann/pi-image-preview@fix/resize-large-images-before-submission",
+    "git:github.com/RielJ/pi-image-preview@main",
     "git:github.com/jvortmann/pi-show-diffs@main"
   ],
   "compaction": {
