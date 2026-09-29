@@ -37,9 +37,9 @@ Martin Fowler, on the home page of refactoring.com.
 ## How to refactor
 
 1. Name what is wrong, as a smell from `references/smells.md`.
-2. Choose one refactoring for it from `references/catalog.md`, and read its
-   page for the mechanics.
-3. Make that one move, in the smallest steps its mechanics allow.
+2. Choose one refactoring for it from `references/catalog.md`, by its smells
+   and its Use it when line. Read its page for the sketch before and after.
+3. Make that one move, in the smallest steps that keep the tests green.
 4. Run the tests after each step. They stay green, with no test changed. A
    test that must change tested the implementation, so fix that first.
 5. Take the next refactoring only when the last one is complete and green.
@@ -68,4 +68,4 @@ then make the easy change
 
 `references/smells.md` maps 27 smells to the refactorings that remove them.
 `references/catalog.md` lists the 66 refactorings of the catalog, with their
-ids and their older names.
+ids, older names, inverses, smells, and when to use each.
