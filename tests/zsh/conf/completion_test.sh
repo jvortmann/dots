@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && git rev-parse --show-toplevel)"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 COMPLETION="$ROOT/zsh/conf/completion.zsh"
 HOMEBREW_ZSH=/opt/homebrew/bin/zsh
 APPLE_ZSH=/bin/zsh

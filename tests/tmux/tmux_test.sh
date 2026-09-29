@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && git rev-parse --show-toplevel)"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 CONFIG="$ROOT/tmux/tmux.conf"
 HOMEBREW_ZSH=/opt/homebrew/bin/zsh
 
