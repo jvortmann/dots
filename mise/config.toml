@@ -19,4 +19,4 @@ minimum_release_age_excludes = ["npm:@earendil-works/pi-coding-agent"]
 auto_update = false
 exec_auto_install = false
 not_found_auto_install = false
-prefer_offline = true
+prefer_offline = false
