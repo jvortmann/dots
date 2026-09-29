@@ -24,7 +24,6 @@
     "anthropic-console/claude-sonnet-5-5"
   ],
   "packages": [
-    "npm:pi-mcp-adapter",
     "npm:pi-fzf",
     "git:git@github.com:jvortmann/pi-claude-commands",
     "npm:pi-collapse-tools",
