@@ -29,3 +29,11 @@ function test_a_new_pane_runs_the_homebrew_zsh() {
 
   assert_same "$("$HOMEBREW_ZSH" -f -c 'echo $ZSH_VERSION')" "$(cat "$HOME_DIR/version")"
 }
+
+function test_a_new_pane_does_not_inherit_a_dynamic_library_path() {
+  DYLD_LIBRARY_PATH=/opt/homebrew/opt/expat/lib run_in_new_session "$HOME_DIR" \
+    "echo \${DYLD_LIBRARY_PATH-unset} > $HOME_DIR/dyld; sleep 5"
+  sleep 1
+
+  assert_same "unset" "$(cat "$HOME_DIR/dyld")"
+}
