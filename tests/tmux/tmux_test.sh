@@ -14,6 +14,7 @@ run_in_new_session() {
 }
 
 function set_up() {
+  [[ -f $CONFIG ]] || bashunit::fail "missing the file under test: $CONFIG"
   [[ -x $HOMEBREW_ZSH ]] || bashunit::skip "needs Homebrew zsh"
   HOME_DIR=$(bashunit::temp_dir "tmux")
   SERVER="bashunit-$$-$RANDOM"

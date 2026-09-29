@@ -31,6 +31,7 @@ colors_as_tput_prints_them() {
 }
 
 function set_up() {
+  [[ -f $COLORS ]] || bashunit::fail "missing the file under test: $COLORS"
   [[ -x $HOMEBREW_ZSH ]] || bashunit::skip "needs Homebrew zsh"
 }
 

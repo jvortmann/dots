@@ -3,6 +3,10 @@
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 HOOK="$ROOT/git/hooks/commit-msg"
 
+function set_up() {
+  [[ -f $HOOK ]] || bashunit::fail "missing the file under test: $HOOK"
+}
+
 ASPELL_AVAILABLE=$(command -v aspell > /dev/null 2>&1 && echo "true" || echo "false")
 
 run_hook() {

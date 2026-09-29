@@ -19,6 +19,7 @@ unloadable_completions() {
 }
 
 function set_up() {
+  [[ -f $COMPLETION ]] || bashunit::fail "missing the file under test: $COMPLETION"
   [[ -x $HOMEBREW_ZSH && -x $APPLE_ZSH ]] || bashunit::skip "needs Homebrew zsh and Apple zsh"
 }
 

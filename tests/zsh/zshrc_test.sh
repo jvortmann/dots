@@ -18,6 +18,7 @@ variable_after_startup() {
 }
 
 function set_up() {
+  [[ -f $ZSHRC ]] || bashunit::fail "missing the file under test: $ZSHRC"
   [[ -x $HOMEBREW_ZSH ]] || bashunit::skip "needs Homebrew zsh"
 }
 
