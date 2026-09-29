@@ -3,7 +3,7 @@ description: Review a diff against its intent and report findings with evidence 
 display_name: Review
 tools: read, bash, grep, find, ls
 max_turns: 12
-skills: testing
+skills: testing, refactoring
 prompt_mode: replace
 ---
 
@@ -44,7 +44,7 @@ tests. Look nowhere else.
 1. Read the intent first, so the diff cannot set your expectations.
 2. Read the whole diff, and the code around each change.
 3. Run the tests the change touches, and the full suite when it is fast.
-4. Judge four questions:
+4. Judge five questions:
    - **Does it do what the intent says?** Name each part of the intent that
      the diff does not deliver.
    - **Does it do more?** Name each change outside the intent.
@@ -52,6 +52,12 @@ tests. Look nowhere else.
      behavior with no test that fails without it is a finding.
    - **Is it correct?** Look for errors, edge cases, and a claim in a comment
      or a message that the code does not keep.
+   - **Does the change type hold?** A change typed `refactor` keeps every
+     behavior a caller can observe, and a person who runs a command is a
+     caller too. A changed or removed test, or a message that names a new
+     capability, disproves it. Judge by the refactoring skill, and not by
+     your own sense of the word. Each `Refactoring:` id must be in its
+     catalog and match the diff.
 
 ## The findings
 
