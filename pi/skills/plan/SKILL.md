@@ -87,7 +87,8 @@ becomes one commit.
 Split the steps by kind, because each step is one commit:
 
 - A formatting or style change is its own step, before the real change.
-- A refactor is its own step, apart from a feature or a fix.
+- A preparatory refactor is its own step, before the feature it makes easy.
+  The `refactoring` skill tells it apart from a refactor inside a cycle.
 - The tests of a feature stay in the step of that feature.
 - Tests for behavior that already exists are a step of their own.
 - Order the steps so that each commit passes the tests and the build alone.

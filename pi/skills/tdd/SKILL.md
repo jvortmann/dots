@@ -25,7 +25,11 @@ For each test scenario in the task:
    below).
 3. **Write the MINIMUM code** — only what makes this one test pass.
 4. **Run the ENTIRE test file** — it passes and nothing else broke (GREEN).
-5. **Refactor if needed** — the file stays green.
+5. **Look for a smell in the code this cycle wrote** — and state one line,
+   `refactor: <smell> -> <catalog id>` or `refactor: none, <why>`. For a
+   smell, load the `refactoring` skill, and keep the file green after each
+   move. Existing code that the next scenario needs in another shape is a
+   preparatory refactor. That skill says where it goes.
 6. **Repeat** — take the next scenario.
 
 When every scenario passes:
@@ -111,22 +115,27 @@ Baby step 1:
      failed, so it counts. "Cannot find module" would not count
   3. Add the minimum code for the description field
   4. Run tests -> see it PASS (GREEN)
+  5. refactor: none, one field has nothing to share yet
 
 Baby step 2:
   1. Write test: "updates only membershipDurationDays"
   2. Run tests -> see it FAIL (RED)
   3. Add the minimum code for the membershipDurationDays field
   4. Run tests -> see it PASS (GREEN)
+  5. refactor: none, two copies are not a pattern yet
 
 Baby step 3:
   1. Write test: "updates multiple fields together"
   2. Run tests -> see it FAIL (RED)
-  3. Refactor to handle the combinations
+  3. Generalize the code to handle the combinations
   4. Run tests -> see it PASS (GREEN)
+  5. Look for a smell: the three field updates repeat the same lines
+     refactor: Duplicated Code -> extractFunction
+     Run tests after the move -> still GREEN, no test changed
 
 After every scenario passes:
-  5. Draft the commit message with the right Change-type, and copy it
-  6. The user commits. Never run `git commit` yourself
+  6. Draft the commit message with the right Change-type, and copy it
+  7. The user commits. Never run `git commit` yourself
 ```
 
 ## The test itself

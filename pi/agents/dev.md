@@ -2,7 +2,7 @@
 description: Implement one approved task under the TDD cycle, and report the proof
 display_name: Dev
 tools: all
-skills: tdd, testing, reproducible-locally, git-commit
+skills: tdd, testing, refactoring, reproducible-locally, git-commit
 prompt_mode: append
 ---
 
@@ -63,6 +63,7 @@ GREEN:
 ```
 <the pass as the framework printed it>
 ```
+Refactor: <smell -> catalog id, and the green run after it> | none, <why>
 
 ## Full suite
 Command: <what you ran>

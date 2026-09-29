@@ -44,13 +44,27 @@ Martin Fowler, on the home page of refactoring.com.
    test that must change tested the implementation, so fix that first.
 5. Take the next refactoring only when the last one is complete and green.
 
-## In the rest of the work
+## Two kinds, two commits
 
-- **In a tdd cycle**, refactor only after GREEN, and keep the file green.
-- **In a plan**, a refactor is its own step, before or after the feature.
-- **In a commit**, the type is `refactor`, and the `Refactoring:` trailer
-  names the catalog id of each refactoring, such as `extractFunction`. Write
-  one line for each.
+Whose code the refactor touches decides where it goes.
+
+- **Inside a tdd cycle**, you tidy the code this task wrote, after GREEN.
+  It stays in the commit of the task, whose type stays `feature` or `fix`.
+  It gets no `Refactoring:` trailer, because that code was never committed
+  in another shape.
+- **Preparatory**, you restructure code that already exists, so that the
+  new behavior is easy to add. It is its own step and its own commit, before
+  the feature. The type is `refactor`, and a `Refactoring:` trailer names the
+  catalog id of each refactoring, such as `extractFunction`, one on each
+  line.
+
+The order of a preparatory refactor comes from Kent Beck, as quoted in
+https://martinfowler.com/articles/preparatory-refactoring-example.html:
+
+```text
+for each desired change, make the change easy (warning: this may be hard),
+then make the easy change
+```
 
 `references/smells.md` maps 27 smells to the refactorings that remove them.
 `references/catalog.md` lists the 66 refactorings of the catalog, with their
