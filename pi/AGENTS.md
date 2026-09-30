@@ -108,7 +108,9 @@ outside a cycle, ask rather than decide.
 Load the `impeccable` skill before you design, build, change, review or audit
 a user interface, however small. A page, a component, a style and a question
 on how something looks all count. It carries the design rules and the engine
-that checks the result. Run the engine as the skill says.
+that checks the result. Run the engine on the files you change or review, as
+the skill says. Start the reply with one line, either
+`engine: <command> -> <n> findings` or `engine: not run, <reason>`.
 
 ---
 
