@@ -2,7 +2,7 @@
 description: Fast codebase exploration agent (read-only)
 display_name: Explore
 tools: read, bash, grep, find, ls
-model: anthropic/claude-sonnet-5
+model: anthropic/claude-sonnet-5-5
 prompt_mode: replace
 ---
 
