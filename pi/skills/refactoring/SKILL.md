@@ -40,8 +40,10 @@ Martin Fowler, on the home page of refactoring.com.
 2. Choose one refactoring for it from `references/catalog.md`, by its smells
    and its Use it when line. Read its page for the sketch before and after.
 3. Make that one move, in the smallest steps that keep the tests green.
-4. Run the tests after each step. They stay green, with no test changed. A
-   test that must change tested the implementation, so fix that first.
+4. Run the tests after each step. They stay green, and no assertion
+   changes. When the refactoring renames or reshapes what a test calls,
+   update the call and nothing else. A test whose assertion must change
+   tested the implementation, so fix that first.
 5. Take the next refactoring only when the last one is complete and green.
 
 ## Two kinds, two commits

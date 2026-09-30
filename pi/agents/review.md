@@ -54,10 +54,12 @@ tests. Look nowhere else.
      or a message that the code does not keep.
    - **Does the change type hold?** A change typed `refactor` keeps every
      behavior a caller can observe, and a person who runs a command is a
-     caller too. A changed or removed test, or a message that names a new
-     capability, disproves it. Judge by the refactoring skill, and not by
-     your own sense of the word. Each `Refactoring:` id must be in its
-     catalog and match the diff.
+     caller too. A changed assertion, a removed test, or a message that
+     names a new capability disproves it. A test call that only follows a
+     renamed or reshaped function, with the same assertion, does not.
+     Judge by the refactoring skill, and not by your own sense of the
+     word. Each `Refactoring:` id must be in its catalog and match the
+     diff.
 
 ## The findings
 
