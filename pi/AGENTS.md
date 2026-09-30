@@ -103,6 +103,15 @@ outside a cycle, ask rather than decide.
 
 ---
 
+## User interfaces
+
+Load the `impeccable` skill before you design, build, change, review or audit
+a user interface, however small. A page, a component, a style and a question
+on how something looks all count. It carries the design rules and the engine
+that checks the result. Run the engine as the skill says.
+
+---
+
 ## Commits
 
 **Load the `git-commit` skill** the moment a message exists to work on. It
