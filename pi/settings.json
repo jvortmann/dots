@@ -28,7 +28,6 @@
   "packages": [
     "npm:pi-fzf",
     "git:git@github.com:jvortmann/pi-claude-commands",
-    "npm:pi-collapse-tools",
     "npm:pi-markdown-preview",
     "npm:@juanibiapina/pi-gob",
     "git:github.com/ghoseb/pi-askuserquestion",
@@ -38,7 +37,8 @@
     "npm:@tintinweb/pi-tasks",
     "git:github.com/RielJ/pi-image-preview@main",
     "git:github.com/jvortmann/pi-show-diffs@main",
-    "git:github.com/jvortmann/pi-anthropic-console-login"
+    "git:github.com/jvortmann/pi-anthropic-console-login",
+    "npm:pi-tool-display"
   ],
   "compaction": {
     "enabled": true,
