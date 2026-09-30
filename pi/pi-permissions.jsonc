@@ -64,6 +64,8 @@
     "tmux *": "allow",
     "jira *": "allow",
     "gh *": "allow",
+    // The engine of the impeccable skill reads the project and reports.
+    "*/skills/impeccable/scripts/impeccable *": "allow",
 
     // Every deny sits below every allow, because the last pattern that matches
     // wins: above `npm *`, a deny would lose to `npm test && git commit`.

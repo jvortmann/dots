@@ -10,6 +10,9 @@ python = "latest"
 "npm:agent-ste" = "latest"
 "npm:@earendil-works/pi-coding-agent" = "latest"
 "cargo:https://github.com/kaofelix/greprip-rs" = "branch:main"
+# The engine of the impeccable skill in pi/skills. Its release tags start with
+# engine-v, and its version moves with the skill copy.
+"github:pbakaus/impeccable" = { version = "0.1.8", version_prefix = "engine-v" }
 
 [settings]
 idiomatic_version_file_enable_tools = ["elixir", "go", "java", "node", "python", "ruby", "terraform", "yarn"]
