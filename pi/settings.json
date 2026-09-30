@@ -4,6 +4,7 @@
   "defaultModel": "claude-opus-5-5",
   "defaultThinkingLevel": "high",
   "defaultTools": ["+grep", "+find", "+ls"],
+  "shellCommandPrefix": "source ~/.dots/greprip/greprip.sh",
   "theme": "solarized-light/solarized-dark",
   "sourceInfoStyle": "name-only",
   "prompts": [

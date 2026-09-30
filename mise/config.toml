@@ -9,6 +9,7 @@ erlang = "latest"
 python = "latest"
 "npm:agent-ste" = "latest"
 "npm:@earendil-works/pi-coding-agent" = "latest"
+"cargo:https://github.com/kaofelix/greprip-rs" = "branch:main"
 
 [settings]
 idiomatic_version_file_enable_tools = ["elixir", "go", "java", "node", "python", "ruby", "terraform", "yarn"]
