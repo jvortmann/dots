@@ -17,12 +17,11 @@
     "bash": "allow",
 
     // MCP tools run through pi's built-in support, as mcp__<server>__<tool>.
-    // Scripts and search run freely, and each call to a server asks, also
-    // from inside a codemode script.
+    // Scripts, search and the calls to each server run without a prompt.
     "codemode": "allow",
     "tool_search": "allow",
-    "mcp__*": "ask",
-    "*_mcp_resource*": "ask",
+    "mcp__*": "allow",
+    "*_mcp_resource*": "allow",
 
     // The two read-only folders below pass the directory check, so writing
     // there needs its own guard. A later match wins over the allow above.
