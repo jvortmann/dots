@@ -56,3 +56,23 @@ function test_grep_and_find_work_as_before_when_greprip_is_missing() {
 ./src/one.ts
 ./build/out.ts" "$output"
 }
+
+function test_grep_reads_a_question_mark_as_a_literal_character() {
+  assert_same "" "$(in_repository "printf 'no marks here\n' | grep '^??'")"
+}
+
+function test_grep_reads_a_plus_sign_as_a_literal_character() {
+  assert_same "" "$(in_repository "printf 'aaa\n' | grep 'a+'")"
+}
+
+function test_grep_reads_a_bar_as_a_literal_character() {
+  assert_same "" "$(in_repository "printf 'a\n' | grep 'a|b'")"
+}
+
+function test_grep_reads_a_brace_as_a_literal_character() {
+  assert_same "" "$(in_repository "printf 'xx\n' | grep 'x{2}'")"
+}
+
+function test_an_extended_recursive_grep_still_skips_ignored_files() {
+  assert_same "./src/one.ts:1:Alpha foo" "$(in_repository "grep -rn -E 'fo+' .")"
+}
