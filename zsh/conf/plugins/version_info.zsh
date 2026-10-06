@@ -25,10 +25,18 @@ active_tools() {
     # One row per language: a backend tool such as npm: carries a colon and
     # never changes per project, and a tool with two versions repeats.
     local all_tools=$(mise ls --current 2>/dev/null | awk '$1 !~ /:/ && !seen[$1]++')
-    local local_tools=$(grep -v -F -e "$global_config" -e ".config/mise/config.toml" <<< "$all_tools" | awk '{print $1, $2}')
+    [[ -z $all_tools ]] && return
 
-    if [[ -n $local_tools ]]; then
-      echo "$local_tools"
+    # Keep the tools of a project config. No grep here, for the same reason
+    # as in git_status.
+    local row local_tools=()
+    for row in ${(f)all_tools}; do
+      [[ $row == *"$global_config"* || $row == *.config/mise/config.toml* ]] && continue
+      local_tools+=("${${=row}[1]} ${${=row}[2]}")
+    done
+
+    if (( $#local_tools )); then
+      print -rl -- $local_tools
     else
       awk '{print $1, $2}' <<< "$all_tools"
     fi

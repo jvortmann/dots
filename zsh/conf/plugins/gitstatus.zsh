@@ -36,7 +36,9 @@ git_status() {
 
   local NUM_AHEAD="$(git log --oneline @{u}.. 2> /dev/null | wc -l | tr -d ' ')"
   local NUM_BEHIND="$(git log --oneline ..@{u} 2> /dev/null | wc -l | tr -d ' ')"
-  local STATUS="$(git status --porcelain)"
+  # Match status lines with zsh patterns, not grep. In the prompt, grep runs
+  # greprip through a mise shim, which is slow and can print mise errors.
+  local -a STATUS_LINES=("${(@f)$(git status --porcelain)}")
 
   if [ "$NUM_AHEAD" -gt 0 ]; then
     GIT_STATE=$GIT_STATE${_GIT_PROMPT_AHEAD//NUM/$NUM_AHEAD}
@@ -46,23 +48,23 @@ git_status() {
     GIT_STATE=$GIT_STATE${_GIT_PROMPT_BEHIND//NUM/$NUM_BEHIND}
   fi
 
-  if echo $STATUS | grep '^UU' --quiet; then
+  if (( ${#${(M)STATUS_LINES:#UU*}} )); then
     GIT_STATE=$GIT_STATE$_GIT_PROMPT_MERGING
   fi
 
-  if echo $STATUS | grep '^.D' --quiet; then
+  if (( ${#${(M)STATUS_LINES:#?D*}} )); then
     GIT_STATE=$GIT_STATE$_GIT_PROMPT_DELETED
   fi
 
-  if echo $STATUS | grep '^??' --quiet; then
+  if (( ${#${(M)STATUS_LINES:#\?\?*}} )); then
     GIT_STATE=$GIT_STATE$_GIT_PROMPT_UNTRACKED
   fi
 
-  if echo $STATUS | grep '^.[TMRC]' --quiet; then
+  if (( ${#${(M)STATUS_LINES:#?[TMRC]*}} )); then
     GIT_STATE=$GIT_STATE$_GIT_PROMPT_MODIFIED
   fi
 
-  if echo $STATUS | grep '^[ATMRCD].' --quiet; then
+  if (( ${#${(M)STATUS_LINES:#[ATMRCD]?*}} )); then
     GIT_STATE=$GIT_STATE$_GIT_PROMPT_STAGED
   fi
 
