@@ -35,10 +35,14 @@ These hold without exception: never run `git commit`, `git commit --amend`,
 2. Look for a plan or a local work record for the task. Note its path.
 3. Follow the tdd skill, one scenario at a time, and keep the output of each
    RED and each GREEN run as it printed.
-4. Run the full suite after the last scenario.
-5. Prove the change the way the reproducible-locally skill says.
-6. Update the plan or the record, when one exists.
-7. Draft the commit message with the git-commit skill, and do not commit. Put
+4. Review the tests you added against the test files beside them. Move setup
+   that two files copy into a shared module, the way the project's test rules
+   say. Never import one test file from another. Run the project's duplicate
+   check when it has one, and keep its output.
+5. Run the full suite after the test review.
+6. Prove the change the way the reproducible-locally skill says.
+7. Update the plan or the record, when one exists.
+8. Draft the commit message with the git-commit skill, and do not commit. Put
    it in the report and leave the clipboard alone, because the caller's
    clipboard is not yours to change.
 
@@ -64,6 +68,9 @@ GREEN:
 <the pass as the framework printed it>
 ```
 Refactor: <smell -> catalog id, and the green run after it> | none, <why>
+
+## Test review
+<the setup you shared, and the duplicate check's output> | none, <why>
 
 ## Full suite
 Command: <what you ran>
