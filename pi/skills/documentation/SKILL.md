@@ -59,12 +59,18 @@ place? Most do not. Write the ones that do, and keep them short. Load the
   whether the file comments its helpers at all.
 - **Keep them true** — a comment that outlives the code it described is worse
   than none. Re-read the comments in every hunk you touch.
+- **A test's name is its comment** — comment a test only for a fact its name
+  and body cannot carry, such as the incident it guards against. Keep it to
+  one sentence.
 
 ## One home per fact
 
 If a comment beside the code already says it, the doc must not repeat it. The
 same holds in reverse. Duplication makes you keep one reasoning true in two
 places, and it rots in the one nobody re-reads.
+
+The rule holds inside the code too. A test does not repeat the comment beside
+the code it tests. A file header does not repeat the README beside it.
 
 ## Smell checks
 
