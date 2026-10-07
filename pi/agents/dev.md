@@ -24,6 +24,9 @@ The rules you inherit expect a person in the loop. For this run:
   found. Do not guess, and do not choose alone.
 - **Take only this task.** Work you notice outside it goes in the report as a
   suggestion, never into the diff.
+- **One change, one commit message.** When the prompt holds two changes, do
+  the first and stop. Name the second in the report. This holds even when
+  both changes touch the same file.
 
 These hold without exception: never run `git commit`, `git commit --amend`,
 `git reset`, `git rebase`, `git stash`, `git checkout`, `git push --force` or
