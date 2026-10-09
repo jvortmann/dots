@@ -16,62 +16,6 @@ _GIT_PROMPT_MODIFIED="%{$YELLOW%}•%{$RESET%}"
 _GIT_PROMPT_DELETED="%{$RED%}•%{$RESET%}"
 _GIT_PROMPT_STAGED="%{$GREEN%}•%{$RESET%}"
 
-# Show Git branch/tag, or name-rev if on detached head
-git_branch() {
-  local GIT_BRANCH="$(git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/' -e 's/(\(.*\))/\1/')"
-
-  if [ -n "$GIT_BRANCH" ]; then
-    if [ $GIT_BRANCH -regex-match "no branch|detached" 2> /dev/null ]; then
-      echo ${_GIT_DIRTY_BRANCH//BRANCH/$GIT_BRANCH}
-    else
-      echo ${_GIT_PROMPT_BRANCH//BRANCH/$GIT_BRANCH}
-    fi
-  fi
-}
-
-# Show different symbols as appropriate for various Git repository states
-git_status() {
-  # Compose this value via multiple conditional appends.
-  local GIT_STATE=""
-
-  local NUM_AHEAD="$(git log --oneline @{u}.. 2> /dev/null | wc -l | tr -d ' ')"
-  local NUM_BEHIND="$(git log --oneline ..@{u} 2> /dev/null | wc -l | tr -d ' ')"
-  # Match status lines with zsh patterns, not grep. In the prompt, grep runs
-  # greprip through a mise shim, which is slow and can print mise errors.
-  local -a STATUS_LINES=("${(@f)$(git status --porcelain)}")
-
-  if [ "$NUM_AHEAD" -gt 0 ]; then
-    GIT_STATE=$GIT_STATE${_GIT_PROMPT_AHEAD//NUM/$NUM_AHEAD}
-  fi
-
-  if [ "$NUM_BEHIND" -gt 0 ]; then
-    GIT_STATE=$GIT_STATE${_GIT_PROMPT_BEHIND//NUM/$NUM_BEHIND}
-  fi
-
-  if (( ${#${(M)STATUS_LINES:#UU*}} )); then
-    GIT_STATE=$GIT_STATE$_GIT_PROMPT_MERGING
-  fi
-
-  if (( ${#${(M)STATUS_LINES:#?D*}} )); then
-    GIT_STATE=$GIT_STATE$_GIT_PROMPT_DELETED
-  fi
-
-  if (( ${#${(M)STATUS_LINES:#\?\?*}} )); then
-    GIT_STATE=$GIT_STATE$_GIT_PROMPT_UNTRACKED
-  fi
-
-  if (( ${#${(M)STATUS_LINES:#?[TMRC]*}} )); then
-    GIT_STATE=$GIT_STATE$_GIT_PROMPT_MODIFIED
-  fi
-
-  if (( ${#${(M)STATUS_LINES:#[ATMRCD]?*}} )); then
-    GIT_STATE=$GIT_STATE$_GIT_PROMPT_STAGED
-  fi
-
-  if [[ -n $GIT_STATE ]]; then
-    echo "$_GIT_PROMPT_PREFIX$GIT_STATE$_GIT_PROMPT_SUFFIX"
-  fi
-}
 
 # Emoji shown in place of the path when inside a linked git worktree, since
 # the worktree directory name only duplicates the branch shown in [ ].
@@ -107,10 +51,33 @@ cwd_prompt_string() {
   fi
 }
 
-# If inside a Git repository, print its branch and state
+# If inside a Git repository with a commit, print its branch and state. One
+# git call gives the branch, the counts against the upstream and the files.
+# Match its lines with zsh patterns, not grep. In the prompt, grep runs
+# greprip through a mise shim, which is slow and can print mise errors.
 git_prompt_string() {
-  local _GIT_BRANCH="$(git_branch)"
-  if [ -n "$_GIT_BRANCH" ]; then
-    echo "$_GIT_PROMPT_SYMBOL$_GIT_PROMPT_PREFIX$_GIT_BRANCH$_GIT_PROMPT_SUFFIX$(git_status)"
+  local -a lines=("${(@f)$(git status --porcelain=v2 --branch 2> /dev/null)}")
+  local head=${${(M)lines:#\# branch.head *}#\# branch.head }
+  [[ -z $head || -n ${(M)lines:#\# branch.oid \(initial\)} ]] && return
+
+  local branch=${_GIT_PROMPT_BRANCH//BRANCH/$head}
+  if [[ $head == '(detached)' ]]; then
+    # Only git branch tells what a detached head is at, such as a tag.
+    head=${${(M)${(f)"$(git branch --no-color 2> /dev/null)"}:#\* *}#\* }
+    branch=${_GIT_DIRTY_BRANCH//BRANCH/${${head#\(}%\)}}
   fi
+
+  local -a counts=(${=${${(M)lines:#\# branch.ab *}#\# branch.ab }})
+  local ahead=${counts[1]#+} behind=${counts[2]#-} state=""
+  (( ahead > 0 )) && state+=${_GIT_PROMPT_AHEAD//NUM/$ahead}
+  (( behind > 0 )) && state+=${_GIT_PROMPT_BEHIND//NUM/$behind}
+  (( ${lines[(I)u UU *]} )) && state+=$_GIT_PROMPT_MERGING
+  (( ${lines[(I)[12u] ?D *]} )) && state+=$_GIT_PROMPT_DELETED
+  (( ${lines[(I)\? *]} )) && state+=$_GIT_PROMPT_UNTRACKED
+  (( ${lines[(I)[12u] ?[TMRC] *]} )) && state+=$_GIT_PROMPT_MODIFIED
+  (( ${lines[(I)[12u] [ATMRCD]? *]} )) && state+=$_GIT_PROMPT_STAGED
+
+  local marks=""
+  [[ -n $state ]] && marks=$_GIT_PROMPT_PREFIX$state$_GIT_PROMPT_SUFFIX
+  echo "$_GIT_PROMPT_SYMBOL$_GIT_PROMPT_PREFIX$branch$_GIT_PROMPT_SUFFIX$marks"
 }

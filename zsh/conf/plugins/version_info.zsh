@@ -28,7 +28,7 @@ active_tools() {
     [[ -z $all_tools ]] && return
 
     # Keep the tools of a project config. No grep here, for the same reason
-    # as in git_status.
+    # as in git_prompt_string.
     local row local_tools=()
     for row in ${(f)all_tools}; do
       [[ $row == *"$global_config"* || $row == *.config/mise/config.toml* ]] && continue
