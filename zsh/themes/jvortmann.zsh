@@ -25,6 +25,6 @@ update_prompt() {
   # cwd_prompt_string must be evaluated on every render (like git_prompt_string),
   # so it is inlined in PROMPT rather than frozen into a variable here.
   PROMPT='${_user_and_host} ${GREEN}$(cwd_prompt_string)${RESET} $(git_prompt_string) ∴ ${RESET}'
-  RPROMPT='$(language_info)$(elapsed_info)$_return_code'
+  RPROMPT='${_LANGUAGE_INFO}$(elapsed_info)$_return_code'
 }
 update_prompt

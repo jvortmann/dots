@@ -1,5 +1,36 @@
 # vim: ft=zsh
 
+# The right prompt shows $_LANGUAGE_INFO. This precmd function runs mise
+# again only when its key changes, and not on every prompt.
+_language_info_precmd() {
+  _language_info_key
+  [[ $REPLY == "$_LANGUAGE_INFO_KEY" ]] && return
+  _LANGUAGE_INFO_KEY=$REPLY
+  _LANGUAGE_INFO=$(language_info)
+}
+precmd_functions+=(_language_info_precmd)
+
+# The key holds the folder and the change times of the mise config files from
+# the folder up to the root. It also holds the change time of each tool folder
+# in the mise installs. zstat reads the times with no new process.
+_language_info_key() {
+  zmodload -F zsh/stat b:zstat 2> /dev/null
+  local dir=$PWD file
+  local -a times
+  REPLY=$PWD
+  while true; do
+    for file in $dir/{,.}mise{,.local}.toml $dir/{.,}mise/config.toml \
+      $dir/.config/mise{.toml,/config.toml} $dir/.tool-versions; do
+      [[ -e $file ]] && zstat -A times +mtime $file && REPLY+=" $file:$times[1]"
+    done
+    [[ $dir == / ]] && break
+    dir=${dir:h}
+  done
+  for dir in ${MISE_DATA_DIR:-$HOME/.local/share/mise}/installs/*(N/); do
+    zstat -A times +mtime $dir && REPLY+=" ${dir:t}:$times[1]"
+  done
+}
+
 language_info() {
   local tools=$(active_tools)
   [[ -z $tools ]] && return
