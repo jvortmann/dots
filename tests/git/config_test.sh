@@ -59,9 +59,47 @@ function test_bdg_lists_only_the_names_to_delete() {
   assert_same "merged" "$(eval "in_clone $listing")"
 }
 
+function test_lg_starts_the_author_at_one_column_one_space_after_the_widest_hash() {
+  merge_a_side_branch
+
+  local plain
+  plain=$(in_clone lg | without_colors)
+
+  assert_same "1" "$(author_columns "$plain" | sort -u | wc -l | tr -d ' ')"
+  assert_matches '^\*   [0-9a-f]+ Test Author ' "$(printf '%s\n' "$plain" | head -1)"
+}
+
+function test_llg_shows_the_trailers_in_brackets_and_nothing_without_them() {
+  merge_a_side_branch
+
+  local plain
+  plain=$(in_clone llg | without_colors)
+
+  assert_not_contains "[]" "$plain"
+  assert_contains "[fix] Side" "$plain"
+}
+
+# HOME is the test folder, so the aliases cannot lean on files installed there.
 in_clone() {
-  GIT_CONFIG_GLOBAL="$CONFIG" git -C "$WORK/clone" \
-    -c commit.gpgsign=false -c core.hooksPath=/dev/null "$@"
+  HOME="$WORK" GIT_CONFIG_GLOBAL="$CONFIG" git -C "$WORK/clone" -c user.name="Test Author" \
+    -c user.email=test@example.com -c commit.gpgsign=false -c core.hooksPath=/dev/null "$@"
+}
+
+# History: Start, a side branch with one commit that has a trailer, a merge.
+merge_a_side_branch() {
+  in_clone switch -q -c side
+  in_clone commit -q --allow-empty -m "Side" -m "Change-type: fix"
+  in_clone switch -q -
+  in_clone merge -q --no-ff -m "Merge side" side
+}
+
+without_colors() {
+  sed $'s/\x1b\\[[0-9;]*m//g'
+}
+
+# The column where the author starts, for each row that shows a commit.
+author_columns() {
+  printf '%s\n' "$1" | awk '/[0-9a-f]{7}/ { print index($0, "Test Author") }'
 }
 
 push_branch() {

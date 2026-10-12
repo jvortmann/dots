@@ -98,11 +98,14 @@
   feature = x --trailer="change:feature"
   fix = x --trailer="change:fix"
   ignore = "!i() { touch .gitignore && echo $1 >> .gitignore; }; i"
+  # Align fields split by § into columns as wide as their longest value, one
+  # space apart. Color codes take no width. A line with no § prints as is.
+  columns = "!perl -CSD -Mutf8 -e 'sub w { (my $v = shift) =~ s/\\e\\[[0-9;]*m//g; length $v } while (<>) { chomp; push @r, [split /§/, $_, -1] } for $r (grep { @$_ > 1 } @r) { for $i (0 .. $#$r - 1) { $n = w($r->[$i]); $w[$i] = $n if $n > ($w[$i] // 0) } } for $r (@r) { print @$r < 2 ? $r->[0] : join(\"\", map { $r->[$_] . \" \" x ($w[$_] - w($r->[$_]) + 1) } 0 .. $#$r - 1) . $r->[-1], \"\\n\" }'"
   l = log
   last = log -1 HEAD
-  lg = "!f() { git log --color=always --graph --date=relative -100 --pretty=tformat:'%C(yellow)%h§%Cblue%aN§%Cgreen%ad§%Creset%s%Cred%d%Creset' \"$@\" | column -t -s\"§\" 2>/dev/null | less -RXF; }; f"
+  lg = "!f() { git log --color=always --graph --date=relative -100 --pretty=tformat:'%C(yellow)%h%Creset§%C(blue)%aN%Creset§%C(green)%ad%Creset§%s%C(red)%d%Creset' \"$@\" | git columns | less -RXF; }; f"
   lgb = log --date=auto:relative --pretty=tformat:'%C(yellow)%h %Cblue%aN %Cgreen%ad %Creset%s%n%b'
-  llg = "!f() { git log --color=always --graph --date=relative -100 --pretty=tformat:'%C(yellow)%h§%Cblue%aN§%Cgreen%ad§%C(yellow)[%(trailers:valueonly=true,separator=|,key=Work-item-id,key=Change-type,key=PR-id,key=PR)]§%Creset%s %Cred%d%Creset' \"$@\" | column -t -s\"§\" 2>/dev/null | less -RXF; }; f"
+  llg = "!f() { git log --color=always --graph --date=relative -100 --pretty=tformat:'%C(yellow)%h%Creset§%C(blue)%aN%Creset§%C(green)%ad%Creset§%C(yellow)[%(trailers:valueonly=true,separator=|,key=Work-item-id,key=Change-type,key=PR-id,key=PR)]%Creset§%s%C(red)%d%Creset' \"$@\" | sed 's/\\[\\]//' | git columns | less -RXF; }; f"
   ls = log --stat
   m = !git db | xargs git switch
   pf = push --force-with-lease --force-if-includes
