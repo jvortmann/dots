@@ -42,6 +42,9 @@
   whitespace=fix,-indent-with-non-tab,trailing-space,space-before-tab,cr-at-eol
   hooksPath = ~/.config/git/hooks/
   attributesfile = ~/.config/git/attributes
+  # Keep the list of untracked files in the index, so git status reads fewer
+  # folders. It halves git status in a large repository.
+  untrackedCache = true
 
 [commit]
   template = ~/.config/git/message
