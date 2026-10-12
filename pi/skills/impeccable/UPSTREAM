@@ -1,6 +1,9 @@
-Copied from https://github.com/pbakaus/impeccable at 0d6b47ea19b63afe15e3f93a44d5d9fbbc6fd275, folder .pi/skills/impeccable.
-Update: copy that folder again, and move the engine version in mise/config.toml
-to the one in scripts/VERSION.
+Installed from https://github.com/pbakaus/impeccable by its own installer, for
+pi. The release is in scripts/VERSION.
+
+Update: run pi/update-impeccable.sh, then read the diff before you commit. It
+installs the latest release, keeps the description in SKILL.md and these
+notes, and sets the engine version in mise/config.toml to scripts/VERSION.
 
 Local change: the description in SKILL.md is ours, so the skill loads without
-being named. Keep it when you copy the folder again.
+being named.
