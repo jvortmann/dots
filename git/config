@@ -108,10 +108,10 @@
   split-refs = "!perl -CSD -Mutf8 -lpe 'if (s/§([^§]*)$//) { my @r = split /, /, $1; my @b = grep { !/^tag: / } @r; my @t = map { s/^tag: //r } grep { /^tag: / } @r; $_ .= \" \\e[31m(\" . join(\", \", @b) . \")\\e[m\" if @b; $_ .= \" \\e[35mtag: \" . join(\", \", @t) . \"\\e[m\" if @t && $ENV{GIT_LG_TAGS} }'"
   l = log
   last = log -1 HEAD
-  lg = "!f() { git log --color=always --graph --date=relative -100 --pretty=tformat:'%C(yellow)%h%Creset§%C(blue)%aN%Creset§%C(green)%ad%Creset§%s§%D' \"$@\" | git split-refs | git columns | less -RXF; }; f"
+  lg = "!f() { git log --color=always --graph --date=relative -100 --pretty=tformat:'%C(yellow)%h%Creset§%C(blue)%aN%Creset§%C(green)%ad%Creset§%s§%D' \"$@\" | git split-refs | git columns | less -RXFS; }; f"
   lgt = "!GIT_LG_TAGS=1 git lg"
   lgb = log --date=auto:relative --pretty=tformat:'%C(yellow)%h %Cblue%aN %Cgreen%ad %Creset%s%n%b'
-  llg = "!f() { git log --color=always --graph --date=relative -100 --pretty=tformat:'%C(yellow)%h%Creset§%C(blue)%aN%Creset§%C(green)%ad%Creset§%C(yellow)[%(trailers:valueonly=true,separator=|,key=Work-item-id,key=Change-type,key=PR-id,key=PR)]%Creset§%s§%D' \"$@\" | sed 's/\\[\\]//' | git split-refs | git columns | less -RXF; }; f"
+  llg = "!f() { git log --color=always --graph --date=relative -100 --pretty=tformat:'%C(yellow)%h%Creset§%C(blue)%aN%Creset§%C(green)%ad%Creset§%C(yellow)[%(trailers:valueonly=true,separator=|,key=Work-item-id,key=Change-type,key=PR-id,key=PR)]%Creset§%s§%D' \"$@\" | sed 's/\\[\\]//' | git split-refs | git columns | less -RXFS; }; f"
   llgt = "!GIT_LG_TAGS=1 git llg"
   ls = log --stat
   m = !git db | xargs git switch
