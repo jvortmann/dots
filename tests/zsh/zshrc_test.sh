@@ -25,3 +25,24 @@ function set_up() {
 function test_keeps_the_shell_the_terminal_started() {
   assert_same "$HOMEBREW_ZSH" "$(variable_after_startup SHELL)"
 }
+
+function test_grep_and_find_in_a_new_terminal_read_ignored_files() {
+  local repo
+  repo=$(bashunit::temp_dir "ignored")
+  git -C "$repo" init -q
+  mkdir "$repo/build"
+  printf 'foo\n' > "$repo/build/out.ts"
+  printf 'build/\n' > "$repo/.gitignore"
+
+  assert_same "./build/out.ts:foo
+./build/out.ts" "$(in_new_terminal "$repo" "grep -r foo .; find . -name out.ts")"
+}
+
+# Run a command in a new terminal shell, from the given folder.
+in_new_terminal() {
+  local zdotdir
+  zdotdir=$(bashunit::temp_dir "zshrc")
+  printf 'source %q\n' "$ZSHRC" > "$zdotdir/.zshrc"
+  (cd "$1" && ZDOTDIR="$zdotdir" SHELL="$HOMEBREW_ZSH" PATH="$TERMINAL_PATH" \
+    "$HOMEBREW_ZSH" -l -i -c "$2" 2> /dev/null)
+}

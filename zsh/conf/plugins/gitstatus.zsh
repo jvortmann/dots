@@ -53,8 +53,8 @@ cwd_prompt_string() {
 
 # If inside a Git repository with a commit, print its branch and state. One
 # git call gives the branch, the counts against the upstream and the files.
-# Match its lines with zsh patterns, not grep. In the prompt, grep runs
-# greprip through a mise shim, which is slow and can print mise errors.
+# Match its lines with zsh patterns, not grep, because a pattern starts no
+# new process.
 git_prompt_string() {
   local -a lines=("${(@f)$(git status --porcelain=v2 --branch 2> /dev/null)}")
   local head=${${(M)lines:#\# branch.head *}#\# branch.head }
