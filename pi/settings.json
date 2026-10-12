@@ -36,13 +36,13 @@
     "npm:@juanibiapina/pi-gob",
     "git:github.com/ghoseb/pi-askuserquestion",
     "npm:@tintinweb/pi-subagents",
-    "npm:pi-permission-system",
     "npm:@robhowley/pi-structured-return",
     "npm:@tintinweb/pi-tasks",
     "git:github.com/RielJ/pi-image-preview@main",
     "git:github.com/jvortmann/pi-show-diffs@main",
     "git:github.com/jvortmann/pi-anthropic-console-login",
-    "npm:pi-tool-display"
+    "npm:pi-tool-display",
+    "git:github.com/jvortmann/pi-permission-system@filter-only-active-tools"
   ],
   "compaction": {
     "enabled": true,
