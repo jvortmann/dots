@@ -99,13 +99,20 @@
   fix = x --trailer="change:fix"
   ignore = "!i() { touch .gitignore && echo $1 >> .gitignore; }; i"
   # Align fields split by § into columns as wide as their longest value, one
-  # space apart. Color codes take no width. A line with no § prints as is.
-  columns = "!perl -CSD -Mutf8 -e 'sub w { (my $v = shift) =~ s/\\e\\[[0-9;]*m//g; length $v } while (<>) { chomp; push @r, [split /§/, $_, -1] } for $r (grep { @$_ > 1 } @r) { for $i (0 .. $#$r - 1) { $n = w($r->[$i]); $w[$i] = $n if $n > ($w[$i] // 0) } } for $r (@r) { print @$r < 2 ? $r->[0] : join(\"\", map { $r->[$_] . \" \" x ($w[$_] - w($r->[$_]) + 1) } 0 .. $#$r - 1) . $r->[-1], \"\\n\" }'"
+  # space apart. Color codes take no width. A line with no § prints as is. No
+  # line ends in spaces, so a padded row does not wrap in less.
+  columns = "!perl -CSD -Mutf8 -e 'sub w { (my $v = shift) =~ s/\\e\\[[0-9;]*m//g; length $v } while (<>) { chomp; push @r, [split /§/, $_, -1] } for $r (grep { @$_ > 1 } @r) { for $i (0 .. $#$r - 1) { $n = w($r->[$i]); $w[$i] = $n if $n > ($w[$i] // 0) } } for $r (@r) { $l = @$r < 2 ? $r->[0] : join(\"\", map { $r->[$_] . \" \" x ($w[$_] - w($r->[$_]) + 1) } 0 .. $#$r - 1) . $r->[-1]; 1 while $l =~ s/ +((?:\\e\\[[0-9;]*m)*)$/$1/; print $l, \"\\n\" }'"
+  # Put the refs of git log %D, the last § field, after the subject: the
+  # branches in parentheses, then the tags. Only lgt and llgt, which set
+  # GIT_LG_TAGS, show the tags.
+  split-refs = "!perl -CSD -Mutf8 -lpe 'if (s/§([^§]*)$//) { my @r = split /, /, $1; my @b = grep { !/^tag: / } @r; my @t = map { s/^tag: //r } grep { /^tag: / } @r; $_ .= \" \\e[31m(\" . join(\", \", @b) . \")\\e[m\" if @b; $_ .= \" \\e[35mtag: \" . join(\", \", @t) . \"\\e[m\" if @t && $ENV{GIT_LG_TAGS} }'"
   l = log
   last = log -1 HEAD
-  lg = "!f() { git log --color=always --graph --date=relative -100 --pretty=tformat:'%C(yellow)%h%Creset§%C(blue)%aN%Creset§%C(green)%ad%Creset§%s%C(red)%d%Creset' \"$@\" | git columns | less -RXF; }; f"
+  lg = "!f() { git log --color=always --graph --date=relative -100 --pretty=tformat:'%C(yellow)%h%Creset§%C(blue)%aN%Creset§%C(green)%ad%Creset§%s§%D' \"$@\" | git split-refs | git columns | less -RXF; }; f"
+  lgt = "!GIT_LG_TAGS=1 git lg"
   lgb = log --date=auto:relative --pretty=tformat:'%C(yellow)%h %Cblue%aN %Cgreen%ad %Creset%s%n%b'
-  llg = "!f() { git log --color=always --graph --date=relative -100 --pretty=tformat:'%C(yellow)%h%Creset§%C(blue)%aN%Creset§%C(green)%ad%Creset§%C(yellow)[%(trailers:valueonly=true,separator=|,key=Work-item-id,key=Change-type,key=PR-id,key=PR)]%Creset§%s%C(red)%d%Creset' \"$@\" | sed 's/\\[\\]//' | git columns | less -RXF; }; f"
+  llg = "!f() { git log --color=always --graph --date=relative -100 --pretty=tformat:'%C(yellow)%h%Creset§%C(blue)%aN%Creset§%C(green)%ad%Creset§%C(yellow)[%(trailers:valueonly=true,separator=|,key=Work-item-id,key=Change-type,key=PR-id,key=PR)]%Creset§%s§%D' \"$@\" | sed 's/\\[\\]//' | git split-refs | git columns | less -RXF; }; f"
+  llgt = "!GIT_LG_TAGS=1 git llg"
   ls = log --stat
   m = !git db | xargs git switch
   pf = push --force-with-lease --force-if-includes

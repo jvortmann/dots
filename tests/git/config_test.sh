@@ -79,6 +79,58 @@ function test_llg_shows_the_trailers_in_brackets_and_nothing_without_them() {
   assert_contains "[fix] Side" "$plain"
 }
 
+function test_lg_shows_the_branches_in_parentheses_one_space_after_the_subject() {
+  merge_a_side_branch
+  in_clone commit -q --allow-empty -m "A longer subject than the others"
+
+  assert_matches ' Side \(side\)$' "$(in_clone lg | without_colors | command grep ' Side ')"
+}
+
+function test_lg_shows_no_tags_by_default() {
+  merge_a_side_branch
+  in_clone tag v1 origin/main
+
+  assert_not_contains "v1" "$(in_clone lg | without_colors)"
+}
+
+function test_lgt_shows_the_tags_after_the_branches() {
+  merge_a_side_branch
+  in_clone tag v1 origin/main
+
+  assert_matches ' Start \(origin/main\) tag: v1$' "$(in_clone lgt | without_colors | tail -1)"
+}
+
+function test_lgt_shows_the_tags_in_magenta() {
+  merge_a_side_branch
+  in_clone tag v1 origin/main
+
+  assert_contains $'\e[35mtag: v1' "$(in_clone lgt)"
+}
+
+function test_lgt_shows_a_tag_without_branches_alone() {
+  merge_a_side_branch
+  in_clone tag v1 side
+  in_clone branch -q -D side
+
+  assert_matches ' Side tag: v1$' "$(in_clone lgt | without_colors | command grep ' Side ')"
+}
+
+function test_llg_shows_the_branches_and_llgt_also_the_tags() {
+  merge_a_side_branch
+  in_clone tag v1 origin/main
+
+  assert_matches ' Start \(origin/main\)$' "$(in_clone llg | without_colors | tail -1)"
+  assert_matches ' Start \(origin/main\) tag: v1$' "$(in_clone llgt | without_colors | tail -1)"
+}
+
+function test_lg_ends_no_commit_row_with_spaces() {
+  merge_a_side_branch
+  in_clone commit -q --allow-empty -m "After the merge, so the merge row has no refs"
+
+  assert_same "0" "$(in_clone lg | without_colors | command grep -cE '[0-9a-f]{7}.* $')"
+  assert_same "0" "$(in_clone lgt | without_colors | command grep -cE '[0-9a-f]{7}.* $')"
+}
+
 # HOME is the test folder, so the aliases cannot lean on files installed there.
 in_clone() {
   HOME="$WORK" GIT_CONFIG_GLOBAL="$CONFIG" git -C "$WORK/clone" -c user.name="Test Author" \
