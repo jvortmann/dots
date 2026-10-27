@@ -116,10 +116,11 @@ the skill says. Start the reply with one line, either
 
 ## Commits
 
-**Load the `git-commit` skill** the moment a message exists to work on. It
-carries the template, the format, the two checks and the handover. Load it
-before the first word of a draft, and never write one from memory. This
-section keeps only the rule that nothing else may override.
+**Hand the message to the `editor` agent** the moment one exists to work on.
+It drafts from the diff with the `git-commit` skill and runs the two checks.
+Never write one from memory. Print the message it returns in a fenced block,
+and copy it with `pbcopy` in the session the user reads. This section keeps
+only the rule that nothing else may override.
 
 ### Who commits
 
@@ -138,12 +139,12 @@ section keeps only the rule that nothing else may override.
 ## Writing
 
 Every text a person reads: commit messages, PR bodies, documentation, code
-comments, task descriptions. Load the `asd-ste100` skill and follow it. It
-carries the rules, the worked rewrites, and the calls where a rule fights the
-text.
+comments, task descriptions. Hand it to the `editor` agent, with the kind of
+text, where it goes, and the intent. It loads `asd-ste100` and `documentation`,
+and runs `ste-lint` until the text passes. Its loop stays out of your context.
 
-`ste-lint <file>` checks the same rules. It reports and never rewrites, so read
-the reasons and revise the text yourself.
+When you cannot start an agent, load the `asd-ste100` skill and follow it, and
+check the text with `ste-lint <file>`.
 
 ---
 
@@ -164,9 +165,9 @@ the reasons and revise the text yourself.
 
 ### Documentation and comments
 
-Load the `documentation` skill when you write, review or edit a README, a
-document or a code comment. It decides whether the text earns its place, and
-it holds the budget.
+The `editor` agent loads the `documentation` skill for a README, a document or
+a code comment, as the Writing section says. The skill decides whether the
+text earns its place, and it holds the budget.
 
 ### Content quality
 
