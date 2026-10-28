@@ -16,7 +16,7 @@ This file applies to ALL pi sessions across all projects.
 - **NO resets** — never `git reset` (`--hard`, `--soft`, or mixed)
 - **NO rebases** — never `git rebase` or any interactive git operation
 - **NO force** — never `git push --force` / `git push -f`
-- **NO stash** — never `git stash`
+- **NO stash** — never `git stash`, in any form, `list` included. No task needs it.
 - **NO history/ref destruction** — never delete branches or tags, or change history
 - **NO `rm -rf`** — never, manually or in scripts
 
@@ -49,6 +49,7 @@ Allowed (read-only, anytime): `git status`, `git diff`, `git log`, `git show`, `
     3. **Test first** — is this call about to create or edit implementation (non-test) code? Proceed ONLY if a test for this exact scenario ran in this session and FAILED on its own assertion (RED). A failure from setup, a missing file or a typo is not RED. Otherwise STOP and write + run the test first.
     4. **Directory** — does this bash command start with `cd`? If it is a bare leading `cd` (not wrapped as `(cd dir && cmd)` for that one command), STOP and delete it — the tool already runs in the correct directory. Never type a remembered absolute path. If you are unsure where you are, check with `pwd` instead of assuming.
     5. **Prose** — does this call write a comment, a doc or a message? Hand the text to the `editor` agent first.
+    6. **Prohibited** — does this call hold a step from Prohibited Operations? Drop that step. Never split, quote or reword it to get past a rule or a block. When the task needs that step, stop and ask.
 
 ---
 
