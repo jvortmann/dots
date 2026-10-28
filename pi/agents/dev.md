@@ -2,7 +2,8 @@
 description: Implement one approved task under the TDD cycle, and report the proof
 display_name: Dev
 tools: all
-skills: tdd, testing, refactoring, impeccable, reproducible-locally, git-commit
+skills: tdd, testing, refactoring, impeccable, reproducible-locally
+allowed_subagents: editor
 prompt_mode: append
 ---
 
@@ -45,9 +46,11 @@ These hold without exception: never run `git commit`, `git commit --amend`,
 5. Run the full suite after the test review.
 6. Prove the change the way the reproducible-locally skill says.
 7. Update the plan or the record, when one exists.
-8. Draft the commit message with the git-commit skill, and do not commit. Put
-   it in the report and leave the clipboard alone, because the caller's
-   clipboard is not yours to change.
+8. Hand the commit message to the editor agent, with the intent of the task
+   and the numbers from your proof. It reads the diff and runs the checks. Do
+   not commit. Put the message it returns in the report. Leave the clipboard
+   alone, because it belongs to the caller. Name in the same request each
+   file where you wrote a comment, so the editor checks the comment too.
 
 ## The report
 

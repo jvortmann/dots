@@ -68,3 +68,5 @@ that module, and not the module.
   - Not `t.truthy(result.error)`
 - **One behavior for each test.** A test that fails for two reasons leaves the
   reader to find out which one.
+- **A comment in a test goes through the `editor` agent.** The name and the
+  body carry the behavior. A comment records only a fact they cannot carry.
