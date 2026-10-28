@@ -73,11 +73,22 @@ Every piece of work gets a task before its first edit. That includes a request m
 5. **Mark the task completed** (`TaskUpdate`), present results, and **STOP**
 6. **Ask permission** — "May I proceed with the next task: [description]?" — then wait
 
+### Ask with the tool
+
+Use the `ask_user_question` tool for a decision that belongs to a task or a
+plan. That covers a choice between approaches, a question of design or scope,
+and which option to keep. Put the option you recommend first.
+
+Step 6 applies to permission to go on and to the choice of the next task. Ask
+them in plain text. Ask in plain text also when the session has no interface
+and the tool returns an error.
+
 ### Never
 
 - ❌ Start a new/next task without explicit permission
 - ❌ Assume permission to continue
 - ❌ Batch multiple tasks together without checkpoints
+- ❌ Ask a decision about a task or a plan in plain text while the `ask_user_question` tool works
 
 ### As a subagent
 
