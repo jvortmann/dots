@@ -61,25 +61,6 @@ callers and locality to maintainers.
 Ask of every interface: can it have fewer methods, simpler parameters, or
 more complexity hidden inside?
 
-## Design for a test
-
-Keep the surface small. Fewer methods need fewer tests, and fewer parameters
-make a simpler setup.
-
-Accept dependencies. Do not create them.
-
-```
-hard to test:  charge(order)           -> makes its own PaymentClient inside
-easy to test:  charge(order, client)   -> the test passes a fake client
-```
-
-Return results. Do not change state out of sight.
-
-```
-hard to test:  applyDiscount(cart)     -> lowers cart.total, returns nothing
-easy to test:  discountFor(cart)       -> returns the discount, the caller applies it
-```
-
 ## Rejected framings
 
 - **Depth as the ratio of implementation lines to interface lines**
@@ -93,7 +74,8 @@ easy to test:  discountFor(cart)       -> returns the discount, the caller appli
 
 ## In this setup
 
-- Tests through the interface agree with the `testing` skill.
+- The `testing` skill holds how to shape an interface for a test: accept a
+  dependency, return a result, keep the surface small.
 - A deepening changes an interface and replaces tests. Load the `refactoring`
   skill before you call it a refactor. A removed or changed test rules that
   label out.
