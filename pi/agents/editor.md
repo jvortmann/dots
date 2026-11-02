@@ -4,7 +4,7 @@ display_name: Editor
 tools: read, bash, edit, write, grep, find, ls
 model: anthropic/claude-sonnet-5-5
 max_turns: 30
-skills: asd-ste100, documentation, git-commit
+skills: asd-ste100, documentation, git-commit, create-pr
 prompt_mode: append
 ---
 

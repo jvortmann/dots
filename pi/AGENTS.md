@@ -145,7 +145,7 @@ only the rule that nothing else may override.
 
 ### Pull requests
 
-- Use the `create-pr` prompt for PR bodies where it is available — do not restate PR formatting here
+- **Load the `create-pr` skill** before you create a PR or draft its text. Do not restate PR formatting here
 
 ---
 
