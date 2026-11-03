@@ -41,12 +41,31 @@ nothing else, unless the table says so.
 | Karabiner | `karabiner/` | links the key remaps |
 | mise | `mise/` | links the global tool versions, as a file and not a folder |
 | OrbStack | `orbstack/` | sets its CPU and memory, and links nothing |
-| pi | `pi/` | links the agent settings, skills, agents and prompts |
+| pi | `pi/` | links the whole folder to `~/.config/pi`, because pi writes its state there (auth, sessions, cache, extensions) and `git/ignore` keeps that state out |
 | tmux | `tmux/` | links the config, clones the plugin manager (then `prefix + I` in tmux) |
 | zsh | `zsh/` | links the shell config, sets zsh as the login shell |
 
 `symlink.sh` covers git, ripgrep, readline, gem, irb, guard and eslint, which
 need only a link.
+
+`dev-docs/` and `raycast/` have no script. They hold exported preferences,
+which you import by hand in DevDocs and Raycast.
+
+## The coding agent
+
+`zsh/conf/plugins/pi.zsh` points pi at `~/.config/pi` with
+`PI_CODING_AGENT_DIR`. The `pi/` folder holds:
+
+| Path | What it holds |
+|---|---|
+| `AGENTS.md` | the rules every agent session follows |
+| `SYSTEM.md` | the system prompt |
+| `skills/` | the skills that agents load for a kind of work, such as tdd, git-commit and create-pr |
+| `agents/` | five subagents: dev implements one task under TDD, editor writes text that people read and runs `ste-lint` until it passes, review reads a diff and changes nothing, Explore and Plan search and plan and change nothing |
+| `prompts/` | three commands: `/goal`, `/review-architecture` and `/watch-pr` |
+| `pi-permissions.jsonc` | what an agent may run without asking, and what it may never run |
+| `settings.json` | runs `greprip/greprip.sh` before each agent shell command, so `grep` and `find` there use ripgrep and fd and skip ignored files. The terminal keeps the real ones. mise installs greprip |
+| `update-impeccable.sh` | updates the impeccable skill from upstream |
 
 ## Change it
 
