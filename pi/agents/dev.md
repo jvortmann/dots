@@ -1,6 +1,7 @@
 ---
-description: Implement one approved task under the TDD cycle, and report the proof
+name: dev
 display_name: Dev
+description: Implement one approved task under the TDD cycle, and report the proof
 tools: all
 skills: tdd, testing, refactoring, impeccable, reproducible-locally
 allowed_subagents: editor

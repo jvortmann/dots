@@ -1,10 +1,11 @@
 ---
-description: Write or revise text that a person reads, and check it with ste-lint until it passes. A commit message, a pull request body, a document, a plan, the text of a skill, a comment in code and a task description all count. It returns the final text with the check results, so the caller keeps the lint loop out of its own context
+name: editor
 display_name: Editor
-tools: read, bash, edit, write, grep, find, ls
+description: Write or revise text that a person reads, and check it with ste-lint until it passes. A commit message, a pull request body, a document, a plan, the text of a skill, a comment in code and a task description all count. It returns the final text with the check results, so the caller keeps the lint loop out of its own context
 model: anthropic/claude-sonnet-5-5
-max_turns: 30
+tools: read, bash, edit, write, grep, find, ls
 skills: asd-ste100, documentation, git-commit, create-pr
+max_turns: 30
 prompt_mode: append
 ---
 

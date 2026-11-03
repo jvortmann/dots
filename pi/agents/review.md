@@ -1,9 +1,10 @@
 ---
-description: Review a diff against its intent and report findings with evidence (read-only). It has 12 turns, fixed here and not changed by the caller, which fits the diff of one task
+name: review
 display_name: Review
+description: Review a diff against its intent and report findings with evidence (read-only). It has 12 turns, fixed here and not changed by the caller, which fits the diff of one task
 tools: read, bash, grep, find, ls
-max_turns: 12
 skills: testing, refactoring
+max_turns: 12
 prompt_mode: replace
 ---
 
