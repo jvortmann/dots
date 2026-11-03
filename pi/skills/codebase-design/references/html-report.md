@@ -20,7 +20,9 @@ Mermaid looks generic.
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="module">
       import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
-      mermaid.initialize({ startOnLoad: true, theme: "neutral", securityLevel: "loose" });
+      // Count diagram ids. Ids from the clock repeat when two diagrams render
+      // in the same millisecond, and the second one draws into the first.
+      mermaid.initialize({ startOnLoad: true, deterministicIds: true, theme: "neutral", securityLevel: "loose" });
     </script>
     <style>
       /* Only what Tailwind does not cover: dashed seams, leak edges. */
