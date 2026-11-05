@@ -76,7 +76,7 @@
   "extensionChangelogVersions": {
     "{\"source\":\"npm:pi-fzf\",\"scope\":\"user\"}": "0.9.0",
     "{\"source\":\"git:git@github.com:jvortmann/pi-claude-commands\",\"scope\":\"user\"}": "3.0.0",
-    "{\"source\":\"npm:@tintinweb/pi-subagents\",\"scope\":\"user\"}": "0.22.1",
+    "{\"source\":\"npm:@tintinweb/pi-subagents\",\"scope\":\"user\"}": "0.23.1",
     "{\"source\":\"npm:@tintinweb/pi-tasks\",\"scope\":\"user\"}": "0.9.1",
     "{\"source\":\"git:github.com/jvortmann/pi-anthropic-console-login\",\"scope\":\"user\"}": "3.2.0",
     "{\"source\":\"npm:pi-tool-display\",\"scope\":\"user\"}": "0.5.0",
