@@ -29,7 +29,7 @@ Agents and tasks:
 - For broad exploration or research, spawn an Explore agent. When you already know the target, use read, grep and find.
 - Use SubagentWorkflow when a run decides how many agents it needs, or when work flows through stages. It also suits a finding that needs its own check. Use Agent for one task, or a few you can name first. Prefer `pipeline` over `parallel`.
 - An agent or a workflow in the background notifies you when it ends. Do not poll or sleep. Continue with other work.
-- An agent's summary states its intent, not its outcome. When an agent writes or edits code, read the actual change before you call the work done.
+- An agent's summary states its intent, not its outcome. When an agent writes or edits code, read the actual change before you call the work done. The `review` agent can read it for you.
 - For work in several steps, track it with TaskCreate and TaskUpdate. Mark a task in_progress before you start it, and completed when it ends. Check TaskList after each task.
 - A task that TaskExecute launched already runs as an agent. Never start another Agent for it.
 

@@ -46,7 +46,7 @@ Allowed (read-only, anytime): `git status`, `git diff`, `git log`, `git show`, `
 - **STOP gate — before EVERY tool call, self-check:**
     1. **Task scope** — is this action part of the single, already-approved task in progress? If it starts the next task, or was not explicitly approved, STOP and ask first.
     2. **Commit** — is this a `git commit` / `git commit --amend`? Run it ONLY if the user said the exact phrase "you can commit". Otherwise prepare + copy the message and never run git.
-    3. **Test first** — is this call about to create or edit implementation (non-test) code? Proceed ONLY if a test for this exact scenario ran in this session and FAILED on its own assertion (RED). A failure from setup, a missing file or a typo is not RED. Otherwise STOP and write + run the test first.
+    3. **Test first** — is this call about to create or edit implementation (non-test) code? Proceed ONLY if a test for this exact scenario ran in this session and FAILED on its own assertion (RED). A failure from setup, a missing file or a typo is not RED. Otherwise STOP and write + run the test first. In the main session, the answer is to hand the task to `dev`, not to write the code.
     4. **Directory** — does this bash command start with `cd`? If it is a bare leading `cd` (not wrapped as `(cd dir && cmd)` for that one command), STOP and delete it — the tool already runs in the correct directory. Never type a remembered absolute path. If you are unsure where you are, check with `pwd` instead of assuming.
     5. **Prose** — does this call write a comment, a doc or a message? Hand the text to the `editor` agent first.
     6. **Prohibited** — does this call hold a step from Prohibited Operations? Drop that step. Never split, quote or reword it to get past a rule or a block. When the task needs that step, stop and ask.
@@ -73,6 +73,27 @@ Every piece of work gets a task before its first edit. That includes a request m
 4. **Prepare the commit** — draft the message and copy it to the clipboard (see Commits), then stop. **Never run `git commit` yourself** — the user commits. The only exception is the exact phrase "you can commit"
 5. **Mark the task completed** (`TaskUpdate`), present results, and **STOP**
 6. **Ask permission** — "May I proceed with the next task: [description]?" — then wait
+
+### Code goes to the dev agent
+
+In the main session, hand each approved task that changes code to the `dev`
+agent. The main session writes no code. This rule is for the main session
+only. A subagent, which has a `<sub_agent_context>` block, never hands work
+to `dev`.
+
+- **The brief** gives the task, its scenarios, the path of the plan or work
+  record, and the decisions and constraints from the conversation.
+- **Questions** — settle the open design questions with the user before the
+  handover, because `dev` cannot ask. When `dev` stops with a question, ask
+  the user. Then resume that `dev` run with the answer. The Agent tool
+  `resume` keeps its context.
+- **After the report** — run the `review` agent on the diff, with the intent
+  of the task. Show the user the outcome from the report, `git diff --stat`
+  and the review findings. Copy the commit message from the report with
+  `pbcopy`. Then continue with the steps of "One task at a time".
+- **Do not** read the full diff or run the work again in the main session.
+  The `review` agent reads the diff.
+- **Exception** — the user asks the main session to make the change itself.
 
 ### Ask with the tool
 
@@ -109,7 +130,8 @@ no person reads your steps. The rules above expect one, so for this run:
 
 **MANDATORY: BABY STEPS for EVERY implementation task.**
 
-Load the `tdd` skill before you write or change any implementation code. It
+Load the `tdd` skill before you write or change any implementation code. In the
+main session, this work goes to `dev`, which loads the skill. The skill
 carries the RED and GREEN cycle, the rules around it and a worked example. It
 loads the `testing` skill for the test itself. When the work seems to fall
 outside a cycle, ask rather than decide.
