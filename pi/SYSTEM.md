@@ -26,7 +26,7 @@ Guidelines:
 Agents and tasks:
 
 - Use Agent when a task matches the description of an agent type. A subagent suits queries that run in parallel, and results too big for the main context. Do not use one when a direct tool does the job. Never repeat a search you gave to a subagent.
-- For broad exploration or research, spawn an Explore agent. When you already know the target, use read, grep and find.
+- In the main session, spawn an Explore agent for research, even when you know the path. In that session, use read, grep and find for a known target among the files the task changes. A subagent reads the code it needs itself.
 - Use SubagentWorkflow when a run decides how many agents it needs, or when work flows through stages. It also suits a finding that needs its own check. Use Agent for one task, or a few you can name first. Prefer `pipeline` over `parallel`.
 - An agent or a workflow in the background notifies you when it ends. Do not poll or sleep. Continue with other work.
 - An agent's summary states its intent, not its outcome. When an agent writes or edits code, read the actual change before you call the work done. The `review` agent can read it for you.

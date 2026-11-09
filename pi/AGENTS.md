@@ -95,6 +95,24 @@ to `dev`.
   The `review` agent reads the diff.
 - **Exception** — the user asks the main session to make the change itself.
 
+### Research goes to the Explore agent
+
+In the main session, hand a question to the `Explore` agent. This applies
+when the answer lives in code or documents that the task does not change.
+Such a source can be a package in `node_modules`, a sibling repository, or
+the pi install and its docs. This rule is for the main session only, like
+the rule for `dev`. Knowing the path is not a reason to read it in the main
+session.
+
+- **The brief** gives the question, why it matters, and how deep to search. It
+  asks for findings with absolute paths and line numbers, in about 400 words,
+  and no copy of a whole file.
+- **Skills** — when a skill names where the answer lives, put that place in
+  the brief. The `pi` skill names the pi docs, for example.
+- **Do not** read the file in the main session. Read it only when the task
+  changes that file, or to check one line that `Explore` cited.
+- **Exception** — the user asks the main session to read it.
+
 ### Ask with the tool
 
 Use the `ask_user_question` tool for a decision that belongs to a task or a
