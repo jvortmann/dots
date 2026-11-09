@@ -59,7 +59,8 @@ which you import by hand in DevDocs and Raycast.
 | Path | What it holds |
 |---|---|
 | `AGENTS.md` | the rules every agent session follows |
-| `SYSTEM.md` | the system prompt |
+| `APPEND_SYSTEM.md` | our guidelines, agent rules and reply rules, which pi adds after the system prompt it generates (its list of tools and the rules of each extension) |
+| `extensions/preamble.ts` | changes the opening sentence of the system prompt and drops its documentation section, so the main prompt never names the agent harness |
 | `skills/` | the skills that agents load for a kind of work, such as tdd, git-commit and create-pr |
 | `agents/` | five subagents: dev implements one task under TDD, editor writes text that people read and runs `ste-lint` until it passes, review reads a diff and changes nothing, Explore and Plan search and plan and change nothing |
 | `prompts/` | three commands: `/goal`, `/review-architecture` and `/watch-pr` |
