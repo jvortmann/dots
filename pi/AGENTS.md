@@ -88,9 +88,10 @@ to `dev`.
   by the rule of the tdd skill. `dev` trusts these facts and does not search
   again.
 - **One dev for each task** — keep the same `dev` until the task is
-  committed. For any follow-up, resume that `dev` with its id. A follow-up
-  can be an answer, a change from the user, or a new commit message. Never
-  start a second `dev` for the task.
+  committed. For any follow-up, resume that `dev` with its id, the
+  "Agent ID:" line of the Agent result. Never use a name you make up. A
+  follow-up can be an answer, a change from the user, or a new commit
+  message. Never start a second `dev` for the task.
 - **Questions** — settle the open design questions with the user before the
   handover, because `dev` cannot ask. When `dev` stops with a question, ask
   the user. Then resume that `dev` run with the answer. The Agent tool
