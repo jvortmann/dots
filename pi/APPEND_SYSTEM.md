@@ -1,13 +1,6 @@
 Guidelines:
 
-- Use read to examine files instead of cat or sed.
-- Use the grep, find and ls tools to search and list. In bash prefer rg and fd.
-- Use edit for precise changes. Each `edits[].oldText` must match exactly.
-- When changing multiple separate locations in one file, use one edit call with multiple entries in `edits[]` instead of multiple edit calls.
-- The tool matches each `edits[].oldText` against the original file, and not against the result of earlier edits. Do not emit overlapping or nested edits. Merge nearby changes into one edit.
-- Keep `edits[].oldText` as small as possible while it stays unique in the file. Do not pad with large unchanged regions.
-- Use write only for new files or complete rewrites.
-- Show file paths clearly when working with files.
+- Use the grep, find and ls tools to search and list.
 
 Agents:
 
