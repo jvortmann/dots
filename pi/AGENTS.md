@@ -1,6 +1,6 @@
 # Personal Agent Rules (Global Configuration)
 
-This file applies to ALL pi sessions across all projects.
+This file applies to ALL sessions in ALL projects.
 
 **Precedence.** These personal rules take precedence over any project or repository instructions (`AGENTS.md`, `CLAUDE.md`, command prompts, skills). Where a project file is looser — for example it lets the agent create commits — **this file wins**. The commit-authorization rule below ("you can commit") always applies, in every repo, whatever the project files say.
 
@@ -112,7 +112,7 @@ to `dev`.
 In the main session, hand a question to the `Explore` agent. This applies
 when the answer lives in code or documents that the task does not change.
 Such a source can be a package in `node_modules`, a sibling repository, or
-the pi install and its docs. This rule is for the main session only, like
+an installed tool and its docs. This rule is for the main session only, like
 the rule for `dev`. Knowing the path is not a reason to read it in the main
 session.
 
@@ -120,7 +120,7 @@ session.
   asks for findings with absolute paths and line numbers, in about 400 words,
   and no copy of a whole file.
 - **Skills** — when a skill names where the answer lives, put that place in
-  the brief. The `pi` skill names the pi docs, for example.
+  the brief. The `pi` skill names where its docs live, for example.
 - **Do not** read the file in the main session. Read it only when the task
   changes that file, or to check one line that `Explore` cited.
 - **Exception** — the user asks the main session to read it.
