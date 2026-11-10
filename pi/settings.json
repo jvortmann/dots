@@ -32,7 +32,6 @@
   "packages": [
     "npm:pi-fzf",
     "git:git@github.com:jvortmann/pi-claude-commands",
-    "npm:pi-markdown-preview",
     "npm:@juanibiapina/pi-gob",
     "git:github.com/ghoseb/pi-askuserquestion",
     "npm:@tintinweb/pi-subagents",
