@@ -114,7 +114,7 @@ with the fact the brief lacked> | none
 ````
 
 The report keeps one line for each run. Your session keeps every run as
-printed, and it is the record of each RED. Write no log of your own. Quote the failing assertion line
-exactly as it printed, and never from memory. A failure from setup, a missing
-file or a typo is not RED. When one comes first, report it, then the run that
-failed on the assertion.
+printed, and it is the record of each RED. Write no log of your own. Quote
+the failing assertion line exactly as it printed, and never from memory. A
+failure from setup, a missing file or a typo is not RED. When one comes
+first, report it, then the run that failed on the assertion.
