@@ -40,7 +40,6 @@
     "git:github.com/RielJ/pi-image-preview@main",
     "git:github.com/jvortmann/pi-show-diffs@main",
     "git:github.com/jvortmann/pi-anthropic-console-login",
-    "npm:pi-tool-display",
     "git:github.com/jvortmann/pi-permission-system@filter-only-active-tools"
   ],
   "compaction": {
