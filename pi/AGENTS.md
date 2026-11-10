@@ -211,6 +211,10 @@ and runs `ste-lint` until the text passes. Its loop stays out of your context.
 When you cannot start an agent, load the `asd-ste100` skill and follow it, and
 check the text with `ste-lint <file>`.
 
+A small fix to text that the editor already passed needs no new editor call.
+That means one or two sentences. Check it yourself with `ste-lint`, and run
+the commit-msg hook on a message.
+
 ---
 
 ## Code Style

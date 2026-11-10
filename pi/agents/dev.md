@@ -54,31 +54,35 @@ These hold without exception: never run `git commit`, `git commit --amend`,
 7. Write the diff to a temporary file from `mktemp`: the output of
    `git diff`, plus the content of each new untracked file. Start the review
    agent and the editor agent in the same message, so the two run at the
-   same time. Give the review agent the file path and the intent in one
-   or two sentences. Add the scenarios with test names and the suite result
-   line, and do not paste the diff into the prompt. The review agent need
-   not run the suite again, and its findings come back to you. Give the
-   editor the intent, the numbers from your proof, and each file where you
-   wrote a comment.
+   same time. Give the review agent the file path, the intent, the
+   scenarios with test names and the suite result line. Give the editor the
+   intent, the numbers from your proof, and each file where you wrote a
+   comment. Add the plan or record update: the path, the step done and what
+   changed from the plan. Keep each prompt to about 10 lines at most, since
+   the diff is in the file.
 8. Fix every blocker. Fix each minor item that takes a few lines in the
    files you changed. Leave the other minor items, and list them in the
    report with a reason. Run the full suite again after the fixes.
-9. Start one final review agent only for a fix that has no RED and GREEN
-   test of its own. It checks only those fixes. When every fix has such a
-   test, its GREEN run is the check. Skip the final review, and say so in
-   the report. Do not start a third round. Put anything still open in the
-   report.
-10. Update the plan or the record, when one exists.
-11. Ask the editor again only when a review fix changed behavior that the
-   message describes. Otherwise the message from step 7 is final. Do not
-   commit or touch the clipboard, which belongs to the caller, and put the
-   message in the report. Name in a new request each file where you wrote a
-   comment. When the hook rejects only a tool or code name that the editor
-   listed for `zg`, the message is final. Do not ask again.
+9. Start one final review agent only for a fix of more than about 10 lines
+   of code that has no RED and GREEN test of its own. It checks only those
+   fixes. For a smaller fix, the green full suite and the typecheck are the
+   check. List that fix in the report as untested. Do not start a third
+   round. Put anything still open in the report.
+10. The editor wrote the plan or record update in step 7, when one exists.
+   When a later fix changes it, edit the note yourself and check it as
+   step 11 says.
+11. When a fix changes a sentence of the message, a comment or the plan
+   note, change it yourself. Then run `ste-lint` on the file and the
+   commit-msg hook on the message, and fix what they report. Ask the editor
+   again only for new text of more than two sentences. Do not commit or
+   touch the clipboard, which belongs to the caller, and put the message in
+   the report. When the hook rejects only a tool or code name that the
+   editor listed for `zg`, the message is final.
 
 ## The report
 
-End the run with this report, and nothing after it.
+End the run with this report, and nothing after it. Keep it under about 250
+words, and do not count the commit message.
 
 ````md
 ## Result: verified | not verified | stopped with a question
