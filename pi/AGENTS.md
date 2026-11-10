@@ -69,7 +69,7 @@ Every piece of work gets a task before its first edit. That includes a request m
 
 1. **Complete only the current task** and make it committable
 2. **Validate** — it works independently and does not break existing code
-3. **Update the plan or the local work record** after every task, whenever one exists for the work. It can live anywhere, so look for it. Mark the task done, record what changed from the plan and why, and name what the next task now needs. Do it before the commit message, so the record and the commit describe the same state
+3. **Update the plan or the local work record** after every task, whenever one exists for the work. It can live anywhere, so look for it. Mark the task done, record what changed from the plan and why, and name what the next task now needs. When `dev` ran the task, `dev` updates that record, and the main agent checks the Record line of its report. Do it before the commit message, so the record and the commit describe the same state
 4. **Prepare the commit** — draft the message and copy it to the clipboard (see Commits), then stop. **Never run `git commit` yourself** — the user commits. The only exception is the exact phrase "you can commit"
 5. **Mark the task completed** (`TaskUpdate`), present results, and **STOP**
 6. **Ask permission** — "May I proceed with the next task: [description]?" — then wait
@@ -81,18 +81,29 @@ agent. The main session writes no code. This rule is for the main session
 only. A subagent, which has a `<sub_agent_context>` block, never hands work
 to `dev`.
 
-- **The brief** gives the task, its scenarios, the path of the plan or work
-  record, and the decisions and constraints from the conversation.
+- **The brief** gives the task in the words of the user, the path of the plan
+  or work record, and the decisions and constraints from the conversation.
+  It also carries the research facts: what exists, where it is, and how the
+  tests run. It tells `dev` to update the plan or work record. It does not list the test scenarios, because `dev` derives them
+  by the rule of the tdd skill. `dev` trusts these facts and does not search
+  again.
+- **One dev for each task** — keep the same `dev` until the task is
+  committed. For any follow-up, resume that `dev` with its id. A follow-up
+  can be an answer, a change from the user, or a new commit message. Never
+  start a second `dev` for the task.
 - **Questions** — settle the open design questions with the user before the
   handover, because `dev` cannot ask. When `dev` stops with a question, ask
   the user. Then resume that `dev` run with the answer. The Agent tool
   `resume` keeps its context.
-- **After the report** — run the `review` agent on the diff, with the intent
-  of the task. Show the user the outcome from the report, `git diff --stat`
-  and the review findings. Copy the commit message from the report with
-  `pbcopy`. Then continue with the steps of "One task at a time".
+- **After the report** — take the report as it stands, and do not run the
+  `review` agent, because `dev` did. Do not check the commit
+  message again, reword it, or update the plan or record. A word the hook rejects stays when the report lists it for `zg`,
+  so name it to the user. Show the user the outcome from the report
+  with its Review section, and `git diff --stat`. Copy the commit message
+  from the report with `pbcopy`. Then continue with the steps of "One task
+  at a time".
 - **Do not** read the full diff or run the work again in the main session.
-  The `review` agent reads the diff.
+  The inner review of `dev` reads the diff.
 - **Exception** — the user asks the main session to make the change itself.
 
 ### Research goes to the Explore agent

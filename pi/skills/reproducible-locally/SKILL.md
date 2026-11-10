@@ -20,6 +20,10 @@ a file on disk.
   change, and show the run where it failed without the change. The RED of a
   tdd cycle is that run. A test that passed before the change proves nothing
   about it.
+- When a passing test covers the changed behavior through its public
+  interface, that test run is the proof. Use a separate run outside the
+  test runner for what tests cannot show. Examples are a UI, a CLI, a
+  service that starts, or a real terminal.
 - Clicking through an app, reading a dashboard, or reading the code back is
   not proof. Script the same check instead, so it prints output that anybody
   can run again.

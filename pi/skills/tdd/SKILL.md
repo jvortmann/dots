@@ -16,6 +16,12 @@ the cycle on your own judgment.
 
 ## The cycle
 
+Choose the scenarios first. Write one test for each behavior the task states.
+Add a guard, which is a test that passes at once, only for existing behavior
+that the change could break. Write at most one guard for each rule the change
+touches. Do not test an edge case the task does not ask about. When one looks
+like a real gap, name it in the report or to the user.
+
 For each test scenario in the task:
 
 1. **Write ONE test scenario first** — a single test case, before you create
@@ -26,8 +32,10 @@ For each test scenario in the task:
 3. **Write the MINIMUM code** — only what makes this one test pass.
 4. **Run the ENTIRE test file** — it passes and nothing else broke (GREEN).
 5. **Look for a smell in the code this cycle wrote** — and state one line,
-   `refactor: <smell> -> <catalog id>` or `refactor: none, <why>`. For a
-   smell, load the `refactoring` skill, and keep the file green after each
+   `refactor: <smell> -> <catalog id>` or `refactor: none, <why>`. Write the
+   line from what you know of smells and refactorings, and with no smell
+   look nothing up. With a smell, load the `refactoring` skill and read its
+   catalog only to name the move by its id. Keep the file green after each
    move. Existing code that the next scenario needs in another shape is a
    preparatory refactor. That skill says where it goes.
 6. **Repeat** — take the next scenario.

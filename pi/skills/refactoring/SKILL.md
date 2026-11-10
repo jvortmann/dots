@@ -36,9 +36,11 @@ Martin Fowler, on the home page of refactoring.com.
 
 ## How to refactor
 
-1. Name what is wrong, as a smell from `references/smells.md`.
-2. Choose one refactoring for it from `references/catalog.md`, by its smells
-   and its Use it when line. Read its page for the sketch before and after.
+1. Name what is wrong, as a smell, from what you know. Open
+   `references/smells.md` only when you are unsure of the name.
+2. Choose one refactoring for it, from what you know. Open
+   `references/catalog.md` only when you are unsure, or to take the exact
+   catalog id for the refactor line or for a `Refactoring:` trailer.
 3. Make that one move, in the smallest steps that keep the tests green.
 4. Run the tests after each step. They stay green, and no assertion
    changes. When the refactoring renames or reshapes what a test calls,
