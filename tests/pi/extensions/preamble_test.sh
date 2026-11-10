@@ -7,6 +7,7 @@ function set_up() {
   [[ -f $EXTENSION ]] || bashunit::fail "missing the file under test: $EXTENSION"
   PI_DIR="$(mise where npm:@earendil-works/pi-coding-agent 2> /dev/null)/lib/node_modules/@earendil-works/pi-coding-agent"
   [[ -f $PI_DIR/dist/core/system-prompt.js ]] || bashunit::skip "needs pi installed with mise"
+  SUBAGENTS_DIR="$HOME/.config/pi/npm/node_modules/@tintinweb/pi-subagents"
 }
 
 function test_the_prompt_never_names_pi() {
@@ -75,21 +76,62 @@ function test_the_hook_leaves_a_custom_prompt_unchanged() {
   assert_not_contains "not found" "$output"
 }
 
+function test_the_prompt_of_a_sub_agent_opens_with_our_header() {
+  skipped_without_the_subagents_package && return
+  local prompt
+  prompt=$(prompt_of_a_sub_agent_after_the_hook)
+
+  assert_same $'<active_agent name="Explore"/>\n\nYou are a sub-agent.' "$(head -n 3 <<< "$prompt")"
+  assert_not_matches '\b[Pp]i\b' "$prompt"
+}
+
+function test_the_hook_leaves_a_sub_agent_prompt_with_another_header_unchanged() {
+  skipped_without_the_subagents_package && return
+  local output
+  output=$(prompt_of_a_sub_agent_after_the_hook "You are a pi sub-agent.")
+
+  assert_contains $'<active_agent name="Explore"/>\n\nYou are a pi sub-agent.\n' "$output"
+  assert_not_contains "not found" "$output"
+}
+
 # The default prompt that pi builds, with the read and bash tools and one
 # extension rule, run through the before_agent_start handler of the extension.
 prompt_after_the_hook() {
   run_the_hook ""
 }
 
-# $1 replaces the preamble sentence of pi before the hook runs, when set.
+# The prompt of the Explore agent, which replaces the prompt of pi, as the
+# subagents package builds it, run through the hook.
+# $1 replaces the header of the package before the hook runs, when set.
+prompt_of_a_sub_agent_after_the_hook() {
+  run_the_hook "$1" "" "" "" $'# Explore\nFind the code.'
+}
+
+skipped_without_the_subagents_package() {
+  [[ -f $SUBAGENTS_DIR/dist/prompts.js ]] && return 1
+  bashunit::skip "needs the subagents package installed"
+}
+
+# $1 replaces the first line that opens with "You are" before the hook runs,
+# when set. That is the preamble sentence of pi, or the header of an agent.
 # $2 is the comma-separated list of tools, read and bash when not set.
 # $3 replaces the rule of the bash tool, when set.
 # $4 is the content of one project instructions file, when set.
+# $5 is the body of an agent in replace mode, when set. The subagents package
+# then builds the prompt that pi uses in place of its own preamble.
 run_the_hook() {
-  PI_DIR="$PI_DIR" EXTENSION="$EXTENSION" OTHER_PREAMBLE="$1" TOOLS="${2:-read,bash}" BASH_RULE="$3" INSTRUCTIONS="$4" mise x node@latest -- node --input-type=module -e '
+  PI_DIR="$PI_DIR" SUBAGENTS_DIR="$SUBAGENTS_DIR" EXTENSION="$EXTENSION" OTHER_PREAMBLE="$1" TOOLS="${2:-read,bash}" BASH_RULE="$3" INSTRUCTIONS="$4" AGENT_BODY="$5" mise x node@latest -- node --input-type=module -e '
     const { buildSystemPrompt } = await import(process.env.PI_DIR + "/dist/core/system-prompt.js");
     const { bashToolSystemPromptContribution: bash } = await import(process.env.PI_DIR + "/dist/core/tools/bash.js");
+    const customPrompt = process.env.AGENT_BODY
+      ? (await import(process.env.SUBAGENTS_DIR + "/dist/prompts.js")).buildAgentPrompt(
+          { name: "Explore", promptMode: "replace", systemPrompt: process.env.AGENT_BODY },
+          "/work",
+          { isGitRepo: false, platform: "darwin" },
+        )
+      : undefined;
     let prompt = buildSystemPrompt({
+      customPrompt,
       selectedTools: process.env.TOOLS.split(","),
       toolSnippets: { read: "Read files", bash: bash.snippet },
       toolGuidelines: process.env.TOOLS.includes("bash") ? { bash: process.env.BASH_RULE ? [process.env.BASH_RULE] : bash.guidelines } : {},
@@ -98,7 +140,7 @@ run_the_hook() {
       contextFiles: process.env.INSTRUCTIONS ? [{ path: "AGENTS.md", content: process.env.INSTRUCTIONS }] : [],
       skills: [],
     });
-    if (process.env.OTHER_PREAMBLE) prompt = prompt.replace(/^[^\n]*/, process.env.OTHER_PREAMBLE);
+    if (process.env.OTHER_PREAMBLE) prompt = prompt.replace(/^You are[^\n]*/m, process.env.OTHER_PREAMBLE);
     const handlers = {};
     const extension = (await import(process.env.EXTENSION)).default;
     extension({ on: (name, handler) => { handlers[name] = handler; } });
