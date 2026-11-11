@@ -11,8 +11,9 @@ python = "latest"
 "npm:@earendil-works/pi-coding-agent" = "latest"
 "cargo:https://github.com/kaofelix/greprip-rs" = "branch:main"
 # The engine of the impeccable skill in pi/skills. Its release tags start with
-# engine-v, and its version moves with the skill copy.
-"github:pbakaus/impeccable" = { version = "0.1.8", version_prefix = "engine-v" }
+# engine-v. After mise installs the engine, mise runs pi/update-impeccable.sh.
+# The script updates the skill copy to the latest release.
+"github:pbakaus/impeccable" = { version = "latest", version_prefix = "engine-v", postinstall = "$HOME/.dots/pi/update-impeccable.sh" }
 
 [settings]
 idiomatic_version_file_enable_tools = ["elixir", "go", "java", "node", "python", "ruby", "terraform", "yarn"]
