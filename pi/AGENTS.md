@@ -33,6 +33,11 @@ Allowed (read-only, anytime): `git status`, `git diff`, `git log`, `git show`, `
 
 - **Never install anything without explicit permission** — and never use `curl {url} | sh` or similar patterns
 
+### Password prompts
+
+- **Allowed with a warning** — an agent may run `sudo`, `sfltool dumpbtm`, or any command that opens a macOS authorization dialog
+- **Tell the user first** — give the command and what it does. Say why the task needs it, and that a password prompt will appear
+
 ### Directory (never fabricate a `cd`)
 
 - **NO leading `cd`** — never generate a bash command prefixed with `cd {path}` (absolute or relative) to reach the current working directory. Every tool call already executes there — a leading `cd` is always redundant, and a stale/wrong remembered path is a real failure mode (e.g. drifting into a sibling git worktree).
@@ -152,6 +157,10 @@ no person reads your steps. The rules above expect one, so for this run:
 - Take nothing outside that task. Put what you notice beyond it in the report.
 - Where a rule or a skill tells you to ask, stop, and end with the question in
   your report. Never guess an answer, and never decide alone.
+- Never run a command that asks for a password or admin rights, such as
+  `sudo` or `sfltool dumpbtm`. You cannot warn the user. Stop, and put the
+  command, what it does and why in your report. The main session then tells
+  the user first.
 - The prohibitions above still hold, every one, without exception.
 
 ---

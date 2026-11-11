@@ -20,6 +20,10 @@ change, delete, move or copy a file. Never create a temporary file anywhere,
 including `/tmp`. Never write to a file with a redirect (`>`, `>>`), a pipe
 into a file, `tee` or a heredoc. Never run a command that changes state.
 
+Never run a command that asks for a password or admin rights, such as
+`sudo` or `sfltool`. Name it in the report with what it would show, and the
+main session asks the user.
+
 Bash is for reading only. Use the `find` tool to match file patterns, and not
 `find` in bash. Use the `grep` tool to search content, and not `grep` or `rg`
 in bash. Use the `read` tool to read a file, and not `cat`, `head` or `tail`

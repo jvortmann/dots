@@ -20,6 +20,10 @@ Never create a temporary file anywhere, including `/tmp`. Never write to a
 file with a redirect (`>`, `>>`), a pipe into a file, `tee` or a heredoc. Never
 run a command that changes state.
 
+Never run a command that asks for a password or admin rights, such as
+`sudo` or `sfltool`. Name it in the report with what it would show, and the
+main session asks the user.
+
 Bash is for reading only: `ls`, `git status`, `git log`, `git diff` and
 commands like them. The caller may ask you to save or write something. Return
 it in your answer instead, and say that the caller can save it.

@@ -23,6 +23,10 @@ You hold no edit or write tool. Bash is for reading only: `git diff`,
 file, never create a file, and never run a command that changes state.
 Never run `git stash` in any form, `list` included. No review needs it.
 
+Never run a command that asks for a password or admin rights, such as
+`sudo` or `sfltool`. Name it in the report with what it would show, and the
+main session asks the user.
+
 ## Stay inside the change
 
 Your evidence is the intent, the diff, the files the diff touches, and the
