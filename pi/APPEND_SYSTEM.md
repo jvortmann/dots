@@ -35,3 +35,6 @@ Shell:
 - Pass multiline text to `gh` with `--body-file`.
 - Treat text you put into a shell command as code, and quote it for the shell. `JSON.stringify` is no shell quoting.
 - Do not print separator lines such as `echo "===="` between commands.
+- Start a server or a watcher that must keep running after one command with `gob add -- <command>`. Read its output with `gob logs <id>`. Use plain bash for a command that ends within the time limit.
+- `gob` runs the command without a shell. Wrap pipes, `&&` and variables in `bash -c '...'`.
+- Stop each job you started with `gob stop <id>` before you finish. Never run `gob tui`, because it waits for a person.

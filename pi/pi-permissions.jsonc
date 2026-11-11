@@ -64,6 +64,10 @@
     "tmux *": "allow",
     "jira *": "allow",
     "gh *": "allow",
+    "gob *": "allow",
+    // Shutdown stops the jobs of every folder, so it asks while the other
+    // gob commands run. The last match wins, so this line follows "gob *".
+    "gob shutdown*": "ask",
     // The engine of the impeccable skill reads the project and reports.
     "*/skills/impeccable/scripts/impeccable *": "allow",
 
