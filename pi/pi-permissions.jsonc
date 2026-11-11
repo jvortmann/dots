@@ -99,6 +99,44 @@
     "*/skills/impeccable/scripts/impeccable detect*file:*": "ask",
     "*/skills/impeccable/scripts/impeccable doctor*--fix*": "ask",
 
+    // A command that matches no bash pattern runs, because tools.bash is
+    // "allow". A subagent has no UI and stops at an ask, so the fallback
+    // stays. These commands change state outside the repository, so they ask
+    // wherever they appear in the line. Each has a bare form and a `* ` form.
+    // They follow every allow, because the last match wins.
+    "sudo*": "ask",
+    "* sudo*": "ask",
+    "brew*": "ask",
+    "* brew*": "ask",
+    "mise install*": "ask",
+    "* mise install*": "ask",
+    "mise use*": "ask",
+    "* mise use*": "ask",
+    "kill*": "ask",
+    "* kill*": "ask",
+    "pkill*": "ask",
+    "* pkill*": "ask",
+    "git push*": "ask",
+    "* git push*": "ask",
+    "docker run*": "ask",
+    "* docker run*": "ask",
+    "docker exec*": "ask",
+    "* docker exec*": "ask",
+    "aws*": "ask",
+    "* aws*": "ask",
+    "gh pr create*": "ask",
+    "* gh pr create*": "ask",
+    "gh pr merge*": "ask",
+    "* gh pr merge*": "ask",
+    "curl -o*": "ask",
+    "* curl -o*": "ask",
+    "curl -X*": "ask",
+    "* curl -X*": "ask",
+    "curl -d*": "ask",
+    "* curl -d*": "ask",
+    "defaults write*": "ask",
+    "* defaults write*": "ask",
+
     // Every deny sits below every allow, because the last pattern that matches
     // wins: above `npm *`, a deny would lose to `npm test && git commit`.
     //
