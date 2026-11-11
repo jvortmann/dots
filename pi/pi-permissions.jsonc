@@ -68,8 +68,36 @@
     // Shutdown stops the jobs of every folder, so it asks while the other
     // gob commands run. The last match wins, so this line follows "gob *".
     "gob shutdown*": "ask",
-    // The engine of the impeccable skill reads the project and reports.
-    "*/skills/impeccable/scripts/impeccable *": "allow",
+    // A pattern matches the whole command line, and the last match wins. A
+    // command that matches no bash pattern takes tools.bash, which is "allow".
+    // So the catch-all ask below is needed. The read verbs after it then run
+    // without asking.
+    "*/skills/impeccable/scripts/impeccable*": "ask",
+    "*/skills/impeccable/scripts/impeccable --version*": "allow",
+    "*/skills/impeccable/scripts/impeccable context*": "allow",
+    "*/skills/impeccable/scripts/impeccable detect*": "allow",
+    "*/skills/impeccable/scripts/impeccable doctor*": "allow",
+    "*/skills/impeccable/scripts/impeccable signals*": "allow",
+    "*/skills/impeccable/scripts/impeccable palette*": "allow",
+    "*/skills/impeccable/scripts/impeccable hooks status*": "allow",
+    "*/skills/impeccable/scripts/impeccable ignores list*": "allow",
+    "*/skills/impeccable/scripts/impeccable surface-brief read*": "allow",
+    "*/skills/impeccable/scripts/impeccable surface-brief path*": "allow",
+    "*/skills/impeccable/scripts/impeccable surface-brief list*": "allow",
+    "*/skills/impeccable/scripts/impeccable critique-storage slug*": "allow",
+    "*/skills/impeccable/scripts/impeccable critique-storage latest*": "allow",
+    "*/skills/impeccable/scripts/impeccable critique-storage trend*": "allow",
+    "*/skills/impeccable/scripts/impeccable live-status*": "allow",
+    "*/skills/impeccable/scripts/impeccable live-resume*": "allow",
+    "*/skills/impeccable/scripts/impeccable comp-spec --print*": "allow",
+    "*/skills/impeccable/scripts/impeccable comp-spec --plate-prompt*": "allow",
+    // These forms of a read verb attach to a browser, fetch a URL or change
+    // files, so they ask. They follow the allow lines, because the last match
+    // wins.
+    "*/skills/impeccable/scripts/impeccable detect*--cdp*": "ask",
+    "*/skills/impeccable/scripts/impeccable detect*http*": "ask",
+    "*/skills/impeccable/scripts/impeccable detect*file:*": "ask",
+    "*/skills/impeccable/scripts/impeccable doctor*--fix*": "ask",
 
     // Every deny sits below every allow, because the last pattern that matches
     // wins: above `npm *`, a deny would lose to `npm test && git commit`.
