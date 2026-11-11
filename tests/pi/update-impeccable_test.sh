@@ -10,7 +10,7 @@ function set_up() {
   mkdir -p "$SKILL/reference" "$DOTS/mise"
   printf -- '---\nname: impeccable\ndescription: Our own description.\n---\nOld body.\n' > "$SKILL/SKILL.md"
   printf 'old\n' > "$SKILL/reference/old.md"
-  printf '"github:pbakaus/impeccable" = { version = "0.1.8", version_prefix = "engine-v" }\n' \
+  printf '"github:pbakaus/impeccable" = { version = "latest", version_prefix = "engine-v", postinstall = "$HOME/.dots/pi/update-impeccable.sh" }\n' \
     > "$DOTS/mise/config.toml"
   CALLER=$(bashunit::temp_dir "caller")
   INSTALLER=$(bashunit::temp_file "impeccable")
@@ -54,7 +54,7 @@ function test_leaves_out_the_engine_binary() {
 function test_leaves_the_mise_engine_version_alone() {
   run_update
 
-  assert_same '"github:pbakaus/impeccable" = { version = "0.1.8", version_prefix = "engine-v" }' \
+  assert_same '"github:pbakaus/impeccable" = { version = "latest", version_prefix = "engine-v", postinstall = "$HOME/.dots/pi/update-impeccable.sh" }' \
     "$(cat "$DOTS/mise/config.toml")"
 }
 
