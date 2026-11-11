@@ -14,7 +14,7 @@ variable_after_startup() {
   zdotdir=$(bashunit::temp_dir "zshrc")
   printf 'source %q\n' "$ZSHRC" > "$zdotdir/.zshrc"
   ZDOTDIR="$zdotdir" SHELL="$HOMEBREW_ZSH" PATH="$TERMINAL_PATH" \
-    "$HOMEBREW_ZSH" -l -i -c "print -r -- \$$name" 2> /dev/null | tail -1
+    "$HOMEBREW_ZSH" -l -i -c "print -r -- \"\$(printenv $name)\"" 2> /dev/null | tail -1
 }
 
 function set_up() {
@@ -24,6 +24,11 @@ function set_up() {
 
 function test_keeps_the_shell_the_terminal_started() {
   assert_same "$HOMEBREW_ZSH" "$(variable_after_startup SHELL)"
+}
+
+function test_keeps_application_state_in_the_home_folder() {
+  assert_same "$HOME/.local/state" \
+    "$(unset XDG_STATE_HOME; variable_after_startup XDG_STATE_HOME)"
 }
 
 function test_grep_and_find_in_a_new_terminal_read_ignored_files() {
