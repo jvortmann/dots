@@ -6,7 +6,8 @@
   "defaultTools": [
     "+grep",
     "+find",
-    "+ls"
+    "+ls",
+    "+codemode"
   ],
   "shellCommandPrefix": "source ~/.dots/greprip/greprip.sh",
   "theme": "solarized-light/solarized-dark",
