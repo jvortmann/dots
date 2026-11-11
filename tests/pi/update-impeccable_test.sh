@@ -35,14 +35,14 @@ description: Upstream description.
 New body." "$(cat "$SKILL/SKILL.md")"
 }
 
-function test_keeps_the_license_notice_and_upstream_notes() {
+function test_removes_the_license_notice_and_upstream_notes() {
   printf 'license\n' > "$SKILL/LICENSE"
   printf 'notice\n' > "$SKILL/NOTICE.md"
   printf 'upstream\n' > "$SKILL/UPSTREAM"
 
   run_update
 
-  assert_same "license notice upstream" "$(cat "$SKILL/LICENSE" "$SKILL/NOTICE.md" "$SKILL/UPSTREAM" | paste -sd' ' -)"
+  assert_same "SKILL.md reference scripts" "$(LC_ALL=C ls "$SKILL" | paste -sd' ' -)"
 }
 
 function test_leaves_out_the_engine_binary() {

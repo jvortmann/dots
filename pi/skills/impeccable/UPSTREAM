@@ -1,7 +1,0 @@
-Installed from https://github.com/pbakaus/impeccable by its own installer, for
-pi. The release is in scripts/VERSION.
-
-Update: run `mise up`, then read the diff before you commit. mise installs the
-newest engine, then runs pi/update-impeccable.sh as its postinstall hook. The
-script installs the latest skill release and keeps LICENSE, NOTICE.md and
-these notes.
