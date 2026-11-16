@@ -70,3 +70,20 @@ pi/mcp-project-approvals.json
 pi/models-store.json
 pi/trust.json
 pi/prompts/primer/
+
+# herdr-app
+# The app writes its state into this folder. Git keeps only our files.
+# Each own mod, layout or theme gets one allow line under its folder
+# rule, such as !herdr-app/mods/prefix/
+herdr-app/*
+!herdr-app/setup.sh
+!herdr-app/keys.json
+!herdr-app/settings.json
+!herdr-app/mods/
+herdr-app/mods/*
+!herdr-app/layouts/
+herdr-app/layouts/*
+!herdr-app/themes/
+herdr-app/themes/*
+herdr-app/mods/*/jsconfig.json
+herdr-app/mods/*/gpui-kit.d.ts

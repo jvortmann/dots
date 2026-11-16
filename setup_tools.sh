@@ -5,6 +5,7 @@ bat
 ctags
 fd
 ghostty
+herdr-app
 iex
 karabiner
 mise
