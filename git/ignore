@@ -70,6 +70,7 @@ pi/mcp-project-approvals.json
 pi/models-store.json
 pi/trust.json
 pi/prompts/primer/
+pi/extensions/herdr-agent-state.ts
 
 # herdr-app
 # The app writes its state into this folder. Git keeps only our files.
