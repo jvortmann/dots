@@ -31,6 +31,11 @@ and not again for each commit. Load the `asd-ste100` skill for the words.
   system. The diff shows how, so do not restate it. One paragraph of about
   five sentences, wrapped at 72. A second one only when the first cannot hold
   it.
+- **The message states only the what and the why.** The title is the
+  short what, and the body is the why. Never name another commit or a later
+  one. Never give proof of work. That means a test run, a measurement, a
+  comparison, what you checked, or what the change does not do. Proof goes
+  in your report, not in the message.
 - **No body when the title says enough.** That is the usual case for a
   config, a dependency and a tooling change.
 - **No bullets by default.** A list needs three or more independent facts.
@@ -49,6 +54,13 @@ and not again for each commit. Load the `asd-ste100` skill for the words.
   broken one is `fix`, and one that holds is `refactor`. `docs` is right
   only when the text explains and nothing acts on it.
 - **Copy-paste ready** — no heading for the title or the body.
+
+```
+Bad:  I compared nvim and bat with the variable unset and set. The next
+      commit moves them to XDG_CONFIG_HOME.
+Good: XDG_RUNTIME_DIR is for sockets only, so config paths now rest on
+      XDG_CONFIG_HOME.
+```
 
 ## Check the draft
 
@@ -89,7 +101,8 @@ reply that says the message is ready, and does not show it, delivered nothing.
   A report cannot prove its checks ran, and a hand-off can drop a newline.
 - Name the files the commit touches, and stop there.
 - When the change needs more than one commit, give a message for each and say
-  which one sits on the clipboard. Only one can.
+  which one sits on the clipboard. Only one can. Each message stands alone
+  and does not mention the others.
 - When a file carries unrelated work as well, say so, and name `git add -p`.
 - When the spelling check rejects a tool name, a flag or an identifier, keep
   the word and name it in the reply. The user adds it with `zg`. Rewording a
