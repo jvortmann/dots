@@ -37,6 +37,8 @@ const GROUPS = [
     bindings: [
       { keys: ["ctrl-f"], label: "Pick a tab or space", run: "mod.open", args: { name: "picker" } },
       { keys: ["a"], label: "Send ctrl-a", send: "ctrl+a" },
+      { keys: ["ctrl-k"], label: "Send ctrl-k", send: "ctrl+k" },
+      { keys: ["ctrl-l"], label: "Send ctrl-l", send: "ctrl+l" },
     ],
   },
 ];

@@ -63,7 +63,11 @@
     "cmd-left": "send:\u0001",
     "cmd-right": "send:\u0005",
     "cmd-backspace": "send:\u0015",
-    "ctrl-a": "mod.open:prefix"
+    "ctrl-a": "mod.open:prefix",
+    "ctrl-h": "pane.go:left",
+    "ctrl-j": "pane.go:down",
+    "ctrl-k": "pane.go:up",
+    "ctrl-l": "pane.go:right"
   },
   "mod:prefix": {
     "ctrl-a": "prefix.last-tab"

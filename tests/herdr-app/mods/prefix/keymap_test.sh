@@ -119,6 +119,11 @@ function test_the_history_forgets_a_closed_space() {
   assert_same "s2" "$(spaces_in_history_after_opens "s1:t1 s2:t2" "s2")"
 }
 
+function test_ctrl_k_and_ctrl_l_send_a_literal_ctrl_k_and_ctrl_l_to_the_terminal() {
+  assert_same '{"send":"ctrl+k"}' "$(action_for_key "k" "control")"
+  assert_same '{"send":"ctrl+l"}' "$(action_for_key "l" "control")"
+}
+
 function test_escape_only_closes_the_popup() {
   assert_same '{"close":true}' "$(action_for_key "escape")"
 }
@@ -136,8 +141,6 @@ function test_keys_kept_for_later_steps_only_close_the_popup() {
   for key in b "[" r R H J K L u; do
     assert_same '{"close":true}' "$(action_for_key "$key")"
   done
-  assert_same '{"close":true}' "$(action_for_key "k" "control")"
-  assert_same '{"close":true}' "$(action_for_key "l" "control")"
 }
 
 function test_a_plain_table_key_with_ctrl_held_only_closes_the_popup() {
