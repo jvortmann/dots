@@ -49,15 +49,6 @@
     "cmd-7": "tab.select:7",
     "cmd-8": "tab.select:8",
     "cmd-9": "tab.select:9",
-    "ctrl-1": "space.select:1",
-    "ctrl-2": "space.select:2",
-    "ctrl-3": "space.select:3",
-    "ctrl-4": "space.select:4",
-    "ctrl-5": "space.select:5",
-    "ctrl-6": "space.select:6",
-    "ctrl-7": "space.select:7",
-    "ctrl-8": "space.select:8",
-    "ctrl-9": "space.select:9",
     "ctrl-a": "mod.open:prefix"
   },
   "terminal": {
@@ -75,6 +66,6 @@
     "ctrl-a": "mod.open:prefix"
   },
   "mod:prefix": {
-    "ctrl-a": "prefix.send-prefix"
+    "ctrl-a": "prefix.last-tab"
   }
 }
