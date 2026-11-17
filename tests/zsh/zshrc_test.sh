@@ -31,6 +31,11 @@ function test_keeps_application_state_in_the_home_folder() {
     "$(unset XDG_STATE_HOME; variable_after_startup XDG_STATE_HOME)"
 }
 
+function test_points_the_runtime_folder_at_the_config_folder() {
+  assert_same "$HOME/.config" \
+    "$(unset XDG_RUNTIME_DIR; variable_after_startup XDG_RUNTIME_DIR)"
+}
+
 function test_grep_and_find_in_a_new_terminal_read_ignored_files() {
   local repo
   repo=$(bashunit::temp_dir "ignored")

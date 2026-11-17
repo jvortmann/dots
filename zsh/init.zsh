@@ -2,6 +2,7 @@
 
 # Configure PATH
 source $ZSH_HOME/conf/path
+source $ZSH_HOME/conf/xdg
 
 # EPOCHREALTIME is a shell parameter, so timing costs no process at all.
 zmodload -F zsh/datetime p:EPOCHREALTIME
