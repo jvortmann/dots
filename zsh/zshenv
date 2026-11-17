@@ -1,0 +1,6 @@
+# vim: ft=zsh
+
+# Each zsh reads this file first, also a script. Keep it small.
+# Record the time the shell started, for the startup time in the prompt.
+zmodload -F zsh/datetime p:EPOCHREALTIME
+typeset -gA STARTUP_MARKS=(shell $EPOCHREALTIME)

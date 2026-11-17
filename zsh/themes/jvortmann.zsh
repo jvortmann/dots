@@ -22,9 +22,13 @@ update_prompt() {
   # display exitcode on the right when >0
   _return_code="%(0?..${RED}%?↵${RESET})"
 
-  # cwd_prompt_string must be evaluated on every render (like git_prompt_string),
-  # so it is inlined in PROMPT rather than frozen into a variable here.
-  PROMPT='${_user_and_host} ${GREEN}$(cwd_prompt_string)${RESET} $(git_prompt_string) ∴ ${RESET}'
+  PROMPT='${_user_and_host} ${GREEN}${_CWD_PROMPT}${RESET} ${_GIT_PROMPT} ∴ ${RESET}'
   RPROMPT='${_LANGUAGE_INFO}$(elapsed_info)$_return_code'
 }
 update_prompt
+
+_prompt_parts_precmd() {
+  _CWD_PROMPT=$(cwd_prompt_string)
+  _GIT_PROMPT=$(git_prompt_string)
+}
+precmd_functions+=(_prompt_parts_precmd)

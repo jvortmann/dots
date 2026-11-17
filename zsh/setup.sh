@@ -7,3 +7,4 @@ chsh -s $(which zsh) $(whoami)
 
 echo "Symlink Zsh configs to ~/zshrc"
 ln -sfhv ~/.dots/zsh/zshrc ~/.zshrc
+ln -sfhv ~/.dots/zsh/zshenv ~/.zshenv
