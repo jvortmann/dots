@@ -57,7 +57,8 @@
     "ctrl-6": "space.select:6",
     "ctrl-7": "space.select:7",
     "ctrl-8": "space.select:8",
-    "ctrl-9": "space.select:9"
+    "ctrl-9": "space.select:9",
+    "ctrl-a": "mod.open:prefix"
   },
   "terminal": {
     "cmd-f": "terminal.search",
@@ -70,6 +71,10 @@
     "alt-backspace": "send:\u0017",
     "cmd-left": "send:\u0001",
     "cmd-right": "send:\u0005",
-    "cmd-backspace": "send:\u0015"
+    "cmd-backspace": "send:\u0015",
+    "ctrl-a": "mod.open:prefix"
+  },
+  "mod:prefix": {
+    "ctrl-a": "prefix.send-prefix"
   }
 }

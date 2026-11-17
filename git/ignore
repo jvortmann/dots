@@ -82,6 +82,7 @@ herdr-app/*
 !herdr-app/settings.json
 !herdr-app/mods/
 herdr-app/mods/*
+!herdr-app/mods/prefix/
 !herdr-app/layouts/
 herdr-app/layouts/*
 !herdr-app/themes/
