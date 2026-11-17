@@ -1,5 +1,4 @@
 # vim: ft=zsh
 
 export XDG_CONFIG_HOME="$HOME/.config"
-export XDG_RUNTIME_DIR="$HOME/.config"
 export XDG_STATE_HOME="$HOME/.local/state"
