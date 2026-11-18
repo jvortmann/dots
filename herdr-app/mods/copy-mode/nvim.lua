@@ -5,6 +5,7 @@ vim.o.modeline = false
 vim.o.laststatus = 0
 vim.o.cmdheight = 0
 vim.o.termguicolors = false
+vim.api.nvim_set_hl(0, "Visual", { ctermfg = 8, ctermbg = 3 })
 
 vim.keymap.set("n", "q", "<cmd>qa!<cr>")
 vim.keymap.set("n", "<Esc>", "<cmd>qa!<cr>")

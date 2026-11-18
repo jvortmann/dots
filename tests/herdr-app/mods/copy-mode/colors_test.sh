@@ -38,12 +38,19 @@ function test_draws_plain_text_in_the_default_colors_of_the_app() {
   assert_not_contains $'\e[38;2;' "$(cat "$SCRATCH/screen")"
 }
 
+function test_draws_the_selection_in_dark_text_on_yellow() {
+  copy_mode_screen 'printf "\033[31mred\033[0m plain\n"' k v l l l
+
+  assert_contains $'\e[38;5;8m\e[48;5;3mred' "$(cat "$SCRATCH/screen")"
+}
+
 # Runs the shell code in $1 in a terminal, opens copy mode on that terminal
-# in a second one, and writes the bytes that draw copy mode to the file
-# screen.
+# in a second one, presses the other arguments there as keys, and writes the
+# bytes that draw copy mode to the file screen.
 copy_mode_screen() {
-  local source view
-  source=$(hc run --bg --json --no-parent -- /bin/sh -c "$1; exec sleep 30" | jq -r .address)
+  local source view code=$1
+  shift
+  source=$(hc run --bg --json --no-parent -- /bin/sh -c "$code; exec sleep 30" | jq -r .address)
   sleep 0.3
   view=$(hc run --bg --json --no-parent -- /bin/sh "$VIEW" "$source" | jq -r .address)
   for _ in {1..30}; do
@@ -52,6 +59,10 @@ copy_mode_screen() {
   done
   # nvim draws the text first and the colors in a later redraw.
   sleep 0.5
+  if [[ $# -gt 0 ]]; then
+    hc keys "$view" "$@" > /dev/null
+    sleep 0.5
+  fi
   in_scratch perl -e 'use POSIX; setsid(); alarm 1; exec @ARGV' \
     "$HC" attach --observe "$view" > "$SCRATCH/screen" 2> /dev/null || true
 }
