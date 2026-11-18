@@ -1,3 +1,5 @@
+vim.o.modeline = false
+
 vim.keymap.set("n", "q", "<cmd>qa!<cr>")
 vim.keymap.set("n", "<Esc>", "<cmd>qa!<cr>")
 

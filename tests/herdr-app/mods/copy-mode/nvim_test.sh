@@ -49,6 +49,14 @@ function test_escape_in_a_selection_cancels_only_the_selection() {
   assert_file_exists "$SCRATCH/open"
 }
 
+function test_a_modeline_in_the_text_changes_no_option() {
+  printf 'foo-bar\n# vim: set iskeyword+=-:\n' > "$SCRATCH/text"
+
+  press "gg0yiw"
+
+  assert_same "foo" "$(cat "$SCRATCH/clipboard")"
+}
+
 # Opens the text in copy mode with the flags of view.sh, and presses the keys
 # in $1. Then it writes "open" to the file open, so the file exists only when
 # copy mode is still running after the keys.
