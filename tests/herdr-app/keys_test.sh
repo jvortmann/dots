@@ -113,6 +113,10 @@ function test_prefix_ctrl_a_selects_the_last_tab_through_the_tab_bar() {
   assert_same '"tab-bar.last-tab"' "$(binding global "ctrl-a ctrl-a")"
 }
 
+function test_prefix_left_bracket_opens_the_copy_mode_of_the_focused_terminal() {
+  assert_same '"copy-mode.open"' "$(binding global "ctrl-a [")"
+}
+
 function test_leaves_ctrl_a_alone_unbound() {
   assert_same "" "$(jq -r '[.[] | to_entries[] | select(.key == "ctrl-a") | .key] | join(" ")' "$KEYS")"
 }

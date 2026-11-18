@@ -87,6 +87,7 @@
     "ctrl-a z": "pane.zoom",
     "ctrl-a x": "pane.close",
     "ctrl-a ctrl-a": "tab-bar.last-tab",
+    "ctrl-a [": "copy-mode.open",
     "ctrl-a ctrl-f": "mod.open:picker",
     "ctrl-a ?": "app.help"
   },

@@ -26,6 +26,10 @@ function test_ignores_a_theme_that_the_herdr_app_ships() {
   assert_same "herdr-app/themes/atom-one-dark.json" "$(ignored herdr-app/themes/atom-one-dark.json)"
 }
 
+function test_keeps_the_own_copy_mode_mod_in_the_herdr_app_folder() {
+  assert_same "" "$(ignored herdr-app/mods/copy-mode/main.js)"
+}
+
 ignored() {
   git -C "$REPO" -c core.excludesFile="$IGNORE" check-ignore "$1"
 }

@@ -10,11 +10,24 @@
   "gap": 8,
   "children": [
     {
-      "id": "tabs",
-      "type": "block",
+      "id": "top",
+      "type": "row",
       "size": { "px": 38 },
-      "window_drag": true,
-      "content": { "mod": "tab-bar" }
+      "resizable": false,
+      "children": [
+        {
+          "id": "tabs",
+          "type": "block",
+          "window_drag": true,
+          "content": { "mod": "tab-bar" }
+        },
+        {
+          "id": "copy-mode",
+          "type": "block",
+          "size": { "px": 1 },
+          "content": { "mod": "copy-mode" }
+        }
+      ]
     },
     {
       "id": "main",
