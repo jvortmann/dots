@@ -90,3 +90,8 @@ herdr-app/layouts/*
 herdr-app/themes/*
 herdr-app/mods/*/jsconfig.json
 herdr-app/mods/*/gpui-kit.d.ts
+
+# herdr-core
+# A process that still has XDG_RUNTIME_DIR=~/.config puts its core sockets
+# here. Only sockets: locks and logs go to XDG_STATE_HOME.
+herdr-core/*.sock

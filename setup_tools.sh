@@ -6,6 +6,7 @@ ctags
 fd
 ghostty
 herdr-app
+herdr-core
 iex
 karabiner
 mise
