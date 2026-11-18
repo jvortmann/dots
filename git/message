@@ -11,10 +11,12 @@ Change-type: feature|refactor|fix|docs|style|test|ci|deps|config|chore
 # Title on the first line: imperative, capitalized, 50 characters or
 # less, no period. The hook rejects anything over 72.
 #
-# Body after a blank line: why the change is needed and what changes
-# for users or the system. One paragraph, wrapped at 72. A second one
-# only when the first cannot hold it. No body at all when the title
-# says enough.
+# No body at all when the title says enough. That is the usual case
+# for a config, a dependency or a tooling change.
+#
+# Otherwise a body after a blank line: why the change is needed and
+# what changes for users or the system. One paragraph, wrapped at 72.
+# A second one only when the first cannot hold it.
 #
 # Plain words, active voice, simple tenses. The code explains how, so
 # do not narrate the diff or list the files you touched.

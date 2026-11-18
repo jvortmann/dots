@@ -25,19 +25,19 @@ and stop.
 Follow the template at `~/.config/git/message`. Read it once in a session,
 and not again for each commit. Load the `asd-ste100` skill for the words.
 
+- **Decide the body first: does the title say enough?** For a `config`,
+  `deps`, `ci` or tooling change the answer is yes by default, so write no
+  body. Write one only when the title cannot carry the why.
 - **Title** — an uppercase first letter, the imperative mood, 50 characters
   or less, and no period. The hook rejects a title past 72.
-- **Body** — why the change exists, and what changes for a user or for the
-  system. The diff shows how, so do not restate it. One paragraph of about
-  five sentences, wrapped at 72. A second one only when the first cannot hold
-  it.
+- **Body, when there is one** — why the change exists, and what changes for a
+  user or for the system. The diff shows how, so do not restate it. One
+  paragraph, wrapped at 72. A second one only when the first cannot hold it.
 - **The message states only the what and the why.** The title is the
   short what, and the body is the why. Never name another commit or a later
   one. Never give proof of work. That means a test run, a measurement, a
   comparison, what you checked, or what the change does not do. Proof goes
   in your report, not in the message.
-- **No body when the title says enough.** That is the usual case for a
-  config, a dependency and a tooling change.
 - **No bullets by default.** A list needs three or more independent facts.
   Never one bullet for each file, each function or each step.
 - **Name a mechanism only when it surprises.** Why the obvious approach
@@ -62,6 +62,20 @@ Good: XDG_RUNTIME_DIR is for sockets only, so config paths now rest on
       XDG_CONFIG_HOME.
 ```
 
+A version bump in a settings file needs no body:
+
+```
+Bad:  Raise the pi version in settings
+
+      The settings file pins the version of pi. The new value makes
+      the agent use the newer release.
+
+      Change-type: config
+Good: Raise the pi version in settings
+
+      Change-type: config
+```
+
 ## Check the draft
 
 Write the draft to a temporary file and run both checks against it.
@@ -79,9 +93,10 @@ ste-lint "$M"
 bash ~/.config/git/hooks/commit-msg "$M"
 ```
 
-Read what they report, revise the text, and run them again. Neither tool
-rewrites prose, because only the author knows the intent. The user reads a
-corrected message, never a warning.
+For a message with no body, drop the `Body here.` line and the blank line
+after it. Read what they report, revise the text, and run them again.
+Neither tool rewrites prose, because only the author knows the intent. The
+user reads a corrected message, never a warning.
 
 ## Hand it over
 
