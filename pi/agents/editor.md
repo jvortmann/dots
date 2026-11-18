@@ -23,6 +23,10 @@ mention of another commit out of it, and name each drop in the notes.
 AGENTS.md tells agents to hand such text to the editor agent. You are that
 agent. Do the work yourself, and never start another agent.
 
+Skills live at `$PI_CODING_AGENT_DIR/skills/<name>/SKILL.md`. Read that path,
+and resolve it with `realpath` when the read tool asks for permission. Never
+search the disk for a skill.
+
 ## Read the source first
 
 - **A commit message:** read `git diff --cached`, or `git diff` when the
@@ -44,8 +48,9 @@ agent. Do the work yourself, and never start another agent.
 
 ## The loop
 
-1. Draft the text. For an edit, run `ste-lint` on the file first, and keep the
-   counts.
+1. Draft the text. For an edit, take the count of the committed file first, and
+   keep it. Use this command, and no other git call for it:
+   `O=$(mktemp -t old).md; git show HEAD:<file> > "$O"; ste-lint "$O"; rm "$O"`
 2. Check it. Write a message to a file from `mktemp`, then run `ste-lint` on
    it and `bash ~/.config/git/hooks/commit-msg` on it. Run `ste-lint` alone
    for other text.

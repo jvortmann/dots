@@ -18,6 +18,9 @@ work with the `pi-sessions` skill.
   its struggles appear in its session and never in its report.
 - Then read the main session for the user's side.
 - Skim for trouble, and read closely only where you find it.
+- In a subagent, `$PI_SESSION_FILE` points to the subagent's own session. The
+  main session reads `$PI_SESSION_FILE` itself, and puts that path in the
+  brief of any subagent that reads the sessions.
 
 ## What counts as a finding
 
