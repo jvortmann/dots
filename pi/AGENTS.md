@@ -196,6 +196,12 @@ Never write one from memory. Print the message it returns in a fenced block,
 and copy it with `pbcopy` in the session the user reads. This section keeps
 only the rule that nothing else may override.
 
+The brief for a message gives the command for the diff, such as
+`git diff --cached`. It adds the change type when you know it. Add the intent
+only when the diff cannot show it, in a sentence or two. Never ask for a
+body or suggest its length. The editor decides that by the `git-commit`
+skill.
+
 ### Who commits
 
 - **The user runs every commit.** The agent runs `git commit` (or `--amend`) **only** when the user says the exact phrase **"you can commit"** (emphasis on *you can*). That is the one and only authorization.
@@ -214,7 +220,8 @@ only the rule that nothing else may override.
 
 Every text a person reads: commit messages, PR bodies, documentation, code
 comments, task descriptions. Hand it to the `editor` agent, with the kind of
-text, where it goes, and the intent. It loads `asd-ste100` and `documentation`,
+text, where it goes, and the intent. For a commit message, give the brief
+that the Commits section describes. It loads `asd-ste100` and `documentation`,
 and runs `ste-lint` until the text passes. Its loop stays out of your context.
 
 When you cannot start an agent, load the `asd-ste100` skill and follow it, and
