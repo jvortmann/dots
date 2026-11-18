@@ -3,9 +3,10 @@
   "sounds": {
     "enabled": true
   },
-  "minimum_contrast": 1.0,
+  "minimum_contrast": 1,
   "theme": {
     "light": "solarized-light",
     "dark": "solarized-dark"
-  }
+  },
+  "appearance": "dark"
 }

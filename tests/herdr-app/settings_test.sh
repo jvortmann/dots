@@ -12,6 +12,6 @@ function test_the_system_appearance_picks_the_solarized_light_or_dark_theme() {
     "$(jq -c '.theme' "$SETTINGS")"
 }
 
-function test_the_appearance_follows_the_system_or_is_fixed_to_light_or_dark() {
-  assert_matches '^(null|"light"|"dark")$' "$(jq -c '.appearance' "$SETTINGS")"
+function test_the_appearance_is_fixed_to_light_or_dark_in_the_form_swap_theme_edits() {
+  assert_same "1" "$(grep -cE '^  "appearance": "(light|dark)",?$' "$SETTINGS")"
 }

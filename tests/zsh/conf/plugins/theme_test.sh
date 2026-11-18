@@ -10,50 +10,42 @@ function set_up() {
   HOME_DIR=$(bashunit::temp_dir "home")
   DOTS=$(bashunit::temp_dir "dots")
   mkdir "$DOTS/herdr-app"
-  cp "$ROOT/herdr-app/settings.json" "$DOTS/herdr-app/settings.json"
   ln -s "$DOTS" "$HOME_DIR/.dots"
   SETTINGS="$DOTS/herdr-app/settings.json"
 }
 
-function test_a_swap_to_light_fixes_the_herdr_app_appearance_to_light() {
+function test_a_swap_to_light_changes_only_the_herdr_app_appearance() {
+  settings_with_appearance '"appearance": "dark"' > "$SETTINGS"
+
   swap_theme_from_to dark light
 
-  assert_same '"light"' "$(jq -c '.appearance' "$SETTINGS")"
+  assert_same "$(settings_with_appearance '"appearance": "light"')" "$(cat "$SETTINGS")"
 }
 
-function test_a_swap_to_dark_fixes_the_herdr_app_appearance_to_dark() {
-  swap_theme_from_to dark light
+function test_a_swap_to_dark_changes_only_the_herdr_app_appearance() {
+  settings_with_appearance '"appearance": "light"' > "$SETTINGS"
+
   swap_theme_from_to light dark
 
-  assert_same '"dark"' "$(jq -c '.appearance' "$SETTINGS")"
+  assert_same "$(settings_with_appearance '"appearance": "dark"')" "$(cat "$SETTINGS")"
 }
 
-function test_a_swap_keeps_every_other_herdr_app_setting() {
-  swap_theme_from_to dark light
-
-  assert_same "$(jq -S -c . "$ROOT/herdr-app/settings.json")" \
-    "$(jq -S -c 'del(.appearance)' "$SETTINGS")"
-}
-
-function test_a_swap_leaves_herdr_app_settings_that_jq_cannot_read_as_they_were() {
-  printf '{"zoom": 1.2,\n' > "$SETTINGS"
+function test_a_swap_leaves_herdr_app_settings_with_no_appearance_unchanged() {
+  settings_with_appearance '"sounds": {}' > "$SETTINGS"
 
   swap_theme_from_to dark light
 
-  assert_same '{"zoom": 1.2,' "$(cat "$SETTINGS")"
+  assert_same "$(settings_with_appearance '"sounds": {}')" "$(cat "$SETTINGS")"
 }
 
-function test_a_swap_that_jq_cannot_finish_leaves_no_file_beside_the_herdr_app_settings() {
-  printf '{"zoom": 1.2,\n' > "$SETTINGS"
-
-  swap_theme_from_to dark light
-
-  assert_same "settings.json" "$(ls -A "$DOTS/herdr-app")"
-}
-
-# Every path the swap edits starts at HOME. The scratch HOME holds only a copy
-# of dots with settings.json, so the other gsed calls find no file and the run
-# changes no file of the user.
+# Every path the swap edits starts at HOME. The scratch HOME holds only the
+# settings.json that the test writes, so the other gsed calls find no file and
+# the run changes no file of the user.
 swap_theme_from_to() {
   HOME="$HOME_DIR" "$HOMEBREW_ZSH" -f -c "source ${PLUGIN@Q}; swap-theme-from-to $1 $2" > /dev/null 2>&1
+}
+
+# Herdr app settings as the app writes them, with the given last line.
+settings_with_appearance() {
+  printf '{\n  "zoom": 1.2,\n  "minimum_contrast": 1,\n  "theme": {\n    "light": "solarized-light",\n    "dark": "solarized-dark"\n  },\n  %s\n}\n' "$1"
 }
