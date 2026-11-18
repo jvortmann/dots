@@ -88,6 +88,8 @@ herdr-app/layouts/*
 !herdr-app/layouts/mine.json
 !herdr-app/themes/
 herdr-app/themes/*
+!herdr-app/themes/solarized-dark.json
+!herdr-app/themes/solarized-light.json
 herdr-app/mods/*/jsconfig.json
 herdr-app/mods/*/gpui-kit.d.ts
 

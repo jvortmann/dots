@@ -17,6 +17,15 @@ function test_keeps_the_core_config_in_the_herdr_core_folder() {
   assert_same "" "$(ignored herdr-core/config.toml)"
 }
 
+function test_keeps_the_own_solarized_themes_in_the_herdr_app_folder() {
+  assert_same "" "$(ignored herdr-app/themes/solarized-dark.json)"
+  assert_same "" "$(ignored herdr-app/themes/solarized-light.json)"
+}
+
+function test_ignores_a_theme_that_the_herdr_app_ships() {
+  assert_same "herdr-app/themes/atom-one-dark.json" "$(ignored herdr-app/themes/atom-one-dark.json)"
+}
+
 ignored() {
   git -C "$REPO" -c core.excludesFile="$IGNORE" check-ignore "$1"
 }
