@@ -17,6 +17,14 @@ run_hook() {
   bash "$HOOK" "$msg_file" 2>&1
 }
 
+run_hook_stderr_only() {
+  local msg_file
+  msg_file=$(bashunit::temp_file "commit_msg")
+  printf '%s' "$1" > "$msg_file"
+
+  bash "$HOOK" "$msg_file" 2>&1 > /dev/null
+}
+
 run_hook_without_aspell() {
   local msg_file
   msg_file=$(bashunit::temp_file "commit_msg")
@@ -44,6 +52,14 @@ function test_format_rejects_lowercase_start() {
   assert_general_error
   assert_contains "title format" "$output"
   assert_contains "[FAIL]" "$output"
+}
+
+function test_format_help_names_the_50_character_title_target() {
+  local output
+  output=$(run_hook "add user search by email")
+
+  assert_general_error
+  assert_contains "50 chars or less" "$output"
 }
 
 function test_format_rejects_title_ending_with_period() {
@@ -111,9 +127,35 @@ function test_format_accepts_title_with_numbers() {
 # Size
 # ------------------------------------------------------------------------------
 
-function test_size_accepts_title_at_exactly_72_characters() {
+function test_size_warns_on_stderr_and_accepts_title_at_51_characters() {
+  local title="Upgrade support for the new versions of the servers"
+  assert_same "51" "${#title}"
+
+  local output
+  output=$(run_hook_stderr_only "$title")
+
+  assert_successful_code
+  assert_contains "[WARNING]" "$output"
+  assert_contains "51 chars" "$output"
+  assert_contains "limit is 50" "$output"
+}
+
+function test_size_warns_and_accepts_title_at_exactly_72_characters() {
   local title="Upgrade support for the new version of the server and update all clients"
   assert_same "72" "${#title}"
+
+  local output
+  output=$(run_hook "$title")
+
+  assert_successful_code
+  assert_contains "[WARNING]" "$output"
+  assert_contains "72 chars" "$output"
+  assert_not_contains "[FAIL]" "$output"
+}
+
+function test_size_accepts_title_at_exactly_50_characters_without_warning() {
+  local title="Upgrade support for the new version of the servers"
+  assert_same "50" "${#title}"
 
   local output
   output=$(run_hook "$title")
@@ -134,6 +176,7 @@ function test_size_rejects_title_at_73_characters() {
   assert_contains "[FAIL]" "$output"
   assert_contains "73 chars" "$output"
   assert_contains "limit is 72" "$output"
+  assert_not_contains "[WARNING]" "$output"
 }
 
 # ------------------------------------------------------------------------------

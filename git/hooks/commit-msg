@@ -83,6 +83,18 @@ problem/solution by opening the the editor (commit without -m or use -e)"
   fi
 }
 
+warn_size() {
+  local title="$1" soft_limit=50 size_limit=72
+  local size=${#title}
+
+  if [[ $size -gt $soft_limit && $size -le $size_limit ]]; then
+    {
+      colorize yellow "[WARNING]"
+      echo "Your message title has ${size} chars and the limit is ${soft_limit} chars."
+    } >&2
+  fi
+}
+
 check_format() {
   local title="$1"
   local capital_letter="[A-Z]"
@@ -96,7 +108,7 @@ check_format() {
 
   if [[ $title =~ $prohibited_pattern || ! $title =~ $allowed_pattern ]]; then
     echo "The title format is as follows:
-Imperative and capitalized (no -ing, -ed ending), short summary of changes (72 chars tops, no period at the end)
+Imperative and capitalized (no -ing, -ed ending), short summary of changes (50 chars or less, 72 chars tops, no period at the end)
 
 Long reference: 'https://dev.to/cvortmann/what-makes-a-good-commit-message-181i'
 Short reference: 'https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html'
@@ -174,6 +186,8 @@ message_title=$(extract_title "$clean_file")
 if is_git_generated "$message_title"; then
   exit 0
 fi
+
+warn_size "$message_title"
 
 message=$(extract_body "$clean_file")
 size_error=$(check_size "$message_title")
