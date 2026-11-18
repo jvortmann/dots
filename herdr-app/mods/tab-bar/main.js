@@ -9,17 +9,20 @@ import { observeTabs, lastTab } from "./history.js";
 // Shared state, not a field: another layout, a save or a restart starts the mod fresh.
 const HISTORY = "tab-bar.tab-history";
 
-const C = {
-  tray: "#1d1f22",
-  // The shown tab stands out; a hovered one only hints, so the two never look alike.
-  tab: "#34373c",
-  tabEdge: "#4a4d53",
-  hover: "#ffffff07",
-  edge: "#383b40",
-  chip: "#252628",
-  text: "#e8e9eb",
-  dim: "#8b8f95",
-};
+function colors(t) {
+  return {
+    tray: t.chrome,
+    // The shown tab has an edge and bright text; a hovered tab gets only a fill.
+    tab: t.selected,
+    tabEdge: t.border,
+    hover: t.hover,
+    edge: t.border,
+    chip: t.chrome,
+    text: t.foreground,
+    label: t.muted,
+    dim: t.dim,
+  };
+}
 
 function folder(cwd) {
   if (!cwd) return "";
@@ -34,7 +37,7 @@ function lead(all, id) {
 }
 
 // The program's tile from the app's table: its color, its glyph (or logo) on it.
-function tile(t, p) {
+function tile(t, C, p) {
   const g = p?.program;
   const dot = p?.status && p.status !== "idle" ? t[p.status] : null;
   return div()
@@ -44,7 +47,7 @@ function tile(t, p) {
     .h(26)
     .rounded(7)
     .border_1()
-    .border_color("#ffffff14")
+    .border_color(C.tabEdge)
     .bg(g?.tile ?? C.chip)
     .flex()
     .items_center()
@@ -63,7 +66,7 @@ function own(el) {
   return el.on_mouse_down("left", (_e, cx) => cx.stop_propagation()).on_mouse_down("right", (_e, cx) => cx.stop_propagation());
 }
 
-function windowButton(id, icon, command) {
+function windowButton(C, id, icon, command) {
   return own(
     div()
       .id(id)
@@ -83,7 +86,7 @@ function windowButton(id, icon, command) {
   );
 }
 
-function iconButton(id, icon, onClick) {
+function iconButton(C, id, icon, onClick) {
   return own(div())
     .id(id)
     .flex_none()
@@ -122,6 +125,7 @@ export default class TerminalsBar extends View {
   render() {
     this.observe();
     const t = theme();
+    const C = colors(t);
     const space = spaces().find((p) => p.active);
     if (!space) return div();
     const all = panes();
@@ -145,18 +149,18 @@ export default class TerminalsBar extends View {
         .cursor_pointer()
         .text_size(13)
         .when(c.active, (el) => el.bg(C.tab).border_color(C.tabEdge))
-        .when(!c.active, (el) => el.border_color("#00000000").hover((s) => s.bg(C.hover)))
+        .when(!c.active, (el) => el.border_color(C.tray).hover((s) => s.bg(C.hover)))
         .on_click(() => run("tab.select", { id: c.id }))
         .on_mouse_down("right", () =>
           openOverlay({ mod: "menu", kind: "popup", width: 200, props: { tab: "tab", target: { id: c.id, space: space.id } } }),
         )
-        .child(tile(t, p))
+        .child(tile(t, C, p))
         .child(
           h_flex()
             .min_w(0)
             .gap(6)
             .truncate()
-            .child(div().flex_none().text_color(c.active ? C.text : "#c4c6ca").child(tabLabel(c)))
+            .child(div().flex_none().text_color(c.active ? C.text : C.label).child(tabLabel(c)))
             .when(Boolean(where), (el) => el.child(div().truncate().text_color(C.dim).child(where))),
         );
     };
@@ -198,8 +202,8 @@ export default class TerminalsBar extends View {
           .children(space.tabs.map(tab)),
       )
       .child(div().flex_1())
-      .child(iconButton("tm-keys", "command", () => run("app.palette")))
-      .child(iconButton("tm-new", "plus", () => run("tab.new", { space: space.id })))
+      .child(iconButton(C, "tm-keys", "command", () => run("app.palette")))
+      .child(iconButton(C, "tm-new", "plus", () => run("tab.new", { space: space.id })))
       .when(Boolean(w.buttons), (el) =>
         el.child(
           h_flex()
@@ -207,9 +211,9 @@ export default class TerminalsBar extends View {
             .pl(6)
             .pr(4)
             .gap(8)
-            .child(windowButton("tm-min", "win-min", "window.minimize"))
-            .child(windowButton("tm-max", w.maximized ? "win-restore" : "win-max", "window.maximize"))
-            .child(windowButton("tm-close", "win-close", "window.close")),
+            .child(windowButton(C, "tm-min", "win-min", "window.minimize"))
+            .child(windowButton(C, "tm-max", w.maximized ? "win-restore" : "win-max", "window.maximize"))
+            .child(windowButton(C, "tm-close", "win-close", "window.close")),
         ),
       );
   }

@@ -21,6 +21,20 @@ swap-theme-from-to()
   gsed -i"" -E "s/(--color=)$1/\1$2/" ~/.dots/zsh/conf/plugins/fzf.zsh
   gsed -i"" -E "s/(vim\.opt\.background = )'$1'/\1'$2'/" ~/.config/nvim/lua/config/guioptions.lua
   gsed -i"" -E "s/(syntax-theme = \"[^\"]*\()$1(\)\")/\1$2\2/" ~/.dots/git/config
+  swap-theme-herdr-app "$2"
+}
+
+swap-theme-herdr-app()
+{
+  local settings=~/.dots/herdr-app/settings.json
+  local next=~/.dots/herdr-app/.settings.json.$$
+
+  if jq --arg appearance "$1" '.appearance = $appearance' "$settings" > "$next";
+  then
+    mv "$next" "$settings"
+  else
+    rm -f "$next"
+  fi
 }
 
 swap-theme-refresh()
