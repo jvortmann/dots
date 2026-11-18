@@ -1,0 +1,10 @@
+{
+  "taskScope": "session",
+  "autoCascade": false,
+  "collapseCompleted": false,
+  "showAll": false,
+  "maxVisible": 20,
+  "sortOrder": "status",
+  "hiddenAt": "top",
+  "autoClearCompleted": "never"
+}
