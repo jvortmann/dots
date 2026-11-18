@@ -1,9 +1,14 @@
+local source = vim.env.COPY_MODE_TERMINAL
+local capture_first_paint, fit_to, show
+
 vim.o.modeline = false
+vim.o.laststatus = 0
+vim.o.cmdheight = 0
+vim.o.termguicolors = false
 
 vim.keymap.set("n", "q", "<cmd>qa!<cr>")
 vim.keymap.set("n", "<Esc>", "<cmd>qa!<cr>")
-
-vim.api.nvim_create_autocmd("BufWinEnter", { once = true, command = "normal! G0" })
+vim.api.nvim_create_autocmd("TermEnter", { command = "stopinsert" })
 
 vim.api.nvim_create_autocmd("TextYankPost", {
   callback = function()
@@ -11,3 +16,46 @@ vim.api.nvim_create_autocmd("TextYankPost", {
     vim.schedule(function() vim.cmd("qa!") end)
   end,
 })
+
+local function open()
+  local size = vim.system({ "hc", "get", "--json", source })
+  local paint = capture_first_paint()
+  if paint == "" then vim.cmd("qa!") end
+  fit_to(size:wait(500))
+  show(paint)
+end
+
+function capture_first_paint()
+  local chunks, quiet, done = {}, vim.uv.new_timer(), false
+  local attach = vim.system({ "hc", "attach", "--observe", "--history", "10000", source }, {
+    stdout = function(_, data)
+      if not data or done then return end
+      table.insert(chunks, data)
+      quiet:start(30, 0, function() done = true end)
+    end,
+  }, function() done = true end)
+  vim.wait(3000, function() return done end, 5)
+  attach:kill("sigterm")
+  return table.concat(chunks)
+end
+
+function fit_to(size)
+  local ok, terminal = pcall(vim.json.decode, size.stdout or "")
+  if ok and type(terminal) == "table" and terminal.cols and terminal.rows then
+    vim.o.columns, vim.o.lines = terminal.cols, terminal.rows
+  end
+end
+
+function show(paint)
+  local height = vim.api.nvim_win_get_height(0)
+  paint = paint:gsub("\n+(\27%[H\27%[2J)", string.rep("\n", height) .. "%1")
+  vim.api.nvim_chan_send(vim.api.nvim_open_term(0, {}), paint)
+  vim.wait(20)
+  local row, column = 1, 1
+  for r, c in paint:gmatch("\27%[(%d+);(%d+)H") do row, column = tonumber(r), tonumber(c) end
+  local top = vim.api.nvim_buf_line_count(0) - height + 1
+  local line = top + row - 1
+  vim.fn.winrestview({ topline = top, lnum = line, col = vim.fn.virtcol2col(0, line, column) - 1 })
+end
+
+open()

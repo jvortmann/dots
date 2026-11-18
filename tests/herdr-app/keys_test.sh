@@ -117,6 +117,10 @@ function test_prefix_left_bracket_opens_the_copy_mode_of_the_focused_terminal() 
   assert_same '"copy-mode.open"' "$(binding global "ctrl-a [")"
 }
 
+function test_copy_mode_needs_no_key_to_go_back_to_the_terminal() {
+  assert_same "" "$(jq -r '[.[] | to_entries[] | select(.value == "copy-mode.back") | .key] | join(" ")' "$KEYS")"
+}
+
 function test_leaves_ctrl_a_alone_unbound() {
   assert_same "" "$(jq -r '[.[] | to_entries[] | select(.key == "ctrl-a") | .key] | join(" ")' "$KEYS")"
 }
