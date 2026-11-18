@@ -109,8 +109,12 @@ function test_cmd_k_and_cmd_shift_p_open_the_command_palette() {
   assert_same '"app.palette"' "$(binding global "cmd-shift-p")"
 }
 
-function test_leaves_ctrl_a_alone_and_ctrl_a_twice_unbound() {
-  assert_same "" "$(jq -r '[.[] | to_entries[] | select(.key == "ctrl-a" or .key == "ctrl-a ctrl-a") | .key] | join(" ")' "$KEYS")"
+function test_prefix_ctrl_a_selects_the_last_tab_through_the_tab_bar() {
+  assert_same '"tab-bar.last-tab"' "$(binding global "ctrl-a ctrl-a")"
+}
+
+function test_leaves_ctrl_a_alone_unbound() {
+  assert_same "" "$(jq -r '[.[] | to_entries[] | select(.key == "ctrl-a") | .key] | join(" ")' "$KEYS")"
 }
 
 function test_leaves_ctrl_and_a_digit_to_the_macos_spaces() {

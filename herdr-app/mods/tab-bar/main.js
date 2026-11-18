@@ -2,8 +2,12 @@
 
 import { View, div, svg, image } from "gpui-kit";
 import { h_flex } from "gpui-base";
-import { spaces, panes, run, theme, home, openOverlay, window as win } from "herdr";
+import { spaces, panes, run, theme, home, openOverlay, window as win, shared, setShared, nextCommand, notify } from "herdr";
 import { tabLabel } from "./label.js";
+import { observeTabs, lastTab } from "./history.js";
+
+// Shared state, not a field: another layout, a save or a restart starts the mod fresh.
+const HISTORY = "tab-bar.tab-history";
 
 const C = {
   tray: "#1d1f22",
@@ -93,7 +97,30 @@ function iconButton(id, icon, onClick) {
 }
 
 export default class TerminalsBar extends View {
+  init(_props, cx) {
+    cx.spawn(async () => {
+      for (;;) {
+        const command = await nextCommand();
+        if (command === "last-tab") this.selectLastTab();
+      }
+    });
+  }
+
+  selectLastTab() {
+    const id = lastTab(this.observe(), spaces());
+    if (id) run("tab.select", { id });
+    else notify({ title: "No previous tab", level: "info" });
+  }
+
+  observe() {
+    const before = shared(HISTORY) ?? {};
+    const after = observeTabs(before, spaces());
+    if (JSON.stringify(after) !== JSON.stringify(before)) setShared(HISTORY, after);
+    return after;
+  }
+
   render() {
+    this.observe();
     const t = theme();
     const space = spaces().find((p) => p.active);
     if (!space) return div();
