@@ -1,5 +1,0 @@
-{
-  "place": "none",
-  "title": "Prefix",
-  "overlay": { "kind": "popup", "at": "top", "offset": 64, "width": 640, "height": 272 }
-}
