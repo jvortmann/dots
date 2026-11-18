@@ -179,7 +179,40 @@
     "security dump-keychain*": "deny",
     "* security dump-keychain*": "deny",
     "security find-*": "deny",
-    "* security find-*": "deny"
+    "* security find-*": "deny",
+    // A full dump of the environment prints every secret in it, such as an API
+    // key, into the transcript. These rules deny the common forms of a dump,
+    // but not a wrapped call such as `bash -c env`. A command that reads or
+    // sets one variable still runs.
+    "env": "deny",
+    "env |*": "deny",
+    "env|*": "deny",
+    "env >*": "deny",
+    "env;*": "deny",
+    "env &&*": "deny",
+    "env -0*": "deny",
+    "* && env": "deny",
+    "* && env |*": "deny",
+    "* ; env": "deny",
+    "* ; env |*": "deny",
+    "printenv": "deny",
+    "printenv |*": "deny",
+    "printenv >*": "deny",
+    "printenv -*": "deny",
+    "* && printenv": "deny",
+    "* && printenv |*": "deny",
+    "export": "deny",
+    "export -p*": "deny",
+    "set": "deny",
+    "set |*": "deny",
+    "set >*": "deny",
+    "declare -x": "deny",
+    "declare -x |*": "deny",
+    "declare -p": "deny",
+    "declare -p |*": "deny",
+    "*$(env)*": "deny",
+    "*$(printenv)*": "deny",
+    "*`env`*": "deny"
   },
   "skills": {
     "*": "allow"
