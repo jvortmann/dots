@@ -1,4 +1,6 @@
-// The bar at the bottom of the layout: space picker, tabs, host and time, and window controls.
+// The bar at the bottom of the layout: space picker, tabs, host and time, and
+// window controls. It runs last-tab (ctrl-a ctrl-a), which selects the tab
+// shown before.
 
 import { View, div, svg, image } from "gpui-kit";
 import { h_flex } from "gpui-base";
@@ -121,7 +123,6 @@ export default class TerminalsBar extends View {
     });
   }
 
-  // Redraws the clock once a minute, when the minute starts.
   tick(cx) {
     cx.timer.after(untilNextMinute(new Date()), (cx) => {
       cx.notify();

@@ -73,7 +73,6 @@ export class Standby {
     for (const address of warm) await this.app.hc(["kill", address]);
   }
 
-  // The live warm nvims that no open took yet.
   warm() {
     return this.app.terminals().filter((t) => t.state === "live" && t.labels?.[LABEL] && !this.used.has(t.address));
   }

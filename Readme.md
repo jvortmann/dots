@@ -1,8 +1,9 @@
 # Dots
 
 The configuration of a macOS machine for terminal-first development: zsh,
-tmux, Ghostty, git and a coding agent. The Neovim configuration lives in a
-separate repository, `vim-files`.
+tmux, the Herdr app, Ghostty, git and a coding agent. The Herdr app replaced
+tmux for daily work, and tmux stays installed. The Neovim configuration lives
+in a separate repository, `vim-files`.
 
 ## Set up a new machine
 
@@ -28,8 +29,8 @@ One command does the whole job, in this order:
 ## Take one piece
 
 Every script runs alone. To set up one tool, run its own script, such as
-`./tmux/setup.sh`. Each one links its folder into `~/.config` or `~`, and does
-nothing else, unless the table says so.
+`./tmux/setup.sh` or `./herdr-app/setup.sh`. Each one links its folder into
+`~/.config` or `~`, and does nothing else, unless the table says so.
 
 | Tool | Folder | What its setup does |
 |---|---|---|
@@ -37,6 +38,8 @@ nothing else, unless the table says so.
 | ctags | `ctags/` | links the config |
 | fd | `fd/` | links the ignore file |
 | Ghostty | `ghostty/` | links the config and its themes |
+| Herdr app | `herdr-app/` | moves an old real folder at `~/.config/herdr-app` to `~/.config/herdr-app.pre-dots` (with a date added when a backup of that name exists), then links the whole folder to `~/.config/herdr-app`, because the app writes its state there and `git/ignore` keeps that state out |
+| herdr-core | `herdr-core/` | moves an old real folder at `~/.config/herdr-core` to `~/.config/herdr-core.pre-dots` (with a date added when a backup of that name exists), then links the whole folder to `~/.config/herdr-core`. Its `config.toml` starts Homebrew zsh as a login shell in new terminals, and shows the last screen of a lost terminal above the new shell |
 | iex | `iex/` | links `.iex.exs` |
 | Karabiner | `karabiner/` | links the key remaps |
 | mise | `mise/` | links the global tool versions, as a file and not a folder |

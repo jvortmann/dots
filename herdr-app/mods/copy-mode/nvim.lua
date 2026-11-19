@@ -9,6 +9,8 @@ vim.api.nvim_set_hl(0, "Visual", { ctermfg = 8, ctermbg = 3 })
 
 vim.keymap.set("n", "q", "<cmd>qa!<cr>")
 vim.keymap.set("n", "<Esc>", "<cmd>qa!<cr>")
+-- The buffer is a terminal buffer, so i, a, I and A would enter Terminal mode,
+-- where q and Esc do not close copy mode.
 vim.api.nvim_create_autocmd("TermEnter", { command = "stopinsert" })
 
 vim.api.nvim_create_autocmd("TextYankPost", {
@@ -54,6 +56,10 @@ end
 
 function show(paint)
   local height = vim.api.nvim_win_get_height(0)
+  -- The first paint of `hc attach --observe` has a run of line feeds before the
+  -- clear of the screen (ESC[H ESC[2J). Make the run as long as the window. A
+  -- longer run shows blank lines between the history and the screen. A shorter
+  -- one lets the clear remove the last history line.
   paint = paint:gsub("\n+(\27%[H\27%[2J)", string.rep("\n", height) .. "%1")
   local terminal = vim.api.nvim_open_term(0, {})
   local tick = vim.b.changedtick

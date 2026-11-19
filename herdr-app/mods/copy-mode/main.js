@@ -50,7 +50,6 @@ export default class CopyMode extends View {
     return div().size_full();
   }
 
-  // Starts a warm nvim when none is ready or starting.
   keepWarm(cx) {
     if (checking() || !this.standby.shouldStart()) return;
     cx.spawn(async () => {
