@@ -1,8 +1,12 @@
 {
-  "zoom": 1.2,
+  "zoom": 1,
   "sounds": {
     "enabled": true
   },
+  "font": "FiraCode Nerd Font",
+  "font_size": 16,
+  "font_weight": 300,
+  "font_ligatures": true,
   "minimum_contrast": 1,
   "theme": {
     "light": "solarized-light",

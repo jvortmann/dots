@@ -4,7 +4,6 @@
   "type": "column",
   "titlebar": "none",
   "traffic_lights": [16, 18],
-  "font_size": 15,
   "background": "canvas",
   "padding": [6, 6],
   "gap": 8,
