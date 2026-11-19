@@ -49,6 +49,38 @@ function test_is_no_longer_ready_for_the_mod_once_copy_mode_opens() {
   assert_same "t5 copy-mode.standby=" "$(tail -1 "$SCRATCH/labels")"
 }
 
+function test_counts_the_lines_from_the_cursor_to_the_last_line_as_the_cursor_moves() {
+  press "k"
+
+  assert_same "$(top_row 'out a' '[8/11]')" "$(cat "$SCRATCH/top")"
+}
+
+function test_reads_0_on_the_last_line() {
+  press "G"
+
+  assert_same "$(top_row 'out a' '[0/11]')" "$(cat "$SCRATCH/top")"
+}
+
+function test_reads_all_lines_on_the_first_line() {
+  press "gg"
+
+  assert_same "$(top_row 'old 1' '[11/11]')" "$(cat "$SCRATCH/top")"
+}
+
+function test_stops_at_the_first_and_the_last_line() {
+  press "ggk"
+  assert_same "[11/11]" "$(grep -o '\[.*\]' "$SCRATCH/top")"
+
+  press "Gj"
+  assert_same "[0/11]" "$(grep -o '\[.*\]' "$SCRATCH/top")"
+}
+
+function test_stays_at_the_top_right_when_the_view_scrolls_without_the_cursor() {
+  press '<C-y>'
+
+  assert_same "$(top_row 'old 2' '[7/11]')" "$(cat "$SCRATCH/top")"
+}
+
 function test_shows_the_history_above_the_screen() {
   press "ggVy"
 
@@ -165,14 +197,22 @@ function test_a_modeline_in_the_text_changes_no_option() {
 
 # Opens copy mode on the terminal t7, which hc gives a size of 40 columns
 # and the rows of the last paint, and types the keys in $1. After 400 ms it
-# writes "open" to the file open, so the file exists only when copy mode is
+# redraws and writes the top row of the screen to the file top. It then
+# writes "open" to the file open, so that file exists only when copy mode is
 # still running after the keys.
 press() {
   SCRATCH="$SCRATCH" PATH="$SCRATCH/bin:$PATH" \
     nvim --clean --headless -u "$CONFIG" --noplugin -n \
     -c "lua copy_mode_open('t7')" \
     -c "lua vim.api.nvim_input('$1')" \
-    -c "lua vim.defer_fn(function() vim.fn.writefile({'open'}, '$SCRATCH/open') vim.cmd('qa!') end, 400)" \
+    -c "lua vim.defer_fn(function()
+      vim.cmd('redraw')
+      local top = {}
+      for column = 1, vim.o.columns do top[column] = vim.fn.screenstring(1, column) end
+      vim.fn.writefile({ table.concat(top) }, '$SCRATCH/top')
+      vim.fn.writefile({ 'open' }, '$SCRATCH/open')
+      vim.cmd('qa!')
+    end, 400)" \
     < /dev/null
 }
 
@@ -193,6 +233,12 @@ wait_for_label() {
     sleep 0.01
   done
   printf '%s' "${line#"$1"}"
+}
+
+# Prints the top row that press writes to the file top, for a screen of 40
+# columns: the text in $1 on the left, and the chip in $2 on the right.
+top_row() {
+  printf "%-$((40 - ${#2}))s%s" "$1" "$2"
 }
 
 # Writes the first paint that hc attach prints for a terminal of ROWS rows

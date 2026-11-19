@@ -44,6 +44,12 @@ function test_draws_the_selection_in_dark_text_on_yellow() {
   assert_contains $'\e[38;5;8m\e[48;5;3mred' "$(cat "$SCRATCH/screen")"
 }
 
+function test_draws_the_scroll_position_in_dark_text_on_yellow() {
+  copy_mode_screen $'\e[48;5;3m[' 'printf "\033[31mred\033[0m plain\n"'
+
+  assert_contains $'\e[38;5;8m\e[48;5;3m[' "$(grep -ao '.\{0,24\}\[[0-9]*/[0-9]*\]' "$SCRATCH/screen")"
+}
+
 # Runs the shell code in $2 in a terminal, and opens copy mode on that
 # terminal in a warm nvim, the way the mod does. Presses the other arguments
 # there as keys. Writes the bytes that draw copy mode to the file screen. It
