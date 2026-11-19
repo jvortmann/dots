@@ -2,6 +2,7 @@
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
 HISTORY="$ROOT/herdr-app/mods/tab-bar/history.js"
+SHOTS="$ROOT/tests/herdr-app/mods/tab-bar/shots.js"
 
 function set_up() {
   [[ -f $HISTORY ]] || bashunit::fail "missing the file under test: $HISTORY"
@@ -46,13 +47,10 @@ spaces_in_record_after() {
 }
 
 observe() {
-  PRINT="$1" HISTORY="$HISTORY" mise x node@latest -- node --input-type=module -e '
+  PRINT="$1" HISTORY="$HISTORY" SHOTS="$SHOTS" mise x node@latest -- node --input-type=module -e '
     const { observeTabs, lastTab } = await import(process.env.HISTORY);
-    const item = (name) => ({ id: name.replace("*", ""), active: name.startsWith("*") });
-    const shots = process.argv.slice(1).map((shot) => shot.split(" ").map((space) => {
-      const [name, tabs] = space.split(":");
-      return { ...item(name), tabs: tabs.split(",").filter(Boolean).map(item) };
-    }));
+    const { parseShot } = await import(process.env.SHOTS);
+    const shots = process.argv.slice(1).map(parseShot);
     const history = shots.reduce((seen, shot) => observeTabs(seen, shot), {});
     if (process.env.PRINT === "spaces") console.log(Object.keys(history).join(" "));
     else console.log(String(lastTab(history, shots.at(-1))));

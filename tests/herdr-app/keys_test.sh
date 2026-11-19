@@ -68,9 +68,9 @@ function test_prefix_n_and_p_go_to_the_next_and_previous_tab() {
   assert_same '"tab.prev"' "$(binding global "ctrl-a p")"
 }
 
-function test_prefix_less_than_and_greater_than_move_the_tab_left_and_right() {
-  assert_same '{"command":"tab.move","args":{"by":-1}}' "$(binding global "ctrl-a <")"
-  assert_same '{"command":"tab.move","args":{"by":1}}' "$(binding global "ctrl-a >")"
+function test_prefix_less_than_and_greater_than_swap_the_tab_left_and_right_through_the_tab_bar() {
+  assert_same '"tab-bar.swap-left"' "$(binding global "ctrl-a <")"
+  assert_same '"tab-bar.swap-right"' "$(binding global "ctrl-a >")"
 }
 
 function test_prefix_braces_swap_the_pane_with_the_one_left_and_right() {
@@ -83,10 +83,17 @@ function test_prefix_ctrl_braces_swap_the_pane_with_the_one_up_and_down() {
   assert_same '"pane.swap:down"' "$(binding global "ctrl-a ctrl-}")"
 }
 
-function test_prefix_digits_1_to_9_select_the_tab_at_that_position() {
-  local index
-  for index in 1 2 3 4 5 6 7 8 9; do
-    assert_same "\"tab.select:$index\"" "$(binding global "ctrl-a $index")"
+function test_prefix_digits_1_to_9_select_the_tab_with_that_number_through_the_tab_bar() {
+  local number
+  for number in 1 2 3 4 5 6 7 8 9; do
+    assert_same "\"tab-bar.select-$number\"" "$(binding global "ctrl-a $number")"
+  done
+}
+
+function test_cmd_digits_1_to_9_select_the_tab_with_that_number_through_the_tab_bar() {
+  local number
+  for number in 1 2 3 4 5 6 7 8 9; do
+    assert_same "\"tab-bar.select-$number\"" "$(binding global "cmd-$number")"
   done
 }
 

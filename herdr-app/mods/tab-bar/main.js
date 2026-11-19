@@ -1,6 +1,7 @@
 // The bar at the bottom of the layout: space picker, tabs, host and time, and
 // window controls. It runs last-tab (ctrl-a ctrl-a), which selects the tab
-// shown before.
+// shown before. Each tab keeps its number, as in tmux: the bar numbers each
+// new tab and moves it into number order, and select-N selects by number.
 
 import { View, div, svg, image } from "gpui-kit";
 import { h_flex } from "gpui-base";
@@ -8,9 +9,11 @@ import { spaces, panes, run, theme, home, openOverlay, window as win, shared, se
 import { tabLabel } from "./label.js";
 import { statusText, untilNextMinute } from "./status.js";
 import { observeTabs, lastTab } from "./history.js";
+import { numberTabs, nextMove, swapNumbers, tabNumbered } from "./numbers.js";
 
 // Shared state, not a field: another layout, a save or a restart starts the mod fresh.
 const HISTORY = "tab-bar.tab-history";
+const NUMBERS = "tab-bar.tab-numbers";
 
 function colors(t) {
   return {
@@ -119,6 +122,9 @@ export default class TerminalsBar extends View {
       for (;;) {
         const command = await nextCommand();
         if (command === "last-tab") this.selectLastTab();
+        else if (command === "swap-left") this.swap(-1);
+        else if (command === "swap-right") this.swap(1);
+        else if (command.startsWith("select-")) this.selectNumber(Number(command.slice("select-".length)));
       }
     });
   }
@@ -136,6 +142,41 @@ export default class TerminalsBar extends View {
     else notify({ title: "No previous tab", level: "info" });
   }
 
+  selectNumber(number) {
+    const space = spaces().find((s) => s.active);
+    const id = space && tabNumbered(this.number(), space, number);
+    if (id) run("tab.select", { id });
+  }
+
+  // The tabs trade numbers, and the next render trades their places.
+  swap(by) {
+    const space = spaces().find((s) => s.active);
+    if (space?.tabs.some((t) => t.active)) setShared(NUMBERS, swapNumbers(this.number(), space, by));
+  }
+
+  number() {
+    const before = shared(NUMBERS) ?? {};
+    const after = numberTabs(before, spaces());
+    if (JSON.stringify(after) !== JSON.stringify(before)) setShared(NUMBERS, after);
+    return after;
+  }
+
+  // One move for each render: the move renders again, and that render takes
+  // the next one. A move that changed nothing is not sent again. The shown
+  // space goes first, so a space that cannot move does not block it.
+  place(numbers) {
+    const all = spaces();
+    const move = [...all].sort((a, b) => b.active - a.active).map((s) => nextMove(numbers, s)).find(Boolean);
+    if (!move) {
+      this.placed = null;
+      return;
+    }
+    const order = JSON.stringify([move, all.map((s) => s.tabs.map((t) => t.id))]);
+    if (order === this.placed) return;
+    this.placed = order;
+    run("tab.move", move);
+  }
+
   observe() {
     const before = shared(HISTORY) ?? {};
     const after = observeTabs(before, spaces());
@@ -145,6 +186,8 @@ export default class TerminalsBar extends View {
 
   render() {
     this.observe();
+    const numbers = this.number();
+    this.place(numbers);
     const t = theme();
     const C = colors(t);
     const space = spaces().find((p) => p.active);
@@ -181,7 +224,7 @@ export default class TerminalsBar extends View {
             .min_w(0)
             .gap(6)
             .truncate()
-            .child(div().flex_none().text_color(c.active ? C.text : C.label).child(tabLabel(c)))
+            .child(div().flex_none().text_color(c.active ? C.text : C.label).child(tabLabel(c, numbers[space.id][c.id])))
             .when(Boolean(where), (el) => el.child(div().truncate().text_color(C.dim).child(where))),
         );
     };

@@ -1,3 +1,3 @@
-export function tabLabel(tab) {
-  return tab.named ? `${tab.index} ${tab.name}` : `${tab.index}`;
+export function tabLabel(tab, number) {
+  return tab.named ? `${number} ${tab.name}` : `${number}`;
 }
