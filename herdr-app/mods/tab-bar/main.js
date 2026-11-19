@@ -1,9 +1,10 @@
-// Terminals layout's draggable top bar: space picker, tabs, and window controls.
+// The bar at the bottom of the layout: space picker, tabs, host and time, and window controls.
 
 import { View, div, svg, image } from "gpui-kit";
 import { h_flex } from "gpui-base";
-import { spaces, panes, run, theme, home, openOverlay, window as win, shared, setShared, nextCommand, notify } from "herdr";
+import { spaces, panes, run, theme, home, openOverlay, window as win, shared, setShared, nextCommand, notify, exec, checking } from "herdr";
 import { tabLabel } from "./label.js";
+import { statusText, untilNextMinute } from "./status.js";
 import { observeTabs, lastTab } from "./history.js";
 
 // Shared state, not a field: another layout, a save or a restart starts the mod fresh.
@@ -21,6 +22,7 @@ function colors(t) {
     text: t.foreground,
     label: t.muted,
     dim: t.dim,
+    status: t.accent,
   };
 }
 
@@ -101,11 +103,29 @@ function iconButton(C, id, icon, onClick) {
 
 export default class TerminalsBar extends View {
   init(_props, cx) {
+    this.host = "";
+    if (!checking()) cx.spawn(async (cx) => {
+      try {
+        this.host = (await exec("hostname", ["-s"])).stdout.trim();
+        cx.notify();
+      } catch {
+        // Without the host, the bar shows the time only.
+      }
+    });
+    this.tick(cx);
     cx.spawn(async () => {
       for (;;) {
         const command = await nextCommand();
         if (command === "last-tab") this.selectLastTab();
       }
+    });
+  }
+
+  // Redraws the clock once a minute, when the minute starts.
+  tick(cx) {
+    cx.timer.after(untilNextMinute(new Date()), (cx) => {
+      cx.notify();
+      this.tick(cx);
     });
   }
 
@@ -169,8 +189,6 @@ export default class TerminalsBar extends View {
       .size_full()
       .gap(8)
       .items_center()
-      // macOS: the window buttons sit here (the layout's traffic_lights).
-      .when(w.platform === "macos" && w.titlebar === "none" && !w.fullscreen, (el) => el.pl(72))
       .child(
         own(h_flex())
           .id("tm-space")
@@ -204,6 +222,7 @@ export default class TerminalsBar extends View {
       .child(div().flex_1())
       .child(iconButton(C, "tm-keys", "command", () => run("app.palette")))
       .child(iconButton(C, "tm-new", "plus", () => run("tab.new", { space: space.id })))
+      .child(div().flex_none().pl(4).pr(8).text_size(13).text_color(C.status).child(statusText(this.host, new Date())))
       .when(Boolean(w.buttons), (el) =>
         el.child(
           h_flex()
