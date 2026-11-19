@@ -56,6 +56,23 @@ function test_waits_for_a_warm_nvim_that_becomes_ready_after_the_key() {
     calls.push(["took", (await taken).address]);')"
 }
 
+function test_opens_again_right_after_q_once_the_next_warm_nvim_is_ready() {
+  assert_same '["took","t9"]' "$(scenario '
+    const standby = new Standby(app, "/v.sh");
+    const render = () => standby.shouldStart() && standby.start();
+    listed = [warm("t8", "/run/nvim.1")];
+    await render();
+    await standby.take(never);
+    await render();
+    listed = [];
+    await render();
+    await render();
+    const taken = standby.take(new Promise((end) => setTimeout(end, 100)));
+    listed = [warm("t9", "/run/nvim.0")];
+    await render();
+    calls.push(["took", (await taken).address]);' | grep -v '^\["hc"')"
+}
+
 function test_starts_a_warm_nvim_when_none_is_ready() {
   assert_same '["hc","run","--bg","--json","--no-parent","--no-notify","--rm","--cwd","/home","--","/bin/sh","/v.sh"]' "$(scenario '
     const standby = new Standby(app, "/v.sh");

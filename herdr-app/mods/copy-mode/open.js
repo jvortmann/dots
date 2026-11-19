@@ -51,7 +51,7 @@ export class Standby {
   // True when the mod must start a warm nvim, because none is ready or
   // starting. It then marks one as starting.
   shouldStart() {
-    if (this.starting || this.ready()) return false;
+    if (this.ready() || this.starting) return false;
     return (this.starting = true);
   }
 
