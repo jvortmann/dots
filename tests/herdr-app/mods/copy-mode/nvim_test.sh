@@ -123,12 +123,148 @@ function test_starts_on_the_line_of_the_terminal_cursor() {
   assert_same "prompt> ls" "$(cat "$SCRATCH/clipboard")"
 }
 
-function test_starts_on_the_column_of_the_terminal_cursor() {
-  paint "" "∴ ls -la" 1 3
+function test_starts_on_the_first_non_blank_of_the_line_of_the_terminal_cursor() {
+  indented
 
   press "yiw"
 
-  assert_same "ls" "$(cat "$SCRATCH/clipboard")"
+  assert_same "l26" "$(cat "$SCRATCH/clipboard")"
+}
+
+function test_k_moves_to_the_first_non_blank_of_the_line_above() {
+  indented
+
+  press "kyiw"
+
+  assert_same "l25" "$(cat "$SCRATCH/clipboard")"
+}
+
+function test_j_moves_to_the_first_non_blank_of_the_line_below() {
+  indented
+
+  press "kkjyiw"
+
+  assert_same "l25" "$(cat "$SCRATCH/clipboard")"
+}
+
+function test_j_with_a_count_moves_that_many_lines_to_the_first_non_blank() {
+  indented
+
+  press "5k3jyiw"
+
+  assert_same "l24" "$(cat "$SCRATCH/clipboard")"
+}
+
+function test_j_in_a_selection_moves_to_the_first_non_blank_of_the_line_below() {
+  indented
+
+  press "kkvjy"
+
+  assert_same $'l24 tail\n l' "$(cat "$SCRATCH/clipboard")"
+}
+
+function test_k_in_a_selection_moves_to_the_first_non_blank_of_the_line_above() {
+  indented
+
+  press "kvky"
+
+  assert_same $'l24 tail\n l' "$(cat "$SCRATCH/clipboard")"
+}
+
+function test_j_in_a_line_selection_copies_the_whole_lines() {
+  indented
+
+  press "kkVjy"
+
+  assert_same $'      l24 tail\n l25 tail' "$(cat "$SCRATCH/clipboard")"
+}
+
+function test_j_in_a_block_selection_keeps_the_column() {
+  indented
+
+  press "kk<C-v>jy"
+
+  assert_same $'l\na' "$(cat "$SCRATCH/clipboard")"
+}
+
+function test_k_in_a_block_selection_keeps_the_column() {
+  indented
+
+  press "k<C-v>ky"
+
+  assert_same $' \nl' "$(cat "$SCRATCH/clipboard")"
+}
+
+function test_gg_moves_to_the_first_non_blank_of_the_first_line() {
+  indented
+
+  press "ggyiw"
+
+  assert_same "l1" "$(cat "$SCRATCH/clipboard")"
+}
+
+function test_G_moves_to_the_first_non_blank_of_the_last_line() {
+  indented
+
+  press "0Gyiw"
+
+  assert_same "l26" "$(cat "$SCRATCH/clipboard")"
+}
+
+function test_ctrl_u_moves_to_the_first_non_blank_half_a_window_up() {
+  indented
+
+  press "0<C-u>yiw"
+
+  assert_same "l23" "$(cat "$SCRATCH/clipboard")"
+}
+
+function test_ctrl_d_moves_to_the_first_non_blank_half_a_window_down() {
+  indented
+
+  press "gg0<C-d>yiw"
+
+  assert_same "l4" "$(cat "$SCRATCH/clipboard")"
+}
+
+function test_ctrl_f_moves_to_the_first_non_blank_a_window_down() {
+  indented
+
+  press "gg0<C-f>yiw"
+
+  assert_same "l5" "$(cat "$SCRATCH/clipboard")"
+}
+
+function test_ctrl_b_moves_to_the_first_non_blank_a_window_up() {
+  indented
+
+  press "0<C-b>yiw"
+
+  assert_same "l22" "$(cat "$SCRATCH/clipboard")"
+}
+
+function test_H_moves_to_the_first_non_blank_of_the_top_line_of_the_window() {
+  indented
+
+  press "0Hyiw"
+
+  assert_same "l21" "$(cat "$SCRATCH/clipboard")"
+}
+
+function test_M_moves_to_the_first_non_blank_of_the_middle_line_of_the_window() {
+  indented
+
+  press "0Myiw"
+
+  assert_same "l23" "$(cat "$SCRATCH/clipboard")"
+}
+
+function test_L_moves_to_the_first_non_blank_of_the_bottom_line_of_the_window() {
+  indented
+
+  press "gg0Lyiw"
+
+  assert_same "l6" "$(cat "$SCRATCH/clipboard")"
 }
 
 function test_fits_the_window_to_the_rows_of_the_terminal() {
@@ -268,6 +404,16 @@ paint() {
     printf '\n%.0s' $(seq 1 "$rows")
     printf '\033[H\033[2J%s\033[%d;%dH' "${2//|/$'\r\n'}" "$3" "$4"
   } > "$SCRATCH/paint"
+}
+
+# Paints the lines "l1 tail" to "l26 tail" for a terminal of 6 rows: 20 lines
+# of history and 6 on the screen. An odd line has 1 space of indent and an even
+# line has 6, so a move that keeps the column lands on "tail" or on a blank.
+# The terminal cursor is on "tail" of the last line.
+indented() {
+  local lines=() i
+  for i in {1..26}; do lines+=("$(printf '%*sl%d tail' $((i % 2 ? 1 : 6)) '' "$i")"); done
+  ROWS=6 paint "$(IFS='|'; printf '%s' "${lines[*]:0:20}")" "$(IFS='|'; printf '%s' "${lines[*]:20}")" 6 12
 }
 
 # Puts a program called $1 first on the PATH of nvim, which runs the shell

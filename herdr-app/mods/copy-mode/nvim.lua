@@ -5,10 +5,17 @@ vim.o.modeline = false
 vim.o.laststatus = 0
 vim.o.cmdheight = 0
 vim.o.termguicolors = false
+vim.o.startofline = true
 vim.api.nvim_set_hl(0, "Visual", { ctermfg = 8, ctermbg = 3 })
 
 vim.keymap.set("n", "q", "<cmd>qa!<cr>")
 vim.keymap.set("n", "<Esc>", "<cmd>qa!<cr>")
+-- The startofline option covers gg, G, H, M, L and the page keys. j and k keep
+-- the column, so they map to + and -, which still take a count and a selection.
+-- A block selection keeps the plain j and k, so the block keeps its column.
+for key, move in pairs({ j = "+", k = "-" }) do
+  vim.keymap.set({ "n", "x" }, key, function() return vim.fn.mode() == "\22" and key or move end, { expr = true })
+end
 -- The buffer is a terminal buffer, so i, a, I and A would enter Terminal mode,
 -- where q and Esc do not close copy mode.
 vim.api.nvim_create_autocmd("TermEnter", { command = "stopinsert" })
@@ -67,11 +74,11 @@ function show(paint)
   -- The buffer gets the lines at the next terminal refresh of nvim, so wait
   -- for the change.
   vim.wait(1000, function() return vim.b.changedtick ~= tick end, 1)
-  local row, column = 1, 1
-  for r, c in paint:gmatch("\27%[(%d+);(%d+)H") do row, column = tonumber(r), tonumber(c) end
+  local row = 1
+  for r in paint:gmatch("\27%[(%d+);%d+H") do row = tonumber(r) end
   local top = vim.api.nvim_buf_line_count(0) - height + 1
-  local line = top + row - 1
-  vim.fn.winrestview({ topline = top, lnum = line, col = vim.fn.virtcol2col(0, line, column) - 1 })
+  vim.fn.winrestview({ topline = top, lnum = top + row - 1 })
+  vim.cmd("normal! ^")
 end
 
 -- Shows the position of the cursor at the top right: the lines between the
