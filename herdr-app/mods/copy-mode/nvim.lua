@@ -68,19 +68,19 @@ function show(paint)
   vim.fn.winrestview({ topline = top, lnum = line, col = vim.fn.virtcol2col(0, line, column) - 1 })
 end
 
--- Shows the position of the cursor at the top right: the lines from the
--- cursor line to the last line, out of all lines but one. The first line reads
--- [N/N], and the last line [0/N]. The last line is the bottom screen row, so a
--- prompt with blank rows below it reads more than 0. The chip is virtual text
--- and not a float, because a headless test sees only the window grid, and a
--- yank skips it. On a full top line it covers the end, as in tmux. WinScrolled
--- moves the chip to the new top line when the view scrolls and the cursor
--- stays.
+-- Shows the position of the cursor at the top right: the lines between the
+-- cursor line and the last line with text, out of the lines between the first
+-- line and that last line. The first line reads [N/N]. The last line with text
+-- and the blank rows below it, as after a clear, read [0/N]. The chip is
+-- virtual text and not a float, because a headless test sees only the window
+-- grid, and a yank skips it. On a full top line it covers the end, as in tmux.
+-- WinScrolled moves the chip to the new top line when the view scrolls and the
+-- cursor stays.
 function show_position()
-  local last = vim.api.nvim_buf_line_count(0)
+  local last = vim.fn.prevnonblank(vim.api.nvim_buf_line_count(0))
   vim.api.nvim_buf_clear_namespace(0, position, 0, -1)
   vim.api.nvim_buf_set_extmark(0, position, vim.fn.line("w0") - 1, 0, {
-    virt_text = { { ("[%d/%d]"):format(last - vim.fn.line("."), last - 1), "Visual" } },
+    virt_text = { { ("[%d/%d]"):format(math.max(0, last - vim.fn.line(".")), math.max(0, last - 1)), "Visual" } },
     virt_text_pos = "right_align",
   })
 end

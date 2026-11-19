@@ -1,0 +1,13 @@
+# vim: ft=zsh
+
+# Before it clears the screen, ctrl-l moves the lines down to the cursor into
+# the history, as tmux does with scroll-on-clear. herdr-core drops the screen
+# lines on a clear, so copy mode could not show them. From the cursor line,
+# $LINES line feeds put the cursor on the bottom row and scroll the lines down
+# to the cursor off the top. clear-screen then draws the command line again.
+_clear_screen_into_history() {
+  repeat $LINES print
+  zle clear-screen
+}
+zle -N _clear_screen_into_history
+bindkey '^L' _clear_screen_into_history

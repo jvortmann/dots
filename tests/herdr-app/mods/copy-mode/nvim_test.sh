@@ -52,33 +52,49 @@ function test_is_no_longer_ready_for_the_mod_once_copy_mode_opens() {
 function test_counts_the_lines_from_the_cursor_to_the_last_line_as_the_cursor_moves() {
   press "k"
 
-  assert_same "$(top_row 'out a' '[8/11]')" "$(cat "$SCRATCH/top")"
+  assert_same "$(top_row 'out a' '[1/4]')" "$(cat "$SCRATCH/top")"
 }
 
-function test_reads_0_on_the_last_line() {
+function test_reads_0_on_the_blank_rows_below_the_last_line_with_text() {
   press "G"
 
-  assert_same "$(top_row 'out a' '[0/11]')" "$(cat "$SCRATCH/top")"
+  assert_same "$(top_row 'out a' '[0/4]')" "$(cat "$SCRATCH/top")"
+}
+
+function test_reads_0_on_the_last_line_with_text_above_blank_rows() {
+  paint "old 1|old 2" "prompt>" 1 8
+
+  press ""
+
+  assert_same "$(top_row 'prompt>' '[0/2]')" "$(cat "$SCRATCH/top")"
+}
+
+function test_reads_0_of_0_when_no_line_has_text() {
+  paint "" "" 1 1
+
+  press ""
+
+  assert_same "[0/0]" "$(grep -o '\[.*\]' "$SCRATCH/top")"
 }
 
 function test_reads_all_lines_on_the_first_line() {
   press "gg"
 
-  assert_same "$(top_row 'old 1' '[11/11]')" "$(cat "$SCRATCH/top")"
+  assert_same "$(top_row 'old 1' '[4/4]')" "$(cat "$SCRATCH/top")"
 }
 
 function test_stops_at_the_first_and_the_last_line() {
   press "ggk"
-  assert_same "[11/11]" "$(grep -o '\[.*\]' "$SCRATCH/top")"
+  assert_same "[4/4]" "$(grep -o '\[.*\]' "$SCRATCH/top")"
 
   press "Gj"
-  assert_same "[0/11]" "$(grep -o '\[.*\]' "$SCRATCH/top")"
+  assert_same "[0/4]" "$(grep -o '\[.*\]' "$SCRATCH/top")"
 }
 
 function test_stays_at_the_top_right_when_the_view_scrolls_without_the_cursor() {
-  press '<C-y>'
+  press 'k<C-y>'
 
-  assert_same "$(top_row 'old 2' '[7/11]')" "$(cat "$SCRATCH/top")"
+  assert_same "$(top_row 'old 2' '[1/4]')" "$(cat "$SCRATCH/top")"
 }
 
 function test_shows_the_history_above_the_screen() {
