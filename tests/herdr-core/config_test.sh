@@ -38,6 +38,15 @@ function test_a_new_terminal_runs_a_login_shell() {
   assert_same "login" "$(wait_for "$SCRATCH/home/login")"
 }
 
+function test_a_lost_terminal_shows_its_last_screen_above_the_new_shell() {
+  start_core
+  run_kept_terminal saved-line-1 saved-line-2
+  hc server stop > /dev/null
+  start_core
+
+  assert_same $'saved-line-1\nsaved-line-2' "$(screen_of_new_shell | head -2)"
+}
+
 # Start a scratch core with an empty home, so that no zsh config of the user
 # loads. In the scratch XDG_CONFIG_HOME, herdr-core links to the dots folder,
 # so the core reads the dots config. SHELL is /bin/zsh, so a core that
@@ -51,6 +60,31 @@ start_core() {
 open_terminal() {
   printf '%s\n' "$1" > "$SCRATCH/home/.zshenv"
   hc run --bg > /dev/null
+}
+
+# Print the lines in a terminal that the core keeps, then wait until its
+# screen shows them. A stop of the core loses a kept program, and the next
+# start replaces it with the configured shell. The probe in .zshenv marks the
+# start of that shell.
+run_kept_terminal() {
+  printf '%s\n' 'print started > $HOME/started' > "$SCRATCH/home/.zshenv"
+  hc run --bg --keep --name lost -- /bin/sh -c 'printf "%s\n" "$@"; exec sleep 60' sh "$@" > /dev/null
+  for _ in {1..50}; do
+    [[ $(hc read --lines 0 lost) == *"${!#}"* ]] && break
+    sleep 0.1
+  done
+}
+
+# Wait for the shell that replaced the lost program, then for its prompt.
+screen_of_new_shell() {
+  local screen
+  wait_for "$SCRATCH/home/started" > /dev/null
+  for _ in {1..50}; do
+    screen=$(hc read --lines 0 lost)
+    [[ $screen =~ %\ *$ ]] && break
+    sleep 0.1
+  done
+  printf '%s\n' "$screen"
 }
 
 hc() {

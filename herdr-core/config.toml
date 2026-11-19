@@ -1,1 +1,2 @@
 shell = ["/opt/homebrew/bin/zsh", "-l"]
+restore_screen = true
