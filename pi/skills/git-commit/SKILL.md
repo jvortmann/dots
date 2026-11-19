@@ -44,11 +44,15 @@ and not again for each commit. Load the `asd-ste100` skill for the words.
   failed, or a constraint the reader cannot see. When you cannot name the
   surprise, leave it out.
 - **Change-type** — one value from the template, and the most specific one.
-  A new capability is `feature`, and a defect is `fix`. A `refactor` changes
-  structure and organization only, and no behavior changes at all. The
-  `refactoring` skill holds the definition. Build and
-  CI are `ci`, a dependency bump is `deps`, and a config file is `config`. The
-  rest are `docs`, `test` and `style`. `chore` is the last resort.
+  - `feature`: a new or changed capability. `fix`: a defect.
+  - `refactor`: structure and organization only, with no change in
+    behavior. The `refactoring` skill holds the definition.
+  - `config`: a change to configuration only, such as a setting, an option
+    or a value. It can change behavior.
+  - `deps`: an upgrade, an addition or a removal of a package. A plugin in
+    the plugin list counts, and so does a version bump in a lock file.
+  - `ci` for build and CI, and `docs`, `test` and `style` as named.
+  - `chore`: rare. Use it only when no other type fits.
 - **A file an agent reads as instruction is code, not documentation.** Pick
   the type by what changes in its behavior. A new behavior is `feature`, a
   broken one is `fix`, and one that holds is `refactor`. `docs` is right
@@ -70,10 +74,10 @@ Bad:  Raise the pi version in settings
       The settings file pins the version of pi. The new value makes
       the agent use the newer release.
 
-      Change-type: config
+      Change-type: deps
 Good: Raise the pi version in settings
 
-      Change-type: config
+      Change-type: deps
 ```
 
 ## Check the draft
