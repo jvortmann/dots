@@ -4,6 +4,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
 CONFIG="$ROOT/herdr-app/mods/copy-mode/nvim.lua"
 
 function set_up() {
+  SERVER=""
   [[ -f $CONFIG ]] || bashunit::fail "missing the file under test: $CONFIG"
   command -v nvim > /dev/null || bashunit::skip "needs nvim"
   SCRATCH=$(bashunit::temp_dir "copy-mode")
@@ -11,9 +12,41 @@ function set_up() {
   fake pbcopy 'cat > "$SCRATCH/clipboard"'
   fake hc 'case $1 in
     get) printf "{\"cols\":40,\"rows\":%s}\n" "$(cat "$SCRATCH/rows")" ;;
+    label) printf "%s %s\n" "$2" "$3" >> "$SCRATCH/labels" ;;
     *) printf "%s\n" "$*" > "$SCRATCH/hc.args"; cat "$SCRATCH/paint"; exec sleep 5 ;;
   esac'
   paint "old 1|old 2" "out a|out b|prompt> ls" 3 11
+}
+
+function tear_down() {
+  [[ -n ${SERVER:-} ]] || return 0
+  nvim --server "$SERVER" --remote-expr 'execute("qa!")' < /dev/null > /dev/null 2>&1 || true
+}
+
+function test_tells_the_mod_where_its_server_listens() {
+  start_standby
+
+  SERVER=$(wait_for_label "t5 copy-mode.standby=")
+
+  assert_same "2" "$(nvim --server "$SERVER" --remote-expr '1+1' < /dev/null)"
+}
+
+function test_opens_copy_mode_on_the_terminal_the_mod_names() {
+  start_standby
+  SERVER=$(wait_for_label "t5 copy-mode.standby=")
+
+  nvim --server "$SERVER" --remote-expr 'v:lua.copy_mode_open("t8")' < /dev/null > /dev/null 2>&1
+
+  assert_same "attach --observe --history 10000 t8" "$(cat "$SCRATCH/hc.args")"
+}
+
+function test_is_no_longer_ready_for_the_mod_once_copy_mode_opens() {
+  start_standby
+  SERVER=$(wait_for_label "t5 copy-mode.standby=")
+
+  nvim --server "$SERVER" --remote-expr 'v:lua.copy_mode_open("t8")' < /dev/null > /dev/null 2>&1
+
+  assert_same "t5 copy-mode.standby=" "$(tail -1 "$SCRATCH/labels")"
 }
 
 function test_shows_the_history_above_the_screen() {
@@ -135,11 +168,31 @@ function test_a_modeline_in_the_text_changes_no_option() {
 # writes "open" to the file open, so the file exists only when copy mode is
 # still running after the keys.
 press() {
-  SCRATCH="$SCRATCH" COPY_MODE_TERMINAL=t7 PATH="$SCRATCH/bin:$PATH" \
+  SCRATCH="$SCRATCH" PATH="$SCRATCH/bin:$PATH" \
     nvim --clean --headless -u "$CONFIG" --noplugin -n \
+    -c "lua copy_mode_open('t7')" \
     -c "lua vim.api.nvim_input('$1')" \
     -c "lua vim.defer_fn(function() vim.fn.writefile({'open'}, '$SCRATCH/open') vim.cmd('qa!') end, 400)" \
     < /dev/null
+}
+
+# Starts nvim in the background as the warm nvim of the terminal t5, the way
+# the mod starts it. It ends after 10 seconds at the latest.
+start_standby() {
+  SCRATCH="$SCRATCH" HC_TERMINAL_ID=t5 PATH="$SCRATCH/bin:$PATH" perl -e 'use POSIX; setsid(); alarm 10; exec @ARGV' \
+    nvim --clean --headless -u "$CONFIG" --noplugin -n < /dev/null > /dev/null 2>&1 &
+}
+
+# Waits about 2 seconds for nvim to set a label that starts with $1, and
+# prints the rest of the label.
+wait_for_label() {
+  local line
+  for _ in {1..200}; do
+    line=$(grep -F "$1" "$SCRATCH/labels" 2> /dev/null | tail -1)
+    [[ -n $line ]] && break
+    sleep 0.01
+  done
+  printf '%s' "${line#"$1"}"
 }
 
 # Writes the first paint that hc attach prints for a terminal of ROWS rows

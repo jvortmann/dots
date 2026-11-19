@@ -27,48 +27,53 @@ function tear_down() {
 }
 
 function test_keeps_the_colors_of_the_terminal() {
-  copy_mode_screen 'printf "\033[31mred\033[0m plain\n"'
+  copy_mode_screen $'\e[38;5;1mred' 'printf "\033[31mred\033[0m plain\n"'
 
   assert_contains $'\e[38;5;1mred' "$(cat "$SCRATCH/screen")"
 }
 
 function test_draws_plain_text_in_the_default_colors_of_the_app() {
-  copy_mode_screen 'printf "\033[31mred\033[0m plain\n"'
+  copy_mode_screen $'\e[38;5;1mred' 'printf "\033[31mred\033[0m plain\n"'
 
   assert_not_contains $'\e[38;2;' "$(cat "$SCRATCH/screen")"
 }
 
 function test_draws_the_selection_in_dark_text_on_yellow() {
-  copy_mode_screen 'printf "\033[31mred\033[0m plain\n"' k v l l l
+  copy_mode_screen $'\e[48;5;3m' 'printf "\033[31mred\033[0m plain\n"' k v l l l
 
   assert_contains $'\e[38;5;8m\e[48;5;3mred' "$(cat "$SCRATCH/screen")"
 }
 
-# Runs the shell code in $1 in a terminal, opens copy mode on that terminal
-# in a second one, presses the other arguments there as keys, and writes the
-# bytes that draw copy mode to the file screen.
+# Runs the shell code in $2 in a terminal, and opens copy mode on that
+# terminal in a warm nvim, the way the mod does. Presses the other arguments
+# there as keys. Writes the bytes that draw copy mode to the file screen. It
+# stops when they hold the text in $1, or after about 5 seconds.
 copy_mode_screen() {
-  local source view code=$1
-  shift
+  local source view server want=$1 code=$2
+  shift 2
   source=$(hc run --bg --json --no-parent -- /bin/sh -c "$code; exec sleep 30" | jq -r .address)
-  sleep 0.3
-  view=$(hc run --bg --json --no-parent -- /bin/sh "$VIEW" "$source" | jq -r .address)
-  for _ in {1..30}; do
-    hc read "$view" | grep -q plain && break
+  for _ in {1..50}; do
+    hc read "$source" | grep -q plain && break
     sleep 0.1
   done
-  # nvim draws the text first and the colors in a later redraw.
-  sleep 0.5
-  if [[ $# -gt 0 ]]; then
-    hc keys "$view" "$@" > /dev/null
-    sleep 0.5
-  fi
-  in_scratch perl -e 'use POSIX; setsid(); alarm 1; exec @ARGV' \
-    "$HC" attach --observe "$view" > "$SCRATCH/screen" 2> /dev/null || true
+  view=$(hc run --bg --json --no-parent -- /bin/sh "$VIEW" | jq -r .address)
+  for _ in {1..50}; do
+    server=$(hc get --json "$view" | jq -r '.labels["copy-mode.standby"] // empty')
+    [[ -n $server ]] && break
+    sleep 0.1
+  done
+  in_scratch perl -e 'use POSIX; setsid(); alarm 5; exec @ARGV' \
+    nvim --server "$server" --remote-expr "v:lua.copy_mode_open(\"$source\")" > /dev/null 2>&1
+  [[ $# -gt 0 ]] && hc keys "$view" "$@" > /dev/null
+  for _ in {1..25}; do
+    in_scratch perl -MTime::HiRes=ualarm -e 'use POSIX; setsid(); ualarm(200000); exec @ARGV' \
+      "$HC" attach --observe "$view" > "$SCRATCH/screen" 2> /dev/null || true
+    grep -qF "$want" "$SCRATCH/screen" && break
+  done
 }
 
 hc() {
-  in_scratch "$HC" "$@" < /dev/null
+  in_scratch perl -e 'use POSIX; setsid(); alarm 5; exec @ARGV' "$HC" "$@"
 }
 
 in_scratch() {

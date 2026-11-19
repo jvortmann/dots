@@ -3,37 +3,35 @@
 // mod of herdr-term (https://github.com/cristianoliveira/herdr-term).
 
 import { View, div } from "gpui-kit";
-import { appHome, exec, focused, hc, home, nextCommand, notify, run, terminals } from "herdr";
-import { openCopyMode } from "./open.js";
+import { appHome, checking, exec, focused, hc, home, nextCommand, notify, run, terminals } from "herdr";
+import { Standby, openCopyMode } from "./open.js";
 
 const app = {
+  exec,
   hc,
   run,
   terminals,
   get home() {
     return home();
   },
-  sleep: (seconds) => exec("sleep", [String(seconds)]),
 };
 
 export default class CopyMode extends View {
   init(_props, cx) {
-    this.keyboard = cx.focus_handle();
-    this.early = null;
-    cx.spawn(async () => {
+    this.standby = new Standby(app, `${appHome()}/mods/copy-mode/view.sh`);
+    cx.spawn(async (cx) => {
       for (;;) {
         if ((await nextCommand()) !== "open") continue;
         try {
-          await this.open();
+          await this.open(cx);
         } catch (error) {
-          notify({ title: "Copy mode failed", body: String(error?.message ?? error), level: "error" });
+          fail(error);
         }
-        this.early = null;
       }
     });
   }
 
-  async open() {
+  async open(cx) {
     const { terminal: source, pane, shown } = focused() ?? {};
     // Copy mode already shows in this pane.
     if (shown) return;
@@ -41,16 +39,34 @@ export default class CopyMode extends View {
       notify({ title: "Copy mode", body: "Focus a terminal first.", level: "info" });
       return;
     }
-    // Keys typed while nvim starts come to this copy, and not to the shell.
-    this.early = [];
-    this.keyboard.focus();
-    await openCopyMode(app, { source, pane, view: `${appHome()}/mods/copy-mode/view.sh`, early: this.early });
+    this.keepWarm(cx);
+    const nvim = await this.standby.take(cx.sleep(3000));
+    await openCopyMode(app, { source, pane, nvim });
   }
 
-  render() {
-    return div()
-      .size_full()
-      .track_focus(this.keyboard)
-      .on_key_down((event) => this.early?.push(event));
+  // The app renders the mod again each time the terminals change.
+  render(cx) {
+    this.keepWarm(cx);
+    return div().size_full();
   }
+
+  // Starts a warm nvim when none is ready or starting.
+  keepWarm(cx) {
+    if (checking() || !this.standby.shouldStart()) return;
+    cx.spawn(async () => {
+      try {
+        await this.standby.start();
+      } catch (error) {
+        fail(error);
+      }
+    });
+  }
+
+  async close() {
+    await this.standby.close();
+  }
+}
+
+function fail(error) {
+  notify({ title: "Copy mode failed", body: String(error?.message ?? error), level: "error" });
 }

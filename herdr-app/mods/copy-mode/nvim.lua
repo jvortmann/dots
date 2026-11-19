@@ -1,5 +1,4 @@
-local source = vim.env.COPY_MODE_TERMINAL
-local capture_first_paint, fit_to, show
+local capture_first_paint, fit_to, show, standby
 
 vim.o.modeline = false
 vim.o.laststatus = 0
@@ -18,15 +17,18 @@ vim.api.nvim_create_autocmd("TextYankPost", {
   end,
 })
 
-local function open()
+-- The mod calls it through the server of this nvim. The mod shows this
+-- terminal when it returns.
+function _G.copy_mode_open(source)
+  standby("")
   local size = vim.system({ "hc", "get", "--json", source })
-  local paint = capture_first_paint()
+  local paint = capture_first_paint(source)
   if paint == "" then vim.cmd("qa!") end
   fit_to(size:wait(500))
   show(paint)
 end
 
-function capture_first_paint()
+function capture_first_paint(source)
   local chunks, quiet, done = {}, vim.uv.new_timer(), false
   local attach = vim.system({ "hc", "attach", "--observe", "--history", "10000", source }, {
     stdout = function(_, data)
@@ -50,8 +52,12 @@ end
 function show(paint)
   local height = vim.api.nvim_win_get_height(0)
   paint = paint:gsub("\n+(\27%[H\27%[2J)", string.rep("\n", height) .. "%1")
-  vim.api.nvim_chan_send(vim.api.nvim_open_term(0, {}), paint)
-  vim.wait(20)
+  local terminal = vim.api.nvim_open_term(0, {})
+  local tick = vim.b.changedtick
+  vim.api.nvim_chan_send(terminal, paint)
+  -- The buffer gets the lines at the next terminal refresh of nvim, so wait
+  -- for the change.
+  vim.wait(1000, function() return vim.b.changedtick ~= tick end, 1)
   local row, column = 1, 1
   for r, c in paint:gmatch("\27%[(%d+);(%d+)H") do row, column = tonumber(r), tonumber(c) end
   local top = vim.api.nvim_buf_line_count(0) - height + 1
@@ -59,4 +65,10 @@ function show(paint)
   vim.fn.winrestview({ topline = top, lnum = line, col = vim.fn.virtcol2col(0, line, column) - 1 })
 end
 
-open()
+-- The label tells the mod where the server of this nvim listens. An empty
+-- server removes the label.
+function standby(server)
+  vim.system({ "hc", "label", vim.env.HC_TERMINAL_ID, "copy-mode.standby=" .. server })
+end
+
+standby(vim.v.servername)

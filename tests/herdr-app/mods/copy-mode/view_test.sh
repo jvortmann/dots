@@ -8,18 +8,11 @@ function set_up() {
   SCRATCH=$(bashunit::temp_dir "copy-mode")
   mkdir -p "$SCRATCH/bin"
   fake hc 'exit 3'
-  fake nvim 'printf "%s" "$COPY_MODE_TERMINAL" > "$SCRATCH/terminal"
-    printf "%s\n" "$*" > "$SCRATCH/nvim.args"; command -v hc > "$SCRATCH/hc.path"'
-}
-
-function test_opens_copy_mode_on_the_terminal() {
-  view t7
-
-  assert_same "t7" "$(cat "$SCRATCH/terminal")"
+  fake nvim 'printf "%s\n" "$*" > "$SCRATCH/nvim.args"; command -v hc > "$SCRATCH/hc.path"'
 }
 
 function test_opens_nvim_with_the_copy_mode_config_and_no_user_config() {
-  view t7
+  view
 
   assert_same "--clean -u $(dirname "$VIEW")/nvim.lua --noplugin -n" "$(cat "$SCRATCH/nvim.args")"
 }
@@ -28,7 +21,7 @@ function test_finds_hc_and_nvim_on_the_bare_path_of_the_core() {
   mkdir -p "$SCRATCH/home/.local"
   mv "$SCRATCH/bin" "$SCRATCH/home/.local/bin"
 
-  HOME="$SCRATCH/home" SCRATCH="$SCRATCH" PATH=/usr/bin:/bin:/usr/sbin:/sbin /bin/sh "$VIEW" t7
+  HOME="$SCRATCH/home" SCRATCH="$SCRATCH" PATH=/usr/bin:/bin:/usr/sbin:/sbin /bin/sh "$VIEW"
 
   assert_same "$SCRATCH/home/.local/bin/hc" "$(cat "$SCRATCH/hc.path")"
 }
