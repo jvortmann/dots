@@ -21,6 +21,11 @@ function test_the_layout_shows_the_copy_mode_mod_so_that_its_chord_reaches_it() 
     | select(. == "copy-mode")' "$LAYOUT")"
 }
 
+function test_the_layout_shows_the_window_mod_so_that_it_maximizes_the_window_at_start() {
+  assert_same "window" "$(jq -r '.. | objects | select(.hidden != true) | .content?.mod? // empty
+    | select(. == "window")' "$LAYOUT")"
+}
+
 function test_the_tab_bar_shows_below_the_terminals() {
   assert_same "active tab-bar" "$(jq -r '.. | objects | select(.type? == "column") | .children
     | map(if .content?.tab? == "active" then "active"
