@@ -6,9 +6,13 @@
 # because a new shell in a lost terminal must keep the label of the program
 # that it replaces. hc is not on PATH, and it runs in the background, so the
 # prompt does not wait for it.
+
+# The names of nvim: the command and its aliases in zsh/conf/lib/aliases.
+_herdr_restore_nvim='(nvim|vim|vi|v|n)'
+
 _herdr_restore_preexec() {
   unset _herdr_restore_ending
-  [[ -n $HC_TERMINAL_ID && ${${(Az)1}[1]} == (nvim|vim|vi|v|pi) ]] || return
+  [[ -n $HC_TERMINAL_ID && ${${(Az)1}[1]} == ($~_herdr_restore_nvim|pi) ]] || return
   _herdr_restore_label_after "$_herdr_restore_clearing" "$1"
   _herdr_restore_recorded=$!
 }
@@ -41,5 +45,44 @@ TRAPTERM() {
   _herdr_restore_ending=1
 }
 
+# At its first prompt, each Herdr shell reads the labels of its terminal. A lost
+# terminal still has them, so the shell starts nvim or pi again. A new terminal
+# has none, and its shell stays a shell. The shell types the line after the
+# whole zsh config loads, so the aliases and the PATH from mise apply. The line
+# runs as a typed command: the shell stays when it ends, and preexec records it
+# again. pi resumes its session file, or continues the last session when pi
+# wrote no file. A restore.pi label with no pi in restore.cmd comes from a pi
+# that ended, so the shell stays a shell. The shell removes the labels before it
+# runs the line, so a program that fails at once does not start again in the
+# next shell.
+_herdr_restore_relaunch() {
+  add-zle-hook-widget -d line-init _herdr_restore_relaunch
+  local -a labels=("${(@0)$($HOME/.local/bin/hc get $HC_TERMINAL_ID --json 2> /dev/null |
+    jq --raw-output0 '.labels | .["restore.cmd"] // "", .["restore.pi"] // ""' 2> /dev/null)}")
+  local cmd=$labels[1] file=$labels[2]
+  case ${${(Az)cmd}[1]} in
+    (pi)
+      if [[ -f $file ]]; then
+        BUFFER="pi --session ${(q)file}"
+      else
+        BUFFER="pi --continue"
+      fi
+      ;;
+    ($~_herdr_restore_nvim) BUFFER=$cmd ;;
+    (*) return ;;
+  esac
+  $HOME/.local/bin/hc label $HC_TERMINAL_ID restore.cmd= restore.pi= > /dev/null 2>&1
+  zle .accept-line
+}
+
 preexec_functions+=(_herdr_restore_preexec)
 precmd_functions+=(_herdr_restore_precmd)
+# Herdr starts zsh as a login shell. A subshell and the shell in nvim :terminal
+# are not login shells, and outside Herdr HC_TERMINAL_ID is not set. tmux starts
+# login shells too, and a tmux in a Herdr terminal passes HC_TERMINAL_ID on to its
+# panes, so a shell with TMUX set does not ask. hc and jq take about 5
+# milliseconds, once for each new Herdr shell.
+if [[ -n $HC_TERMINAL_ID && -o login && -z $TMUX ]]; then
+  autoload -Uz add-zle-hook-widget
+  add-zle-hook-widget line-init _herdr_restore_relaunch
+fi

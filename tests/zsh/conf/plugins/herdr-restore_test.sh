@@ -6,20 +6,28 @@ HOMEBREW_ZSH=/opt/homebrew/bin/zsh
 
 function set_up() {
   INPUT=""
+  SERVER=""
   [[ -f $PLUGIN ]] || bashunit::fail "missing the file under test: $PLUGIN"
   [[ -x $HOMEBREW_ZSH ]] || bashunit::skip "needs Homebrew zsh"
+  command -v tmux > /dev/null || bashunit::skip "needs tmux"
   HOME_DIR=$(bashunit::temp_dir "home")
   BIN=$(bashunit::temp_dir "bin")
   LOG="$HOME_DIR/hc.log"
   mkdir -p "$HOME_DIR/.local/bin"
   fake_hc ""
-  for program in nvim vim vi v pi pip; do
+  for program in nvim vim vi v n pi pip; do
     printf '#!/bin/sh\nexit 0\n' > "$BIN/$program"
     chmod +x "$BIN/$program"
   done
 }
 
+# Types exit, so zsh ends and the tmux server ends with its last session. The
+# server leaves its socket file, so tear_down removes it.
 function tear_down() {
+  if [[ -n $SERVER ]]; then
+    tmux -L "$SERVER" send-keys exit Enter 2> /dev/null
+    rm -f "${TMUX_TMPDIR:-/tmp}/tmux-$(id -u)/$SERVER"
+  fi
   [[ -n $INPUT ]] || return 0
   [[ -s $HOME_DIR/pi.pid ]] && kill "$(cat "$HOME_DIR/pi.pid")" 2> /dev/null || true
   exec 3>&-
@@ -48,6 +56,7 @@ function the_other_names_of_nvim_and_pi() {
   bashunit::data_set vim
   bashunit::data_set vi
   bashunit::data_set v
+  bashunit::data_set n
   bashunit::data_set pi
 }
 
@@ -128,6 +137,141 @@ function test_the_clear_of_a_command_does_not_remove_the_record_of_the_next() {
   shell_that_runs_pi "nvim --version"
 
   assert_same $'label t7 restore.cmd=nvim --version\nlabel t7 restore.cmd=\nlabel t7 restore.cmd=pi' "$(hc_calls 3)"
+}
+
+function test_a_lost_terminal_that_ran_pi_starts_pi_again_with_its_session() {
+  local session="$HOME_DIR/sessions/2026-11-19_a b.jsonl"
+  mkdir -p "$HOME_DIR/sessions"
+  touch "$session"
+
+  lost_terminal_with_labels "$(jq -n --arg file "$session" '{"restore.cmd": "pi", "restore.pi": $file}')"
+
+  assert_same "pi --session $session" "$(logged '^pi ')"
+}
+
+# A program that fails at once must not start again in the next shell.
+function test_the_relaunch_clears_the_labels_before_the_program_starts() {
+  lost_terminal_with_labels '{"restore.cmd": "v notes.md"}'
+
+  logged '^nvim ' > /dev/null
+
+  assert_same $'get t7 --json\nlabel t7 restore.cmd= restore.pi=' "$(head -2 "$LOG")"
+}
+
+function test_the_shell_stays_when_the_relaunched_program_ends() {
+  lost_terminal_with_labels '{"restore.cmd": "v notes.md"}'
+  logged '^nvim ' > /dev/null
+
+  type_in_shell 'print -r -- shell-ready >> $HOME/hc.log'
+
+  assert_same "shell-ready" "$(logged shell-ready)"
+}
+
+# The next loss of the terminal then starts the program again.
+function test_the_relaunched_program_records_itself_again() {
+  lost_terminal_with_labels '{"restore.cmd": "v notes.md"}'
+
+  assert_same "label t7 restore.cmd=v notes.md" "$(logged 'restore.cmd=v')"
+}
+
+# pi writes the session file only after the first message.
+function test_a_lost_terminal_that_ran_pi_with_no_session_file_continues_the_last_session() {
+  lost_terminal_with_labels "$(jq -n --arg file "$HOME_DIR/none.jsonl" '{"restore.cmd": "pi", "restore.pi": $file}')"
+
+  assert_same "pi --continue" "$(logged '^pi ')"
+}
+
+# v is an alias of nvim, so the line runs after the aliases load.
+function test_a_lost_terminal_that_ran_nvim_runs_its_command_line_again() {
+  lost_terminal_with_labels '{"restore.cmd": "v notes.md"}'
+
+  assert_same "nvim notes.md" "$(logged '^nvim ')"
+}
+
+function test_a_terminal_with_no_labels_stays_a_shell() {
+  lost_terminal_with_labels '{}'
+
+  type_in_shell 'print -r -- shell-ready >> $HOME/hc.log'
+
+  assert_same "get t7 --json" "$(logged shell-ready > /dev/null; grep -v shell-ready "$LOG")"
+}
+
+# The pi extension writes the session file to restore.pi and nothing removes it,
+# so the label stays after pi ends. Only restore.cmd tells that pi still ran.
+function test_a_terminal_where_pi_ended_stays_a_shell() {
+  touch "$HOME_DIR/session.jsonl"
+  lost_terminal_with_labels "$(jq -n --arg file "$HOME_DIR/session.jsonl" '{"restore.pi": $file}')"
+
+  type_in_shell 'print -r -- shell-ready >> $HOME/hc.log'
+
+  assert_same "get t7 --json" "$(logged shell-ready > /dev/null; grep -v shell-ready "$LOG")"
+}
+
+# tmux starts login shells, and a tmux inside a Herdr terminal passes its id
+# on to each pane.
+function test_a_login_shell_in_tmux_calls_no_hc() {
+  IN_TMUX=1 lost_terminal_with_labels '{"restore.cmd": "pi"}'
+
+  type_in_shell 'print -r -- shell-ready >> $HOME/hc.log'
+
+  assert_same "shell-ready" "$(logged shell-ready > /dev/null; cat "$LOG")"
+}
+
+function test_a_login_shell_outside_herdr_calls_no_hc() {
+  TERMINAL_ID="" lost_terminal_with_labels '{"restore.cmd": "pi"}'
+
+  type_in_shell 'print -r -- shell-ready >> $HOME/hc.log'
+
+  assert_same "shell-ready" "$(logged shell-ready > /dev/null; cat "$LOG")"
+}
+
+# nvim :terminal starts zsh with no -l, and a subshell has no -l either.
+function test_a_shell_that_is_no_login_shell_calls_no_hc() {
+  SHELL_FLAGS=-i lost_terminal_with_labels '{"restore.cmd": "pi"}'
+
+  type_in_shell 'print -r -- shell-ready >> $HOME/hc.log'
+
+  assert_same "shell-ready" "$(logged shell-ready > /dev/null; cat "$LOG")"
+}
+
+# Types $1 and enter into the shell in the tmux pane.
+type_in_shell() {
+  tmux -L "$SERVER" send-keys "$1" Enter
+}
+
+# Starts zsh in a tmux pane as Herdr starts the shell of a lost terminal: a
+# login shell with the id t7, where the fake hc gives the labels $1. The zshrc
+# loads the plugin before PATH holds the programs, as mise loads after it. The
+# fake pi and nvim log their arguments and end. SHELL_FLAGS replaces -l. Herdr
+# sets no TMUX, so the zshrc removes the one of the test pane, unless IN_TMUX
+# is set.
+lost_terminal_with_labels() {
+  printf '{"labels": %s}\n' "$1" > "$HOME_DIR/terminal.json"
+  fake_hc "[ \"\$1\" = get ] && cat $(printf %q "$HOME_DIR/terminal.json")"
+  for program in nvim pi; do
+    printf '#!/bin/sh\necho "%s $*" >> %q\n' "$program" "$LOG" > "$BIN/$program"
+  done
+  [[ -n ${IN_TMUX-} ]] || echo 'unset TMUX' > "$HOME_DIR/.zshrc"
+  printf 'source %q\npath=(%q $path)\nalias v=nvim\nPS1="%%%% "\n' "$PLUGIN" "$BIN" >> "$HOME_DIR/.zshrc"
+  start_shell "${SHELL_FLAGS--l}"
+}
+
+# Starts zsh with the flags $@ in a tmux pane of 80 by 24, with the scratch
+# HOME and the zshrc in it. PATH holds no mise shims, and the zshrc loads no
+# config of the user. An empty TERMINAL_ID runs the shell outside Herdr.
+start_shell() {
+  SERVER="bashunit-$$-$RANDOM"
+  tmux -L "$SERVER" -f /dev/null new-session -d -x 80 -y 24 -e HOME="$HOME_DIR" -e ZDOTDIR="$HOME_DIR" \
+    -e HC_TERMINAL_ID="${TERMINAL_ID-t7}" -e PATH=/usr/bin:/bin "$HOMEBREW_ZSH $*" < /dev/null
+}
+
+# Waits at most 5 seconds until a line of the log matches $1, then prints the
+# first such line.
+logged() {
+  for _ in {1..50}; do
+    grep -m 1 -- "$1" "$LOG" 2> /dev/null && return
+    sleep 0.1
+  done
 }
 
 # Types each argument, then pi, into an interactive zsh in a Herdr terminal.
