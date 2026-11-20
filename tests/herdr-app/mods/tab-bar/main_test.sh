@@ -19,8 +19,23 @@ function test_a_tab_takes_the_width_of_its_label_up_to_a_cap() {
 }
 
 function test_the_tabs_the_tray_and_the_space_chip_have_corners_of_at_most_2_px() {
-  assert_contains ".rounded(" "$(space_and_tray_chain)"
-  assert_same "" "$({ tab_chain; space_and_tray_chain; } | round_corners_over 2)"
+  assert_contains ".rounded(" "$(space_chip_chain)"
+  assert_same "" "$({ tab_chain; space_chip_chain; tray_chain; } | round_corners_over 2)"
+}
+
+function test_the_space_chip_is_as_tall_as_the_tray_of_the_tabs() {
+  assert_contains ".h(" "$(tray_chain)"
+  assert_same "$(tray_chain | heights)" "$(space_chip_chain | heights)"
+}
+
+function test_the_space_chip_touches_the_tray_of_the_tabs() {
+  assert_contains "h_flex()" "$(row_of_the_space_chip)"
+  assert_same "" "$(row_of_the_space_chip | gaps)"
+  assert_same "" "$({ space_chip_chain; tray_chain; } | margins)"
+}
+
+function test_the_bar_keeps_its_space_between_the_parts_on_the_right() {
+  assert_contains ".gap(8)" "$(bar_row)"
 }
 
 function test_the_program_icon_is_at_most_18_px() {
@@ -32,8 +47,32 @@ function tab_chain() {
   sed -n '/const tab = (c) =>/,/\.child(tile/p' "$MAIN"
 }
 
-function space_and_tray_chain() {
-  sed -n '/\.id("tm-space")/,/\.children(space\.tabs\.map(tab))/p' "$MAIN"
+function space_chip_chain() {
+  sed -n '/\.id("tm-space")/,/space\.name/p' "$MAIN"
+}
+
+function tray_chain() {
+  sed -n '/space\.name/,/\.children(space\.tabs\.map(tab))/p' "$MAIN" | sed 1d
+}
+
+function row_of_the_space_chip() {
+  awk '/h_flex\(\)$/ && !/own\(/ { row = ""; on = 1 } on { row = row $0 "\n" } /\.id\("tm-space"\)/ { printf "%s", row; exit }' "$MAIN"
+}
+
+function bar_row() {
+  sed -n '/return h_flex()/,/\.child(/p' "$MAIN"
+}
+
+function gaps() {
+  grep -oE '\.gap\([0-9]+\)'
+}
+
+function margins() {
+  grep -oE '\.m[lrx]?\([0-9]+\)'
+}
+
+function heights() {
+  grep -oE '\.h\([0-9]+\)'
 }
 
 function tile_function() {
