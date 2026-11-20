@@ -50,9 +50,9 @@ function tile(t, C, p) {
   return div()
     .relative()
     .flex_none()
-    .w(26)
-    .h(26)
-    .rounded(7)
+    .w(18)
+    .h(18)
+    .rounded(2)
     .border_1()
     .border_color(C.tabEdge)
     .bg(g?.tile ?? C.chip)
@@ -60,10 +60,10 @@ function tile(t, C, p) {
     .items_center()
     .justify_center()
     .when(Boolean(g?.icon), (el) =>
-      el.child(g.tint ? svg(g.icon).size(15).text_color(g.color ?? C.text) : image(g.icon).w(15).h(15)),
+      el.child(g.tint ? svg(g.icon).size(12).text_color(g.color ?? C.text) : image(g.icon).w(12).h(12)),
     )
     .when(Boolean(dot), (el) =>
-      el.child(div().absolute().top(-4).right(-4).w(11).h(11).rounded_full().border_2().border_color(C.tray).bg(dot)),
+      el.child(div().absolute().top(-3).right(-3).w(9).h(9).rounded_full().border_1().border_color(C.tray).bg(dot)),
     );
 }
 
@@ -201,14 +201,14 @@ export default class TerminalsBar extends View {
       return own(h_flex())
         .id(`tm-${c.id}`)
         .flex_shrink(1)
-        .w(260)
+        .max_w(220)
         .min_w(0)
         .h_full()
-        .pl(5)
-        .pr(12)
-        .gap(9)
+        .pl(4)
+        .pr(8)
+        .gap(6)
         .items_center()
-        .rounded(13)
+        .rounded(2)
         .border_1()
         .cursor_pointer()
         .text_size(13)
@@ -242,7 +242,7 @@ export default class TerminalsBar extends View {
           .pr(12)
           .gap(8)
           .items_center()
-          .rounded_full()
+          .rounded(2)
           .bg(C.chip)
           .cursor_pointer()
           .text_size(13)
@@ -259,7 +259,7 @@ export default class TerminalsBar extends View {
           .h(36)
           .p(3)
           .gap(3)
-          .rounded(16)
+          .rounded(2)
           .bg(C.tray)
           .children(space.tabs.map(tab)),
       )
