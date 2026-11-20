@@ -5,8 +5,8 @@
 
 import { View, div, svg, image } from "gpui-kit";
 import { h_flex } from "gpui-base";
-import { spaces, panes, terminals, run, theme, home, openOverlay, window as win, shared, setShared, nextCommand, notify, exec, checking } from "herdr";
-import { tabText, tabFolder } from "./label.js";
+import { spaces, panes, terminals, run, theme, openOverlay, window as win, shared, setShared, nextCommand, notify, exec, checking } from "herdr";
+import { tabText } from "./label.js";
 import { statusText, untilNextMinute } from "./status.js";
 import { observeTabs, lastTab } from "./history.js";
 import { numberTabs, nextMove, swapNumbers, tabNumbered } from "./numbers.js";
@@ -29,12 +29,6 @@ function colors(t) {
     dim: t.dim,
     status: t.accent,
   };
-}
-
-function folder(cwd) {
-  if (!cwd) return "";
-  const h = home();
-  return cwd === h ? "~" : cwd.startsWith(h + "/") ? "~" + cwd.slice(h.length) : cwd;
 }
 
 // The pane a tab's tab speaks for: the focused one, else its agent, else the first.
@@ -198,7 +192,6 @@ export default class TerminalsBar extends View {
 
     const tab = (c) => {
       const p = lead(all, c.id);
-      const where = tabFolder(c, folder(p?.cwd));
       const record = p?.terminal ? records.find((r) => r.address === p.terminal) : undefined;
       const text = tabText(c, record);
       return own(h_flex())
@@ -226,10 +219,8 @@ export default class TerminalsBar extends View {
         .child(
           h_flex()
             .min_w(0)
-            .gap(6)
             .truncate()
-            .when(Boolean(text), (el) => el.child(div().flex_none().text_color(c.active ? C.text : C.label).child(text)))
-            .when(Boolean(where), (el) => el.child(div().truncate().text_color(C.dim).child(where))),
+            .when(Boolean(text), (el) => el.child(div().truncate().text_color(c.active ? C.text : C.label).child(text))),
         );
     };
 

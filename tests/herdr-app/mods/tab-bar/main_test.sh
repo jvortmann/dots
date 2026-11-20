@@ -22,6 +22,11 @@ function test_a_tab_shows_its_number_then_its_icon_then_its_name() {
   assert_same "number icon text " "$(tab_chain | tab_parts)"
 }
 
+function test_no_tab_shows_a_path_named_or_not() {
+  assert_contains "const tab = (c) =>" "$(tab_chain)"
+  assert_same "" "$(tab_chain | grep -oE '\.cwd\b' | tr '\n' ' ')"
+}
+
 function test_the_tabs_the_tray_and_the_space_chip_have_corners_of_at_most_2_px() {
   assert_contains ".rounded(" "$(space_chip_chain)"
   assert_same "" "$({ tab_chain; space_chip_chain; tray_chain; } | round_corners_over 2)"

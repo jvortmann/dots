@@ -27,14 +27,6 @@ function test_a_tab_nobody_named_shows_the_process_name_and_not_the_program_name
   assert_same '"nvim"' "$(text_of '{"index":2,"name":"2","named":false}' '{"address":"t7","foreground":{"name":"nvim"},"program":{"key":"nvim","name":"Neovim"}}')"
 }
 
-function test_a_tab_nobody_named_shows_no_folder() {
-  assert_same '""' "$(folder_of '{"index":2,"name":"2","named":false}' '~/prj')"
-}
-
-function test_a_renamed_tab_keeps_its_folder() {
-  assert_same '"~/prj"' "$(folder_of '{"index":2,"name":"api","named":true}' '~/prj')"
-}
-
 # Prints, as JSON, the text that the tab in $1, a TabInfo as JSON, shows after its icon.
 # $2 is the record of its terminal, as terminals() gives it, when it has one.
 text_of() {
@@ -42,13 +34,5 @@ text_of() {
     const { tabText } = await import(process.env.LABEL);
     const terminal = process.env.TERMINAL ? JSON.parse(process.env.TERMINAL) : undefined;
     console.log(JSON.stringify(tabText(JSON.parse(process.env.TAB), terminal)));
-  '
-}
-
-# Prints, as JSON, the folder that the tab in $1, a TabInfo as JSON, shows for folder $2.
-folder_of() {
-  TAB="$1" FOLDER="$2" LABEL="$LABEL" mise x node@latest -- node --input-type=module -e '
-    const { tabFolder } = await import(process.env.LABEL);
-    console.log(JSON.stringify(tabFolder(JSON.parse(process.env.TAB), process.env.FOLDER)));
   '
 }
