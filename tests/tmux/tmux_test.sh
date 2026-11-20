@@ -20,8 +20,10 @@ function set_up() {
   SERVER="bashunit-$$-$RANDOM"
 }
 
+# The server leaves its socket file, so tear_down removes it.
 function tear_down() {
   tmux -L "$SERVER" kill-server 2> /dev/null || true
+  rm -f "${TMUX_TMPDIR:-/tmp}/tmux-$(id -u)/$SERVER"
 }
 
 function test_a_new_pane_runs_the_homebrew_zsh() {

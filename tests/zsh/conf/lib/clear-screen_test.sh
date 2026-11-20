@@ -12,10 +12,17 @@ function set_up() {
   SERVER="bashunit-$$-$RANDOM"
 }
 
-# Types exit, so zsh ends and the tmux server ends with its last session.
+# Types exit, so zsh ends and the tmux server ends with its last session. The
+# server leaves its socket file, so tear_down waits at most 5 seconds for the
+# server to end, then removes the file.
 function tear_down() {
   [[ -n $SERVER ]] || return 0
   tmux -L "$SERVER" send-keys exit Enter 2> /dev/null || true
+  for _ in {1..50}; do
+    tmux -L "$SERVER" has-session 2> /dev/null || break
+    sleep 0.1
+  done
+  rm -f "${TMUX_TMPDIR:-/tmp}/tmux-$(id -u)/$SERVER"
 }
 
 function test_a_clear_keeps_the_lines_of_the_screen_in_the_history() {
