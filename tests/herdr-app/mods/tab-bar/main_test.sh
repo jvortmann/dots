@@ -59,6 +59,14 @@ function test_the_agents_that_need_you_take_the_blocked_color() {
   assert_contains "text_color(t.blocked).child(needsText(" "$(right_side)"
 }
 
+function test_the_bar_has_no_command_palette_button() {
+  assert_same "" "$(grep -oE 'tm-keys|app\.palette' "$MAIN" | tr '\n' ' ')"
+}
+
+function test_the_bar_has_no_new_tab_button() {
+  assert_same "" "$(grep -oE 'tm-new|tab\.new' "$MAIN" | tr '\n' ' ')"
+}
+
 function test_the_program_icon_is_at_most_18_px() {
   assert_contains "function tile(" "$(tile_function)"
   assert_same "" "$(tile_function | sizes_over 18)"

@@ -93,19 +93,6 @@ function windowButton(C, id, icon, command) {
   );
 }
 
-function iconButton(C, id, icon, onClick) {
-  return own(div())
-    .id(id)
-    .flex_none()
-    .p(7)
-    .rounded(8)
-    .text_color(C.dim)
-    .cursor_pointer()
-    .hover((s) => s.bg(C.chip).text_color(C.text))
-    .on_click(onClick)
-    .child(svg(`mods/tab-bar/${icon}.svg`).size(17));
-}
-
 export default class TerminalsBar extends View {
   init(_props, cx) {
     this.host = "";
@@ -272,8 +259,6 @@ export default class TerminalsBar extends View {
           ),
       )
       .child(div().flex_1())
-      .child(iconButton(C, "tm-keys", "command", () => run("app.palette")))
-      .child(iconButton(C, "tm-new", "plus", () => run("tab.new", { space: space.id })))
       .child(
         h_flex()
           .flex_none()
