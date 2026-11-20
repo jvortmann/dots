@@ -5,8 +5,8 @@
 
 import { View, div, svg, image } from "gpui-kit";
 import { h_flex } from "gpui-base";
-import { spaces, panes, run, theme, home, openOverlay, window as win, shared, setShared, nextCommand, notify, exec, checking } from "herdr";
-import { tabLabel } from "./label.js";
+import { spaces, panes, terminals, run, theme, home, openOverlay, window as win, shared, setShared, nextCommand, notify, exec, checking } from "herdr";
+import { tabLabel, tabFolder } from "./label.js";
 import { statusText, untilNextMinute } from "./status.js";
 import { observeTabs, lastTab } from "./history.js";
 import { numberTabs, nextMove, swapNumbers, tabNumbered } from "./numbers.js";
@@ -194,10 +194,12 @@ export default class TerminalsBar extends View {
     if (!space) return div();
     const all = panes();
     const w = win() ?? {};
+    const records = terminals();
 
     const tab = (c) => {
       const p = lead(all, c.id);
-      const where = folder(p?.cwd);
+      const where = tabFolder(c, folder(p?.cwd));
+      const record = p?.terminal ? records.find((r) => r.address === p.terminal) : undefined;
       return own(h_flex())
         .id(`tm-${c.id}`)
         .flex_shrink(1)
@@ -224,7 +226,7 @@ export default class TerminalsBar extends View {
             .min_w(0)
             .gap(6)
             .truncate()
-            .child(div().flex_none().text_color(c.active ? C.text : C.label).child(tabLabel(c, numbers[space.id][c.id])))
+            .child(div().flex_none().text_color(c.active ? C.text : C.label).child(tabLabel(c, numbers[space.id][c.id], record)))
             .when(Boolean(where), (el) => el.child(div().truncate().text_color(C.dim).child(where))),
         );
     };
