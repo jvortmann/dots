@@ -26,11 +26,6 @@ function test_the_layout_shows_the_window_mod_so_that_it_maximizes_the_window_at
     | select(. == "window")' "$LAYOUT")"
 }
 
-function test_the_layout_shows_the_nav_mod_so_that_ctrl_h_j_k_l_reach_it() {
-  assert_same "nav" "$(jq -r '.. | objects | select(.hidden != true) | .content?.mod? // empty
-    | select(. == "nav")' "$LAYOUT")"
-}
-
 function test_the_tab_bar_shows_below_the_terminals() {
   assert_same "active tab-bar" "$(jq -r '.. | objects | select(.type? == "column") | .children
     | map(if .content?.tab? == "active" then "active"

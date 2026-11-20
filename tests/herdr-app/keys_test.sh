@@ -7,8 +7,9 @@ function set_up() {
   [[ -f $KEYS ]] || bashunit::fail "missing the file under test: $KEYS"
 }
 
-function test_ctrl_h_j_k_l_in_a_terminal_go_left_down_up_and_right_through_the_nav_mod() {
-  assert_same "nav.left nav.down nav.up nav.right" \
+# zsh/conf/plugins/herdr-nav.zsh moves the pane, and nvim moves its windows.
+function test_ctrl_h_j_k_l_in_a_terminal_go_to_the_program() {
+  assert_same "terminal terminal terminal terminal" \
     "$(jq -r '.terminal | [."ctrl-h", ."ctrl-j", ."ctrl-k", ."ctrl-l"] | join(" ")' "$KEYS")"
 }
 
@@ -105,10 +106,15 @@ function test_prefix_question_mark_opens_the_help_of_the_app() {
   assert_same '"app.help"' "$(binding global "ctrl-a ?")"
 }
 
-function test_prefix_a_ctrl_k_and_ctrl_l_in_a_terminal_send_those_keys_to_it() {
+function test_prefix_a_in_a_terminal_sends_ctrl_a_to_it() {
   assert_same '"send:\u0001"' "$(binding terminal "ctrl-a a")"
-  assert_same '"send:\u000b"' "$(binding terminal "ctrl-a ctrl-k")"
-  assert_same '"send:\f"' "$(binding terminal "ctrl-a ctrl-l")"
+}
+
+# In Herdr, zsh moves the pane on ctrl-k and ctrl-l, and it kills and clears
+# on their CSI u forms.
+function test_prefix_ctrl_k_and_ctrl_l_in_a_terminal_send_those_keys_in_the_csi_u_form() {
+  assert_same '"send:\u001b[107;5u"' "$(binding terminal "ctrl-a ctrl-k")"
+  assert_same '"send:\u001b[108;5u"' "$(binding terminal "ctrl-a ctrl-l")"
 }
 
 function test_cmd_k_and_cmd_shift_p_open_the_command_palette() {

@@ -85,7 +85,6 @@ herdr-app/mods/*
 !herdr-app/mods/tab-bar/
 !herdr-app/mods/copy-mode/
 !herdr-app/mods/window/
-!herdr-app/mods/nav/
 !herdr-app/layouts/
 herdr-app/layouts/*
 !herdr-app/layouts/mine.json
