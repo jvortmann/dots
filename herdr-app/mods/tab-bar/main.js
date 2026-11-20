@@ -280,6 +280,8 @@ export default class TerminalsBar extends View {
           .child(
             h_flex()
               .gap(6)
+              .items_center()
+              .child(div().size(6).rounded(3).bg(C.dim))
               .child(agentsText(list))
               .when(Boolean(needsText(list)), (el) => el.child(div().text_color(t.blocked).child(needsText(list)))),
           )

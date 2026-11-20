@@ -83,6 +83,10 @@ function test_the_machine_label_lightens_under_the_pointer_like_the_space_chip()
   assert_contains ".hover((s) => s.text_color(C.text))" "$(machine_function)"
 }
 
+function test_the_agent_count_has_the_dim_dot_of_the_stock_status_bar() {
+  assert_contains "h_flex().gap(6).items_center().child(div().size(6).rounded(3).bg(C.dim)).child(agentsText(list))" "$(agents_group)"
+}
+
 function test_the_program_icon_is_at_most_18_px() {
   assert_contains "function tile(" "$(tile_function)"
   assert_same "" "$(tile_function | sizes_over 18)"
@@ -130,6 +134,10 @@ function margins() {
 
 function heights() {
   grep -oE '\.h\([0-9]+\)'
+}
+
+function agents_group() {
+  right_side | awk '/h_flex\(\)/ { group = "" } { group = group $0 } /agentsText\(/ { print group; exit }' | tr -d ' '
 }
 
 function machine_function() {
