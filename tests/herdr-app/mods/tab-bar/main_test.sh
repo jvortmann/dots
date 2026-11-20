@@ -67,6 +67,22 @@ function test_the_bar_has_no_new_tab_button() {
   assert_same "" "$(grep -oE 'tm-new|tab\.new' "$MAIN" | tr '\n' ' ')"
 }
 
+function test_a_click_on_the_machine_label_opens_the_add_machine_dialog() {
+  assert_contains 'on_click(() => run("mod.open", { name: "machine-add" }))' "$(machine_function)"
+}
+
+function test_a_press_on_the_machine_label_does_not_drag_the_window() {
+  assert_contains "return own(h_flex())" "$(machine_function)"
+}
+
+function test_the_machine_label_shows_a_hand_cursor_like_the_other_controls() {
+  assert_contains ".cursor_pointer()" "$(machine_function)"
+}
+
+function test_the_machine_label_lightens_under_the_pointer_like_the_space_chip() {
+  assert_contains ".hover((s) => s.text_color(C.text))" "$(machine_function)"
+}
+
 function test_the_program_icon_is_at_most_18_px() {
   assert_contains "function tile(" "$(tile_function)"
   assert_same "" "$(tile_function | sizes_over 18)"
@@ -114,6 +130,10 @@ function margins() {
 
 function heights() {
   grep -oE '\.h\([0-9]+\)'
+}
+
+function machine_function() {
+  sed -n '/^function machine(/,/^}/p' "$MAIN"
 }
 
 function tile_function() {

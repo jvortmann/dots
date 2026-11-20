@@ -62,9 +62,18 @@ function tile(t, C, p) {
 }
 
 // The machine label of the stock workspace-status mod, with the host name as
-// its text. The stock label has no click, so this one has none.
-function machine({ icon, name }) {
-  return h_flex().gap(6).items_center().child(svg(`mods/workspace-chrome/${icon}.svg`).size(13)).child(name);
+// its text. A click opens the stock Add machine dialog, like the row of the
+// stock sidebar footer.
+function machine(C, { icon, name }) {
+  return own(h_flex())
+    .id("tm-machine")
+    .gap(6)
+    .items_center()
+    .cursor_pointer()
+    .hover((s) => s.text_color(C.text))
+    .on_click(() => run("mod.open", { name: "machine-add" }))
+    .child(svg(`mods/workspace-chrome/${icon}.svg`).size(13))
+    .child(name);
 }
 
 // A control in the draggable bar: the press is its own, not the window's
@@ -274,7 +283,7 @@ export default class TerminalsBar extends View {
               .child(agentsText(list))
               .when(Boolean(needsText(list)), (el) => el.child(div().text_color(t.blocked).child(needsText(list)))),
           )
-          .child(machine(machineLabel(space, this.host)))
+          .child(machine(C, machineLabel(space, this.host)))
           .child(timeText(new Date())),
       )
       .when(Boolean(w.buttons), (el) =>
