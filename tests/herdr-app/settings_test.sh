@@ -29,6 +29,10 @@ function test_the_terminals_join_ligatures_as_ghostty_does_by_default() {
   assert_same "true" "$(jq -r '.font_ligatures' "$SETTINGS")"
 }
 
+function test_the_panes_show_no_scroll_bar() {
+  assert_same "false" "$(jq -r '.pane_scrollbars' "$SETTINGS")"
+}
+
 function test_the_appearance_is_fixed_to_light_or_dark_in_the_form_swap_theme_edits() {
   assert_same "1" "$(grep -cE '^  "appearance": "(light|dark)",?$' "$SETTINGS")"
 }

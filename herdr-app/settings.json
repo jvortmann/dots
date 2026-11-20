@@ -8,6 +8,7 @@
   "font_weight": 300,
   "font_ligatures": true,
   "minimum_contrast": 1,
+  "pane_scrollbars": false,
   "theme": {
     "light": "solarized-light",
     "dark": "solarized-dark"
