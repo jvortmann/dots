@@ -33,6 +33,10 @@ function test_the_tab_bar_shows_below_the_terminals() {
     | select(length == 2) | join(" ")' "$LAYOUT")"
 }
 
+function test_the_panes_show_the_own_pane_header() {
+  assert_same "pane-header" "$(jq -r '.. | objects | .pane?.header?.content?.mod? // empty' "$LAYOUT")"
+}
+
 function test_the_sidebar_that_cmd_b_shows_starts_hidden() {
   local sidebar
   sidebar="$(jq -r '.global["cmd-b"] | ltrimstr("layout.toggle:")' "$KEYS")"

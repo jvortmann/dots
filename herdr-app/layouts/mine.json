@@ -52,7 +52,7 @@
           "content": {
             "tab": "active",
             "pane": {
-              "header": { "content": { "mod": "terminals-pane" }, "height": 38 },
+              "header": { "content": { "mod": "pane-header" }, "height": 38 },
               "background": "background",
               "border": { "width": 1, "color": "border" },
               "focus": { "width": 1, "color": "accent" },
