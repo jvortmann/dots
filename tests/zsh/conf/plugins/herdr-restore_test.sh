@@ -207,16 +207,6 @@ function test_a_terminal_where_pi_ended_stays_a_shell() {
   assert_same "get t7 --json" "$(logged shell-ready > /dev/null; grep -v shell-ready "$LOG")"
 }
 
-# tmux starts login shells, and a tmux inside a Herdr terminal passes its id
-# on to each pane.
-function test_a_login_shell_in_tmux_calls_no_hc() {
-  IN_TMUX=1 lost_terminal_with_labels '{"restore.cmd": "pi"}'
-
-  type_in_shell 'print -r -- shell-ready >> $HOME/hc.log'
-
-  assert_same "shell-ready" "$(logged shell-ready > /dev/null; cat "$LOG")"
-}
-
 function test_a_login_shell_outside_herdr_calls_no_hc() {
   TERMINAL_ID="" lost_terminal_with_labels '{"restore.cmd": "pi"}'
 
@@ -242,17 +232,14 @@ type_in_shell() {
 # Starts zsh in a tmux pane as Herdr starts the shell of a lost terminal: a
 # login shell with the id t7, where the fake hc gives the labels $1. The zshrc
 # loads the plugin before PATH holds the programs, as mise loads after it. The
-# fake pi and nvim log their arguments and end. SHELL_FLAGS replaces -l. Herdr
-# sets no TMUX, so the zshrc removes the one of the test pane, unless IN_TMUX
-# is set.
+# fake pi and nvim log their arguments and end. SHELL_FLAGS replaces -l.
 lost_terminal_with_labels() {
   printf '{"labels": %s}\n' "$1" > "$HOME_DIR/terminal.json"
   fake_hc "[ \"\$1\" = get ] && cat $(printf %q "$HOME_DIR/terminal.json")"
   for program in nvim pi; do
     printf '#!/bin/sh\necho "%s $*" >> %q\n' "$program" "$LOG" > "$BIN/$program"
   done
-  [[ -n ${IN_TMUX-} ]] || echo 'unset TMUX' > "$HOME_DIR/.zshrc"
-  printf 'source %q\npath=(%q $path)\nalias v=nvim\nPS1="%%%% "\n' "$PLUGIN" "$BIN" >> "$HOME_DIR/.zshrc"
+  printf 'source %q\npath=(%q $path)\nalias v=nvim\nPS1="%%%% "\n' "$PLUGIN" "$BIN" > "$HOME_DIR/.zshrc"
   start_shell "${SHELL_FLAGS--l}"
 }
 

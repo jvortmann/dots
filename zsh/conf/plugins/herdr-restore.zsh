@@ -78,11 +78,9 @@ _herdr_restore_relaunch() {
 preexec_functions+=(_herdr_restore_preexec)
 precmd_functions+=(_herdr_restore_precmd)
 # Herdr starts zsh as a login shell. A subshell and the shell in nvim :terminal
-# are not login shells, and outside Herdr HC_TERMINAL_ID is not set. tmux starts
-# login shells too, and a tmux in a Herdr terminal passes HC_TERMINAL_ID on to its
-# panes, so a shell with TMUX set does not ask. hc and jq take about 5
-# milliseconds, once for each new Herdr shell.
-if [[ -n $HC_TERMINAL_ID && -o login && -z $TMUX ]]; then
+# are not login shells, and outside Herdr HC_TERMINAL_ID is not set. hc and jq
+# take about 5 milliseconds, once for each new Herdr shell.
+if [[ -n $HC_TERMINAL_ID && -o login ]]; then
   autoload -Uz add-zle-hook-widget
   add-zle-hook-widget line-init _herdr_restore_relaunch
 fi
