@@ -106,9 +106,9 @@
     "ctrl-a a": "send:\u0001",
     "ctrl-a ctrl-k": "send:\u000b",
     "ctrl-a ctrl-l": "send:\u000c",
-    "ctrl-h": "pane.go:left",
-    "ctrl-j": "pane.go:down",
-    "ctrl-k": "pane.go:up",
-    "ctrl-l": "pane.go:right"
+    "ctrl-h": "nav.left",
+    "ctrl-j": "nav.down",
+    "ctrl-k": "nav.up",
+    "ctrl-l": "nav.right"
   }
 }

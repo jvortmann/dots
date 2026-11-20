@@ -7,8 +7,8 @@ function set_up() {
   [[ -f $KEYS ]] || bashunit::fail "missing the file under test: $KEYS"
 }
 
-function test_ctrl_h_j_k_l_in_a_terminal_go_to_the_pane_left_down_up_and_right() {
-  assert_same "pane.go:left pane.go:down pane.go:up pane.go:right" \
+function test_ctrl_h_j_k_l_in_a_terminal_go_left_down_up_and_right_through_the_nav_mod() {
+  assert_same "nav.left nav.down nav.up nav.right" \
     "$(jq -r '.terminal | [."ctrl-h", ."ctrl-j", ."ctrl-k", ."ctrl-l"] | join(" ")' "$KEYS")"
 }
 
