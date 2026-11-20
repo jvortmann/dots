@@ -43,8 +43,8 @@
     {
       "id": "work",
       "type": "column",
-      "padding": [6, 6],
-      "gap": 8,
+      "padding": [0, 0],
+      "gap": 0,
       "children": [
         {
           "id": "main",
@@ -56,8 +56,8 @@
               "background": "background",
               "border": { "width": 1, "color": "border" },
               "focus": { "width": 1, "color": "accent" },
-              "radius": 12,
-              "gap": 8,
+              "radius": 3,
+              "gap": 0,
               "lone": true
             }
           }

@@ -37,6 +37,15 @@ function test_the_panes_show_the_own_pane_header() {
   assert_same "pane-header" "$(jq -r '.. | objects | .pane?.header?.content?.mod? // empty' "$LAYOUT")"
 }
 
+function test_the_terminals_fill_the_work_area_with_no_padding_and_no_gaps() {
+  assert_same "0 0 0 0" "$(jq -r '.children[] | select(.id == "work")
+    | [.padding[], .gap, (.. | objects | .pane?.gap? // empty)] | join(" ")' "$LAYOUT")"
+}
+
+function test_the_panes_keep_only_slightly_rounded_corners() {
+  assert_same "true" "$(jq -r '.. | objects | .pane?.radius? // empty | . > 0 and . <= 4' "$LAYOUT")"
+}
+
 function test_the_sidebar_that_cmd_b_shows_starts_hidden() {
   local sidebar
   sidebar="$(jq -r '.global["cmd-b"] | ltrimstr("layout.toggle:")' "$KEYS")"
