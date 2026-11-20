@@ -42,8 +42,8 @@ function test_the_terminals_fill_the_work_area_with_no_padding_and_no_gaps() {
     | [.padding[], .gap, (.. | objects | .pane?.gap? // empty)] | join(" ")' "$LAYOUT")"
 }
 
-function test_the_panes_keep_only_slightly_rounded_corners() {
-  assert_same "true" "$(jq -r '.. | objects | .pane?.radius? // empty | . > 0 and . <= 4' "$LAYOUT")"
+function test_the_panes_have_square_corners() {
+  assert_same "0" "$(jq -r '.. | objects | .pane?.radius? | select(. != null)' "$LAYOUT")"
 }
 
 function test_the_sidebar_that_cmd_b_shows_starts_hidden() {

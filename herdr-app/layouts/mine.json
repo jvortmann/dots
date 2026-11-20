@@ -56,7 +56,7 @@
               "background": "background",
               "border": { "width": 1, "color": "border" },
               "focus": { "width": 1, "color": "accent" },
-              "radius": 3,
+              "radius": 0,
               "gap": 0,
               "lone": true
             }
