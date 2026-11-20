@@ -33,8 +33,8 @@ function test_the_tab_bar_shows_below_the_terminals() {
     | select(length == 2) | join(" ")' "$LAYOUT")"
 }
 
-function test_the_panes_show_the_own_pane_header() {
-  assert_same "pane-header" "$(jq -r '.. | objects | .pane?.header?.content?.mod? // empty' "$LAYOUT")"
+function test_the_panes_show_no_header() {
+  assert_same "" "$(jq -c '.. | objects | .pane?.header? // empty' "$LAYOUT")"
 }
 
 function test_the_terminals_sit_4_px_inside_the_work_area_with_no_gaps() {

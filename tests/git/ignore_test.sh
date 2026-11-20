@@ -39,10 +39,6 @@ function test_ignores_the_files_that_the_herdr_app_writes_into_the_window_mod() 
   assert_same "herdr-app/mods/window/gpui-kit.d.ts" "$(ignored herdr-app/mods/window/gpui-kit.d.ts)"
 }
 
-function test_keeps_the_own_pane_header_mod_in_the_herdr_app_folder() {
-  assert_same "" "$(ignored herdr-app/mods/pane-header/main.js)"
-}
-
 ignored() {
   git -C "$REPO" -c core.excludesFile="$IGNORE" check-ignore "$1"
 }
