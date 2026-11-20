@@ -44,10 +44,9 @@ export default class PaneHeader extends View {
     // Shells often put the folder in their title already.
     const title = p.title || "shell";
     const dir = where && !title.includes(where) && !/^[~/]/.test(title) ? where : "";
-    // The name sits in the middle, clear of the macOS window buttons over the
-    // top-left pane. The two sides share the rest equally, so it stays centered.
-    // The left side is never narrower than the buttons, so a narrow pane keeps
-    // the name clear too.
+    // The name sits in the middle. The two sides share the rest equally, so it
+    // stays centered. The left side is never narrower than the buttons on the
+    // right, so the name stays centered in a narrow pane too.
     return h_flex()
       .id(`tm-head-${pane}`)
       .size_full()

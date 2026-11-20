@@ -52,6 +52,15 @@ function test_the_sidebar_that_cmd_b_shows_starts_hidden() {
   assert_same "true" "$(jq -r --arg id "$sidebar" '.. | objects | select(.id? == $id) | .hidden' "$LAYOUT")"
 }
 
+function test_the_macos_window_buttons_sit_out_of_view() {
+  assert_same "-100 -100" "$(jq -r '.traffic_lights | join(" ")' "$LAYOUT")"
+}
+
+function test_the_bottom_bar_moves_the_window_while_the_sidebar_is_hidden() {
+  assert_same "tab-bar" "$(jq -r 'def shown: select(.hidden != true) | ., (.children[]? | shown);
+    [shown | select(.window_drag == true) | .content?.mod? // empty] | join(" ")' "$LAYOUT")"
+}
+
 function test_the_layout_colors_follow_the_theme_in_both_appearances() {
   assert_same "" "$(jq -r '.. | strings | select(startswith("#"))' "$LAYOUT")"
 }

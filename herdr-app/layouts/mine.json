@@ -3,7 +3,7 @@
   "cloned_from": { "name": "terminals", "version": "0.1.16" },
   "type": "row",
   "titlebar": "none",
-  "traffic_lights": [16, 18],
+  "traffic_lights": [-100, -100],
   "background": "canvas",
   "divider": { "width": 1, "color": "border" },
   "children": [
