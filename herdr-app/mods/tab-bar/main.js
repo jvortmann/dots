@@ -1,13 +1,14 @@
-// The bar at the bottom of the layout: space picker, tabs, host and time, and
-// window controls. It runs last-tab (ctrl-a ctrl-a), which selects the tab
-// shown before. Each tab keeps its number, as in tmux: the bar numbers each
-// new tab and moves it into number order, and select-N selects by number.
+// The bar at the bottom of the layout: space picker, tabs, status, and window
+// controls. The status is the agent count, the agents that need you, the
+// machine label and the time. It runs last-tab (ctrl-a ctrl-a), which selects
+// the tab shown before. Each tab keeps its number, as in tmux: the bar numbers
+// each new tab and moves it into number order, and select-N selects by number.
 
 import { View, div, svg, image } from "gpui-kit";
 import { h_flex } from "gpui-base";
-import { spaces, panes, terminals, run, theme, openOverlay, window as win, shared, setShared, nextCommand, notify, exec, checking } from "herdr";
+import { spaces, panes, agents, terminals, run, theme, openOverlay, window as win, shared, setShared, nextCommand, notify, exec, checking } from "herdr";
 import { tabText } from "./label.js";
-import { statusText, untilNextMinute } from "./status.js";
+import { agentsText, needsText, machineLabel, timeText, untilNextMinute } from "./status.js";
 import { observeTabs, lastTab } from "./history.js";
 import { numberTabs, nextMove, swapNumbers, tabNumbered } from "./numbers.js";
 
@@ -27,7 +28,6 @@ function colors(t) {
     text: t.foreground,
     label: t.muted,
     dim: t.dim,
-    status: t.accent,
   };
 }
 
@@ -59,6 +59,12 @@ function tile(t, C, p) {
     .when(Boolean(dot), (el) =>
       el.child(div().absolute().top(-3).right(-3).w(9).h(9).rounded_full().border_1().border_color(C.tray).bg(dot)),
     );
+}
+
+// The machine label of the stock workspace-status mod, with the host name as
+// its text. The stock label has no click, so this one has none.
+function machine({ icon, name }) {
+  return h_flex().gap(6).items_center().child(svg(`mods/workspace-chrome/${icon}.svg`).size(13)).child(name);
 }
 
 // A control in the draggable bar: the press is its own, not the window's
@@ -108,7 +114,7 @@ export default class TerminalsBar extends View {
         this.host = (await exec("hostname", ["-s"])).stdout.trim();
         cx.notify();
       } catch {
-        // Without the host, the bar shows the time only.
+        // Without the host, the machine label shows "This computer".
       }
     });
     this.tick(cx);
@@ -189,6 +195,7 @@ export default class TerminalsBar extends View {
     const all = panes();
     const w = win() ?? {};
     const records = terminals();
+    const list = agents();
 
     const tab = (c) => {
       const p = lead(all, c.id);
@@ -267,7 +274,24 @@ export default class TerminalsBar extends View {
       .child(div().flex_1())
       .child(iconButton(C, "tm-keys", "command", () => run("app.palette")))
       .child(iconButton(C, "tm-new", "plus", () => run("tab.new", { space: space.id })))
-      .child(div().flex_none().pl(4).pr(8).text_size(13).text_color(C.status).child(statusText(this.host, new Date())))
+      .child(
+        h_flex()
+          .flex_none()
+          .pl(4)
+          .pr(8)
+          .gap(12)
+          .items_center()
+          .text_size(13)
+          .text_color(C.label)
+          .child(
+            h_flex()
+              .gap(6)
+              .child(agentsText(list))
+              .when(Boolean(needsText(list)), (el) => el.child(div().text_color(t.blocked).child(needsText(list)))),
+          )
+          .child(machine(machineLabel(space, this.host)))
+          .child(timeText(new Date())),
+      )
       .when(Boolean(w.buttons), (el) =>
         el.child(
           h_flex()

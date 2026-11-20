@@ -47,6 +47,18 @@ function test_the_bar_keeps_its_space_between_the_parts_on_the_right() {
   assert_contains ".gap(8)" "$(bar_row)"
 }
 
+function test_the_status_on_the_right_takes_no_accent_color() {
+  assert_same "" "$(grep -oE 't\.accent|C\.status\b' "$MAIN" | tr '\n' ' ')"
+}
+
+function test_the_right_side_shows_the_agents_then_the_machine_then_the_time() {
+  assert_same "agents needs machine time " "$(right_side | right_parts)"
+}
+
+function test_the_agents_that_need_you_take_the_blocked_color() {
+  assert_contains "text_color(t.blocked).child(needsText(" "$(right_side)"
+}
+
 function test_the_program_icon_is_at_most_18_px() {
   assert_contains "function tile(" "$(tile_function)"
   assert_same "" "$(tile_function | sizes_over 18)"
@@ -54,6 +66,14 @@ function test_the_program_icon_is_at_most_18_px() {
 
 function tab_chain() {
   sed -n '/const tab = (c) =>/,/^    };$/p' "$MAIN"
+}
+
+function right_side() {
+  sed -n '/\.child(div()\.flex_1())/,$p' "$MAIN"
+}
+
+function right_parts() {
+  awk '/agentsText\(/ { print "agents" } /needsText\(/ { print "needs" } /machineLabel\(/ { print "machine" } /timeText\(/ { print "time" }' | tr '\n' ' '
 }
 
 function tab_parts() {
