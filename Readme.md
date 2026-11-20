@@ -64,6 +64,7 @@ which you import by hand in DevDocs and Raycast.
 | `AGENTS.md` | the rules every agent session follows |
 | `APPEND_SYSTEM.md` | our guidelines, agent rules and reply rules, which pi adds after the system prompt it generates (its list of tools and the rules of each extension) |
 | `extensions/preamble.ts` | changes the opening sentence of the system prompt and drops its documentation section, so the main prompt never names the agent harness |
+| `extensions/herdr-restore.ts` | labels a Herdr app terminal with the file of its pi session, so that a terminal that comes back after a reboot resumes that session |
 | `skills/` | the skills that agents load for a kind of work, such as tdd, git-commit and create-pr |
 | `agents/` | five subagents: dev implements one task under TDD, editor writes text that people read and runs `ste-lint` until it passes, review reads a diff and changes nothing, Explore and Plan search and plan and change nothing |
 | `prompts/` | three commands: `/goal`, `/review-architecture` and `/watch-pr` |
