@@ -43,7 +43,7 @@
     {
       "id": "work",
       "type": "column",
-      "padding": [0, 0],
+      "padding": [4, 4],
       "gap": 0,
       "children": [
         {

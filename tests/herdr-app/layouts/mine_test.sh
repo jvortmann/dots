@@ -37,8 +37,8 @@ function test_the_panes_show_the_own_pane_header() {
   assert_same "pane-header" "$(jq -r '.. | objects | .pane?.header?.content?.mod? // empty' "$LAYOUT")"
 }
 
-function test_the_terminals_fill_the_work_area_with_no_padding_and_no_gaps() {
-  assert_same "0 0 0 0" "$(jq -r '.children[] | select(.id == "work")
+function test_the_terminals_sit_4_px_inside_the_work_area_with_no_gaps() {
+  assert_same "4 4 0 0" "$(jq -r '.children[] | select(.id == "work")
     | [.padding[], .gap, (.. | objects | .pane?.gap? // empty)] | join(" ")' "$LAYOUT")"
 }
 
