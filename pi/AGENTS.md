@@ -136,6 +136,13 @@ Use the `ask_user_question` tool for a decision that belongs to a task or a
 plan. That covers a choice between approaches, a question of design or scope,
 and which option to keep. Put the option you recommend first.
 
+When the user asks a question, answer it in a message of its own. The
+question often comes as the answer to an option of the tool. Write text only,
+with no `ask_user_question` call in that message. The interface hides the
+text of a message that holds a call, so the user sees only the question
+window. Put the next question in a later message, after the answer. Never ask
+the same question again before the user sees the answer.
+
 Step 6 applies to permission to go on and to the choice of the next task. Ask
 them in plain text. Ask in plain text also when the session has no interface
 and the tool returns an error.
