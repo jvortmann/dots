@@ -18,11 +18,9 @@ const NUMBERS = "tab-bar.tab-numbers";
 
 function colors(t) {
   return {
-    tray: t.chrome,
-    // The shown tab has an edge and bright text; a hovered tab gets only a fill.
-    tab: t.selected,
-    tabEdge: t.border,
-    hover: t.hover,
+    // The shown tab has a fill, an edge and bright text; a hovered tab gets only bright text.
+    tab: t.surface,
+    tabEdge: `${t.border}40`,
     edge: t.border,
     chip: t.chrome,
     text: t.foreground,
@@ -37,28 +35,22 @@ function lead(all, id) {
   return mine.find((p) => p.focused) ?? mine.find((p) => p.program?.agent) ?? mine[0];
 }
 
-// The program's tile from the app's table: its color, its glyph (or logo) on it.
-function tile(t, C, p) {
+// The program's icon from the app's table: its glyph in its color, or its logo.
+function programIcon(t, C, p) {
   const g = p?.program;
   const dot = p?.status && p.status !== "idle" ? t[p.status] : null;
   return div()
     .relative()
     .flex_none()
-    .w(18)
-    .h(18)
-    .rounded(2)
-    .border_1()
-    .border_color(C.tabEdge)
-    .bg(g?.tile ?? C.chip)
+    .w(14)
+    .h(14)
     .flex()
     .items_center()
     .justify_center()
     .when(Boolean(g?.icon), (el) =>
-      el.child(g.tint ? svg(g.icon).size(12).text_color(g.color ?? C.text) : image(g.icon).w(12).h(12)),
+      el.child(g.tint ? svg(g.icon).size(14).text_color(g.color ?? C.text) : image(g.icon).w(14).h(14)),
     )
-    .when(Boolean(dot), (el) =>
-      el.child(div().absolute().top(-3).right(-3).w(9).h(9).rounded_full().border_1().border_color(C.tray).bg(dot)),
-    );
+    .when(Boolean(dot), (el) => el.child(div().absolute().top(-2).right(-2).w(7).h(7).rounded_full().bg(dot)));
 }
 
 // The machine label of the stock workspace-status mod, with the host name as
@@ -203,27 +195,29 @@ export default class TerminalsBar extends View {
         .max_w(220)
         .min_w(0)
         .h_full()
-        .pl(4)
+        .pl(8)
         .pr(8)
         .gap(6)
         .items_center()
-        .rounded(2)
-        .border_1()
+        .rounded(4)
         .cursor_pointer()
         .text_size(13)
-        .when(c.active, (el) => el.bg(C.tab).border_color(C.tabEdge))
-        .when(!c.active, (el) => el.border_color(C.tray).hover((s) => s.bg(C.hover)))
+        .text_color(C.label)
+        .when(c.active, (el) =>
+          el.pl(7).pr(7).bg(C.tab).border_1().border_color(C.tabEdge).text_color(C.text),
+        )
+        .when(!c.active, (el) => el.hover((s) => s.text_color(C.text)))
         .on_click(() => run("tab.select", { id: c.id }))
         .on_mouse_down("right", () =>
           openOverlay({ mod: "menu", kind: "popup", width: 200, props: { tab: "tab", target: { id: c.id, space: space.id } } }),
         )
         .child(div().flex_none().text_color(C.label).child(`${numbers[space.id][c.id]}`))
-        .child(tile(t, C, p))
+        .child(programIcon(t, C, p))
         .child(
           h_flex()
             .min_w(0)
             .truncate()
-            .when(Boolean(text), (el) => el.child(div().truncate().text_color(c.active ? C.text : C.label).child(text))),
+            .when(Boolean(text), (el) => el.child(div().truncate().child(text))),
         );
     };
 
@@ -235,12 +229,13 @@ export default class TerminalsBar extends View {
         h_flex()
           .flex_shrink(1)
           .min_w(0)
+          .h_full()
           .items_center()
           .child(
             own(h_flex())
               .id("tm-space")
               .flex_none()
-              .h(36)
+              .h_full()
               .pl(10)
               .pr(12)
               .gap(8)
@@ -259,11 +254,8 @@ export default class TerminalsBar extends View {
             h_flex()
               .flex_shrink(1)
               .min_w(0)
-              .h(36)
-              .p(3)
+              .h_full()
               .gap(3)
-              .rounded(2)
-              .bg(C.tray)
               .children(space.tabs.map(tab)),
           ),
       )

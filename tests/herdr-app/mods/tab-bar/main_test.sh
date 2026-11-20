@@ -27,20 +27,51 @@ function test_no_tab_shows_a_path_named_or_not() {
   assert_same "" "$(tab_chain | grep -oE '\.cwd\b' | tr '\n' ' ')"
 }
 
-function test_the_tabs_the_tray_and_the_space_chip_have_corners_of_at_most_2_px() {
+function test_the_tray_and_the_space_chip_have_corners_of_at_most_2_px() {
   assert_contains ".rounded(" "$(space_chip_chain)"
-  assert_same "" "$({ tab_chain; space_chip_chain; tray_chain; } | round_corners_over 2)"
+  assert_same "" "$({ space_chip_chain; tray_chain; } | round_corners_over 2)"
 }
 
-function test_the_space_chip_is_as_tall_as_the_tray_of_the_tabs() {
-  assert_contains ".h(" "$(tray_chain)"
-  assert_same "$(tray_chain | heights)" "$(space_chip_chain | heights)"
+function test_the_shown_tab_rounds_all_four_corners_a_little_like_a_button() {
+  assert_same ".rounded(4) " "$(tab_chain | grep -oE '\.rounded[_a-z]*\([0-9]*\)' | tr '\n' ' ')"
+}
+
+function test_the_space_chip_and_the_tabs_fill_the_height_of_the_bar_up_to_the_panes() {
+  assert_same ".h_full() .h_full() .h_full() .h_full() " "$({ row_of_the_space_chip; space_chip_chain; tray_chain; tab_chain; } | heights)"
 }
 
 function test_the_space_chip_touches_the_tray_of_the_tabs() {
   assert_contains "h_flex()" "$(row_of_the_space_chip)"
   assert_same "" "$(row_of_the_space_chip | gaps)"
   assert_same "" "$({ space_chip_chain; tray_chain; } | margins)"
+}
+
+function test_the_shown_tab_has_the_same_slim_edge_on_all_four_sides_like_a_button() {
+  assert_same ".border_1() " "$(shown_tab_style | border_widths)"
+  assert_contains ".border_color(C.tabEdge)" "$(shown_tab_style)"
+}
+
+function test_the_edge_of_the_shown_tab_is_the_border_color_at_a_quarter_strength() {
+  assert_contains 'tabEdge: `${t.border}40`,' "$(colors_function)"
+}
+
+function test_the_shown_tab_takes_the_surface_fill_one_step_up_from_the_bar() {
+  assert_contains ".bg(C.tab)" "$(shown_tab_style)"
+  assert_contains "tab: t.surface," "$(colors_function)"
+}
+
+function test_a_tab_that_is_not_shown_has_no_border_and_no_fill() {
+  assert_contains ".when(!c.active," "$(other_tab_style)"
+  assert_same "" "$(other_tab_style | grep -oE '\.(border[_a-z0-9]*|bg)\(' | tr '\n' ' ')"
+}
+
+function test_a_tab_keeps_its_content_in_place_when_it_is_shown() {
+  assert_same "$(tab_base_style | side_paddings 1)" "$(shown_tab_style | side_paddings 0)"
+  assert_same "" "$(shown_tab_style | grep -oE '\.p[tby]\(' | tr '\n' ' ')"
+}
+
+function test_the_tabs_sit_in_the_bar_with_no_box_around_them() {
+  assert_same "" "$(tray_chain | box_styles)"
 }
 
 function test_the_bar_keeps_its_space_between_the_parts_on_the_right() {
@@ -87,9 +118,15 @@ function test_the_agent_count_has_the_dim_dot_of_the_stock_status_bar() {
   assert_contains "h_flex().gap(6).items_center().child(div().size(6).rounded(3).bg(C.dim)).child(agentsText(list))" "$(agents_group)"
 }
 
+function test_the_program_icon_draws_plain_with_no_box_and_no_border() {
+  assert_contains "function programIcon(" "$(icon_function)"
+  assert_same "" "$(icon_function | grep -oE '\.border[_a-z0-9]*\(' | tr '\n' ' ')"
+  assert_same "" "$(icon_function | grep -oE '\.(rounded|bg)\([^)]*\)' | grep -v '^\.bg(dot)$' | tr '\n' ' ')"
+}
+
 function test_the_program_icon_is_at_most_18_px() {
-  assert_contains "function tile(" "$(tile_function)"
-  assert_same "" "$(tile_function | sizes_over 18)"
+  assert_contains "function programIcon(" "$(icon_function)"
+  assert_same "" "$(icon_function | sizes_over 18)"
 }
 
 function tab_chain() {
@@ -105,7 +142,7 @@ function right_parts() {
 }
 
 function tab_parts() {
-  awk '/numbers\[space\.id\]/ { print "number" } /tile\(t, C, p\)/ { print "icon" } /\.child\(text\)/ { print "text" }' | tr '\n' ' '
+  awk '/numbers\[space\.id\]/ { print "number" } /programIcon\(t, C, p\)/ { print "icon" } /\.child\(text\)/ { print "text" }' | tr '\n' ' '
 }
 
 function space_chip_chain() {
@@ -124,6 +161,30 @@ function bar_row() {
   sed -n '/return h_flex()/,/\.child(/p' "$MAIN"
 }
 
+function shown_tab_style() {
+  tab_chain | awk '/\.when\(!c\.active,/ { exit } /\.when\(c\.active,/ { on = 1 } on'
+}
+
+function tab_base_style() {
+  tab_chain | awk '/\.when\(/ { exit } 1'
+}
+
+function side_paddings() {
+  grep -oE '\.p[lr]\([0-9]+\)' | awk -v less="$1" -F'[()]' '{ printf "%s(%d) ", $1, $2 - less }'
+}
+
+function other_tab_style() {
+  tab_chain | awk '/\.on_click\(/ { exit } /\.when\(!c\.active,/ { on = 1 } on'
+}
+
+function border_widths() {
+  grep -oE '\.border_[a-z0-9]+\([0-9]*\)' | tr '\n' ' '
+}
+
+function box_styles() {
+  grep -oE '\.(bg|p[xytblr]?|rounded[_a-z]*|border[_a-z0-9]*)\(' | tr '\n' ' '
+}
+
 function gaps() {
   grep -oE '\.gap\([0-9]+\)'
 }
@@ -133,7 +194,7 @@ function margins() {
 }
 
 function heights() {
-  grep -oE '\.h\([0-9]+\)'
+  grep -oE '\.h(_full)?\([0-9]*\)' | tr '\n' ' '
 }
 
 function agents_group() {
@@ -144,8 +205,12 @@ function machine_function() {
   sed -n '/^function machine(/,/^}/p' "$MAIN"
 }
 
-function tile_function() {
-  sed -n '/^function tile(/,/^}/p' "$MAIN"
+function colors_function() {
+  sed -n '/^function colors(/,/^}/p' "$MAIN"
+}
+
+function icon_function() {
+  sed -n '/^function programIcon(/,/^}/p' "$MAIN"
 }
 
 function round_corners_over() {
