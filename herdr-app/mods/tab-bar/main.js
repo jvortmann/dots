@@ -6,7 +6,7 @@
 import { View, div, svg, image } from "gpui-kit";
 import { h_flex } from "gpui-base";
 import { spaces, panes, terminals, run, theme, home, openOverlay, window as win, shared, setShared, nextCommand, notify, exec, checking } from "herdr";
-import { tabLabel, tabFolder } from "./label.js";
+import { tabText, tabFolder } from "./label.js";
 import { statusText, untilNextMinute } from "./status.js";
 import { observeTabs, lastTab } from "./history.js";
 import { numberTabs, nextMove, swapNumbers, tabNumbered } from "./numbers.js";
@@ -200,6 +200,7 @@ export default class TerminalsBar extends View {
       const p = lead(all, c.id);
       const where = tabFolder(c, folder(p?.cwd));
       const record = p?.terminal ? records.find((r) => r.address === p.terminal) : undefined;
+      const text = tabText(c, record);
       return own(h_flex())
         .id(`tm-${c.id}`)
         .flex_shrink(1)
@@ -220,13 +221,14 @@ export default class TerminalsBar extends View {
         .on_mouse_down("right", () =>
           openOverlay({ mod: "menu", kind: "popup", width: 200, props: { tab: "tab", target: { id: c.id, space: space.id } } }),
         )
+        .child(div().flex_none().text_color(C.label).child(`${numbers[space.id][c.id]}`))
         .child(tile(t, C, p))
         .child(
           h_flex()
             .min_w(0)
             .gap(6)
             .truncate()
-            .child(div().flex_none().text_color(c.active ? C.text : C.label).child(tabLabel(c, numbers[space.id][c.id], record)))
+            .when(Boolean(text), (el) => el.child(div().flex_none().text_color(c.active ? C.text : C.label).child(text)))
             .when(Boolean(where), (el) => el.child(div().truncate().text_color(C.dim).child(where))),
         );
     };

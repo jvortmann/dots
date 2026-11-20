@@ -18,6 +18,10 @@ function test_a_tab_takes_the_width_of_its_label_up_to_a_cap() {
   assert_contains ".max_w(" "$(tab_chain)"
 }
 
+function test_a_tab_shows_its_number_then_its_icon_then_its_name() {
+  assert_same "number icon text " "$(tab_chain | tab_parts)"
+}
+
 function test_the_tabs_the_tray_and_the_space_chip_have_corners_of_at_most_2_px() {
   assert_contains ".rounded(" "$(space_chip_chain)"
   assert_same "" "$({ tab_chain; space_chip_chain; tray_chain; } | round_corners_over 2)"
@@ -44,7 +48,11 @@ function test_the_program_icon_is_at_most_18_px() {
 }
 
 function tab_chain() {
-  sed -n '/const tab = (c) =>/,/\.child(tile/p' "$MAIN"
+  sed -n '/const tab = (c) =>/,/^    };$/p' "$MAIN"
+}
+
+function tab_parts() {
+  awk '/numbers\[space\.id\]/ { print "number" } /tile\(t, C, p\)/ { print "icon" } /\.child\(text\)/ { print "text" }' | tr '\n' ' '
 }
 
 function space_chip_chain() {
