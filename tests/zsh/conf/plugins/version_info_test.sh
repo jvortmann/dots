@@ -95,6 +95,14 @@ function test_the_zig_entry_shows_in_the_orange_of_color_214() {
   assert_contains "${orange}[zig:0.14.0]" "$shown"
 }
 
+function test_the_java_entry_shows_in_the_orange_red_of_color_202() {
+  local output
+  output=$(in_terminal_zsh 'print -rP -- "%F{202}"; print -rP -- "$(format_version java 21)"')
+  local orange_red=${output%%$'\n'*} shown=${output#*$'\n'}
+
+  assert_contains "${orange_red}[java:21]" "$shown"
+}
+
 # One prompt draw, as zsh does it: the precmd functions, then the right prompt.
 DRAW='for f in $precmd_functions; do $f; done; print -r -- "${(e)RPROMPT}"'
 

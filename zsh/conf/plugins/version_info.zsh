@@ -101,7 +101,7 @@ tool_color() {
     elixir)  echo "$PURPLE" ;;
     erlang)  echo "$MAGENTA" ;;
     go)      echo "$LIGHT_BLUE" ;;
-    java)    echo "$BROWN" ;;
+    java)    echo "$ORANGE_RED" ;;
     lua)     echo "$DEEP_PURPLE" ;;
     node)    echo "$HI_YELLOW" ;;
     python)  echo "$HI_BLUE" ;;

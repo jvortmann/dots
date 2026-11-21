@@ -8,7 +8,7 @@ zmodload zsh/terminfo
   local name code
   for name code in RED 1 GREEN 2 YELLOW 3 HI_YELLOW 220 BLUE 4 HI_BLUE 32 \
     LIGHT_BLUE 39 MAGENTA 5 CYAN 6 ORANGE 9 AMBER 214 LIGHT_BROWN 215 \
-    BROWN 173 PURPLE 99 DEEP_PURPLE 26; do
+    ORANGE_RED 202 PURPLE 99 DEEP_PURPLE 26; do
     print -v code -P "%F{$code}"
     typeset -g $name="%{$code%}"
   done
