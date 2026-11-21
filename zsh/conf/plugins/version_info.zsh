@@ -96,17 +96,17 @@ tool_color() {
   local tool=$1
 
   case $tool in
-    clojure) echo "$ORANGE" ;;
-    deno)    echo "$GREEN" ;;
-    elixir)  echo "$PURPLE" ;;
-    erlang)  echo "$MAGENTA" ;;
-    go)      echo "$LIGHT_BLUE" ;;
-    java)    echo "$ORANGE_RED" ;;
-    lua)     echo "$DEEP_PURPLE" ;;
-    node)    echo "$HI_YELLOW" ;;
-    python)  echo "$HI_BLUE" ;;
-    ruby)    echo "$RED" ;;
-    rust)    echo "$LIGHT_BROWN" ;;
+    clojure) echo "$STEEL_BLUE" ;;
+    deno)    echo "$SEA_GREEN" ;;
+    elixir)  echo "$MEDIUM_PURPLE" ;;
+    erlang)  echo "$DEEP_PINK" ;;
+    go)      echo "$DEEP_SKY_BLUE" ;;
+    java)    echo "$DARK_ORANGE" ;;
+    lua)     echo "$DODGER_BLUE" ;;
+    node)    echo "$DARK_SEA_GREEN" ;;
+    python)  echo "$LIGHT_GOLDENROD" ;;
+    ruby)    echo "$DEEP_RED" ;;
+    rust)    echo "$TAN" ;;
     zig)     echo "$AMBER" ;;
     *)       echo "" ;;
   esac

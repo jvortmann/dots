@@ -6,9 +6,10 @@ zmodload zsh/terminfo
 
 () {
   local name code
-  for name code in RED 1 GREEN 2 YELLOW 3 HI_YELLOW 220 BLUE 4 HI_BLUE 32 \
-    LIGHT_BLUE 39 MAGENTA 5 CYAN 6 ORANGE 9 AMBER 214 LIGHT_BROWN 215 \
-    ORANGE_RED 202 PURPLE 99 DEEP_PURPLE 26; do
+  for name code in RED 1 GREEN 2 YELLOW 3 BLUE 4 CYAN 6 AMBER 214 \
+    STEEL_BLUE 68 SEA_GREEN 85 MEDIUM_PURPLE 97 DEEP_PINK 125 \
+    DEEP_SKY_BLUE 38 DARK_ORANGE 166 DODGER_BLUE 27 DARK_SEA_GREEN 71 \
+    LIGHT_GOLDENROD 221 DEEP_RED 160 TAN 180; do
     print -v code -P "%F{$code}"
     typeset -g $name="%{$code%}"
   done

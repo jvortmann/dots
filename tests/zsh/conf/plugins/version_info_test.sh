@@ -87,20 +87,28 @@ function test_the_right_prompt_shows_the_tools_of_the_folder_it_moves_to() {
   assert_contains "[python:3.10" "$output"
 }
 
-function test_the_zig_entry_shows_in_the_orange_of_color_214() {
+# @data_provider languages_and_logo_colors
+function test_each_language_entry_shows_in_the_color_of_its_logo() {
   local output
-  output=$(in_terminal_zsh 'print -rP -- "%F{214}"; print -rP -- "$(format_version zig 0.14.0)"')
-  local orange=${output%%$'\n'*} shown=${output#*$'\n'}
+  output=$(in_terminal_zsh "print -rP -- '%F{$2}'; print -rP -- \"\$(format_version $1 1.0)\"")
+  local logo_color=${output%%$'\n'*} shown=${output#*$'\n'}
 
-  assert_contains "${orange}[zig:0.14.0]" "$shown"
+  assert_contains "${logo_color}[$1:1.0]" "$shown"
 }
 
-function test_the_java_entry_shows_in_the_orange_red_of_color_202() {
-  local output
-  output=$(in_terminal_zsh 'print -rP -- "%F{202}"; print -rP -- "$(format_version java 21)"')
-  local orange_red=${output%%$'\n'*} shown=${output#*$'\n'}
-
-  assert_contains "${orange_red}[java:21]" "$shown"
+function languages_and_logo_colors() {
+  bashunit::data_set clojure 68
+  bashunit::data_set deno 85
+  bashunit::data_set elixir 97
+  bashunit::data_set erlang 125
+  bashunit::data_set go 38
+  bashunit::data_set java 166
+  bashunit::data_set lua 27
+  bashunit::data_set node 71
+  bashunit::data_set python 221
+  bashunit::data_set ruby 160
+  bashunit::data_set rust 180
+  bashunit::data_set zig 214
 }
 
 # One prompt draw, as zsh does it: the precmd functions, then the right prompt.
