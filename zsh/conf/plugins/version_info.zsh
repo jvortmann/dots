@@ -107,6 +107,7 @@ tool_color() {
     python)  echo "$HI_BLUE" ;;
     ruby)    echo "$RED" ;;
     rust)    echo "$LIGHT_BROWN" ;;
+    zig)     echo "$AMBER" ;;
     *)       echo "" ;;
   esac
 }

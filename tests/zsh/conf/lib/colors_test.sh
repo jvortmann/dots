@@ -10,7 +10,7 @@ colors_as_set_by_the_file() {
   TERM=xterm-256color "$HOMEBREW_ZSH" -f -c '
     source "$1"
     for name in RED GREEN YELLOW HI_YELLOW BLUE HI_BLUE LIGHT_BLUE MAGENTA CYAN \
-      ORANGE LIGHT_BROWN BROWN PURPLE DEEP_PURPLE BOLD RESET; do
+      ORANGE AMBER LIGHT_BROWN BROWN PURPLE DEEP_PURPLE BOLD RESET; do
       print -r -- "$name=${(q+)${(P)name}}"
     done
   ' _ "$COLORS"
@@ -20,8 +20,8 @@ colors_as_set_by_the_file() {
 colors_as_tput_prints_them() {
   TERM=xterm-256color "$HOMEBREW_ZSH" -f -c '
     for name code in RED 1 GREEN 2 YELLOW 3 HI_YELLOW 220 BLUE 4 HI_BLUE 32 \
-      LIGHT_BLUE 39 MAGENTA 5 CYAN 6 ORANGE 9 LIGHT_BROWN 215 BROWN 173 \
-      PURPLE 99 DEEP_PURPLE 26; do
+      LIGHT_BLUE 39 MAGENTA 5 CYAN 6 ORANGE 9 AMBER 214 LIGHT_BROWN 215 \
+      BROWN 173 PURPLE 99 DEEP_PURPLE 26; do
       value="%{$(tput setaf $code)%}"
       print -r -- "$name=${(q+)value}"
     done

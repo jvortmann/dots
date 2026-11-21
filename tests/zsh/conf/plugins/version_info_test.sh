@@ -87,6 +87,14 @@ function test_the_right_prompt_shows_the_tools_of_the_folder_it_moves_to() {
   assert_contains "[python:3.10" "$output"
 }
 
+function test_the_zig_entry_shows_in_the_orange_of_color_214() {
+  local output
+  output=$(in_terminal_zsh 'print -rP -- "%F{214}"; print -rP -- "$(format_version zig 0.14.0)"')
+  local orange=${output%%$'\n'*} shown=${output#*$'\n'}
+
+  assert_contains "${orange}[zig:0.14.0]" "$shown"
+}
+
 # One prompt draw, as zsh does it: the precmd functions, then the right prompt.
 DRAW='for f in $precmd_functions; do $f; done; print -r -- "${(e)RPROMPT}"'
 
