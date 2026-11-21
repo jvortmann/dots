@@ -66,12 +66,38 @@ function test_a_herdr_terminal_records_a_command_with_no_arguments() {
   assert_same "label t7 restore.cmd=pi" "$(hc_calls 1 | head -1)"
 }
 
-# The nvim line comes last. Had pip called hc, the first logged call would
-# be the one of pip.
+# The pi line comes last. Had pip called hc, the first logged call would be
+# the one of pip.
 function test_another_command_leaves_the_labels_alone() {
-  in_herdr_shell "pip list" "nvim notes.md"
+  in_herdr_shell "pip list" "pi"
 
-  assert_same "label t7 restore.cmd=nvim notes.md" "$(hc_calls 1 | head -1)"
+  assert_same "label t7 restore.cmd=pi" "$(hc_calls 1 > /dev/null; head -1 "$LOG")"
+}
+
+# An nvim that saves no session, such as nvim --clean, must not leave the
+# label of an earlier nvim. An nvim that saves one labels itself again.
+function test_a_herdr_terminal_clears_the_nvim_session_when_nvim_starts() {
+  in_herdr_shell "nvim notes.md"
+
+  assert_same "label t7 restore.nvim=" "$(logged restore.nvim=)"
+}
+
+# nvim labels itself at start, so a clear that lands later removes that label.
+function test_the_nvim_session_clears_before_nvim_starts() {
+  fake_hc 'case "$*" in *restore.nvim=) sleep 0.5 ;; esac'
+  printf '#!/bin/sh\necho "nvim started" >> %q\n' "$LOG" > "$BIN/nvim"
+
+  in_herdr_shell "nvim notes.md"
+  logged restore.nvim= > /dev/null
+
+  assert_same $'label t7 restore.nvim=\nnvim started' "$(grep -e restore.nvim= -e 'nvim started' "$LOG")"
+}
+
+function test_a_pi_line_leaves_the_nvim_session_alone() {
+  in_herdr_shell "pi"
+  hc_calls 2 > /dev/null
+
+  assert_same $'label t7 restore.cmd=pi\nlabel t7 restore.cmd=' "$(cat "$LOG")"
 }
 
 function test_a_shell_outside_herdr_calls_no_hc() {
@@ -81,8 +107,8 @@ function test_a_shell_outside_herdr_calls_no_hc() {
   assert_file_not_exists "$LOG"
 }
 
-function test_the_shell_does_not_wait_for_hc() {
-  fake_hc "sleep 3"
+function test_the_shell_does_not_wait_for_the_record() {
+  fake_hc 'case "$*" in *restore.cmd=*) sleep 3 ;; esac'
   SECONDS=0
 
   in_herdr_shell "nvim notes.md"
@@ -329,12 +355,12 @@ fake_hc() {
   chmod +x "$HOME_DIR/.local/bin/hc"
 }
 
-# Waits at most 5 seconds until the fake hc logged $1 calls, then prints the
-# log. The plugin runs hc in the background.
+# Waits at most 5 seconds until the fake hc logged $1 calls that set
+# restore.cmd, then prints them. The plugin runs these calls in the background.
 hc_calls() {
   for _ in {1..50}; do
-    [[ $(wc -l 2> /dev/null < "$LOG") -ge $1 ]] && break
+    [[ $(grep -c restore.cmd= "$LOG" 2> /dev/null) -ge $1 ]] && break
     sleep 0.1
   done
-  cat "$LOG" 2> /dev/null
+  grep restore.cmd= "$LOG" 2> /dev/null
 }

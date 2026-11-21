@@ -4,17 +4,26 @@
 # restore.cmd of the terminal, so that a lost terminal can start it again. The
 # label goes when the command ends. A shell clears only a label that it wrote,
 # because a new shell in a lost terminal must keep the label of the program
-# that it replaces. hc is not on PATH, and it runs in the background, so the
-# prompt does not wait for it.
+# that it replaces. hc is not on PATH. The writes of restore.cmd run in the
+# background, so the command and the prompt do not wait for them. Only the clear
+# of restore.nvim on an nvim line runs before the command starts.
 
 # The names of nvim: the command and its aliases in zsh/conf/lib/aliases.
 _herdr_restore_nvim='(nvim|vim|vi|v|n)'
 
 _herdr_restore_preexec() {
   unset _herdr_restore_ending
-  [[ -n $HC_TERMINAL_ID && ${${(Az)1}[1]} == ($~_herdr_restore_nvim|pi) ]] || return
+  local word=${${(Az)1}[1]}
+  [[ -n $HC_TERMINAL_ID && $word == ($~_herdr_restore_nvim|pi) ]] || return
   _herdr_restore_label_after "$_herdr_restore_clearing" "$1"
   _herdr_restore_recorded=$!
+  # An nvim line also clears restore.nvim, the label that names the session
+  # file of an earlier nvim. The new nvim labels itself again, and nvim --clean
+  # saves no session, so it leaves no label. The call runs in the foreground,
+  # because one in the background could land after the label of the new nvim. It
+  # costs about 9 milliseconds.
+  [[ $word == $~_herdr_restore_nvim ]] || return
+  $HOME/.local/bin/hc label $HC_TERMINAL_ID restore.nvim= > /dev/null 2>&1
 }
 
 _herdr_restore_precmd() {
