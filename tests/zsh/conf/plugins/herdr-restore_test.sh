@@ -149,13 +149,23 @@ function test_a_lost_terminal_that_ran_pi_starts_pi_again_with_its_session() {
   assert_same "pi --session $session" "$(logged '^pi ')"
 }
 
+# The label restore.nvim can stay from an earlier nvim, so a pi line must ignore it.
+function test_a_lost_terminal_that_ran_pi_ignores_the_nvim_session() {
+  touch "$HOME_DIR/session.jsonl" "$HOME_DIR/session.vim"
+
+  lost_terminal_with_labels "$(jq -n --arg pi "$HOME_DIR/session.jsonl" --arg nvim "$HOME_DIR/session.vim" \
+    '{"restore.cmd": "pi", "restore.pi": $pi, "restore.nvim": $nvim}')"
+
+  assert_same "pi --session $HOME_DIR/session.jsonl" "$(logged '^pi ')"
+}
+
 # A program that fails at once must not start again in the next shell.
 function test_the_relaunch_clears_the_labels_before_the_program_starts() {
   lost_terminal_with_labels '{"restore.cmd": "v notes.md"}'
 
   logged '^nvim ' > /dev/null
 
-  assert_same $'get t7 --json\nlabel t7 restore.cmd= restore.pi=' "$(head -2 "$LOG")"
+  assert_same $'get t7 --json\nlabel t7 restore.cmd= restore.pi= restore.nvim=' "$(head -2 "$LOG")"
 }
 
 function test_the_shell_stays_when_the_relaunched_program_ends() {
@@ -184,6 +194,23 @@ function test_a_lost_terminal_that_ran_pi_with_no_session_file_continues_the_las
 # v is an alias of nvim, so the line runs after the aliases load.
 function test_a_lost_terminal_that_ran_nvim_runs_its_command_line_again() {
   lost_terminal_with_labels '{"restore.cmd": "v notes.md"}'
+
+  assert_same "nvim notes.md" "$(logged '^nvim ')"
+}
+
+function test_a_lost_terminal_that_ran_nvim_starts_nvim_again_with_its_session() {
+  local session="$HOME_DIR/sessions/t7  a.vim"
+  mkdir -p "$HOME_DIR/sessions"
+  touch "$session"
+
+  lost_terminal_with_labels "$(jq -n --arg file "$session" '{"restore.cmd": "v notes.md", "restore.nvim": $file}')"
+
+  assert_same "nvim -S $session" "$(logged '^nvim ')"
+}
+
+# A clean quit of nvim removes its session file.
+function test_a_lost_terminal_that_ran_nvim_with_no_session_file_runs_its_command_line_again() {
+  lost_terminal_with_labels "$(jq -n --arg file "$HOME_DIR/none.vim" '{"restore.cmd": "v notes.md", "restore.nvim": $file}')"
 
   assert_same "nvim notes.md" "$(logged '^nvim ')"
 }

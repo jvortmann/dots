@@ -51,15 +51,17 @@ TRAPTERM() {
 # whole zsh config loads, so the aliases and the PATH from mise apply. The line
 # runs as a typed command: the shell stays when it ends, and preexec records it
 # again. pi resumes its session file, or continues the last session when pi
-# wrote no file. A restore.pi label with no pi in restore.cmd comes from a pi
+# wrote no file. nvim loads its session file when restore.nvim names a file that
+# exists. A clean quit of nvim removes the file, so the shell then runs the
+# typed line. A restore.pi label with no pi in restore.cmd comes from a pi
 # that ended, so the shell stays a shell. The shell removes the labels before it
 # runs the line, so a program that fails at once does not start again in the
 # next shell.
 _herdr_restore_relaunch() {
   add-zle-hook-widget -d line-init _herdr_restore_relaunch
   local -a labels=("${(@0)$($HOME/.local/bin/hc get $HC_TERMINAL_ID --json 2> /dev/null |
-    jq --raw-output0 '.labels | .["restore.cmd"] // "", .["restore.pi"] // ""' 2> /dev/null)}")
-  local cmd=$labels[1] file=$labels[2]
+    jq --raw-output0 '.labels | .["restore.cmd"] // "", .["restore.pi"] // "", .["restore.nvim"] // ""' 2> /dev/null)}")
+  local cmd=$labels[1] file=$labels[2] session=$labels[3]
   case ${${(Az)cmd}[1]} in
     (pi)
       if [[ -f $file ]]; then
@@ -68,10 +70,16 @@ _herdr_restore_relaunch() {
         BUFFER="pi --continue"
       fi
       ;;
-    ($~_herdr_restore_nvim) BUFFER=$cmd ;;
+    ($~_herdr_restore_nvim)
+      if [[ -f $session ]]; then
+        BUFFER="nvim -S ${(q)session}"
+      else
+        BUFFER=$cmd
+      fi
+      ;;
     (*) return ;;
   esac
-  $HOME/.local/bin/hc label $HC_TERMINAL_ID restore.cmd= restore.pi= > /dev/null 2>&1
+  $HOME/.local/bin/hc label $HC_TERMINAL_ID restore.cmd= restore.pi= restore.nvim= > /dev/null 2>&1
   zle .accept-line
 }
 
