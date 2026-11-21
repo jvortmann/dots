@@ -1,12 +1,15 @@
-local capture_first_paint, copied_text, fit_to, show, show_position, standby
+local capture_first_paint, color_selection, copied_text, fit_to, read_json, show, show_position, standby, system_appearance, theme_palette
 local position = vim.api.nvim_create_namespace("copy-mode.position")
+local app_home = vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":p:h:h:h")
 
 vim.o.modeline = false
 vim.o.laststatus = 0
 vim.o.cmdheight = 0
-vim.o.termguicolors = false
+-- termguicolors keeps the exact true colors of the text. Normal has no colors
+-- of its own, so text in the default colors shows the colors of the app theme.
+vim.o.termguicolors = true
+vim.api.nvim_set_hl(0, "Normal", {})
 vim.o.startofline = true
-vim.api.nvim_set_hl(0, "Visual", { ctermfg = 8, ctermbg = 3 })
 
 vim.keymap.set("n", "q", "<cmd>qa!<cr>")
 vim.keymap.set("n", "<Esc>", "<cmd>qa!<cr>")
@@ -31,6 +34,7 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 -- terminal when it returns.
 function _G.copy_mode_open(source)
   standby("")
+  color_selection()
   local size = vim.system({ "hc", "get", "--json", source })
   local paint = capture_first_paint(source)
   if paint == "" then vim.cmd("qa!") end
@@ -54,6 +58,20 @@ function capture_first_paint(source)
   return table.concat(chunks)
 end
 
+-- The selection and the chip use colors 8 and 3 of the palette of the app
+-- theme: dark text on yellow in Solarized. Copy mode reads the theme at each
+-- open, so it follows a change of theme or appearance. The theme comes from
+-- settings.json, with the system appearance when settings.json sets none. The
+-- theme of a layout does not apply. A theme with no file or no palette, such
+-- as a built-in theme, gets the Solarized colors.
+function color_selection()
+  local ok = pcall(function()
+    local ansi = theme_palette()
+    vim.api.nvim_set_hl(0, "Visual", { fg = ansi[9], bg = ansi[4] })
+  end)
+  if not ok then vim.api.nvim_set_hl(0, "Visual", { fg = "#002b36", bg = "#b58900" }) end
+end
+
 -- A program such as pi pads each line to the width of the pane with spaces.
 -- The copy removes the spaces at the end of a line, so a blank line copies as
 -- an empty line. A selection that ends inside a line keeps its spaces.
@@ -74,6 +92,10 @@ function fit_to(size)
   end
 end
 
+function read_json(path)
+  return vim.json.decode(table.concat(vim.fn.readfile(path), "\n"))
+end
+
 function show(paint)
   local height = vim.api.nvim_win_get_height(0)
   -- The first paint of `hc attach --observe` has a run of line feeds before the
@@ -81,6 +103,11 @@ function show(paint)
   -- longer run shows blank lines between the history and the screen. A shorter
   -- one lets the clear remove the last history line.
   paint = paint:gsub("\n+(\27%[H\27%[2J)", string.rep("\n", height) .. "%1")
+  -- The paint starts with ESC[?1049l, which restores the first pen of the
+  -- terminal. With termguicolors, that pen is black on black, and the first
+  -- clear fills the screen with it. A reset before each clear keeps the
+  -- default colors.
+  paint = paint:gsub("\27%[H\27%[2J", "\27[0m%0")
   local terminal = vim.api.nvim_open_term(0, {})
   local tick = vim.b.changedtick
   vim.api.nvim_chan_send(terminal, paint)
@@ -115,6 +142,18 @@ end
 -- server removes the label.
 function standby(server)
   vim.system({ "hc", "label", vim.env.HC_TERMINAL_ID, "copy-mode.standby=" .. server })
+end
+
+function system_appearance()
+  local style = vim.system({ "defaults", "read", "-g", "AppleInterfaceStyle" }):wait(500).stdout or ""
+  return style:match("Dark") and "dark" or "light"
+end
+
+function theme_palette()
+  local settings = read_json(app_home .. "/settings.json")
+  local name = settings.theme
+  if type(name) == "table" then name = name[settings.appearance or system_appearance()] end
+  return read_json(("%s/themes/%s.json"):format(app_home, name)).ansi
 end
 
 standby(vim.v.servername)
