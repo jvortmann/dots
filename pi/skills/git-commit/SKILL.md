@@ -49,8 +49,9 @@ and not again for each commit. Load the `asd-ste100` skill for the words.
     behavior. The `refactoring` skill holds the definition.
   - `config`: a change to configuration only, such as a setting, an option
     or a value. It can change behavior.
-  - `deps`: an upgrade, an addition or a removal of a package. A plugin in
-    the plugin list counts, and so does a version bump in a lock file.
+  - `deps`: only when the package change is the whole commit, such as a
+    version bump or a plugin added or removed with nothing else. A commit
+    that adds a capability is `feature`, even when it installs a package.
   - `ci` for build and CI, and `docs`, `test` and `style` as named.
   - `chore`: rare. Use it only when no other type fits.
 - **A file an agent reads as instruction is code, not documentation.** Pick
