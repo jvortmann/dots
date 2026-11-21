@@ -14,6 +14,7 @@ python = "latest"
 # engine-v. After mise installs the engine, mise runs pi/update-impeccable.sh.
 # The script updates the skill copy to the latest release.
 "github:pbakaus/impeccable" = { version = "latest", version_prefix = "engine-v", postinstall = "$HOME/.dots/pi/update-impeccable.sh" }
+zig = "latest"
 
 [settings]
 idiomatic_version_file_enable_tools = ["elixir", "go", "java", "node", "python", "ruby", "terraform", "yarn"]
