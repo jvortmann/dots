@@ -1,20 +1,24 @@
 // The bar at the bottom of the layout: space picker, tabs, status, and window
-// controls. The status is the agent count, the agents that need you, the
-// machine label and the time. It runs last-tab (ctrl-a ctrl-a), which selects
+// controls. The status is the agent count with a dot for each agent that is not
+// idle, then the agents that need you, the machine label and the time. A click
+// on the count opens the agent list above it. select-agent-N (alt-1..9) goes
+// to agent N of that list. The bar runs last-tab (ctrl-a ctrl-a), which selects
 // the tab shown before. Each tab keeps its number, as in tmux: the bar numbers
 // each new tab and moves it into number order, and select-N selects by number.
 
 import { View, div, svg, image } from "gpui-kit";
 import { h_flex } from "gpui-base";
-import { spaces, panes, agents, terminals, run, theme, openOverlay, window as win, shared, setShared, nextCommand, notify, exec, checking } from "herdr";
+import { spaces, panes, agents, terminals, run, theme, openOverlay, closeOverlay, props, window as win, shared, setShared, nextCommand, notify, exec, checking } from "herdr";
 import { tabText } from "./label.js";
-import { agentsText, needsText, machineLabel, timeText, untilNextMinute } from "./status.js";
+import { agentRows, ROW } from "./agent-list.js";
+import { agentsText, needsText, agentList, listKey, machineLabel, timeText, untilNextMinute } from "./status.js";
 import { observeTabs, lastTab } from "./history.js";
 import { numberTabs, nextMove, swapNumbers, tabNumbered } from "./numbers.js";
 
 // Shared state, not a field: another layout, a save or a restart starts the mod fresh.
 const HISTORY = "tab-bar.tab-history";
 const NUMBERS = "tab-bar.tab-numbers";
+const LIST_WIDTH = 360;
 
 function colors(t) {
   return {
@@ -70,8 +74,12 @@ function machine(C, { icon, name }) {
 
 // A control in the draggable bar: the press is its own, not the window's
 // (a right press there would open the system's window menu).
-function own(el) {
-  return el.on_mouse_down("left", (_e, cx) => cx.stop_propagation()).on_mouse_down("right", (_e, cx) => cx.stop_propagation());
+function own(el, press = () => {}) {
+  return el
+    .on_mouse_down("left", (e, cx) => {
+      press(e);
+      cx.stop_propagation();
+    }).on_mouse_down("right", (_e, cx) => cx.stop_propagation());
 }
 
 function windowButton(C, id, icon, command) {
@@ -95,7 +103,10 @@ function windowButton(C, id, icon, command) {
 }
 
 export default class TerminalsBar extends View {
+  // The list is this mod opened as a popup, and a command reaches every shown
+  // copy, so the list copy skips the command loop or a swap runs twice.
   init(_props, cx) {
+    if (props()?.popup) return this.initList(cx);
     this.host = "";
     if (!checking()) cx.spawn(async (cx) => {
       try {
@@ -112,9 +123,41 @@ export default class TerminalsBar extends View {
         if (command === "last-tab") this.selectLastTab();
         else if (command === "swap-left") this.swap(-1);
         else if (command === "swap-right") this.swap(1);
+        else if (command.startsWith("select-agent-")) this.selectAgent(Number(command.slice("select-agent-".length)));
         else if (command.startsWith("select-")) this.selectNumber(Number(command.slice("select-".length)));
       }
     });
+  }
+
+  initList(cx) {
+    this.listing = true;
+    this.chosen = 0;
+    this.handle = cx.focus_handle();
+    this.handle.focus();
+  }
+
+  renderList() {
+    const rows = agentList(agents());
+    return agentRows(theme(), rows, Math.min(this.chosen, rows.length - 1), (a) => this.goTo(a))
+      .id("tm-agent-list")
+      .track_focus(this.handle)
+      .on_key_down((e, cx) => this.listKeyDown(e, rows, cx));
+  }
+
+  listKeyDown(e, rows, cx) {
+    const key = listKey(e.keystroke, this.chosen, rows.length);
+    if (!key) return;
+    if ("go" in key) {
+      if (rows[key.go]) this.goTo(rows[key.go]);
+      return;
+    }
+    this.chosen = key.chosen;
+    cx.notify();
+  }
+
+  goTo(a) {
+    closeOverlay(props().overlay);
+    run("agent.focus", { terminal: a.address });
   }
 
   tick(cx) {
@@ -134,6 +177,24 @@ export default class TerminalsBar extends View {
     const space = spaces().find((s) => s.active);
     const id = space && tabNumbered(this.number(), space, number);
     if (id) run("tab.select", { id });
+  }
+
+  selectAgent(number) {
+    const agent = agentList(agents()).find((a) => a.number === number);
+    if (agent) run("agent.focus", { terminal: agent.address });
+  }
+
+  openAgents() {
+    const height = 8 + Math.min(Math.max(agents().length, 1), 12) * ROW;
+    const at = this.agentsAt;
+    openOverlay({
+      mod: "tab-bar",
+      kind: "popup",
+      width: LIST_WIDTH,
+      height,
+      props: { popup: "agents" },
+      at: at ? { x: at.x + at.width - LIST_WIDTH, y: at.y - height - 6 } : "pointer",
+    });
   }
 
   // The tabs trade numbers, and the next render trades their places.
@@ -173,6 +234,7 @@ export default class TerminalsBar extends View {
   }
 
   render() {
+    if (this.listing) return this.renderList();
     this.observe();
     const numbers = this.number();
     this.place(numbers);
@@ -270,11 +332,16 @@ export default class TerminalsBar extends View {
           .text_size(13)
           .text_color(C.label)
           .child(
-            h_flex()
+            own(h_flex(), (e) => (this.agentsAt = e.bounds))
+              .id("tm-agents")
               .gap(6)
               .items_center()
+              .cursor_pointer()
+              .hover((s) => s.text_color(C.text))
+              .on_click(() => this.openAgents())
               .child(div().size(6).rounded(3).bg(C.dim))
               .child(agentsText(list))
+              .child(h_flex().gap(3).children(list.filter((a) => a.status !== "idle").map((a) => div().size(6).rounded(3).bg(t[a.status]))))
               .when(Boolean(needsText(list)), (el) => el.child(div().text_color(t.blocked).child(needsText(list)))),
           )
           .child(machine(C, machineLabel(space, this.host)))

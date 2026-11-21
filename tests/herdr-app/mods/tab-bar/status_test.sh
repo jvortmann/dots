@@ -35,6 +35,38 @@ function test_this_computer_keeps_the_stock_name_while_the_host_is_not_known() {
   assert_same '{"icon":"monitor","name":"This computer"}' "$(status_of 'JSON.stringify(machineLabel({ machine: null }, ""))')"
 }
 
+function test_the_agents_keep_the_order_of_the_app_and_take_their_place_as_their_number() {
+  assert_same "t3=1 t1=2 vps/t7=3" "$(status_of 'agentList([{ address: "t3" }, { address: "t1" }, { address: "vps/t7" }]).map((a) => `${a.address}=${a.number}`).join(" ")')"
+}
+
+function test_an_agent_after_the_ninth_has_no_number_because_alt_takes_one_digit() {
+  assert_same "9 null" "$(status_of 'agentList(Array.from({ length: 10 }, (_, i) => ({ address: `t${i}` }))).slice(8).map((a) => String(a.number)).join(" ")')"
+}
+
+function test_a_blocked_agent_reads_needs_you_and_the_other_statuses_read_as_they_are() {
+  assert_same "working,needs you,done,idle" "$(status_of '["working", "blocked", "done", "idle"].map(statusWord).join(",")')"
+}
+
+function test_the_arrows_move_the_chosen_row_and_stop_at_the_ends_of_the_list() {
+  assert_same '{"chosen":1} {"chosen":1} {"chosen":0} {"chosen":0}' "$(status_of '[listKey("down", 0, 2), listKey("down", 1, 2), listKey("up", 1, 2), listKey("up", 0, 2)].map((k) => JSON.stringify(k)).join(" ")')"
+}
+
+function test_enter_goes_to_the_chosen_row() {
+  assert_same '{"go":1}' "$(status_of 'JSON.stringify(listKey("enter", 1, 2))')"
+}
+
+function test_a_digit_goes_to_the_agent_with_that_number_and_a_number_no_agent_holds_does_nothing() {
+  assert_same '{"go":1} null' "$(status_of '[listKey("2", 0, 3), listKey("4", 0, 3)].map((k) => JSON.stringify(k)).join(" ")')"
+}
+
+function test_keys_on_an_empty_list_do_nothing() {
+  assert_same "null null" "$(status_of '[listKey("down", 0, 0), listKey("enter", 0, 0)].map((k) => JSON.stringify(k)).join(" ")')"
+}
+
+function test_enter_goes_to_the_last_row_when_the_list_shrank_under_the_chosen_row() {
+  assert_same '{"go":1}' "$(status_of 'JSON.stringify(listKey("enter", 3, 2))')"
+}
+
 function test_the_clock_waits_until_the_next_minute_starts() {
   assert_same "17500" "$(status_of 'untilNextMinute(new Date("2026-11-09T07:05:42.500"))')"
 }

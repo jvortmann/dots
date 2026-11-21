@@ -15,6 +15,24 @@ export function needsText(list) {
   return needs ? `· ${needs} needs you` : "";
 }
 
+export function agentList(list) {
+  return list.map((a, i) => ({ ...a, number: i < 9 ? i + 1 : null }));
+}
+
+export function statusWord(status) {
+  return status === "blocked" ? "needs you" : status;
+}
+
+export function listKey(key, at, count) {
+  if (count === 0) return null;
+  const chosen = Math.min(at, count - 1);
+  if (key === "down") return { chosen: Math.min(count - 1, chosen + 1) };
+  if (key === "up") return { chosen: Math.max(0, chosen - 1) };
+  if (key === "enter") return { go: chosen };
+  if (/^[1-9]$/.test(key) && Number(key) <= count) return { go: Number(key) - 1 };
+  return null;
+}
+
 export function machineLabel(space, host) {
   return space.machine ? { icon: "server", name: space.machine } : { icon: "monitor", name: host || "This computer" };
 }

@@ -98,6 +98,13 @@ function test_cmd_digits_1_to_9_select_the_tab_with_that_number_through_the_tab_
   done
 }
 
+function test_alt_digits_1_to_9_go_to_the_agent_with_that_number_through_the_tab_bar() {
+  local number
+  for number in 1 2 3 4 5 6 7 8 9; do
+    assert_same "\"tab-bar.select-agent-$number\"" "$(binding global "alt-$number")"
+  done
+}
+
 function test_prefix_ctrl_f_opens_the_picker_of_tabs_and_spaces() {
   assert_same '"mod.open:picker"' "$(binding global "ctrl-a ctrl-f")"
 }
