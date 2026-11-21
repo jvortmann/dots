@@ -309,6 +309,46 @@ function test_y_copies_the_selection_to_the_clipboard() {
   assert_same "out b" "$(cat "$SCRATCH/clipboard")"
 }
 
+function test_y_copies_lines_without_the_spaces_that_pad_them_to_the_pane_width() {
+  paint "" "fix: title    |          |body text  " 3 1
+
+  press "kkVjjy"
+
+  assert_same $'fix: title\n\nbody text' "$(cat "$SCRATCH/clipboard")"
+}
+
+function test_y_keeps_the_indent_of_a_line() {
+  paint "" "    - item    " 1 1
+
+  press "Vy"
+
+  assert_same "    - item" "$(cat "$SCRATCH/clipboard")"
+}
+
+function test_y_keeps_the_spaces_between_words_at_the_end_of_a_selection() {
+  paint "" "one  two    " 1 1
+
+  press "v4ly"
+
+  assert_same "one  " "$(cat "$SCRATCH/clipboard")"
+}
+
+function test_y_copies_a_selection_to_the_end_of_a_line_without_the_padding() {
+  paint "" "one  two    " 1 1
+
+  press "wv9ly"
+
+  assert_same "two" "$(cat "$SCRATCH/clipboard")"
+}
+
+function test_y_copies_a_block_to_the_end_of_each_line_without_the_padding() {
+  paint "" "ab  |abcdefgh    |x  " 1 1
+
+  press '<C-v>jj$y'
+
+  assert_same $'ab\nabcdefgh\nx' "$(cat "$SCRATCH/clipboard")"
+}
+
 function test_y_closes_copy_mode() {
   press "Vy"
 

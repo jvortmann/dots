@@ -1,4 +1,4 @@
-local capture_first_paint, fit_to, show, show_position, standby
+local capture_first_paint, copied_text, fit_to, show, show_position, standby
 local position = vim.api.nvim_create_namespace("copy-mode.position")
 
 vim.o.modeline = false
@@ -22,7 +22,7 @@ vim.api.nvim_create_autocmd("TermEnter", { command = "stopinsert" })
 
 vim.api.nvim_create_autocmd("TextYankPost", {
   callback = function()
-    vim.system({ "pbcopy" }, { stdin = table.concat(vim.v.event.regcontents, "\n") }):wait()
+    vim.system({ "pbcopy" }, { stdin = copied_text(vim.v.event) }):wait()
     vim.schedule(function() vim.cmd("qa!") end)
   end,
 })
@@ -52,6 +52,19 @@ function capture_first_paint(source)
   vim.wait(3000, function() return done end, 5)
   attach:kill("sigterm")
   return table.concat(chunks)
+end
+
+-- A program such as pi pads each line to the width of the pane with spaces.
+-- The copy removes the spaces at the end of a line, so a blank line copies as
+-- an empty line. A selection that ends inside a line keeps its spaces.
+function copied_text(yank)
+  local lines = vim.deepcopy(yank.regcontents)
+  local region = vim.fn.getregionpos(vim.fn.getpos("'["), vim.fn.getpos("']"), { type = yank.regtype:sub(1, 1) })
+  for i, span in ipairs(region) do
+    local start = span[1]
+    if not vim.fn.getline(start[2]):sub(start[3] + #lines[i]):find("%S") then lines[i] = lines[i]:gsub("%s+$", "") end
+  end
+  return table.concat(lines, "\n")
 end
 
 function fit_to(size)
