@@ -4,6 +4,8 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
 PLUGIN="$ROOT/zsh/conf/plugins/herdr-nav.zsh"
 CLEAR="$ROOT/zsh/conf/lib/clear-screen"
 HOMEBREW_ZSH=/opt/homebrew/bin/zsh
+# shellcheck source=../../../herdr-app/fake_herdr_app.sh
+source "$ROOT/tests/herdr-app/fake_herdr_app.sh"
 
 function set_up() {
   SERVER=""
@@ -84,24 +86,37 @@ function test_in_a_herdr_terminal_ctrl_l_in_the_csi_u_form_clears_the_screen_int
   assert_same "1" "$(tmux -L "$SERVER" capture-pane -p -S - -E -1 | grep -cx 30)"
 }
 
-# keys.json sends ctrl-k in the CSI u form for ctrl-a ctrl-k, so the chord
+# keys.json sends ctrl-alt-k in the CSI u form for ctrl-a ctrl-k, so the chord
 # still kills in Herdr.
-function test_in_a_herdr_terminal_ctrl_k_in_the_csi_u_form_kills_to_the_end_of_the_line() {
+function test_in_a_herdr_terminal_ctrl_alt_k_kills_to_the_end_of_the_line() {
   shell_in_terminal t7
 
-  kill_with_ctrl_k_in_the_csi_u_form
+  kill_with_ctrl_alt_k
 
   assert_same "% print -r -- keep" "$(tmux -L "$SERVER" capture-pane -p | grep '^% print')"
 }
 
-# A second source of the zshrc must not give ctrl-k in the CSI u form the pane
-# move that ctrl-k now has.
-function test_after_a_second_load_ctrl_k_in_the_csi_u_form_still_kills_to_the_end_of_the_line() {
+# keys.json sends ctrl-alt-j in the CSI u form for ctrl-a ctrl-j, so the chord
+# runs the line as ctrl-j did.
+function test_in_a_herdr_terminal_ctrl_alt_j_runs_the_line() {
+  shell_in_terminal t7
+  tmux -L "$SERVER" send-keys "print -r -- ran"
+  wait_for_screen 'ran$'
+
+  tmux -L "$SERVER" send-keys -l $'\e[106;7u'
+  wait_for_screen '^ran$'
+
+  assert_same "ran" "$(tmux -L "$SERVER" capture-pane -p | grep -x ran)"
+}
+
+# A second source of the zshrc must not give ctrl-alt-k the pane move that
+# ctrl-k now has.
+function test_after_a_second_load_ctrl_alt_k_still_kills_to_the_end_of_the_line() {
   shell_in_terminal t7
   tmux -L "$SERVER" send-keys "source $(printf %q "$PLUGIN"); clear" Enter
   wait_for_screen_rows 1
 
-  kill_with_ctrl_k_in_the_csi_u_form
+  kill_with_ctrl_alt_k
 
   assert_same "% print -r -- keep" "$(tmux -L "$SERVER" capture-pane -p | grep '^% print')"
 }
@@ -121,11 +136,11 @@ shell_in_terminal() {
 }
 
 # Types a command line, moves the cursor before its last 4 characters, and
-# sends ctrl-k in the CSI u form. Waits at most 5 seconds for each step.
-kill_with_ctrl_k_in_the_csi_u_form() {
+# sends ctrl-alt-k in the CSI u form. Waits at most 5 seconds for each step.
+kill_with_ctrl_alt_k() {
   tmux -L "$SERVER" send-keys "print -r -- keep-cut" Left Left Left Left
   wait_for_screen 'keep-cut$'
-  tmux -L "$SERVER" send-keys -l $'\e[107;5u'
+  tmux -L "$SERVER" send-keys -l $'\e[107;7u'
   wait_for_screen 'keep$'
 }
 
@@ -152,12 +167,4 @@ logged() {
     grep -m 1 -- "$1" "$LOG" 2> /dev/null && return
     sleep 0.1
   done
-}
-
-# The herdr-app of the user is not on PATH, so the plugin runs
-# ~/.local/bin/herdr-app. This fake prints what the real one prints, and logs
-# its arguments. $1 is a shell line that runs first.
-fake_herdr_app() {
-  printf '#!/bin/sh\n%s\necho "{\\"ok\\": true}"\necho "$*" >> %q\n' "$1" "$LOG" > "$HOME_DIR/.local/bin/herdr-app"
-  chmod +x "$HOME_DIR/.local/bin/herdr-app"
 }

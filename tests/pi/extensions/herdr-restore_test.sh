@@ -2,12 +2,12 @@
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 EXTENSION="$ROOT/pi/extensions/herdr-restore.ts"
+# shellcheck source=node.sh
+source "$ROOT/tests/pi/extensions/node.sh"
 
 function set_up() {
   [[ -f $EXTENSION ]] || bashunit::fail "missing the file under test: $EXTENSION"
-  command -v mise > /dev/null || bashunit::skip "needs mise"
-  NODE=$(mise x node@latest -- node -p process.execPath 2> /dev/null)
-  [[ -x $NODE ]] || bashunit::skip "needs node from mise"
+  find_node
   HOME_DIR=$(bashunit::temp_dir "home")
   LOG="$HOME_DIR/hc.log"
   SESSION_FILE="$HOME_DIR/sessions/2026-11-19_a b.jsonl"
@@ -87,9 +87,7 @@ hc_calls() {
 # it each event that the arguments name, in order. The context has the mode
 # that MODE names, "tui" by default. The event "write" is no
 # event of pi: it creates the session file, as pi does after the first message.
-# Node ends only when each hc that the extension started has ended. set_up
-# finds node with the real HOME, and only node runs with the scratch HOME.
-# Mise with the scratch HOME finds no install, and it starts many npm processes.
+# Node ends only when each hc that the extension started has ended.
 run_events() {
   HOME="$HOME_DIR" HC_TERMINAL_ID=${TERMINAL_ID-t7} EXTENSION="$EXTENSION" SESSION_FILE="$SESSION_FILE" \
     MODE=${MODE-tui} \

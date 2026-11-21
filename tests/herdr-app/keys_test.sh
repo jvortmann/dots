@@ -47,9 +47,14 @@ function test_prefix_h_j_k_l_go_to_the_pane_left_down_up_and_right() {
   assert_same '"pane.go:right"' "$(binding global "ctrl-a l")"
 }
 
-function test_prefix_ctrl_h_and_prefix_ctrl_j_go_to_the_pane_left_and_down() {
+function test_prefix_ctrl_h_goes_to_the_pane_left() {
   assert_same '"pane.go:left"' "$(binding global "ctrl-a ctrl-h")"
-  assert_same '"pane.go:down"' "$(binding global "ctrl-a ctrl-j")"
+}
+
+# In Herdr, pi moves the pane on ctrl-j, and it adds a line on ctrl-alt-j.
+function test_prefix_ctrl_j_in_a_terminal_sends_ctrl_alt_j_in_the_csi_u_form() {
+  assert_same '"send:\u001b[106;7u"' "$(binding terminal "ctrl-a ctrl-j")"
+  assert_same "null" "$(binding global "ctrl-a ctrl-j")"
 }
 
 function test_prefix_z_zooms_the_pane() {
@@ -117,11 +122,15 @@ function test_prefix_a_in_a_terminal_sends_ctrl_a_to_it() {
   assert_same '"send:\u0001"' "$(binding terminal "ctrl-a a")"
 }
 
-# In Herdr, zsh moves the pane on ctrl-k and ctrl-l, and it kills and clears
-# on their CSI u forms.
-function test_prefix_ctrl_k_and_ctrl_l_in_a_terminal_send_those_keys_in_the_csi_u_form() {
-  assert_same '"send:\u001b[107;5u"' "$(binding terminal "ctrl-a ctrl-k")"
+# In Herdr, zsh moves the pane on ctrl-l, and it clears on the CSI u form.
+function test_prefix_ctrl_l_in_a_terminal_sends_ctrl_l_in_the_csi_u_form() {
   assert_same '"send:\u001b[108;5u"' "$(binding terminal "ctrl-a ctrl-l")"
+}
+
+# In Herdr, zsh and pi move the pane on ctrl-k, and they delete to the end of
+# the line on ctrl-alt-k. pi cannot tell the CSI u form of ctrl-k from ctrl-k.
+function test_prefix_ctrl_k_in_a_terminal_sends_ctrl_alt_k_in_the_csi_u_form() {
+  assert_same '"send:\u001b[107;7u"' "$(binding terminal "ctrl-a ctrl-k")"
 }
 
 function test_cmd_k_and_cmd_shift_p_open_the_command_palette() {
