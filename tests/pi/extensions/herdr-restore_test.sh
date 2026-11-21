@@ -42,6 +42,14 @@ function test_a_session_records_its_file_once_and_not_for_each_message() {
   assert_same "label t7 restore.pi=$SESSION_FILE" "$(hc_calls)"
 }
 
+function test_a_subagent_in_the_same_pi_records_nothing() {
+  touch "$SESSION_FILE"
+
+  MODE=print run_events session_start message_end
+
+  assert_same "" "$(hc_calls)"
+}
+
 function test_pi_outside_herdr_calls_no_hc() {
   touch "$SESSION_FILE"
 
@@ -76,19 +84,21 @@ hc_calls() {
 }
 
 # Loads the extension in node, in a Herdr terminal with the id t7, and sends
-# it each event that the arguments name, in order. The event "write" is no
+# it each event that the arguments name, in order. The context has the mode
+# that MODE names, "tui" by default. The event "write" is no
 # event of pi: it creates the session file, as pi does after the first message.
 # Node ends only when each hc that the extension started has ended. set_up
 # finds node with the real HOME, and only node runs with the scratch HOME.
 # Mise with the scratch HOME finds no install, and it starts many npm processes.
 run_events() {
   HOME="$HOME_DIR" HC_TERMINAL_ID=${TERMINAL_ID-t7} EXTENSION="$EXTENSION" SESSION_FILE="$SESSION_FILE" \
+    MODE=${MODE-tui} \
     "$NODE" --input-type=module -e '
     import { writeFileSync } from "node:fs";
     const handlers = {};
     const extension = (await import(process.env.EXTENSION)).default;
     extension({ on: (name, handler) => { handlers[name] = handler; } });
-    const ctx = { sessionManager: { getSessionFile: () => process.env.SESSION_FILE } };
+    const ctx = { mode: process.env.MODE, sessionManager: { getSessionFile: () => process.env.SESSION_FILE } };
     for (const event of process.argv.slice(1)) {
       if (event === "write") writeFileSync(process.env.SESSION_FILE, "{}\n");
       else await handlers[event]?.({ type: event }, ctx);
