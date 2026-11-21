@@ -45,7 +45,8 @@ swap_theme_from_to() {
   HOME="$HOME_DIR" "$HOMEBREW_ZSH" -f -c "source ${PLUGIN@Q}; swap-theme-from-to $1 $2" > /dev/null 2>&1
 }
 
-# Herdr app settings as the app writes them, with the given last line.
+# Herdr app settings as the app writes them, with the given line before the
+# theme.
 settings_with_appearance() {
-  printf '{\n  "zoom": 1.2,\n  "minimum_contrast": 1,\n  "theme": {\n    "light": "solarized-light",\n    "dark": "solarized-dark"\n  },\n  %s\n}\n' "$1"
+  printf '{\n  "zoom": 1.0,\n  "minimum_contrast": 1.0,\n  %s,\n  "theme": {\n    "light": "solarized-light",\n    "dark": "solarized-dark"\n  }\n}\n' "$1"
 }

@@ -1,17 +1,20 @@
 {
-  "zoom": 1,
+  "zoom": 1.0,
   "sounds": {
     "enabled": true
   },
   "font": "FiraCode Nerd Font",
-  "font_size": 16,
+  "font_size": 16.0,
   "font_weight": 300,
   "font_ligatures": true,
-  "minimum_contrast": 1,
+  "terminal_line_height": 1.0,
+  "terminal_cell_width": 1.0,
+  "terminal_scroll_speed": 1.0,
   "pane_scrollbars": false,
+  "minimum_contrast": 1.0,
+  "appearance": "dark",
   "theme": {
     "light": "solarized-light",
     "dark": "solarized-dark"
-  },
-  "appearance": "dark"
+  }
 }
