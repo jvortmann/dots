@@ -49,7 +49,6 @@ function test_a_row_not_chosen_has_no_fill_and_its_text_brightens_under_the_poin
 function test_the_rows_draw_their_icons_like_the_tab_bar_and_no_text_glyph_stands_in_for_one() {
   assert_same "" "$(grep -oE '"[○●·+]"' "$MAIN" | tr '\n' ' ')"
   assert_contains 'svg("mods/tab-bar/stack.svg").size(15).text_color(spaceColor(t, r.w))' "$(sed -n '/r\.kind === "head"/,/;$/p' "$MAIN")"
-  assert_contains ".child(programIcon(t, r.mine[0], r.ctx.status))" "$(tab_row)"
   assert_contains 'svg("mods/workspace-chrome/plus.svg").size(14)' "$(cat "$MAIN")"
 }
 
@@ -78,6 +77,17 @@ function test_a_program_glyph_takes_the_color_that_stands_out_on_the_canvas_as_i
 
 function test_the_glyph_rule_of_the_picker_is_the_same_as_the_tab_bar_s() {
   assert_same "" "$(diff "$ROOT/herdr-app/mods/tab-bar/glyph.js" "$ROOT/herdr-app/mods/recent-picker/glyph.js" 2>&1)"
+}
+
+function test_the_lead_pane_rule_of_the_picker_is_the_same_as_the_tab_bar_s() {
+  assert_same "" "$(diff "$ROOT/herdr-app/mods/tab-bar/lead.js" "$ROOT/herdr-app/mods/recent-picker/lead.js" 2>&1)"
+}
+
+function test_a_tab_row_shows_the_icon_and_dot_of_the_lead_pane_of_the_tab_like_the_tab_bar() {
+  assert_contains 'import { lead } from "./lead.js";' "$(cat "$MAIN")"
+  assert_contains "const shown = panes();" "$(rows_method)"
+  assert_contains "lead: lead(shown, ctx.id)" "$(rows_method)"
+  assert_contains ".child(programIcon(t, r.lead, r.lead?.status))" "$(tab_row)"
 }
 
 function icon_function() {

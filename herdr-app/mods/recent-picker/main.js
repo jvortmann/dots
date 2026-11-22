@@ -11,10 +11,11 @@
 
 import { View, div, svg, image } from "gpui-kit";
 import { v_flex, h_flex, InputState, Input } from "gpui-base";
-import { agents, spaces, terminals, run, hc, theme, settings, props, closeOverlay, openOverlay, shared, setShared } from "herdr";
+import { agents, panes, spaces, terminals, run, hc, theme, settings, props, closeOverlay, openOverlay, shared, setShared } from "herdr";
 import { recentSpaces, openingTab } from "./order.js";
 import { quarter } from "./edge.js";
 import { glyphColor } from "./glyph.js";
+import { lead } from "./lead.js";
 
 const RECENT = "tab-bar.space-history";
 
@@ -91,6 +92,7 @@ export default class Picker extends View {
   rows() {
     const f = this.filter.toLowerCase();
     const all = agents();
+    const shown = panes();
     const live = terminals().filter((x) => x.state === "live");
     const teamOf = (addrs) => {
       let n = 0;
@@ -102,7 +104,7 @@ export default class Picker extends View {
       const ctxs = w.tabs
         .map((ctx) => {
           const mine = all.filter((a) => a.tab === ctx.id);
-          return { w, ctx, mine, team: teamOf(mine.map((a) => a.address)) };
+          return { w, ctx, mine, lead: lead(shown, ctx.id), team: teamOf(mine.map((a) => a.address)) };
         })
         .filter((c) => !f || [w.name, c.ctx.name, ...c.mine.map((a) => a.program?.name ?? "")].join(" ").toLowerCase().includes(f));
       return { w, ctxs };
@@ -209,7 +211,7 @@ export default class Picker extends View {
         .when(on, (el) => el.px(9).bg(t.surface).border_1().border_color(edge).text_color(t.foreground))
         .hover((s) => s.text_color(t.foreground))
         .on_click(() => this.go(r))
-        .child(programIcon(t, r.mine[0], r.ctx.status))
+        .child(programIcon(t, r.lead, r.lead?.status))
         .child(div().flex_1().truncate().when(here, (d) => d.font_semibold()).child(r.ctx.name))
         .when(r.ctx.status === "blocked", (el) => el.child(div().text_color(t.blocked).child("needs you")))
         .when(r.ctx.status === "done", (el) => el.child(div().text_color(t.done).child("finished")))
