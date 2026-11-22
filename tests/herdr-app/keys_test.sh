@@ -110,8 +110,10 @@ function test_alt_digits_1_to_9_go_to_the_agent_with_that_number_through_the_tab
   done
 }
 
-function test_prefix_ctrl_f_opens_the_picker_of_tabs_and_spaces() {
-  assert_same '"mod.open:picker"' "$(binding global "ctrl-a ctrl-f")"
+function test_prefix_f_prefix_ctrl_f_and_cmd_p_open_the_same_picker_of_recent_spaces() {
+  assert_same '"mod.open:recent-picker"' "$(binding global "ctrl-a f")"
+  assert_same '"mod.open:recent-picker"' "$(binding global "ctrl-a ctrl-f")"
+  assert_same '"mod.open:recent-picker"' "$(binding global "cmd-p")"
 }
 
 function test_prefix_question_mark_opens_the_help_of_the_app() {

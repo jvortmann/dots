@@ -12,12 +12,13 @@ import { spaces, panes, agents, terminals, run, theme, openOverlay, closeOverlay
 import { tabText } from "./label.js";
 import { agentRows, ROW } from "./agent-list.js";
 import { agentsText, needsText, agentList, listKey, machineLabel, timeText, untilNextMinute } from "./status.js";
-import { observeTabs, lastTab } from "./history.js";
+import { observeTabs, observeSpaces, lastTab } from "./history.js";
 import { numberTabs, nextMove, swapNumbers, tabNumbered } from "./numbers.js";
 
 // Shared state, not a field: another layout, a save or a restart starts the mod fresh.
 const HISTORY = "tab-bar.tab-history";
 const NUMBERS = "tab-bar.tab-numbers";
+const SPACES = "tab-bar.space-history";
 const LIST_WIDTH = 360;
 
 function colors(t) {
@@ -230,6 +231,9 @@ export default class TerminalsBar extends View {
     const before = shared(HISTORY) ?? {};
     const after = observeTabs(before, spaces());
     if (JSON.stringify(after) !== JSON.stringify(before)) setShared(HISTORY, after);
+    const seen = shared(SPACES) ?? [];
+    const recent = observeSpaces(seen, spaces());
+    if (JSON.stringify(recent) !== JSON.stringify(seen)) setShared(SPACES, recent);
     return after;
   }
 

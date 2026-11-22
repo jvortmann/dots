@@ -183,6 +183,14 @@ function test_the_program_icon_is_at_most_18_px() {
   assert_same "" "$(icon_function | sizes_over 18)"
 }
 
+function test_each_render_records_the_spaces_by_recency_for_the_recent_picker() {
+  assert_contains 'const SPACES = "tab-bar.space-history";' "$(grep -F 'const SPACES' "$MAIN")"
+  assert_contains "this.observe();" "$(sed -n '/^  render(/,/^  }/p' "$MAIN")"
+  assert_contains "const seen = shared(SPACES) ?? [];" "$(observe_method)"
+  assert_contains "observeSpaces(seen, spaces())" "$(observe_method)"
+  assert_contains "setShared(SPACES," "$(observe_method)"
+}
+
 function tab_chain() {
   sed -n '/const tab = (c) =>/,/^    };$/p' "$MAIN"
 }
@@ -257,6 +265,10 @@ function agents_group() {
 
 function select_agent_method() {
   sed -n '/^  selectAgent(/,/^  }/p' "$MAIN"
+}
+
+function observe_method() {
+  sed -n '/^  observe(/,/^  }/p' "$MAIN"
 }
 
 function go_to_method() {

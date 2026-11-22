@@ -2,7 +2,7 @@
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
 NUMBERS="$ROOT/herdr-app/mods/tab-bar/numbers.js"
-SHOTS="$ROOT/tests/herdr-app/mods/tab-bar/shots.js"
+SHOTS="$ROOT/tests/herdr-app/mods/shots.js"
 
 function set_up() {
   [[ -f $NUMBERS ]] || bashunit::fail "missing the file under test: $NUMBERS"

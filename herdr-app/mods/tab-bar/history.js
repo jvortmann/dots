@@ -8,6 +8,13 @@ export function observeTabs(history, spaces) {
   return { ...open, [space.id]: [tab.id, ...before].slice(0, 2) };
 }
 
+export function observeSpaces(history, spaces) {
+  const space = shown(spaces);
+  if (!space) return history;
+  const open = new Set(spaces.map((s) => s.id));
+  return [space.id, ...history.filter((id) => open.has(id) && id !== space.id)];
+}
+
 export function lastTab(history, spaces) {
   return history[shown(spaces)?.id]?.[1] ?? null;
 }

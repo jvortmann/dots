@@ -16,7 +16,7 @@
     "cmd-[": "agent.prev",
     "cmd-shift-l": "layout.switch",
     "cmd-n": "space.new",
-    "cmd-p": "mod.open:picker",
+    "cmd-p": "mod.open:recent-picker",
     "cmd-shift-p": "app.palette",
     "cmd-k": "app.palette",
     "cmd-,": "app.settings",
@@ -96,7 +96,8 @@
     "ctrl-a x": "pane.close",
     "ctrl-a ctrl-a": "tab-bar.last-tab",
     "ctrl-a [": "copy-mode.open",
-    "ctrl-a ctrl-f": "mod.open:picker",
+    "ctrl-a f": "mod.open:recent-picker",
+    "ctrl-a ctrl-f": "mod.open:recent-picker",
     "ctrl-a ?": "app.help"
   },
   "terminal": {

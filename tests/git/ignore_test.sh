@@ -34,6 +34,10 @@ function test_keeps_the_own_window_mod_in_the_herdr_app_folder() {
   assert_same "" "$(ignored herdr-app/mods/window/main.js)"
 }
 
+function test_keeps_the_own_recent_picker_mod_in_the_herdr_app_folder() {
+  assert_same "" "$(ignored herdr-app/mods/recent-picker/main.js)"
+}
+
 function test_ignores_the_files_that_the_herdr_app_writes_into_the_window_mod() {
   assert_same "herdr-app/mods/window/jsconfig.json" "$(ignored herdr-app/mods/window/jsconfig.json)"
   assert_same "herdr-app/mods/window/gpui-kit.d.ts" "$(ignored herdr-app/mods/window/gpui-kit.d.ts)"
