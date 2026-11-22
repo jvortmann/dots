@@ -1,9 +1,11 @@
 // The look is the one of the recent picker: the canvas, the chosen row like the
-// shown tab, and plain rows.
+// shown tab, and plain rows. A row reads like a row of the stock sidebar: the
+// program icon, the space and tab, the time since the last change of state,
+// and the status mark.
 
 import { div } from "gpui-kit";
 import { h_flex, v_flex } from "gpui-base";
-import { statusWord } from "./status.js";
+import { statusMark } from "./status-mark.js";
 import { quarter } from "./edge.js";
 import { programGlyph } from "./program-icon.js";
 
@@ -40,11 +42,11 @@ function row(t, a, chosen, go) {
 function agentCells(t, a) {
   return [
     div().flex_none().w(10).text_color(t.dim).child(a.number ? `${a.number}` : ""),
-    div().flex_none().size(6).rounded(3).bg(t[a.status]),
     agentIcon(t, a),
     div().flex_1().min_w(0).truncate().child(`${a.space_name} · ${a.tab_name}`),
-    div().flex_none().text_color(a.status === "blocked" ? t.blocked : t.dim).child(statusWord(a.status)),
-  ];
+    a.time && div().flex_none().text_size(11).text_color(t.dim).child(a.time),
+    statusMark(t, a.status),
+  ].filter(Boolean);
 }
 
 function agentIcon(t, a) {
@@ -64,9 +66,9 @@ function agentIcon(t, a) {
 
 function childCells(t, c) {
   return [
-    div().flex_none().w(10 + 14 * c.depth),
-    div().flex_none().size(6).rounded(3).bg(t[c.status]),
+    div().flex_none().w(10 + 22 * c.depth),
     div().flex_none().max_w(140).truncate().child(c.title),
     div().flex_1().min_w(0).truncate().text_color(t.dim).child(c.msg),
+    statusMark(t, c.status),
   ];
 }

@@ -58,10 +58,6 @@ function test_each_row_has_a_key_of_its_own() {
   assert_same "t3 t3:sub/a t3:sub/a/c" "$(status_of 'agentList([{ address: "t3" }], { t3: { "sub/a": {}, "sub/a/c": {} } }).map((r) => r.key).join(" ")')"
 }
 
-function test_a_blocked_agent_reads_needs_you_and_the_other_statuses_read_as_they_are() {
-  assert_same "working,needs you,done,idle" "$(status_of '["working", "blocked", "done", "idle"].map(statusWord).join(",")')"
-}
-
 function test_the_arrows_move_the_chosen_row_and_stop_at_the_ends_of_the_list() {
   assert_same '{"chosen":1} {"chosen":1} {"chosen":0} {"chosen":0}' "$(status_of '[listKey("down", 0, [{}, {}]), listKey("down", 1, [{}, {}]), listKey("up", 1, [{}, {}]), listKey("up", 0, [{}, {}])].map((k) => JSON.stringify(k)).join(" ")')"
 }
@@ -92,6 +88,47 @@ function test_enter_goes_to_the_last_row_when_the_list_shrank_under_the_chosen_r
 
 function test_the_clock_waits_until_the_next_minute_starts() {
   assert_same "17500" "$(status_of 'untilNextMinute(new Date("2026-11-09T07:05:42.500"))')"
+}
+
+function test_an_agent_seen_first_is_stamped_with_its_state_and_the_time() {
+  assert_same '{"t1":{"s":"working","at":5}}' "$(status_of 'JSON.stringify(stampChanges({}, [{ address: "t1", status: "working" }], 5))')"
+}
+
+function test_an_agent_that_keeps_its_state_keeps_its_stamp() {
+  assert_same '{"t1":{"s":"working","at":5}}' "$(status_of 'JSON.stringify(stampChanges({ t1: { s: "working", at: 5 } }, [{ address: "t1", status: "working" }], 9))')"
+}
+
+# A look at a done agent turns it idle, and a look is not the agent doing
+# anything. The stock sidebar counts the two as one state for this reason.
+function test_an_agent_that_goes_from_done_to_idle_keeps_its_stamp() {
+  assert_same '{"t1":{"s":"idle","at":5}}' "$(status_of 'JSON.stringify(stampChanges(stampChanges({}, [{ address: "t1", status: "done" }], 5), [{ address: "t1", status: "idle" }], 9))')"
+}
+
+function test_an_agent_that_changes_its_state_is_stamped_again() {
+  assert_same '{"t1":{"s":"blocked","at":9}}' "$(status_of 'JSON.stringify(stampChanges({ t1: { s: "working", at: 5 } }, [{ address: "t1", status: "blocked" }], 9))')"
+}
+
+# The list is empty right after a start, so only age makes a stamp go.
+function test_the_stamp_of_an_agent_that_is_gone_goes_after_30_days() {
+  assert_same '{"new":{"s":"idle","at":2592000001}}' "$(status_of 'JSON.stringify(stampChanges({ old: { s: "idle", at: 0 }, new: { s: "idle", at: 2592000001 } }, [], 2592000002))')"
+}
+
+function test_an_agent_still_listed_keeps_a_stamp_older_than_30_days() {
+  assert_same '{"t1":{"s":"idle","at":0}}' "$(status_of 'JSON.stringify(stampChanges({ t1: { s: "idle", at: 0 } }, [{ address: "t1", status: "idle" }], 2592000002))')"
+}
+
+function test_an_agent_row_shows_the_time_since_its_last_change_as_the_sidebar_does() {
+  assert_same "<1m 5m 2h 3d" "$(status_of 'agentList(["a", "b", "c", "d"].map((address) => ({ address })), {}, { a: { at: 9e9 - 59999 }, b: { at: 9e9 - 5 * 60000 }, c: { at: 9e9 - 150 * 60000 }, d: { at: 9e9 - 80 * 3600000 } }, 9e9).map((a) => a.time).join(" ")')"
+}
+
+function test_an_agent_row_with_no_stamp_shows_no_time() {
+  assert_same "" "$(status_of 'agentList([{ address: "a" }], {}, {}, 9e9)[0].time')"
+}
+
+# A subagent reports to its agent, so its done is no news, as in the stock
+# sidebar.
+function test_a_child_record_in_error_reads_as_blocked_and_a_done_one_as_idle() {
+  assert_same "blocked idle working" "$(status_of 'agentList([{ address: "t3" }], { t3: { "sub/a": { state: "error" }, "sub/b": { state: "done" }, "sub/c": { state: "working" } } }).slice(1).map((r) => r.status).join(" ")')"
 }
 
 # Prints the value of $1, a call to the exports of status.js, at local time.

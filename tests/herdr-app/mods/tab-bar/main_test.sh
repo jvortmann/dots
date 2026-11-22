@@ -151,7 +151,7 @@ function test_the_agent_list_copy_draws_only_the_list_and_moves_no_tab() {
 }
 
 function test_the_agent_list_shows_a_row_for_each_agent_in_the_order_and_numbers_of_alt_n() {
-  assert_contains "const rows = agentList(agents(), this.records);" "$(render_list_method)"
+  assert_contains "const rows = agentList(agents(), this.records, changesOf(), Date.now());" "$(render_list_method)"
   assert_contains "agentRows(theme(), rows" "$(render_list_method)"
 }
 
@@ -161,7 +161,7 @@ function test_the_agent_list_reads_the_records_of_each_agent_with_hc_while_it_is
   assert_contains "this.records = shared(RECORDS) ?? {};" "$(init_list_method)"
   assert_contains "if (!checking()) cx.timer.every(2000, (cx) => this.readRecords(cx));" "$(init_list_method)"
   assert_contains 'hc(["get", address, "--json"])' "$(records_of_function)"
-  assert_contains "const rows = agentList(agents(), this.records);" "$(render_list_method)"
+  assert_contains "const rows = agentList(agents(), this.records, changesOf(), Date.now());" "$(render_list_method)"
   assert_same "1" "$(grep -c 'hc(\[' "$MAIN")"
 }
 
@@ -243,6 +243,22 @@ function test_the_bar_paints_the_pi_icon_in_color_13_of_the_theme_when_that_colo
   assert_contains "this.paintPi(cx, t.ansi13);" "$(sed -n '/^  render(/,/^  }/p' "$MAIN")"
   assert_contains "if (checking() || color === this.piColor) return;" "$(paint_pi_method)"
   assert_contains 'syncPiIcon({ readTextFile, writeTextFile }, `${appHome()}/${PI_ICON}`, color)' "$(paint_pi_method)"
+}
+
+function test_each_render_of_the_bar_stamps_the_changes_of_the_agents_in_its_storage_for_the_list() {
+  assert_contains "this.stamp(list);" "$(sed -n '/^  render(/,/^  }/p' "$MAIN")"
+  assert_contains "const after = stampChanges(before, list, Date.now());" "$(stamp_method)"
+  assert_contains "localStorage.setItem(CHANGES, JSON.stringify(after));" "$(stamp_method)"
+  assert_contains 'JSON.parse(localStorage.getItem(CHANGES) ?? "{}")' "$(sed -n '/^function changesOf(/,/^}/p' "$MAIN")"
+  assert_contains "const rows = agentList(agents(), this.records, changesOf(), Date.now());" "$(render_list_method)"
+}
+
+function test_stored_stamps_that_are_not_a_plain_object_read_as_none() {
+  assert_contains 'return changes && typeof changes === "object" && !Array.isArray(changes) ? changes : {};' "$(sed -n '/^function changesOf(/,/^}/p' "$MAIN")"
+}
+
+function stamp_method() {
+  sed -n '/^  stamp(/,/^  }/p' "$MAIN"
 }
 
 function paint_pi_method() {

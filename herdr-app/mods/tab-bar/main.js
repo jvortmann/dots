@@ -26,7 +26,7 @@ import { h_flex } from "gpui-base";
 import { spaces, panes, agents, terminals, run, theme, openOverlay, closeOverlay, props, window as win, shared, setShared, nextCommand, notify, exec, hc, checking, appHome, readTextFile, writeTextFile } from "herdr";
 import { tabText } from "./label.js";
 import { agentRows, ROW } from "./agent-list.js";
-import { agentsText, needsText, agentList, listKey, machineLabel, timeText, untilNextMinute } from "./status.js";
+import { agentsText, needsText, agentList, listKey, machineLabel, timeText, untilNextMinute, stampChanges } from "./status.js";
 import { observeTabs, observeSpaces, lastTab } from "./history.js";
 import { programIcon } from "./program-icon.js";
 import { lead } from "./lead.js";
@@ -39,6 +39,8 @@ const NUMBERS = "tab-bar.tab-numbers";
 const SPACES = "tab-bar.space-history";
 const RECORDS = "tab-bar.agent-records";
 const COUNT_AT = "tab-bar.count-at";
+// In localStorage, so the times of the agent list outlive a restart.
+const CHANGES = "agent-changes";
 const LIST_WIDTH = 360;
 
 function colors(t) {
@@ -90,6 +92,15 @@ function openList(anchor, count, chosen = 0) {
     props: { popup: "agents", anchor, height, chosen },
     at: anchor ? { x: anchor.x, y: anchor.bottom - height } : "pointer",
   });
+}
+
+function changesOf() {
+  try {
+    const changes = JSON.parse(localStorage.getItem(CHANGES) ?? "{}");
+    return changes && typeof changes === "object" && !Array.isArray(changes) ? changes : {};
+  } catch {
+    return {};
+  }
 }
 
 function listHeight(count) {
@@ -183,7 +194,7 @@ export default class TerminalsBar extends View {
   }
 
   renderList() {
-    const rows = agentList(agents(), this.records);
+    const rows = agentList(agents(), this.records, changesOf(), Date.now());
     return agentRows(theme(), rows, Math.min(this.chosen, rows.length - 1), (a) => this.goTo(a))
       .id("tm-agent-list")
       .track_focus(this.handle)
@@ -282,6 +293,15 @@ export default class TerminalsBar extends View {
     return after;
   }
 
+  // The bar stamps each change of state in its own storage, because a mod
+  // cannot read the storage of the sidebar. The agent list shows the time
+  // since the stamp.
+  stamp(list) {
+    const before = changesOf();
+    const after = stampChanges(before, list, Date.now());
+    if (JSON.stringify(after) !== JSON.stringify(before)) localStorage.setItem(CHANGES, JSON.stringify(after));
+  }
+
   // The app does not tint the pi icon of programs.json, because it is a
   // picture. So the bar writes the file in color 13 of the theme when that
   // color changes. Every mod then shows the new icon, and the app loads
@@ -312,6 +332,7 @@ export default class TerminalsBar extends View {
     const w = win() ?? {};
     const records = terminals();
     const list = agents();
+    this.stamp(list);
 
     const tab = (c) => {
       const p = lead(all, c.id);

@@ -18,8 +18,9 @@ function test_the_edge_rule_of_the_list_is_the_same_as_the_picker_s() {
   assert_same "" "$(diff "$ROOT/herdr-app/mods/recent-picker/edge.js" "$ROOT/herdr-app/mods/tab-bar/edge.js" 2>&1)"
 }
 
-function test_a_row_shows_the_number_the_status_dot_the_program_icon_the_space_and_tab_and_the_status() {
-  assert_same "number dot icon place status " "$(agent_cells_function | row_parts)"
+# The order of the stock sidebar, after the number of alt-N.
+function test_a_row_shows_the_number_the_program_icon_the_space_and_tab_the_time_and_the_status_mark() {
+  assert_same "number icon place time mark " "$(agent_cells_function | row_parts)"
 }
 
 function test_the_name_of_the_program_shows_under_the_pointer_and_to_a_screen_reader() {
@@ -44,11 +45,11 @@ function test_the_program_icon_draws_a_glyph_in_the_color_of_the_tab_bar_or_a_pi
   assert_contains ".child(programGlyph(t, g))" "$(icon_function)"
 }
 
-# 14 px is a dot and its gap, so the dot of a child row sits under the name of
-# its parent.
-function test_a_child_row_shows_an_indent_by_its_depth_the_status_dot_the_type_and_the_description() {
+# 22 px is an icon and its gap, so the type of a child row sits under the
+# space of its agent.
+function test_a_child_row_shows_an_indent_by_its_depth_the_type_the_description_and_the_status_mark() {
   assert_contains ".children(a.depth ? childCells(t, a) : agentCells(t, a))" "$(row_function)"
-  assert_same "indent dot type description " "$(child_cells_function | child_parts)"
+  assert_same "indent type description mark " "$(child_cells_function | child_parts)"
 }
 
 function test_a_click_on_a_row_goes_to_its_agent_with_a_hand_cursor() {
@@ -72,9 +73,16 @@ function test_a_row_not_chosen_has_no_fill_and_its_text_brightens_under_the_poin
   assert_same "" "$({ agent_cells_function; child_cells_function; } | grep -oE 't\.muted' | tr '\n' ' ')"
 }
 
-function test_all_text_takes_the_13_px_size_of_the_picker() {
+function test_the_text_takes_the_13_px_size_of_the_picker_and_the_time_the_dim_11_px_of_the_sidebar() {
   assert_contains ".text_size(13)" "$(rows_function)"
-  assert_same "" "$(grep -oE 'text_size\([0-9.]+\)' "$LIST" | grep -v '^text_size(13)$' | tr '\n' ' ')"
+  assert_contains "div().flex_none().text_size(11).text_color(t.dim).child(a.time)" "$(agent_cells_function)"
+}
+
+# An empty cell would add the gap of the row before the mark.
+function test_an_agent_with_no_time_has_no_time_cell() {
+  assert_contains "a.time && div().flex_none().text_size(11)" "$(agent_cells_function)"
+  assert_contains "].filter(Boolean);" "$(agent_cells_function)"
+  assert_same "" "$(grep -oE 'text_size\([0-9.]+\)' "$LIST" | grep -v -e '^text_size(13)$' -e '^text_size(11)$' | tr '\n' ' ')"
 }
 
 function test_a_list_with_no_agents_says_so() {
@@ -103,9 +111,9 @@ function child_cells_function() {
 }
 
 function child_parts() {
-  awk '/\.w\(10 \+ 14 \* c\.depth\)/ { print "indent" } /\.bg\(t\[c\.status\]\)/ { print "dot" } /c\.title/ { print "type" } /c\.msg/ { print "description" }' | tr '\n' ' '
+  awk '/\.w\(10 \+ 22 \* c\.depth\)/ { print "indent" } /\.bg\(t\[c\.status\]\)/ { print "dot" } /c\.title/ { print "type" } /c\.msg/ { print "description" } /statusMark\(t, c\.status\)/ { print "mark" }' | tr '\n' ' '
 }
 
 function row_parts() {
-  awk '/a\.number/ { print "number" } /\.bg\(t\[a\.status\]\)/ { print "dot" } /agentIcon\(t, a\)/ { print "icon" } /a\.program\.name/ { print "name" } /a\.space_name/ { print "place" } /statusWord\(a\.status\)/ { print "status" }' | tr '\n' ' '
+  awk '/a\.number/ { print "number" } /\.bg\(t\[a\.status\]\)/ { print "dot" } /agentIcon\(t, a\)/ { print "icon" } /a\.program\.name/ { print "name" } /a\.space_name/ { print "place" } /a\.time/ { print "time" } /statusWord\(/ { print "word" } /statusMark\(t, a\.status\)/ { print "mark" }' | tr '\n' ' '
 }
