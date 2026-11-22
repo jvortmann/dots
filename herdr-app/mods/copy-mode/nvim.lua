@@ -19,6 +19,14 @@ vim.keymap.set("n", "<Esc>", "<cmd>qa!<cr>")
 for key, move in pairs({ j = "+", k = "-" }) do
   vim.keymap.set({ "n", "x" }, key, function() return vim.fn.mode() == "\22" and key or move end, { expr = true })
 end
+-- keys.json sends ctrl-h/j/k/l to the program, so here they move the Herdr
+-- pane, as in zsh. pane.go keeps copy mode shown in its pane, but pane.focus
+-- would end it. The call runs in the background, so nvim does not wait.
+for key, direction in pairs({ h = "left", j = "down", k = "up", l = "right" }) do
+  vim.keymap.set("n", "<C-" .. key .. ">", function()
+    vim.system({ "herdr-app", "do", "pane.go", vim.json.encode({ direction = direction }) })
+  end)
+end
 -- The buffer is a terminal buffer, so i, a, I and A would enter Terminal mode,
 -- where q and Esc do not close copy mode.
 vim.api.nvim_create_autocmd("TermEnter", { command = "stopinsert" })

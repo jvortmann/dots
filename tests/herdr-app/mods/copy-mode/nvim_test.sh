@@ -10,6 +10,7 @@ function set_up() {
   SCRATCH=$(bashunit::temp_dir "copy-mode")
   mkdir -p "$SCRATCH/bin"
   fake pbcopy 'cat > "$SCRATCH/clipboard"'
+  fake herdr-app 'printf "%s\n" "$*" >> "$SCRATCH/herdr-app"'
   fake hc 'case $1 in
     get) printf "{\"cols\":40,\"rows\":%s}\n" "$(cat "$SCRATCH/rows")" ;;
     label) printf "%s %s\n" "$2" "$3" >> "$SCRATCH/labels" ;;
@@ -379,6 +380,29 @@ function test_escape_in_a_selection_cancels_only_the_selection() {
   assert_file_exists "$SCRATCH/open"
 }
 
+function test_ctrl_l_moves_to_the_herdr_pane_on_the_right() {
+  press '<C-l>'
+
+  assert_same 'do pane.go {"direction":"right"}' "$(cat "$SCRATCH/herdr-app" 2> /dev/null)"
+}
+
+function test_ctrl_h_j_and_k_move_to_the_herdr_pane_on_the_left_below_and_above() {
+  press '<C-h><C-j><C-k>'
+
+  assert_same 'do pane.go {"direction":"left"}
+do pane.go {"direction":"down"}
+do pane.go {"direction":"up"}' "$(sort_moves)"
+}
+
+function test_does_not_wait_for_the_pane_move() {
+  fake herdr-app 'exec sleep 3'
+  local start=$SECONDS
+
+  press '<C-l>q'
+
+  assert_less_than 2 $((SECONDS - start))
+}
+
 function test_a_modeline_in_the_text_changes_no_option() {
   paint "" "foo-bar|# vim: set iskeyword+=-:" 1 1
 
@@ -454,6 +478,15 @@ indented() {
   local lines=() i
   for i in {1..26}; do lines+=("$(printf '%*sl%d tail' $((i % 2 ? 1 : 6)) '' "$i")"); done
   ROWS=6 paint "$(IFS='|'; printf '%s' "${lines[*]:0:20}")" "$(IFS='|'; printf '%s' "${lines[*]:20}")" 6 12
+}
+
+# Prints the calls of the fake herdr-app in the order left, down, up and
+# right. The calls run in the background, so they can end in another order.
+sort_moves() {
+  local direction
+  for direction in left down up right; do
+    grep -F "\"$direction\"" "$SCRATCH/herdr-app" 2> /dev/null
+  done
 }
 
 # Puts a program called $1 first on the PATH of nvim, which runs the shell
