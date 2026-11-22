@@ -24,8 +24,30 @@ function test_the_edge_rule_of_the_list_is_the_same_as_the_picker_s() {
   assert_same "" "$(diff "$ROOT/herdr-app/mods/recent-picker/edge.js" "$ROOT/herdr-app/mods/tab-bar/edge.js" 2>&1)"
 }
 
-function test_a_row_shows_the_number_the_status_dot_the_name_the_space_and_tab_and_the_status() {
-  assert_same "number dot name place status " "$(agent_cells_function | row_parts)"
+function test_a_row_shows_the_number_the_status_dot_the_program_icon_the_space_and_tab_and_the_status() {
+  assert_same "number dot icon place status " "$(agent_cells_function | row_parts)"
+}
+
+function test_the_name_of_the_program_shows_under_the_pointer_and_to_a_screen_reader() {
+  assert_contains ".tooltip(g.name)" "$(icon_function)"
+  assert_contains ".accessibility_label(g.name)" "$(icon_function)"
+}
+
+# With the name gone, the space and tab are the main text of the row, so they
+# brighten with it under the pointer and on the chosen row.
+function test_the_space_and_tab_take_the_text_color_of_the_row() {
+  assert_contains 'div().flex_1().min_w(0).truncate().child(`${a.space_name} · ${a.tab_name}`)' "$(agent_cells_function)"
+}
+
+# The program table of the app gives no icon to a program it does not list.
+function test_a_program_with_no_icon_shows_its_name() {
+  assert_contains "if (!g.icon) return div().flex_none().max_w(140).truncate().child(g.name);" "$(icon_function)"
+}
+
+# A picture, such as the violet pi of programs.json, keeps its own colors.
+function test_the_program_icon_draws_a_glyph_in_the_color_of_the_tab_bar_or_a_picture_as_it_is() {
+  assert_contains 'import { glyphColor } from "./glyph.js";' "$(cat "$LIST")"
+  assert_contains "g.tint ? svg(g.icon).size(14).text_color(glyphColor(g, t.canvas, t.foreground, t)) : image(g.icon).w(14).h(14)" "$(icon_function)"
 }
 
 # 14 px is a dot and its gap, so the dot of a child row sits under the name of
@@ -78,6 +100,10 @@ function agent_cells_function() {
   sed -n '/^function agentCells(/,/^}/p' "$LIST"
 }
 
+function icon_function() {
+  sed -n '/^function programIcon(/,/^}/p' "$LIST"
+}
+
 function child_cells_function() {
   sed -n '/^function childCells(/,/^}/p' "$LIST"
 }
@@ -87,5 +113,5 @@ function child_parts() {
 }
 
 function row_parts() {
-  awk '/a\.number/ { print "number" } /\.bg\(t\[a\.status\]\)/ { print "dot" } /a\.program\.name/ { print "name" } /a\.space_name/ { print "place" } /statusWord\(a\.status\)/ { print "status" }' | tr '\n' ' '
+  awk '/a\.number/ { print "number" } /\.bg\(t\[a\.status\]\)/ { print "dot" } /programIcon\(t, a\)/ { print "icon" } /a\.program\.name/ { print "name" } /a\.space_name/ { print "place" } /statusWord\(a\.status\)/ { print "status" }' | tr '\n' ' '
 }
