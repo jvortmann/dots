@@ -1,1 +1,1 @@
-{ "programs": { "pi": { "icon": "my-icons/pi.svg", "tint": false } } }
+{ "programs": { "pi": { "icon": "mods/tab-bar/pi.svg", "tint": false } } }

@@ -23,7 +23,7 @@
 
 import { View, div, svg } from "gpui-kit";
 import { h_flex } from "gpui-base";
-import { spaces, panes, agents, terminals, run, theme, openOverlay, closeOverlay, props, window as win, shared, setShared, nextCommand, notify, exec, hc, checking } from "herdr";
+import { spaces, panes, agents, terminals, run, theme, openOverlay, closeOverlay, props, window as win, shared, setShared, nextCommand, notify, exec, hc, checking, appHome, readTextFile, writeTextFile } from "herdr";
 import { tabText } from "./label.js";
 import { agentRows, ROW } from "./agent-list.js";
 import { agentsText, needsText, agentList, listKey, machineLabel, timeText, untilNextMinute } from "./status.js";
@@ -31,6 +31,7 @@ import { observeTabs, observeSpaces, lastTab } from "./history.js";
 import { programIcon } from "./program-icon.js";
 import { lead } from "./lead.js";
 import { numberTabs, nextMove, swapNumbers, tabNumbered } from "./numbers.js";
+import { PI_ICON, syncPiIcon } from "./pi-icon.js";
 
 // Shared state, not a field: another layout, a save or a restart starts the mod fresh.
 const HISTORY = "tab-bar.tab-history";
@@ -281,12 +282,29 @@ export default class TerminalsBar extends View {
     return after;
   }
 
-  render() {
+  // The app does not tint the pi icon of programs.json, because it is a
+  // picture. So the bar writes the file in color 13 of the theme when that
+  // color changes. Every mod then shows the new icon, and the app loads
+  // this mod again.
+  paintPi(cx, color) {
+    if (checking() || color === this.piColor) return;
+    this.piColor = color;
+    cx.spawn(async () => {
+      try {
+        await syncPiIcon({ readTextFile, writeTextFile }, `${appHome()}/${PI_ICON}`, color);
+      } catch (error) {
+        notify({ title: "Pi icon", body: String(error?.message ?? error), level: "error" });
+      }
+    });
+  }
+
+  render(cx) {
     if (this.listing) return this.renderList();
     this.observe();
     const numbers = this.number();
     this.place(numbers);
     const t = theme();
+    this.paintPi(cx, t.ansi13);
     const C = colors(t);
     const space = spaces().find((p) => p.active);
     if (!space) return div();

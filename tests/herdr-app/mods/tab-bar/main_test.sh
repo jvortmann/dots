@@ -245,6 +245,16 @@ function test_each_render_records_the_spaces_by_recency_for_the_recent_picker() 
   assert_contains "setShared(SPACES," "$(observe_method)"
 }
 
+function test_the_bar_paints_the_pi_icon_in_color_13_of_the_theme_when_that_color_changes() {
+  assert_contains "this.paintPi(cx, t.ansi13);" "$(sed -n '/^  render(/,/^  }/p' "$MAIN")"
+  assert_contains "if (checking() || color === this.piColor) return;" "$(paint_pi_method)"
+  assert_contains 'syncPiIcon({ readTextFile, writeTextFile }, `${appHome()}/${PI_ICON}`, color)' "$(paint_pi_method)"
+}
+
+function paint_pi_method() {
+  sed -n '/^  paintPi(/,/^  }/p' "$MAIN"
+}
+
 function tab_chain() {
   sed -n '/const tab = (c) =>/,/^    };$/p' "$MAIN"
 }

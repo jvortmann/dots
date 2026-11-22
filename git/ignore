@@ -81,7 +81,6 @@ herdr-app/*
 !herdr-app/keys.json
 !herdr-app/settings.json
 !herdr-app/programs.json
-!herdr-app/my-icons/
 !herdr-app/mods/
 herdr-app/mods/*
 !herdr-app/mods/tab-bar/
@@ -97,6 +96,7 @@ herdr-app/themes/*
 !herdr-app/themes/solarized-light.json
 herdr-app/mods/*/jsconfig.json
 herdr-app/mods/*/gpui-kit.d.ts
+herdr-app/mods/tab-bar/pi.svg
 
 # herdr-core
 # A process that still has XDG_RUNTIME_DIR=~/.config puts its core sockets

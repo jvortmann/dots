@@ -38,9 +38,16 @@ function test_keeps_the_own_recent_picker_mod_in_the_herdr_app_folder() {
   assert_same "" "$(ignored herdr-app/mods/recent-picker/main.js)"
 }
 
-function test_keeps_the_own_program_table_and_its_icons_in_the_herdr_app_folder() {
+function test_keeps_the_own_program_table_in_the_herdr_app_folder() {
   assert_same "" "$(ignored herdr-app/programs.json)"
-  assert_same "" "$(ignored herdr-app/my-icons/pi.svg)"
+}
+
+function test_ignores_the_old_folder_of_own_program_icons() {
+  assert_same "herdr-app/my-icons/pi.svg" "$(ignored herdr-app/my-icons/pi.svg)"
+}
+
+function test_ignores_the_pi_icon_that_the_tab_bar_writes_in_the_color_of_the_theme() {
+  assert_same "herdr-app/mods/tab-bar/pi.svg" "$(ignored herdr-app/mods/tab-bar/pi.svg)"
 }
 
 function test_ignores_the_program_icons_that_the_herdr_app_ships() {
