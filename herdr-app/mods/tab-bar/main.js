@@ -21,14 +21,14 @@
 // state, so that the bar can size the list. A popup cannot change its size, so
 // the list opens again in place when its height changes.
 
-import { View, div, svg, image } from "gpui-kit";
+import { View, div, svg } from "gpui-kit";
 import { h_flex } from "gpui-base";
 import { spaces, panes, agents, terminals, run, theme, openOverlay, closeOverlay, props, window as win, shared, setShared, nextCommand, notify, exec, hc, checking } from "herdr";
 import { tabText } from "./label.js";
 import { agentRows, ROW } from "./agent-list.js";
 import { agentsText, needsText, agentList, listKey, machineLabel, timeText, untilNextMinute } from "./status.js";
 import { observeTabs, observeSpaces, lastTab } from "./history.js";
-import { glyphColor } from "./glyph.js";
+import { programIcon } from "./program-icon.js";
 import { lead } from "./lead.js";
 import { numberTabs, nextMove, swapNumbers, tabNumbered } from "./numbers.js";
 
@@ -51,24 +51,6 @@ function colors(t) {
     label: t.muted,
     dim: t.dim,
   };
-}
-
-// The program's icon from the app's table: its glyph in its color, or its logo.
-function programIcon(t, C, p) {
-  const g = p?.program;
-  const dot = p?.status && p.status !== "idle" ? t[p.status] : null;
-  return div()
-    .relative()
-    .flex_none()
-    .w(14)
-    .h(14)
-    .flex()
-    .items_center()
-    .justify_center()
-    .when(Boolean(g?.icon), (el) =>
-      el.child(g.tint ? svg(g.icon).size(14).text_color(glyphColor(g, t.canvas, C.text, t)) : image(g.icon).w(14).h(14)),
-    )
-    .when(Boolean(dot), (el) => el.child(div().absolute().top(-2).right(-2).w(7).h(7).rounded_full().bg(dot)));
 }
 
 // The machine label of the stock workspace-status mod, with the host name as
@@ -340,7 +322,7 @@ export default class TerminalsBar extends View {
           openOverlay({ mod: "menu", kind: "popup", width: 200, props: { tab: "tab", target: { id: c.id, space: space.id } } }),
         )
         .child(div().flex_none().text_color(C.label).child(`${numbers[space.id][c.id]}`))
-        .child(programIcon(t, C, p))
+        .child(programIcon(t, p, p?.status))
         .child(
           h_flex()
             .min_w(0)

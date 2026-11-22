@@ -2,6 +2,7 @@
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
 MAIN="$ROOT/herdr-app/mods/tab-bar/main.js"
+ICON="$ROOT/herdr-app/mods/tab-bar/program-icon.js"
 # shellcheck source=../fixed_colors.sh
 source "$ROOT/tests/herdr-app/mods/fixed_colors.sh"
 
@@ -232,7 +233,8 @@ function test_the_program_icon_is_at_most_18_px() {
 }
 
 function test_a_program_glyph_takes_the_color_that_stands_out_on_the_canvas() {
-  assert_contains "svg(g.icon).size(14).text_color(glyphColor(g, t.canvas, C.text, t))" "$(icon_function)"
+  assert_contains 'import { programIcon } from "./program-icon.js";' "$(cat "$MAIN")"
+  assert_contains "svg(g.icon).size(14).text_color(glyphColor(g, t.canvas, t.foreground, t))" "$(icon_function)"
 }
 
 function test_each_render_records_the_spaces_by_recency_for_the_recent_picker() {
@@ -256,7 +258,7 @@ function right_parts() {
 }
 
 function tab_parts() {
-  awk '/numbers\[space\.id\]/ { print "number" } /programIcon\(t, C, p\)/ { print "icon" } /\.child\(text\)/ { print "text" }' | tr '\n' ' '
+  awk '/numbers\[space\.id\]/ { print "number" } /programIcon\(t, p, p\?\.status\)/ { print "icon" } /\.child\(text\)/ { print "text" }' | tr '\n' ' '
 }
 
 function space_chip_chain() {
@@ -364,7 +366,7 @@ function colors_function() {
 }
 
 function icon_function() {
-  sed -n '/^function programIcon(/,/^}/p' "$MAIN"
+  cat "$ICON"
 }
 
 function round_corners_over() {

@@ -46,8 +46,8 @@ function test_a_program_with_no_icon_shows_its_name() {
 
 # A picture, such as the violet pi of programs.json, keeps its own colors.
 function test_the_program_icon_draws_a_glyph_in_the_color_of_the_tab_bar_or_a_picture_as_it_is() {
-  assert_contains 'import { glyphColor } from "./glyph.js";' "$(cat "$LIST")"
-  assert_contains "g.tint ? svg(g.icon).size(14).text_color(glyphColor(g, t.canvas, t.foreground, t)) : image(g.icon).w(14).h(14)" "$(icon_function)"
+  assert_contains 'import { programGlyph } from "./program-icon.js";' "$(cat "$LIST")"
+  assert_contains ".child(programGlyph(t, g))" "$(icon_function)"
 }
 
 # 14 px is a dot and its gap, so the dot of a child row sits under the name of
@@ -101,7 +101,7 @@ function agent_cells_function() {
 }
 
 function icon_function() {
-  sed -n '/^function programIcon(/,/^}/p' "$LIST"
+  sed -n '/^function agentIcon(/,/^}/p' "$LIST"
 }
 
 function child_cells_function() {
@@ -113,5 +113,5 @@ function child_parts() {
 }
 
 function row_parts() {
-  awk '/a\.number/ { print "number" } /\.bg\(t\[a\.status\]\)/ { print "dot" } /programIcon\(t, a\)/ { print "icon" } /a\.program\.name/ { print "name" } /a\.space_name/ { print "place" } /statusWord\(a\.status\)/ { print "status" }' | tr '\n' ' '
+  awk '/a\.number/ { print "number" } /\.bg\(t\[a\.status\]\)/ { print "dot" } /agentIcon\(t, a\)/ { print "icon" } /a\.program\.name/ { print "name" } /a\.space_name/ { print "place" } /statusWord\(a\.status\)/ { print "status" }' | tr '\n' ' '
 }

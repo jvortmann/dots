@@ -1,11 +1,11 @@
 // The look is the one of the recent picker: the canvas, the chosen row like the
 // shown tab, and plain rows.
 
-import { div, svg, image } from "gpui-kit";
+import { div } from "gpui-kit";
 import { h_flex, v_flex } from "gpui-base";
 import { statusWord } from "./status.js";
 import { quarter } from "./edge.js";
-import { glyphColor } from "./glyph.js";
+import { programGlyph } from "./program-icon.js";
 
 export const ROW = 28;
 
@@ -41,13 +41,13 @@ function agentCells(t, a) {
   return [
     div().flex_none().w(10).text_color(t.dim).child(a.number ? `${a.number}` : ""),
     div().flex_none().size(6).rounded(3).bg(t[a.status]),
-    programIcon(t, a),
+    agentIcon(t, a),
     div().flex_1().min_w(0).truncate().child(`${a.space_name} · ${a.tab_name}`),
     div().flex_none().text_color(a.status === "blocked" ? t.blocked : t.dim).child(statusWord(a.status)),
   ];
 }
 
-function programIcon(t, a) {
+function agentIcon(t, a) {
   const g = a.program;
   if (!g.icon) return div().flex_none().max_w(140).truncate().child(g.name);
   return div()
@@ -59,7 +59,7 @@ function programIcon(t, a) {
     .flex()
     .items_center()
     .justify_center()
-    .child(g.tint ? svg(g.icon).size(14).text_color(glyphColor(g, t.canvas, t.foreground, t)) : image(g.icon).w(14).h(14));
+    .child(programGlyph(t, g));
 }
 
 function childCells(t, c) {

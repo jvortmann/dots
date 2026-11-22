@@ -2,6 +2,7 @@
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
 MAIN="$ROOT/herdr-app/mods/recent-picker/main.js"
+ICON="$ROOT/herdr-app/mods/recent-picker/program-icon.js"
 MOD="$ROOT/herdr-app/mods/recent-picker/mod.json"
 # shellcheck source=../fixed_colors.sh
 source "$ROOT/tests/herdr-app/mods/fixed_colors.sh"
@@ -71,12 +72,17 @@ function test_the_picker_names_the_stock_mod_and_version_it_was_copied_from() {
 }
 
 function test_a_program_glyph_takes_the_color_that_stands_out_on_the_canvas_as_in_the_tab_bar() {
-  assert_contains 'import { glyphColor } from "./glyph.js";' "$(cat "$MAIN")"
+  assert_contains 'import { programIcon } from "./program-icon.js";' "$(cat "$MAIN")"
+  assert_contains 'import { glyphColor } from "./glyph.js";' "$(icon_function)"
   assert_contains "svg(g.icon).size(14).text_color(glyphColor(g, t.canvas, t.foreground, t))" "$(icon_function)"
 }
 
 function test_the_glyph_rule_of_the_picker_is_the_same_as_the_tab_bar_s() {
   assert_same "" "$(diff "$ROOT/herdr-app/mods/tab-bar/glyph.js" "$ROOT/herdr-app/mods/recent-picker/glyph.js" 2>&1)"
+}
+
+function test_the_program_icon_of_the_picker_is_the_same_as_the_tab_bar_s() {
+  assert_same "" "$(diff "$ROOT/herdr-app/mods/tab-bar/program-icon.js" "$ROOT/herdr-app/mods/recent-picker/program-icon.js" 2>&1)"
 }
 
 function test_the_lead_pane_rule_of_the_picker_is_the_same_as_the_tab_bar_s() {
@@ -91,7 +97,7 @@ function test_a_tab_row_shows_the_icon_and_dot_of_the_lead_pane_of_the_tab_like_
 }
 
 function icon_function() {
-  sed -n '/^function programIcon(/,/^}/p' "$MAIN"
+  cat "$ICON"
 }
 
 function tab_row() {

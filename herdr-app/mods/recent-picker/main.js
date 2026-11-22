@@ -9,12 +9,12 @@
 // - The icons are as in the tab bar.
 // - The colors come from the theme only.
 
-import { View, div, svg, image } from "gpui-kit";
+import { View, div, svg } from "gpui-kit";
 import { v_flex, h_flex, InputState, Input } from "gpui-base";
 import { agents, panes, spaces, terminals, run, hc, theme, settings, props, closeOverlay, openOverlay, shared, setShared } from "herdr";
 import { recentSpaces, openingTab } from "./order.js";
 import { quarter } from "./edge.js";
-import { glyphColor } from "./glyph.js";
+import { programIcon } from "./program-icon.js";
 import { lead } from "./lead.js";
 
 const RECENT = "tab-bar.space-history";
@@ -41,23 +41,6 @@ function spaceColor(t, p) {
   if (p.name === "~") return t.dim;
   const c = spaceColors()[p.id] ?? PROJECT_COLORS[0];
   return c.startsWith("#") ? c : t[c];
-}
-
-function programIcon(t, a, status) {
-  const g = a?.program;
-  const dot = status && status !== "idle" ? t[status] : null;
-  return div()
-    .relative()
-    .flex_none()
-    .w(14)
-    .h(14)
-    .flex()
-    .items_center()
-    .justify_center()
-    .when(Boolean(g?.icon), (el) =>
-      el.child(g.tint ? svg(g.icon).size(14).text_color(glyphColor(g, t.canvas, t.foreground, t)) : image(g.icon).w(14).h(14)),
-    )
-    .when(Boolean(dot), (el) => el.child(div().absolute().top(-2).right(-2).w(7).h(7).rounded_full().bg(dot)));
 }
 
 export default class Picker extends View {
