@@ -184,7 +184,7 @@ function test_the_program_icon_is_at_most_18_px() {
 }
 
 function test_a_program_glyph_takes_the_color_that_stands_out_on_the_canvas() {
-  assert_contains "svg(g.icon).size(14).text_color(glyphColor(g, t.canvas, C.text))" "$(icon_function)"
+  assert_contains "svg(g.icon).size(14).text_color(glyphColor(g, t.canvas, C.text, t))" "$(icon_function)"
 }
 
 function test_each_render_records_the_spaces_by_recency_for_the_recent_picker() {

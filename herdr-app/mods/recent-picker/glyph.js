@@ -1,8 +1,15 @@
-// The table gives a glyph color for drawing on its tile. A mod draws no tile,
-// so the glyph takes its color or its tile, whichever stands out more.
-export function glyphColor(program, background, fallback) {
+// The table gives a glyph color for drawing on a tile, and a mod draws no tile.
+// The pi glyph takes the theme violet. Another glyph takes its tile color when
+// that reaches 3:1 on the background. Else it takes the color or the tile,
+// whichever stands out more.
+const THEME_COLORS = { pi: "ansi13" };
+
+export function glyphColor(program, background, fallback, theme = {}) {
+  const own = theme[THEME_COLORS[program.key]];
+  if (own) return own;
   const choices = [program.color, program.tile].filter(Boolean);
   if (!choices.length) return fallback;
+  if (program.tile && contrast(program.tile, background) >= 3) return program.tile;
   return choices.reduce((best, c) => (contrast(c, background) > contrast(best, background) ? c : best));
 }
 

@@ -54,7 +54,7 @@ function programIcon(t, C, p) {
     .items_center()
     .justify_center()
     .when(Boolean(g?.icon), (el) =>
-      el.child(g.tint ? svg(g.icon).size(14).text_color(glyphColor(g, t.canvas, C.text)) : image(g.icon).w(14).h(14)),
+      el.child(g.tint ? svg(g.icon).size(14).text_color(glyphColor(g, t.canvas, C.text, t)) : image(g.icon).w(14).h(14)),
     )
     .when(Boolean(dot), (el) => el.child(div().absolute().top(-2).right(-2).w(7).h(7).rounded_full().bg(dot)));
 }
