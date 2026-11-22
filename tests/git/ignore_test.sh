@@ -38,6 +38,15 @@ function test_keeps_the_own_recent_picker_mod_in_the_herdr_app_folder() {
   assert_same "" "$(ignored herdr-app/mods/recent-picker/main.js)"
 }
 
+function test_keeps_the_own_program_table_and_its_icons_in_the_herdr_app_folder() {
+  assert_same "" "$(ignored herdr-app/programs.json)"
+  assert_same "" "$(ignored herdr-app/my-icons/pi.svg)"
+}
+
+function test_ignores_the_program_icons_that_the_herdr_app_ships() {
+  assert_same "herdr-app/icons/pi.svg" "$(ignored herdr-app/icons/pi.svg)"
+}
+
 function test_ignores_the_files_that_the_herdr_app_writes_into_the_window_mod() {
   assert_same "herdr-app/mods/window/jsconfig.json" "$(ignored herdr-app/mods/window/jsconfig.json)"
   assert_same "herdr-app/mods/window/gpui-kit.d.ts" "$(ignored herdr-app/mods/window/gpui-kit.d.ts)"

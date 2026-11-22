@@ -80,6 +80,8 @@ herdr-app/*
 !herdr-app/setup.sh
 !herdr-app/keys.json
 !herdr-app/settings.json
+!herdr-app/programs.json
+!herdr-app/my-icons/
 !herdr-app/mods/
 herdr-app/mods/*
 !herdr-app/mods/tab-bar/
