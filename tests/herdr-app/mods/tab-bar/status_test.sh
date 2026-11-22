@@ -66,6 +66,10 @@ function test_the_arrows_move_the_chosen_row_and_stop_at_the_ends_of_the_list() 
   assert_same '{"chosen":1} {"chosen":1} {"chosen":0} {"chosen":0}' "$(status_of '[listKey("down", 0, [{}, {}]), listKey("down", 1, [{}, {}]), listKey("up", 1, [{}, {}]), listKey("up", 0, [{}, {}])].map((k) => JSON.stringify(k)).join(" ")')"
 }
 
+function test_j_and_k_move_the_chosen_row_down_and_up_as_in_vi() {
+  assert_same '{"chosen":1} {"chosen":0}' "$(status_of '[listKey("j", 0, [{}, {}]), listKey("k", 1, [{}, {}])].map((k) => JSON.stringify(k)).join(" ")')"
+}
+
 function test_enter_goes_to_the_chosen_row() {
   assert_same '{"go":1}' "$(status_of 'JSON.stringify(listKey("enter", 1, [{}, {}]))')"
 }

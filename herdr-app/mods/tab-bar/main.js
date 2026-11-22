@@ -1,10 +1,19 @@
 // The bar at the bottom of the layout: space picker, tabs, status, and window
 // controls. The status is the agent count with a dot for each agent that is not
 // idle, then the agents that need you, the machine label and the time. A click
-// on the count opens the agent list above it. select-agent-N (alt-1..9) goes
-// to agent N of that list. The bar runs last-tab (ctrl-a ctrl-a), which selects
-// the tab shown before. Each tab keeps its number, as in tmux: the bar numbers
-// each new tab and moves it into number order, and select-N selects by number.
+// on the count opens the agent list above it, and so does alt-a (tab-bar.agents).
+// In the open list, alt-a closes it: keys.json runs overlay.close for mod:tab-bar,
+// because the list has the keyboard. The keys j and k move like the arrows.
+// select-agent-N (alt-1..9) goes to agent N of that list.
+//
+// A key has no position, so the count keeps its place from the pointer, a press
+// or a move over it. It stores the place in shared state, as distances from the
+// right and bottom edges of the window. Before the pointer has been there, the
+// list opens at the pointer.
+//
+// The bar runs last-tab (ctrl-a ctrl-a), which selects the tab shown before.
+// Each tab keeps its number, as in tmux: the bar numbers each new tab and moves
+// it into number order, and select-N selects by number.
 //
 // The agent list shows the subagents of each agent under it, from the child
 // records. Only the open list reads them, with `hc get` every 2 seconds,
@@ -28,6 +37,7 @@ const HISTORY = "tab-bar.tab-history";
 const NUMBERS = "tab-bar.tab-numbers";
 const SPACES = "tab-bar.space-history";
 const RECORDS = "tab-bar.agent-records";
+const COUNT_AT = "tab-bar.count-at";
 const LIST_WIDTH = 360;
 
 function colors(t) {
@@ -153,6 +163,7 @@ export default class TerminalsBar extends View {
         if (command === "last-tab") this.selectLastTab();
         else if (command === "swap-left") this.swap(-1);
         else if (command === "swap-right") this.swap(1);
+        else if (command === "agents") this.openAgents();
         else if (command.startsWith("select-agent-")) this.selectAgent(Number(command.slice("select-agent-".length)));
         else if (command.startsWith("select-")) this.selectNumber(Number(command.slice("select-".length)));
       }
@@ -237,8 +248,16 @@ export default class TerminalsBar extends View {
   }
 
   openAgents() {
-    const at = this.agentsAt;
-    openList(at && { x: at.x + at.width - LIST_WIDTH, bottom: at.y - 6 }, agentList(agents(), shared(RECORDS) ?? {}).length);
+    const at = shared(COUNT_AT);
+    const { width, height } = window.viewport_size();
+    openList(at && { x: width - at.right - LIST_WIDTH, bottom: height - at.bottom - 6 }, agentList(agents(), shared(RECORDS) ?? {}).length);
+  }
+
+  placeCount(bounds) {
+    if (!bounds) return;
+    const { width, height } = window.viewport_size();
+    const at = { right: Math.round(width - bounds.x - bounds.width), bottom: Math.round(height - bounds.y) };
+    if (JSON.stringify(at) !== JSON.stringify(shared(COUNT_AT))) setShared(COUNT_AT, at);
   }
 
   // The tabs trade numbers, and the next render trades their places.
@@ -379,13 +398,14 @@ export default class TerminalsBar extends View {
           .text_size(13)
           .text_color(C.label)
           .child(
-            own(h_flex(), (e) => (this.agentsAt = e.bounds))
+            own(h_flex(), (e) => this.placeCount(e.bounds))
               .id("tm-agents")
               .gap(6)
               .items_center()
               .cursor_pointer()
               .hover((s) => s.text_color(C.text))
               .on_click(() => this.openAgents())
+              .on_mouse_move((e) => this.placeCount(e.bounds))
               .child(div().size(6).rounded(3).bg(C.dim))
               .child(agentsText(list))
               .child(h_flex().gap(3).children(list.filter((a) => a.status !== "idle").map((a) => div().size(6).rounded(3).bg(t[a.status]))))

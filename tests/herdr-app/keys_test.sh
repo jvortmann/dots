@@ -110,6 +110,17 @@ function test_alt_digits_1_to_9_go_to_the_agent_with_that_number_through_the_tab
   done
 }
 
+# The key costs alt-a in two programs: zsh loses accept-and-hold, and nvim loses
+# select the whole buffer.
+function test_alt_a_opens_the_agent_list_of_the_tab_bar() {
+  assert_same '"tab-bar.agents"' "$(binding global "alt-a")"
+}
+
+# The open list has the keyboard, so its section wins over global.
+function test_alt_a_in_the_agent_list_closes_it() {
+  assert_same '"overlay.close"' "$(binding mod:tab-bar "alt-a")"
+}
+
 function test_prefix_f_prefix_ctrl_f_and_cmd_p_open_the_same_picker_of_recent_spaces() {
   assert_same '"mod.open:recent-picker"' "$(binding global "ctrl-a f")"
   assert_same '"mod.open:recent-picker"' "$(binding global "ctrl-a ctrl-f")"

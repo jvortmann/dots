@@ -124,11 +124,27 @@ function test_the_agent_count_has_the_dim_dot_of_the_stock_status_bar() {
 }
 
 function test_a_click_on_the_agent_count_opens_the_agent_list_of_the_tab_bar_as_a_popup() {
-  assert_contains 'own(h_flex(),(e)=>(this.agentsAt=e.bounds)).id("tm-agents")' "$(agents_group)"
+  assert_contains 'own(h_flex(),(e)=>this.placeCount(e.bounds)).id("tm-agents")' "$(agents_group)"
   assert_contains ".on_click(()=>this.openAgents())" "$(agents_group)"
   assert_contains "openList(" "$(open_agents_method)"
   assert_contains 'openOverlay({ mod: "tab-bar", kind: "popup",' "$(open_list_function)"
   assert_contains 'props: { popup: "agents",' "$(open_list_function)"
+}
+
+# keys.json binds alt-a to tab-bar.agents.
+function test_the_agents_command_opens_the_agent_list_as_a_click_on_the_count_does() {
+  assert_contains 'else if (command === "agents") this.openAgents();' "$(sed -n '/^  init(/,/^  }/p' "$MAIN")"
+}
+
+# A key carries no bounds, so the count keeps its place from the pointer, as
+# distances from the right and bottom edges of the window.
+function test_the_agent_list_opens_above_the_count_also_from_a_key() {
+  assert_contains ".on_mouse_move((e)=>this.placeCount(e.bounds))" "$(agents_group)"
+  assert_contains "own(h_flex(),(e)=>this.placeCount(e.bounds)).id(\"tm-agents\")" "$(agents_group)"
+  assert_contains "const { width, height } = window.viewport_size();" "$(place_count_method)"
+  assert_contains "setShared(COUNT_AT, at);" "$(place_count_method)"
+  assert_contains "const at = shared(COUNT_AT);" "$(open_agents_method)"
+  assert_contains "x: width - at.right - LIST_WIDTH, bottom: height - at.bottom - 6" "$(open_agents_method)"
 }
 
 function test_the_agent_list_copy_takes_no_tab_commands_so_a_swap_does_not_run_twice() {
@@ -169,7 +185,7 @@ function test_the_agent_list_takes_the_keyboard_and_reads_each_key_as_listkey_sa
 
 function test_the_agent_list_opens_above_the_agent_count_with_its_right_edge_on_the_count() {
   assert_contains "return 8 + Math.min(Math.max(count, 1), 12) * ROW;" "$(sed -n '/^function listHeight(/,/^}/p' "$MAIN")"
-  assert_contains "openList(at && { x: at.x + at.width - LIST_WIDTH, bottom: at.y - 6 }," "$(open_agents_method)"
+  assert_contains "openList(at && { x: width - at.right - LIST_WIDTH, bottom: height - at.bottom - 6 }," "$(open_agents_method)"
   assert_contains "at: anchor ? { x: anchor.x, y: anchor.bottom - height } : \"pointer\"" "$(open_list_function)"
 }
 
@@ -329,6 +345,10 @@ function render_list_method() {
 
 function open_agents_method() {
   sed -n '/^  openAgents(/,/^  }/p' "$MAIN" | tr '\n' ' ' | tr -s ' '
+}
+
+function place_count_method() {
+  sed -n '/^  placeCount(/,/^  }/p' "$MAIN"
 }
 
 function open_list_function() {

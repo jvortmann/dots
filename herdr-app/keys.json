@@ -59,6 +59,7 @@
     "alt-7": "tab-bar.select-agent-7",
     "alt-8": "tab-bar.select-agent-8",
     "alt-9": "tab-bar.select-agent-9",
+    "alt-a": "tab-bar.agents",
     "ctrl-a c": "tab.new",
     "ctrl-a ctrl-c": "tab.new",
     "ctrl-a v": "pane.split:right",
@@ -120,5 +121,8 @@
     "ctrl-j": "terminal",
     "ctrl-k": "terminal",
     "ctrl-l": "terminal"
+  },
+  "mod:tab-bar": {
+    "alt-a": "overlay.close"
   }
 }
