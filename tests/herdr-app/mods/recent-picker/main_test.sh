@@ -71,6 +71,15 @@ function test_the_picker_names_the_stock_mod_and_version_it_was_copied_from() {
   assert_same '{"name":"picker","version":"0.1.16"}' "$(jq -c '.cloned_from' "$MOD")"
 }
 
+function test_a_program_glyph_takes_the_color_that_stands_out_on_the_canvas_as_in_the_tab_bar() {
+  assert_contains 'import { glyphColor } from "./glyph.js";' "$(cat "$MAIN")"
+  assert_contains "svg(g.icon).size(14).text_color(glyphColor(g, t.canvas, t.foreground))" "$(icon_function)"
+}
+
+function test_the_glyph_rule_of_the_picker_is_the_same_as_the_tab_bar_s() {
+  assert_same "" "$(diff "$ROOT/herdr-app/mods/tab-bar/glyph.js" "$ROOT/herdr-app/mods/recent-picker/glyph.js" 2>&1)"
+}
+
 function icon_function() {
   sed -n '/^function programIcon(/,/^}/p' "$MAIN"
 }

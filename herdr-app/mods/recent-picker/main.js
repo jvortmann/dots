@@ -14,6 +14,7 @@ import { v_flex, h_flex, InputState, Input } from "gpui-base";
 import { agents, spaces, terminals, run, hc, theme, settings, props, closeOverlay, openOverlay, shared, setShared } from "herdr";
 import { recentSpaces, openingTab } from "./order.js";
 import { quarter } from "./edge.js";
+import { glyphColor } from "./glyph.js";
 
 const RECENT = "tab-bar.space-history";
 
@@ -53,7 +54,7 @@ function programIcon(t, a, status) {
     .items_center()
     .justify_center()
     .when(Boolean(g?.icon), (el) =>
-      el.child(g.tint ? svg(g.icon).size(14).text_color(g.color ?? t.foreground) : image(g.icon).w(14).h(14)),
+      el.child(g.tint ? svg(g.icon).size(14).text_color(glyphColor(g, t.canvas, t.foreground)) : image(g.icon).w(14).h(14)),
     )
     .when(Boolean(dot), (el) => el.child(div().absolute().top(-2).right(-2).w(7).h(7).rounded_full().bg(dot)));
 }

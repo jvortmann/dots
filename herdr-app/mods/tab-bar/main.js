@@ -13,6 +13,7 @@ import { tabText } from "./label.js";
 import { agentRows, ROW } from "./agent-list.js";
 import { agentsText, needsText, agentList, listKey, machineLabel, timeText, untilNextMinute } from "./status.js";
 import { observeTabs, observeSpaces, lastTab } from "./history.js";
+import { glyphColor } from "./glyph.js";
 import { numberTabs, nextMove, swapNumbers, tabNumbered } from "./numbers.js";
 
 // Shared state, not a field: another layout, a save or a restart starts the mod fresh.
@@ -53,7 +54,7 @@ function programIcon(t, C, p) {
     .items_center()
     .justify_center()
     .when(Boolean(g?.icon), (el) =>
-      el.child(g.tint ? svg(g.icon).size(14).text_color(g.color ?? C.text) : image(g.icon).w(14).h(14)),
+      el.child(g.tint ? svg(g.icon).size(14).text_color(glyphColor(g, t.canvas, C.text)) : image(g.icon).w(14).h(14)),
     )
     .when(Boolean(dot), (el) => el.child(div().absolute().top(-2).right(-2).w(7).h(7).rounded_full().bg(dot)));
 }
