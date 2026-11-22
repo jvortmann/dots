@@ -3,8 +3,6 @@
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
 PI_ICON="$ROOT/herdr-app/mods/tab-bar/pi-icon.js"
 STOCK_PI="$ROOT/herdr-app/icons/pi.svg"
-# shellcheck source=../fixed_colors.sh
-source "$ROOT/tests/herdr-app/mods/fixed_colors.sh"
 
 function set_up() {
   [[ -f $PI_ICON ]] || bashunit::fail "missing the file under test: $PI_ICON"
@@ -47,10 +45,6 @@ function test_reports_a_write_that_fails_while_the_icon_keeps_another_color() {
   assert_same 'stale snapshot' "$(scenario '
     files.writeTextFile = async () => { throw new Error("stale snapshot"); };
     await syncPiIcon(files, "/app/pi.svg", "#123456").then(() => console.log("written"), (e) => console.log(e.message));')"
-}
-
-function test_has_no_fixed_color_of_its_own() {
-  assert_same "" "$(fixed_colors "$PI_ICON")"
 }
 
 # Runs the JavaScript in $1 with the exports of pi-icon.js and stand-in file

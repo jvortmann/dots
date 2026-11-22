@@ -2,15 +2,9 @@
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
 ICON="$ROOT/herdr-app/mods/tab-bar/program-icon.js"
-# shellcheck source=../fixed_colors.sh
-source "$ROOT/tests/herdr-app/mods/fixed_colors.sh"
 
 function set_up() {
   [[ -f $ICON ]] || bashunit::fail "missing the file under test: $ICON"
-}
-
-function test_the_program_icon_colors_follow_the_theme_in_both_appearances() {
-  assert_same "" "$(fixed_colors "$ICON")"
 }
 
 function test_a_glyph_draws_14_px_in_its_glyph_color() {

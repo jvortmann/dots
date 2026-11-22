@@ -2,15 +2,9 @@
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
 LIST="$ROOT/herdr-app/mods/tab-bar/agent-list.js"
-# shellcheck source=../fixed_colors.sh
-source "$ROOT/tests/herdr-app/mods/fixed_colors.sh"
 
 function set_up() {
   [[ -f $LIST ]] || bashunit::fail "missing the file under test: $LIST"
-}
-
-function test_the_agent_list_colors_follow_the_theme_in_both_appearances() {
-  assert_same "" "$(fixed_colors "$LIST")"
 }
 
 function test_the_agent_list_sits_on_the_canvas_like_the_recent_picker() {

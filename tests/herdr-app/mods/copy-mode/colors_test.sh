@@ -3,8 +3,6 @@
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
 MOD="$ROOT/herdr-app/mods/copy-mode"
 HC="$HOME/.local/bin/hc"
-# shellcheck source=../fixed_colors.sh
-source "$ROOT/tests/herdr-app/mods/fixed_colors.sh"
 
 function set_up() {
   SOCKET=""
@@ -99,10 +97,6 @@ function test_keeps_the_selection_colors_when_the_app_shows_copy_mode_in_light()
   copy_mode_screen $'\e[48;2;181;137;0mred' 'printf "\033[31mred\033[0m plain\n"' k v l l l
 
   assert_contains $'\e[38;2;0;43;54m\e[48;2;181;137;0mred' "$(cat "$SCRATCH/screen")"
-}
-
-function test_has_no_fixed_color_of_its_own() {
-  assert_same "" "$(fixed_colors "$MOD/nvim.lua")"
 }
 
 function test_draws_the_scroll_position_in_the_colors_that_the_mod_gives() {

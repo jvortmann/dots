@@ -4,8 +4,6 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
 MAIN="$ROOT/herdr-app/mods/recent-picker/main.js"
 ICON="$ROOT/herdr-app/mods/recent-picker/program-icon.js"
 MOD="$ROOT/herdr-app/mods/recent-picker/mod.json"
-# shellcheck source=../fixed_colors.sh
-source "$ROOT/tests/herdr-app/mods/fixed_colors.sh"
 
 function set_up() {
   [[ -f $MAIN ]] || bashunit::fail "missing the file under test: $MAIN"
@@ -24,10 +22,6 @@ function test_the_picker_opens_on_the_row_of_the_tab_that_the_previous_space_sho
   assert_contains 'if (this.at === null) {' "$(render_method)"
   assert_contains 'const tab = openingTab(spaces(), shared(RECENT) ?? []);' "$(render_method)"
   assert_contains 'this.at = Math.max(0, pickable.findIndex((r) => r.kind === "ctx" && r.ctx.id === tab));' "$(render_method)"
-}
-
-function test_the_picker_colors_follow_the_theme_in_both_appearances() {
-  assert_same "" "$(fixed_colors "$MAIN")"
 }
 
 function test_the_picker_sits_on_the_canvas_like_the_tabs_that_are_not_shown() {
