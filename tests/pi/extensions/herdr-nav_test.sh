@@ -10,8 +10,7 @@ source "$ROOT/tests/herdr-app/fake_herdr_app.sh"
 function set_up() {
   [[ -f $EXTENSION ]] || bashunit::fail "missing the file under test: $EXTENSION"
   find_node
-  PI_TUI="$(mise where npm:@earendil-works/pi-coding-agent 2> /dev/null)/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/@earendil-works/pi-tui/dist/index.js"
-  [[ -f $PI_TUI ]] || bashunit::skip "needs pi from mise"
+  find_pi_tui
   HOME_DIR=$(bashunit::temp_dir "home")
   LOG="$HOME_DIR/herdr-app.log"
   mkdir -p "$HOME_DIR/.local/bin"
@@ -97,13 +96,7 @@ herdr_app_calls() {
 run_keys() {
   HOME="$HOME_DIR" HC_TERMINAL_ID=${TERMINAL_ID-t7} EXTENSION="$EXTENSION" PI_TUI="$PI_TUI" \
     MODE=${MODE-tui} \
-    "$NODE" --input-type=module -e '
-    import { registerHooks } from "node:module";
-    import { pathToFileURL } from "node:url";
-    const piTui = pathToFileURL(process.env.PI_TUI).href;
-    registerHooks({
-      resolve: (specifier, context, next) => next(specifier === "@earendil-works/pi-tui" ? piTui : specifier, context),
-    });
+    "$NODE" --import "$PI_TUI_HOOK" --input-type=module -e '
     const handlers = {};
     (await import(process.env.EXTENSION)).default({ on: (name, handler) => { handlers[name] = handler; } });
     let listener;
