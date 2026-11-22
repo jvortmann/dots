@@ -1,6 +1,6 @@
 // The steps that open copy mode, apart from the app, so that a test can run
 // them. `app` holds the calls of the app that they use: exec, hc, run,
-// terminals and home.
+// terminals, theme and home.
 
 // The label in which a warm nvim gives the address of its server.
 const LABEL = "copy-mode.standby";
@@ -8,7 +8,9 @@ const LABEL = "copy-mode.standby";
 // The warm nvim draws copy mode of the source terminal, and only then the app
 // shows it in the pane. So the pane keeps the keyboard and its focus accent.
 export async function openCopyMode(app, { source, pane, nvim }) {
-  const result = await app.exec("nvim", ["--server", nvim.labels[LABEL], "--remote-expr", `v:lua.copy_mode_open(${JSON.stringify(source)})`]);
+  const t = app.theme();
+  const selection = { fg: t.ansi8, bg: t.ansi3 };
+  const result = await app.exec("nvim", ["--server", nvim.labels[LABEL], "--remote-expr", `v:lua.copy_mode_open(${JSON.stringify(source)}, ${JSON.stringify(selection)})`]);
   if (result.code !== 0) {
     await app.hc(["kill", nvim.address]);
     throw new Error((result.stderr || result.stdout || `nvim exited with code ${result.code}`).split("\n")[0]);

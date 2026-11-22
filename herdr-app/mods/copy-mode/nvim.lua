@@ -1,14 +1,11 @@
-local capture_first_paint, color_selection, copied_text, fit_to, read_json, show, show_position, standby, system_appearance, theme_palette
+local capture_first_paint, copied_text, fit_to, set_colors, show, show_position, standby
 local position = vim.api.nvim_create_namespace("copy-mode.position")
-local app_home = vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":p:h:h:h")
 
 vim.o.modeline = false
 vim.o.laststatus = 0
 vim.o.cmdheight = 0
--- termguicolors keeps the exact true colors of the text. Normal has no colors
--- of its own, so text in the default colors shows the colors of the app theme.
+-- termguicolors keeps the exact true colors of the text.
 vim.o.termguicolors = true
-vim.api.nvim_set_hl(0, "Normal", {})
 vim.o.startofline = true
 
 vim.keymap.set("n", "q", "<cmd>qa!<cr>")
@@ -39,10 +36,12 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 })
 
 -- The mod calls it through the server of this nvim. The mod shows this
--- terminal when it returns.
-function _G.copy_mode_open(source)
+-- terminal when it returns. The selection and the chip take the colors fg and
+-- bg of `selection`, which the mod takes from the theme of the app.
+function _G.copy_mode_open(source, selection)
   standby("")
-  color_selection()
+  set_colors(selection)
+  vim.api.nvim_create_autocmd("OptionSet", { pattern = "background", callback = function() set_colors(selection) end })
   local size = vim.system({ "hc", "get", "--json", source })
   local paint = capture_first_paint(source)
   if paint == "" then vim.cmd("qa!") end
@@ -66,20 +65,6 @@ function capture_first_paint(source)
   return table.concat(chunks)
 end
 
--- The selection and the chip use colors 8 and 3 of the palette of the app
--- theme: dark text on yellow in Solarized. Copy mode reads the theme at each
--- open, so it follows a change of theme or appearance. The theme comes from
--- settings.json, with the system appearance when settings.json sets none. The
--- theme of a layout does not apply. A theme with no file or no palette, such
--- as a built-in theme, gets the Solarized colors.
-function color_selection()
-  local ok = pcall(function()
-    local ansi = theme_palette()
-    vim.api.nvim_set_hl(0, "Visual", { fg = ansi[9], bg = ansi[4] })
-  end)
-  if not ok then vim.api.nvim_set_hl(0, "Visual", { fg = "#002b36", bg = "#b58900" }) end
-end
-
 -- A program such as pi pads each line to the width of the pane with spaces.
 -- The copy removes the spaces at the end of a line, so a blank line copies as
 -- an empty line. A selection that ends inside a line keeps its spaces.
@@ -100,8 +85,14 @@ function fit_to(size)
   end
 end
 
-function read_json(path)
-  return vim.json.decode(table.concat(vim.fn.readfile(path), "\n"))
+-- Normal has no colors of its own, so text in the default colors shows the
+-- colors of the app theme. The app shows this terminal after copy mode opens,
+-- and nvim then reads the background of the app again. When that sets the
+-- background option to light, nvim gives Normal and Visual their own light
+-- colors, so copy mode sets them again.
+function set_colors(selection)
+  vim.api.nvim_set_hl(0, "Normal", {})
+  vim.api.nvim_set_hl(0, "Visual", { fg = selection.fg, bg = selection.bg })
 end
 
 function show(paint)
@@ -150,18 +141,6 @@ end
 -- server removes the label.
 function standby(server)
   vim.system({ "hc", "label", vim.env.HC_TERMINAL_ID, "copy-mode.standby=" .. server })
-end
-
-function system_appearance()
-  local style = vim.system({ "defaults", "read", "-g", "AppleInterfaceStyle" }):wait(500).stdout or ""
-  return style:match("Dark") and "dark" or "light"
-end
-
-function theme_palette()
-  local settings = read_json(app_home .. "/settings.json")
-  local name = settings.theme
-  if type(name) == "table" then name = name[settings.appearance or system_appearance()] end
-  return read_json(("%s/themes/%s.json"):format(app_home, name)).ansi
 end
 
 standby(vim.v.servername)

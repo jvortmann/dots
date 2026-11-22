@@ -3,6 +3,8 @@
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
 MOD="$ROOT/herdr-app/mods/copy-mode"
 HC="$HOME/.local/bin/hc"
+# shellcheck source=../fixed_colors.sh
+source "$ROOT/tests/herdr-app/mods/fixed_colors.sh"
 
 function set_up() {
   SOCKET=""
@@ -10,7 +12,9 @@ function set_up() {
   [[ -x $HC ]] || bashunit::skip "needs the herdr-core CLI"
   command -v nvim > /dev/null || bashunit::skip "needs nvim"
   SCRATCH=$(bashunit::temp_dir "copy-mode")
-  app_home dark
+  SELECTION='{"fg": "#002b36", "bg": "#b58900"}'
+  VIEWER=""
+  app_home
   mkdir -p "$SCRATCH/home/.local/bin"
   ln -s "$HC" "$SCRATCH/home/.local/bin/hc"
   SESSION="bashunit-$$-$RANDOM"
@@ -70,55 +74,43 @@ function test_draws_plain_text_in_the_default_colors_of_the_app() {
   assert_not_contains ';2;' "$plain"
 }
 
-function test_draws_the_selection_in_dark_text_on_yellow() {
-  copy_mode_screen $'\e[48;2;181;137;0m' 'printf "\033[31mred\033[0m plain\n"' k v l l l
-
-  assert_contains $'\e[38;2;0;43;54m\e[48;2;181;137;0mred' "$(cat "$SCRATCH/screen")"
-}
-
-function test_draws_the_selection_in_colors_3_and_8_of_the_theme_of_the_app() {
-  app_home light
-  printf '{"appearance": "light", "theme": {"light": "probe", "dark": "solarized-dark"}}\n' > "$SCRATCH/app/settings.json"
-  jq '.ansi[3] = "#123456" | .ansi[8] = "#654321"' "$SCRATCH/app/themes/solarized-light.json" > "$SCRATCH/app/themes/probe.json"
+function test_draws_the_selection_in_the_colors_that_the_mod_gives() {
+  SELECTION='{"fg": "#654321", "bg": "#123456"}'
 
   copy_mode_screen $'\e[48;2;18;52;86m' 'printf "\033[31mred\033[0m plain\n"' k v l l l
 
   assert_contains $'\e[38;2;101;67;33m\e[48;2;18;52;86mred' "$(cat "$SCRATCH/screen")"
 }
 
-function test_draws_the_selection_in_the_theme_of_the_system_appearance_when_the_app_sets_none() {
-  printf '{"theme": {"light": "probe-light", "dark": "probe-dark"}}\n' > "$SCRATCH/app/settings.json"
-  jq '.ansi[3] = "#123456"' "$SCRATCH/app/themes/solarized-light.json" > "$SCRATCH/app/themes/probe-light.json"
-  jq '.ansi[3] = "#0a0b0c"' "$SCRATCH/app/themes/solarized-dark.json" > "$SCRATCH/app/themes/probe-dark.json"
-  local yellow=$'\e[48;2;18;52;86m'
-  [[ $(defaults read -g AppleInterfaceStyle 2> /dev/null) == Dark ]] && yellow=$'\e[48;2;10;11;12m'
+function test_draws_plain_text_in_the_default_colors_when_the_app_shows_copy_mode_in_light() {
+  VIEWER="#fdf6e3"
 
-  copy_mode_screen "$yellow" 'printf "\033[31mred\033[0m plain\n"' k v l l l
+  copy_mode_screen $'\e[38;5;1mred' 'printf "\033[31mred\033[0m plain\n"'
 
-  assert_contains "${yellow}red" "$(cat "$SCRATCH/screen")"
+  local plain
+  plain=$(grep -ao '.\{0,40\}plain' "$SCRATCH/screen")
+  assert_contains "plain" "$plain"
+  assert_not_contains ';2;' "$plain"
 }
 
-function test_draws_the_selection_in_dark_text_on_yellow_for_a_theme_with_no_file() {
-  printf '{"appearance": "dark", "theme": "graphite"}\n' > "$SCRATCH/app/settings.json"
+function test_keeps_the_selection_colors_when_the_app_shows_copy_mode_in_light() {
+  VIEWER="#fdf6e3"
 
-  copy_mode_screen $'\e[48;2;181;137;0m' 'printf "\033[31mred\033[0m plain\n"' k v l l l
+  copy_mode_screen $'\e[48;2;181;137;0mred' 'printf "\033[31mred\033[0m plain\n"' k v l l l
 
   assert_contains $'\e[38;2;0;43;54m\e[48;2;181;137;0mred' "$(cat "$SCRATCH/screen")"
 }
 
-function test_draws_the_selection_in_dark_text_on_yellow_for_a_theme_with_no_palette() {
-  printf '{"appearance": "dark", "theme": "probe"}\n' > "$SCRATCH/app/settings.json"
-  jq 'del(.ansi)' "$SCRATCH/app/themes/solarized-dark.json" > "$SCRATCH/app/themes/probe.json"
-
-  copy_mode_screen $'\e[48;2;181;137;0m' 'printf "\033[31mred\033[0m plain\n"' k v l l l
-
-  assert_contains $'\e[38;2;0;43;54m\e[48;2;181;137;0mred' "$(cat "$SCRATCH/screen")"
+function test_has_no_fixed_color_of_its_own() {
+  assert_same "" "$(fixed_colors "$MOD/nvim.lua")"
 }
 
-function test_draws_the_scroll_position_in_dark_text_on_yellow() {
-  copy_mode_screen $'\e[48;2;181;137;0m[' 'printf "\033[31mred\033[0m plain\n"'
+function test_draws_the_scroll_position_in_the_colors_that_the_mod_gives() {
+  SELECTION='{"fg": "#654321", "bg": "#123456"}'
 
-  assert_contains $'\e[38;2;0;43;54m\e[48;2;181;137;0m[' "$(grep -ao '.\{0,40\}\[[0-9]*/[0-9]*\]' "$SCRATCH/screen")"
+  copy_mode_screen $'\e[48;2;18;52;86m[' 'printf "\033[31mred\033[0m plain\n"'
+
+  assert_contains $'\e[38;2;101;67;33m\e[48;2;18;52;86m[' "$(grep -ao '.\{0,40\}\[[0-9]*/[0-9]*\]' "$SCRATCH/screen")"
 }
 
 # Runs the shell code in $2 in a terminal, and opens copy mode on that
@@ -140,7 +132,8 @@ copy_mode_screen() {
     sleep 0.1
   done
   in_scratch perl -e 'use POSIX; setsid(); alarm 5; exec @ARGV' \
-    nvim --server "$server" --remote-expr "v:lua.copy_mode_open(\"$source\")" > /dev/null 2>&1
+    nvim --server "$server" --remote-expr "v:lua.copy_mode_open(\"$source\", $SELECTION)" > /dev/null 2>&1
+  [[ -n $VIEWER ]] && attach_viewer "$view" "$server"
   [[ $# -gt 0 ]] && hc keys "$view" "$@" > /dev/null
   for _ in {1..25}; do
     in_scratch perl -MTime::HiRes=ualarm -e 'use POSIX; setsid(); ualarm(200000); exec @ARGV' \
@@ -149,13 +142,28 @@ copy_mode_screen() {
   done
 }
 
-# Makes a copy of the app home in $SCRATCH/app with the copy-mode mod and the
-# Solarized themes, and an appearance of $1.
+# Makes a copy of the app home in $SCRATCH/app with the copy-mode mod.
 app_home() {
-  mkdir -p "$SCRATCH/app/mods/copy-mode" "$SCRATCH/app/themes"
+  mkdir -p "$SCRATCH/app/mods/copy-mode"
   cp "$MOD/view.sh" "$MOD/nvim.lua" "$SCRATCH/app/mods/copy-mode/"
-  cp "$ROOT"/herdr-app/themes/solarized-*.json "$SCRATCH/app/themes/"
-  printf '{"appearance": "%s", "theme": {"light": "solarized-light", "dark": "solarized-dark"}}\n' "$1" > "$SCRATCH/app/settings.json"
+}
+
+# Attaches a viewer with the background $VIEWER to the terminal $1, as the app
+# shows copy mode after it opens. The viewer runs `hc attach` in a terminal
+# whose display has that background. Waits until the nvim at the server $2
+# takes the new background and draws again, and fails when it does not.
+attach_viewer() {
+  local before
+  before=$(in_scratch nvim --server "$2" --remote-expr '&background')
+  printf '{"jsonrpc":"2.0","id":1,"method":"terminal.run","params":{"argv":["%s","attach","%s"],"no_parent":true,"no_notify":true,"display":{"bg":"%s"}}}\n' \
+    "$HC" "$1" "$VIEWER" | nc -U -w 1 "$SOCKET" > /dev/null
+  for _ in {1..30}; do
+    [[ $(in_scratch nvim --server "$2" --remote-expr '&background') != "$before" ]] && break
+    sleep 0.1
+  done
+  [[ $(in_scratch nvim --server "$2" --remote-expr '&background') != "$before" ]] ||
+    bashunit::fail "nvim kept the background $before"
+  in_scratch nvim --server "$2" --remote-expr 'execute("redraw")' > /dev/null
 }
 
 hc() {

@@ -36,7 +36,7 @@ function test_opens_copy_mode_on_the_terminal_the_mod_names() {
   start_standby
   SERVER=$(wait_for_label "t5 copy-mode.standby=")
 
-  nvim --server "$SERVER" --remote-expr 'v:lua.copy_mode_open("t8")' < /dev/null > /dev/null 2>&1
+  nvim --server "$SERVER" --remote-expr 'v:lua.copy_mode_open("t8", {})' < /dev/null > /dev/null 2>&1
 
   assert_same "attach --observe --history 10000 t8" "$(cat "$SCRATCH/hc.args")"
 }
@@ -45,7 +45,7 @@ function test_is_no_longer_ready_for_the_mod_once_copy_mode_opens() {
   start_standby
   SERVER=$(wait_for_label "t5 copy-mode.standby=")
 
-  nvim --server "$SERVER" --remote-expr 'v:lua.copy_mode_open("t8")' < /dev/null > /dev/null 2>&1
+  nvim --server "$SERVER" --remote-expr 'v:lua.copy_mode_open("t8", {})' < /dev/null > /dev/null 2>&1
 
   assert_same "t5 copy-mode.standby=" "$(tail -1 "$SCRATCH/labels")"
 }
@@ -419,7 +419,7 @@ function test_a_modeline_in_the_text_changes_no_option() {
 press() {
   SCRATCH="$SCRATCH" PATH="$SCRATCH/bin:$PATH" \
     nvim --clean --headless -u "$CONFIG" --noplugin -n \
-    -c "lua copy_mode_open('t7')" \
+    -c "lua copy_mode_open('t7', {})" \
     -c "lua vim.api.nvim_input('$1')" \
     -c "lua vim.defer_fn(function()
       vim.cmd('redraw')

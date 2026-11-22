@@ -3,7 +3,7 @@
 // mod of herdr-term (https://github.com/cristianoliveira/herdr-term).
 
 import { View, div } from "gpui-kit";
-import { appHome, checking, exec, focused, hc, home, nextCommand, notify, run, terminals } from "herdr";
+import { appHome, checking, exec, focused, hc, home, nextCommand, notify, run, terminals, theme } from "herdr";
 import { Standby, openCopyMode } from "./open.js";
 
 const app = {
@@ -11,6 +11,7 @@ const app = {
   hc,
   run,
   terminals,
+  theme,
   get home() {
     return home();
   },

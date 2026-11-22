@@ -9,9 +9,15 @@ function set_up() {
 }
 
 function test_shows_the_warm_nvim_in_the_pane_once_it_has_opened_copy_mode() {
-  assert_same '["exec","nvim","--server","/run/nvim.0","--remote-expr","v:lua.copy_mode_open(\"t7\")"]
+  assert_same '["exec","nvim","--server","/run/nvim.0","--remote-expr","v:lua.copy_mode_open(\"t7\", {\"fg\":\"#002b36\",\"bg\":\"#b58900\"})"]
 ["terminal.show",{"terminal":"t9","pane":"p1"}]' \
     "$(scenario 'await openCopyMode(app, { source: "t7", pane: "p1", nvim: warm("t9", "/run/nvim.0") });')"
+}
+
+function test_draws_the_selection_in_colors_8_and_3_of_the_theme_of_the_app() {
+  assert_contains 'v:lua.copy_mode_open(\"t7\", {\"fg\":\"#654321\",\"bg\":\"#123456\"})' "$(scenario '
+    palette = { ansi3: "#123456", ansi8: "#654321", ansi4: "#000000", foreground: "#ffffff" };
+    await openCopyMode(app, { source: "t7", pane: "p1", nvim: warm("t9", "/run/nvim.0") });' | grep '^\["exec"')"
 }
 
 function test_shows_nothing_and_says_why_when_nvim_cannot_open_copy_mode() {
@@ -146,6 +152,7 @@ scenario() {
     import { openCopyMode, Standby } from '$OPEN';
     const calls = [];
     let listed = [];
+    let palette = { ansi3: '#b58900', ansi8: '#002b36' };
     const results = { exec: { code: 0, stdout: '', stderr: '' }, hc: { code: 0, stdout: '{\"address\":\"t9\"}', stderr: '' } };
     const app = {
       home: '/home',
@@ -153,6 +160,7 @@ scenario() {
       hc: async (args) => (calls.push(['hc', ...args]), results.hc),
       run: (name, args) => calls.push([name, args]),
       terminals: () => listed,
+      theme: () => palette,
     };
     const warm = (address, server) => ({ address, state: 'live', labels: { 'copy-mode.standby': server } });
     const never = new Promise(() => {});
