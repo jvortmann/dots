@@ -5,10 +5,16 @@
 // to agent N of that list. The bar runs last-tab (ctrl-a ctrl-a), which selects
 // the tab shown before. Each tab keeps its number, as in tmux: the bar numbers
 // each new tab and moves it into number order, and select-N selects by number.
+//
+// The agent list shows the subagents of each agent under it, from the child
+// records. Only the open list reads them, with `hc get` every 2 seconds,
+// because terminals() and agents() do not carry them. It keeps them in shared
+// state, so that the bar can size the list. A popup cannot change its size, so
+// the list opens again in place when its height changes.
 
 import { View, div, svg, image } from "gpui-kit";
 import { h_flex } from "gpui-base";
-import { spaces, panes, agents, terminals, run, theme, openOverlay, closeOverlay, props, window as win, shared, setShared, nextCommand, notify, exec, checking } from "herdr";
+import { spaces, panes, agents, terminals, run, theme, openOverlay, closeOverlay, props, window as win, shared, setShared, nextCommand, notify, exec, hc, checking } from "herdr";
 import { tabText } from "./label.js";
 import { agentRows, ROW } from "./agent-list.js";
 import { agentsText, needsText, agentList, listKey, machineLabel, timeText, untilNextMinute } from "./status.js";
@@ -21,6 +27,7 @@ import { numberTabs, nextMove, swapNumbers, tabNumbered } from "./numbers.js";
 const HISTORY = "tab-bar.tab-history";
 const NUMBERS = "tab-bar.tab-numbers";
 const SPACES = "tab-bar.space-history";
+const RECORDS = "tab-bar.agent-records";
 const LIST_WIDTH = 360;
 
 function colors(t) {
@@ -79,6 +86,32 @@ function own(el, press = () => {}) {
     }).on_mouse_down("right", (_e, cx) => cx.stop_propagation());
 }
 
+// The anchor holds the left edge and the bottom edge of the list, above the agent count.
+function openList(anchor, count, chosen = 0) {
+  const height = listHeight(count);
+  openOverlay({
+    mod: "tab-bar",
+    kind: "popup",
+    width: LIST_WIDTH,
+    height,
+    props: { popup: "agents", anchor, height, chosen },
+    at: anchor ? { x: anchor.x, y: anchor.bottom - height } : "pointer",
+  });
+}
+
+function listHeight(count) {
+  return 8 + Math.min(Math.max(count, 1), 12) * ROW;
+}
+
+// The child records of a terminal, as OSC 7501 reports them.
+async function recordsOf(address) {
+  try {
+    return JSON.parse((await hc(["get", address, "--json"])).stdout).records ?? {};
+  } catch {
+    return {};
+  }
+}
+
 function windowButton(C, id, icon, command) {
   return own(
     div()
@@ -128,13 +161,35 @@ export default class TerminalsBar extends View {
 
   initList(cx) {
     this.listing = true;
-    this.chosen = 0;
+    this.chosen = props().chosen ?? 0;
+    this.records = shared(RECORDS) ?? {};
     this.handle = cx.focus_handle();
     this.handle.focus();
+    if (!checking()) cx.timer.every(2000, (cx) => this.readRecords(cx));
+    if (!checking()) this.readRecords(cx);
+  }
+
+  readRecords(cx) {
+    if (this.reading) return;
+    this.reading = true;
+    cx.spawn(async (cx) => {
+      const records = Object.fromEntries(await Promise.all(agents().map(async (a) => [a.address, await recordsOf(a.address)])));
+      this.records = records;
+      if (JSON.stringify(records) !== JSON.stringify(shared(RECORDS))) setShared(RECORDS, records);
+      const { anchor, height, overlay } = props();
+      const count = agentList(agents(), records).length;
+      if (anchor && listHeight(count) !== height) {
+        closeOverlay(overlay);
+        openList(anchor, count, this.chosen);
+        return;
+      }
+      this.reading = false;
+      cx.notify();
+    });
   }
 
   renderList() {
-    const rows = agentList(agents());
+    const rows = agentList(agents(), this.records);
     return agentRows(theme(), rows, Math.min(this.chosen, rows.length - 1), (a) => this.goTo(a))
       .id("tm-agent-list")
       .track_focus(this.handle)
@@ -142,7 +197,7 @@ export default class TerminalsBar extends View {
   }
 
   listKeyDown(e, rows, cx) {
-    const key = listKey(e.keystroke, this.chosen, rows.length);
+    const key = listKey(e.keystroke, this.chosen, rows);
     if (!key) return;
     if ("go" in key) {
       if (rows[key.go]) this.goTo(rows[key.go]);
@@ -182,16 +237,8 @@ export default class TerminalsBar extends View {
   }
 
   openAgents() {
-    const height = 8 + Math.min(Math.max(agents().length, 1), 12) * ROW;
     const at = this.agentsAt;
-    openOverlay({
-      mod: "tab-bar",
-      kind: "popup",
-      width: LIST_WIDTH,
-      height,
-      props: { popup: "agents" },
-      at: at ? { x: at.x + at.width - LIST_WIDTH, y: at.y - height - 6 } : "pointer",
-    });
+    openList(at && { x: at.x + at.width - LIST_WIDTH, bottom: at.y - 6 }, agentList(agents(), shared(RECORDS) ?? {}).length);
   }
 
   // The tabs trade numbers, and the next render trades their places.

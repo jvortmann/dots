@@ -11,12 +11,24 @@
 // ctrl+z or the external editor (pi-tui terminal.js:217). Our record returns
 // at the next subagent start or end.
 //
+// The extension also writes one OSC 7501 child record for each running
+// subagent. The id is sub/<id>, the title is the type, and the msg is the
+// description. A subagent that a subagent started goes under the id of its
+// parent: sub/<parent>/<id>. When a subagent ends, its record gets clear,
+// which removes it, because done stays until something replaces it. A seed
+// first clears sub, to remove the records that an older copy left. It then
+// begins the agents parents first, by depth, so a nested subagent goes under
+// its parent whatever the order of the list. The extension writes child
+// records also during the run of the core. The core writes no child records.
+//
 // The extension acts only in the main tui session, in a Herdr terminal. It
 // unsubscribes on session_shutdown, because pi keeps one event bus across
 // /reload.
 //
-// Not handled: an error result, where we write done. Also a dialog close or a
-// rename while subagents run. The report of the core wins until the next
+// Not handled: an error result, where we write done. Also a parent that ends
+// before its child. Its clear also removes the record of the child, while the
+// count of the working record still includes the child. Also a dialog close or
+// a rename while subagents run. The report of the core wins until the next
 // subagent event.
 
 import { randomUUID } from "node:crypto";
@@ -24,16 +36,16 @@ import { formatProgramStatus } from "@earendil-works/pi-tui";
 
 export default function (pi) {
   if (!process.env.HC_TERMINAL_ID) return;
-  const running = new Set();
+  const running = new Map();
   let runActive = false;
   let reporting = false;
   let aborted = false;
   const unsubscribes = [];
   pi.on("session_start", (_event, ctx) => {
     if (ctx.mode !== "tui") return;
-    track("subagents:started", (id) => running.add(id));
-    track("subagents:completed", (id) => running.delete(id));
-    track("subagents:failed", (id) => running.delete(id));
+    track("subagents:started", begin);
+    track("subagents:completed", end);
+    track("subagents:failed", end);
     listen("subagents:ready", seed);
     seed();
   });
@@ -50,9 +62,19 @@ export default function (pi) {
     setTimeout(report);
   });
 
+  function begin(agent) {
+    running.set(agent.id, `${running.get(agent.parentAgentId) ?? "sub"}/${agent.id}`);
+    writeRecord({ state: "working", id: running.get(agent.id), title: agent.type, message: agent.description });
+  }
+
+  function end(agent) {
+    writeRecord({ state: "clear", id: running.get(agent.id) ?? `sub/${agent.id}` });
+    running.delete(agent.id);
+  }
+
   function track(channel, change) {
-    listen(channel, ({ id }) => {
-      change(id);
+    listen(channel, (agent) => {
+      change(agent);
       setTimeout(report);
     });
   }
@@ -67,7 +89,9 @@ export default function (pi) {
       stop();
       if (!reply.success) return;
       running.clear();
-      for (const agent of reply.data.agents) if (agent.status === "running") running.add(agent.id);
+      writeRecord({ state: "clear", id: "sub" });
+      const agents = reply.data.agents.filter((agent) => agent.status === "running");
+      for (const agent of agents.sort((a, b) => a.depth - b.depth)) begin(agent);
       setTimeout(report);
     });
     unsubscribes.push(stop);
@@ -89,4 +113,15 @@ export default function (pi) {
 
 function write(status) {
   process.stdout.write(formatProgramStatus({ ...status, app: "pi" }));
+}
+
+function writeRecord({ state, id, title, message }) {
+  const pairs = [`state=${state}`, `id=${id}`];
+  if (title) pairs.push(`title=${base64(title)}`);
+  if (message) pairs.push(`msg=${base64(message)}`);
+  process.stdout.write(`\x1b]7501;${pairs.join(":")}\x1b\\`);
+}
+
+function base64(text) {
+  return Buffer.from(text, "utf8").toString("base64");
 }

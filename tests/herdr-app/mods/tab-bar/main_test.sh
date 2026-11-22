@@ -126,8 +126,9 @@ function test_the_agent_count_has_the_dim_dot_of_the_stock_status_bar() {
 function test_a_click_on_the_agent_count_opens_the_agent_list_of_the_tab_bar_as_a_popup() {
   assert_contains 'own(h_flex(),(e)=>(this.agentsAt=e.bounds)).id("tm-agents")' "$(agents_group)"
   assert_contains ".on_click(()=>this.openAgents())" "$(agents_group)"
-  assert_contains 'openOverlay({ mod: "tab-bar", kind: "popup",' "$(open_agents_method)"
-  assert_contains 'props: { popup: "agents" }' "$(open_agents_method)"
+  assert_contains "openList(" "$(open_agents_method)"
+  assert_contains 'openOverlay({ mod: "tab-bar", kind: "popup",' "$(open_list_function)"
+  assert_contains 'props: { popup: "agents",' "$(open_list_function)"
 }
 
 function test_the_agent_list_copy_takes_no_tab_commands_so_a_swap_does_not_run_twice() {
@@ -139,8 +140,18 @@ function test_the_agent_list_copy_draws_only_the_list_and_moves_no_tab() {
 }
 
 function test_the_agent_list_shows_a_row_for_each_agent_in_the_order_and_numbers_of_alt_n() {
-  assert_contains "const rows = agentList(agents());" "$(render_list_method)"
+  assert_contains "const rows = agentList(agents(), this.records);" "$(render_list_method)"
   assert_contains "agentRows(theme(), rows" "$(render_list_method)"
+}
+
+# terminals() and agents() do not carry the child records, and hc get does.
+# The bar reads no records, so it costs nothing while the list is closed.
+function test_the_agent_list_reads_the_records_of_each_agent_with_hc_while_it_is_open() {
+  assert_contains "this.records = shared(RECORDS) ?? {};" "$(init_list_method)"
+  assert_contains "if (!checking()) cx.timer.every(2000, (cx) => this.readRecords(cx));" "$(init_list_method)"
+  assert_contains 'hc(["get", address, "--json"])' "$(records_of_function)"
+  assert_contains "const rows = agentList(agents(), this.records);" "$(render_list_method)"
+  assert_same "1" "$(grep -c 'hc(\[' "$MAIN")"
 }
 
 function test_going_to_an_agent_from_the_list_closes_the_list_and_focuses_the_agent() {
@@ -153,12 +164,33 @@ function test_the_agent_list_takes_the_keyboard_and_reads_each_key_as_listkey_sa
   assert_contains "this.handle.focus();" "$(sed -n '/^  initList(/,/^  }/p' "$MAIN")"
   assert_contains ".track_focus(this.handle)" "$(render_list_method)"
   assert_contains ".on_key_down((e, cx) => this.listKeyDown(e, rows, cx))" "$(render_list_method)"
-  assert_contains "listKey(e.keystroke, this.chosen, rows.length)" "$(sed -n '/^  listKeyDown(/,/^  }/p' "$MAIN")"
+  assert_contains "listKey(e.keystroke, this.chosen, rows)" "$(sed -n '/^  listKeyDown(/,/^  }/p' "$MAIN")"
 }
 
 function test_the_agent_list_opens_above_the_agent_count_with_its_right_edge_on_the_count() {
-  assert_contains "const height = 8 + Math.min(Math.max(agents().length, 1), 12) * ROW;" "$(open_agents_method)"
-  assert_contains "at: at ? { x: at.x + at.width - LIST_WIDTH, y: at.y - height - 6 } : \"pointer\"" "$(open_agents_method)"
+  assert_contains "return 8 + Math.min(Math.max(count, 1), 12) * ROW;" "$(sed -n '/^function listHeight(/,/^}/p' "$MAIN")"
+  assert_contains "openList(at && { x: at.x + at.width - LIST_WIDTH, bottom: at.y - 6 }," "$(open_agents_method)"
+  assert_contains "at: anchor ? { x: anchor.x, y: anchor.bottom - height } : \"pointer\"" "$(open_list_function)"
+}
+
+# The bar reads no records, so the height counts the ones the list saw last.
+function test_the_height_of_the_agent_list_counts_the_child_rows_that_the_list_saw_last() {
+  assert_contains "agentList(agents(), shared(RECORDS) ?? {}).length" "$(open_agents_method)"
+}
+
+# A popup cannot change its size, so the list opens again in its place.
+function test_the_agent_list_opens_again_at_the_new_height_when_the_records_change_its_rows() {
+  assert_contains "if (anchor && listHeight(count) !== height) {" "$(read_records_method)"
+  assert_contains "closeOverlay(overlay);" "$(read_records_method)"
+  assert_contains "openList(anchor, count, this.chosen);" "$(read_records_method)"
+  assert_contains "this.chosen = props().chosen ?? 0;" "$(init_list_method)"
+}
+
+# hc can take more than 2 s, and two reads could each open the list again.
+function test_the_agent_list_starts_no_read_while_a_read_runs() {
+  assert_contains "if (this.reading) return;" "$(read_records_method)"
+  assert_contains "this.reading = true;" "$(read_records_method)"
+  assert_contains "this.reading = false;" "$(read_records_method)"
 }
 
 function test_the_agent_count_shows_a_hand_cursor_and_lightens_under_the_pointer_like_the_machine_label() {
@@ -279,12 +311,28 @@ function go_to_method() {
   sed -n '/^  goTo(/,/^  }/p' "$MAIN"
 }
 
+function init_list_method() {
+  sed -n '/^  initList(/,/^  }/p' "$MAIN"
+}
+
+function read_records_method() {
+  sed -n '/^  readRecords(/,/^  }/p' "$MAIN"
+}
+
+function records_of_function() {
+  sed -n '/^async function recordsOf(/,/^}/p' "$MAIN"
+}
+
 function render_list_method() {
   sed -n '/^  renderList(/,/^  }/p' "$MAIN"
 }
 
 function open_agents_method() {
   sed -n '/^  openAgents(/,/^  }/p' "$MAIN" | tr '\n' ' ' | tr -s ' '
+}
+
+function open_list_function() {
+  sed -n '/^function openList(/,/^}/p' "$MAIN" | tr '\n' ' ' | tr -s ' '
 }
 
 function machine_function() {

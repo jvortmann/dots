@@ -43,28 +43,47 @@ function test_an_agent_after_the_ninth_has_no_number_because_alt_takes_one_digit
   assert_same "9 null" "$(status_of 'agentList(Array.from({ length: 10 }, (_, i) => ({ address: `t${i}` }))).slice(8).map((a) => String(a.number)).join(" ")')"
 }
 
+# A child row takes the address of its agent, so that a click on it goes to
+# that agent. It has no number, because alt-N goes to agents only.
+function test_the_records_of_an_agent_follow_it_as_child_rows_with_no_number() {
+  assert_same "t3=1 t3=-,1,working,Explore,find a t1=2" "$(status_of 'agentList([{ address: "t3" }, { address: "t1" }], { t3: { "sub/a": { state: "working", title: "Explore", msg: "find a" } } }).map((r) => `${r.address}=${r.number ?? "-"}` + (r.depth ? `,${r.depth},${r.status},${r.title},${r.msg}` : "")).join(" ")')"
+}
+
+# In OSC 7501, the record sub/a/c is a child of the record sub/a.
+function test_a_child_record_follows_its_parent_record_one_level_deeper() {
+  assert_same "a1 c2 b1" "$(status_of 'agentList([{ address: "t3" }], { t3: { "sub/b": { title: "b" }, "sub/a/c": { title: "c" }, "sub/a": { title: "a" } } }).slice(1).map((r) => `${r.title}${r.depth}`).join(" ")')"
+}
+
+function test_each_row_has_a_key_of_its_own() {
+  assert_same "t3 t3:sub/a t3:sub/a/c" "$(status_of 'agentList([{ address: "t3" }], { t3: { "sub/a": {}, "sub/a/c": {} } }).map((r) => r.key).join(" ")')"
+}
+
 function test_a_blocked_agent_reads_needs_you_and_the_other_statuses_read_as_they_are() {
   assert_same "working,needs you,done,idle" "$(status_of '["working", "blocked", "done", "idle"].map(statusWord).join(",")')"
 }
 
 function test_the_arrows_move_the_chosen_row_and_stop_at_the_ends_of_the_list() {
-  assert_same '{"chosen":1} {"chosen":1} {"chosen":0} {"chosen":0}' "$(status_of '[listKey("down", 0, 2), listKey("down", 1, 2), listKey("up", 1, 2), listKey("up", 0, 2)].map((k) => JSON.stringify(k)).join(" ")')"
+  assert_same '{"chosen":1} {"chosen":1} {"chosen":0} {"chosen":0}' "$(status_of '[listKey("down", 0, [{}, {}]), listKey("down", 1, [{}, {}]), listKey("up", 1, [{}, {}]), listKey("up", 0, [{}, {}])].map((k) => JSON.stringify(k)).join(" ")')"
 }
 
 function test_enter_goes_to_the_chosen_row() {
-  assert_same '{"go":1}' "$(status_of 'JSON.stringify(listKey("enter", 1, 2))')"
+  assert_same '{"go":1}' "$(status_of 'JSON.stringify(listKey("enter", 1, [{}, {}]))')"
 }
 
 function test_a_digit_goes_to_the_agent_with_that_number_and_a_number_no_agent_holds_does_nothing() {
-  assert_same '{"go":1} null' "$(status_of '[listKey("2", 0, 3), listKey("4", 0, 3)].map((k) => JSON.stringify(k)).join(" ")')"
+  assert_same '{"go":1} null' "$(status_of '[listKey("2", 0, [{ number: 1 }, { number: 2 }, { number: 3 }]), listKey("4", 0, [{ number: 1 }, { number: 2 }, { number: 3 }])].map((k) => JSON.stringify(k)).join(" ")')"
+}
+
+function test_a_digit_goes_to_the_agent_with_that_number_past_the_child_rows() {
+  assert_same '{"go":2}' "$(status_of 'JSON.stringify(listKey("2", 0, [{ number: 1 }, { depth: 1 }, { number: 2 }]))')"
 }
 
 function test_keys_on_an_empty_list_do_nothing() {
-  assert_same "null null" "$(status_of '[listKey("down", 0, 0), listKey("enter", 0, 0)].map((k) => JSON.stringify(k)).join(" ")')"
+  assert_same "null null" "$(status_of '[listKey("down", 0, []), listKey("enter", 0, [])].map((k) => JSON.stringify(k)).join(" ")')"
 }
 
 function test_enter_goes_to_the_last_row_when_the_list_shrank_under_the_chosen_row() {
-  assert_same '{"go":1}' "$(status_of 'JSON.stringify(listKey("enter", 3, 2))')"
+  assert_same '{"go":1}' "$(status_of 'JSON.stringify(listKey("enter", 3, [{}, {}]))')"
 }
 
 function test_the_clock_waits_until_the_next_minute_starts() {
