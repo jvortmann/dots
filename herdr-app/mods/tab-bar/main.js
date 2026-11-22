@@ -14,6 +14,7 @@ import { agentRows, ROW } from "./agent-list.js";
 import { agentsText, needsText, agentList, listKey, machineLabel, timeText, untilNextMinute } from "./status.js";
 import { observeTabs, observeSpaces, lastTab } from "./history.js";
 import { glyphColor } from "./glyph.js";
+import { lead } from "./lead.js";
 import { numberTabs, nextMove, swapNumbers, tabNumbered } from "./numbers.js";
 
 // Shared state, not a field: another layout, a save or a restart starts the mod fresh.
@@ -33,12 +34,6 @@ function colors(t) {
     label: t.muted,
     dim: t.dim,
   };
-}
-
-// The pane a tab's tab speaks for: the focused one, else its agent, else the first.
-function lead(all, id) {
-  const mine = all.filter((p) => p.tab === id);
-  return mine.find((p) => p.focused) ?? mine.find((p) => p.program?.agent) ?? mine[0];
 }
 
 // The program's icon from the app's table: its glyph in its color, or its logo.
