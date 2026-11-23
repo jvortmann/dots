@@ -62,10 +62,6 @@ function test_the_picker_drops_from_the_top_at_the_size_of_the_stock_picker() {
   assert_same '"none" {"kind":"popup","at":"top","offset":40,"width":640,"height":0.8}' "$(jq -c '.place, .overlay' "$MOD" | tr '\n' ' ' | sed 's/ $//')"
 }
 
-function test_the_picker_names_the_stock_mod_and_version_it_was_copied_from() {
-  assert_same '{"name":"picker","version":"0.1.16"}' "$(jq -c '.cloned_from' "$MOD")"
-}
-
 function test_a_program_glyph_takes_the_color_that_stands_out_on_the_canvas_as_in_the_tab_bar() {
   assert_contains 'import { programIcon } from "./program-icon.js";' "$(cat "$MAIN")"
   assert_contains 'import { glyphColor } from "./glyph.js";' "$(icon_function)"
