@@ -38,8 +38,8 @@ function test_the_prompt_shows_the_user_the_host_and_the_folder() {
   assert_same "$USER@$(hostname -s) ${FOLDER##*/}  ∴ " "$prompt"
 }
 
-# zsh reads the command lines from a pipe and has no terminal, so the test sets
-# TTY. The time tracker then records each command as it does in a terminal.
+# zsh reads the command lines from a pipe and can have no terminal, so the test
+# sets TTY. The time tracker then records each command as it does in a terminal.
 function test_a_later_prompt_shows_the_time_of_the_last_command() {
   ZSHENV_EXTRA="sleep 0.3"
 
@@ -88,7 +88,8 @@ function test_startup_times_after_reading_the_zshrc_again_shows_no_negative_phas
 # Start zsh as a terminal starts it, with the repository zshenv and zshrc, and
 # type each argument as one command line. A command line runs after the prompt
 # before it, so the first one sees the state of the first prompt.
-# ZSHENV_EXTRA and ZSHRC_EXTRA add lines after the repository files.
+# ZSHENV_EXTRA and ZSHRC_EXTRA add lines after the repository files. +Z turns
+# off the line editor, which reads the terminal and not the pipe.
 at_prompts() {
   local zdotdir
   zdotdir=$(bashunit::temp_dir "zdotdir")
@@ -96,7 +97,7 @@ at_prompts() {
   printf 'source %q\n%s\n' "$ZSHRC" "$ZSHRC_EXTRA" > "$zdotdir/.zshrc"
   printf '%s\n' "$@" | (cd "$FOLDER" && env -i HOME="$HOME" USER="$USER" \
     TERM=xterm-256color ZDOTDIR="$zdotdir" SHELL="$HOMEBREW_ZSH" \
-    PATH=/usr/bin:/bin:/usr/sbin:/sbin "$HOMEBREW_ZSH" -l -i 2> /dev/null)
+    PATH=/usr/bin:/bin:/usr/sbin:/sbin "$HOMEBREW_ZSH" -l -i +Z 2> /dev/null)
 }
 
 # The name of each line that startup-times prints, without its time.

@@ -12,7 +12,7 @@ in_terminal_zsh() {
   zdotdir=$(bashunit::temp_dir "zdotdir")
   printf 'source %q\n' "$ZSHRC" > "$zdotdir/.zshrc"
   (cd "$FOLDER" && env -i HOME="$HOME" USER="$USER" TERM=xterm-256color ZDOTDIR="$zdotdir" \
-    SHELL="$HOMEBREW_ZSH" PATH=/usr/bin:/bin:/usr/sbin:/sbin "$HOMEBREW_ZSH" -l -i -c "$1" 2> /dev/null)
+    SHELL="$HOMEBREW_ZSH" PATH=/usr/bin:/bin:/usr/sbin:/sbin "$HOMEBREW_ZSH" -l -i -c "$1" < /dev/null 2> /dev/null)
 }
 
 function set_up() {

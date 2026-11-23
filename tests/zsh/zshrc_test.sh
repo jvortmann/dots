@@ -14,7 +14,7 @@ variable_after_startup() {
   zdotdir=$(bashunit::temp_dir "zshrc")
   printf 'source %q\n' "$ZSHRC" > "$zdotdir/.zshrc"
   ZDOTDIR="$zdotdir" SHELL="$HOMEBREW_ZSH" PATH="$TERMINAL_PATH" \
-    "$HOMEBREW_ZSH" -l -i -c "print -r -- \"\$(printenv $name)\"" 2> /dev/null | tail -1
+    "$HOMEBREW_ZSH" -l -i -c "print -r -- \"\$(printenv $name)\"" < /dev/null 2> /dev/null | tail -1
 }
 
 function set_up() {
@@ -64,5 +64,5 @@ in_new_terminal() {
   zdotdir=$(bashunit::temp_dir "zshrc")
   printf 'source %q\n' "$ZSHRC" > "$zdotdir/.zshrc"
   (cd "$1" && ZDOTDIR="$zdotdir" SHELL="$HOMEBREW_ZSH" PATH="$TERMINAL_PATH" \
-    "$HOMEBREW_ZSH" -l -i -c "$2" 2> /dev/null)
+    "$HOMEBREW_ZSH" -l -i -c "$2" < /dev/null 2> /dev/null)
 }

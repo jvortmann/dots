@@ -317,14 +317,15 @@ logged() {
 # Types each argument, then pi, into an interactive zsh in a Herdr terminal.
 # pi ends on SIGTERM or SIGHUP, or after 10 seconds. The shell reads its lines
 # from a fifo, so it keeps running until tear_down closes the fifo. Waits for
-# pi and for the first record.
+# pi and for the first record. +Z turns off the line editor, which reads the
+# terminal and not the fifo.
 shell_that_runs_pi() {
   INPUT="$HOME_DIR/input"
   printf '#!/bin/sh\necho $$ > "$HOME/pi.pid"\ntrap "exit 143" TERM HUP\nfor i in $(seq 100); do sleep 0.1; done\n' > "$BIN/pi"
   mkfifo "$INPUT"
   (
     export HC_TERMINAL_ID=t7
-    HOME="$HOME_DIR" PATH="$BIN:/usr/bin:/bin" exec "$HOMEBREW_ZSH" -f -i < "$INPUT" > /dev/null 2>&1
+    HOME="$HOME_DIR" PATH="$BIN:/usr/bin:/bin" exec "$HOMEBREW_ZSH" -f -i +Z < "$INPUT" > /dev/null 2>&1
   ) &
   SHELL_PID=$!
   exec 3> "$INPUT"
@@ -338,13 +339,14 @@ shell_that_runs_pi() {
 
 # Types each argument as one command line into an interactive zsh that loads
 # the plugin, in a Herdr terminal with the id t7. An empty TERMINAL_ID runs the
-# shell outside Herdr.
+# shell outside Herdr. +Z turns off the line editor, which reads the terminal
+# and not the pipe.
 in_herdr_shell() {
   (
     unset HC_TERMINAL_ID
     [[ -n ${TERMINAL_ID-t7} ]] && export HC_TERMINAL_ID=${TERMINAL_ID-t7}
     printf '%s\n' "source ${PLUGIN@Q}" "$@" |
-      HOME="$HOME_DIR" PATH="$BIN:/usr/bin:/bin" "$HOMEBREW_ZSH" -f -i > /dev/null 2>&1
+      HOME="$HOME_DIR" PATH="$BIN:/usr/bin:/bin" "$HOMEBREW_ZSH" -f -i +Z > /dev/null 2>&1
   )
 }
 
