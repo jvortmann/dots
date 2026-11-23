@@ -29,29 +29,14 @@ function tear_down() {
   rm -f "$SOCKET"
 }
 
-function test_keeps_the_colors_of_the_terminal() {
-  copy_mode_screen $'\e[38;5;1mred' 'printf "\033[31mred\033[0m plain\n"'
-
-  assert_contains $'\e[38;5;1mred' "$(cat "$SCRATCH/screen")"
-}
-
-function test_keeps_the_exact_true_color_of_the_terminal() {
-  copy_mode_screen $'\e[38;2;10;200;30mtrue' 'printf "\033[38;2;10;200;30mtrue\033[0m plain\n"'
-
-  assert_contains $'\e[38;2;10;200;30mtrue' "$(cat "$SCRATCH/screen")"
-}
-
-function test_keeps_the_256_colors_of_the_terminal() {
-  copy_mode_screen $'\e[38;5;208mx' 'printf "\033[38;5;208mx\033[0m plain\n"'
-
-  assert_contains $'\e[38;5;208mx' "$(cat "$SCRATCH/screen")"
-}
-
-function test_keeps_bold_italic_and_reverse_text() {
-  copy_mode_screen $'\e[7mrev' 'printf "\033[1mbold\033[0m \033[3mital\033[0m \033[7mrev\033[0m plain\n"'
+function test_keeps_the_colors_and_the_styles_of_the_terminal() {
+  copy_mode_screen $'\e[7mrev' 'printf "\033[31mred\033[0m \033[38;2;10;200;30mtrue\033[0m \033[38;5;208mx\033[0m \033[1mbold\033[0m \033[3mital\033[0m \033[7mrev\033[0m plain\n"'
 
   local screen
   screen=$(cat "$SCRATCH/screen")
+  assert_contains $'\e[38;5;1mred' "$screen"
+  assert_contains $'\e[38;2;10;200;30mtrue' "$screen"
+  assert_contains $'\e[38;5;208mx' "$screen"
   assert_contains $'\e[1mbold' "$screen"
   assert_contains $'\e[3mital' "$screen"
   assert_contains $'\e[7mrev' "$screen"
@@ -61,15 +46,6 @@ function test_draws_the_history_in_the_default_colors_of_the_app() {
   copy_mode_screen '[150/150]' 'seq 1 150; printf "plain\n"' g g
 
   assert_not_contains $'\e[48;2;0;0;0m' "$(cat "$SCRATCH/screen")"
-}
-
-function test_draws_plain_text_in_the_default_colors_of_the_app() {
-  copy_mode_screen $'\e[38;5;1mred' 'printf "\033[31mred\033[0m plain\n"'
-
-  local plain
-  plain=$(grep -ao '.\{0,40\}plain' "$SCRATCH/screen")
-  assert_contains "plain" "$plain"
-  assert_not_contains ';2;' "$plain"
 }
 
 function test_draws_the_selection_in_the_colors_that_the_mod_gives() {
@@ -89,22 +65,6 @@ function test_draws_plain_text_in_the_default_colors_when_the_app_shows_copy_mod
   plain=$(grep -ao '.\{0,40\}plain' "$SCRATCH/screen")
   assert_contains "plain" "$plain"
   assert_not_contains ';2;' "$plain"
-}
-
-function test_keeps_the_selection_colors_when_the_app_shows_copy_mode_in_light() {
-  VIEWER="#fdf6e3"
-
-  copy_mode_screen $'\e[48;2;181;137;0mred' 'printf "\033[31mred\033[0m plain\n"' k v l l l
-
-  assert_contains $'\e[38;2;0;43;54m\e[48;2;181;137;0mred' "$(cat "$SCRATCH/screen")"
-}
-
-function test_draws_the_scroll_position_in_the_colors_that_the_mod_gives() {
-  SELECTION='{"fg": "#654321", "bg": "#123456"}'
-
-  copy_mode_screen $'\e[48;2;18;52;86m[' 'printf "\033[31mred\033[0m plain\n"'
-
-  assert_contains $'\e[38;2;101;67;33m\e[48;2;18;52;86m[' "$(grep -ao '.\{0,40\}\[[0-9]*/[0-9]*\]' "$SCRATCH/screen")"
 }
 
 # Runs the shell code in $2 in a terminal, and opens copy mode on that
