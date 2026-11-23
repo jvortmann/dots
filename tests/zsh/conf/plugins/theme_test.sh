@@ -38,6 +38,18 @@ function test_a_swap_leaves_herdr_app_settings_with_no_appearance_unchanged() {
   assert_same "$(settings_with_appearance '"sounds": {}')" "$(cat "$SETTINGS")"
 }
 
+# The app rewrites settings.json on its own. The swap must still find the
+# appearance line in the form that the app writes.
+function test_a_swap_changes_the_appearance_of_the_real_herdr_app_settings() {
+  cp "$ROOT/herdr-app/settings.json" "$SETTINGS"
+  local from=light to=dark
+  [[ $(jq -r '.appearance' "$SETTINGS") == dark ]] && from=dark to=light
+
+  swap_theme_from_to "$from" "$to"
+
+  assert_same "$to" "$(jq -r '.appearance' "$SETTINGS")"
+}
+
 # Every path the swap edits starts at HOME. The scratch HOME holds only the
 # settings.json that the test writes, so the other gsed calls find no file and
 # the run changes no file of the user.
