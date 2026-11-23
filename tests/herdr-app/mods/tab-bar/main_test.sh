@@ -172,7 +172,7 @@ function test_the_agent_list_copy_draws_only_the_list_and_moves_no_tab() {
 }
 
 function test_the_agent_list_shows_a_row_for_each_agent_in_the_order_and_numbers_of_alt_n() {
-  assert_contains "const rows = agentList(agents(), this.records, changesOf(), Date.now());" "$(render_list_method)"
+  assert_contains "const rows = agentList(agents(), this.records, changesOf(), Date.now(), shared(AGENTS) ?? []);" "$(render_list_method)"
   assert_contains "agentRows(theme(), rows" "$(render_list_method)"
 }
 
@@ -182,7 +182,7 @@ function test_the_agent_list_reads_the_records_of_each_agent_with_hc_while_it_is
   assert_contains "this.records = shared(RECORDS) ?? {};" "$(init_list_method)"
   assert_contains "if (!checking()) cx.timer.every(2000, (cx) => this.readRecords(cx));" "$(init_list_method)"
   assert_contains 'hc(["get", address, "--json"])' "$(records_of_function)"
-  assert_contains "const rows = agentList(agents(), this.records, changesOf(), Date.now());" "$(render_list_method)"
+  assert_contains "const rows = agentList(agents(), this.records, changesOf(), Date.now(), shared(AGENTS) ?? []);" "$(render_list_method)"
   assert_same "1" "$(grep -c 'hc(\[' "$MAIN")"
 }
 
@@ -207,7 +207,11 @@ function test_the_agent_list_opens_above_the_agent_count_with_its_right_edge_on_
 
 # The bar reads no records, so the height counts the ones the list saw last.
 function test_the_height_of_the_agent_list_counts_the_child_rows_that_the_list_saw_last() {
-  assert_contains "agentList(agents(), shared(RECORDS) ?? {}).length" "$(open_agents_method)"
+  assert_contains "const rows = agentList(agents(), shared(RECORDS) ?? {}, {}, 0, shared(AGENTS) ?? []);" "$(open_agents_method)"
+}
+
+function test_the_agent_list_opens_on_the_row_that_openingrow_chooses_in_the_recency_order() {
+  assert_contains "openList(at && { x: width - at.right - LIST_WIDTH, bottom: height - at.bottom - 6 }, rows.length, openingRow(rows));" "$(open_agents_method)"
 }
 
 # A popup cannot change its size, so the list opens again in its place.
@@ -260,6 +264,14 @@ function test_each_render_records_the_spaces_by_recency_for_the_recent_picker() 
   assert_contains "setShared(SPACES," "$(observe_method)"
 }
 
+# Only a change of the history writes it, because a write to shared state makes the mods render again.
+function test_each_render_records_the_agents_by_focus_recency_for_the_agent_list() {
+  assert_contains 'const AGENTS = "tab-bar.agent-history";' "$(grep -F 'const AGENTS' "$MAIN")"
+  assert_contains "const focusedBefore = shared(AGENTS) ?? [];" "$(observe_method)"
+  assert_contains "const byFocus = observeAgents(focusedBefore, agents());" "$(observe_method)"
+  assert_contains "if (JSON.stringify(byFocus) !== JSON.stringify(focusedBefore)) setShared(AGENTS, byFocus);" "$(observe_method)"
+}
+
 function test_the_bar_paints_the_pi_icon_in_color_13_of_the_theme_when_that_color_changes() {
   assert_contains "this.paintPi(cx, t.ansi13);" "$(sed -n '/^  render(/,/^  }/p' "$MAIN")"
   assert_contains "if (checking() || color === this.piColor) return;" "$(paint_pi_method)"
@@ -271,7 +283,7 @@ function test_each_render_of_the_bar_stamps_the_changes_of_the_agents_in_its_sto
   assert_contains "const after = stampChanges(before, list, Date.now());" "$(stamp_method)"
   assert_contains "localStorage.setItem(CHANGES, JSON.stringify(after));" "$(stamp_method)"
   assert_contains 'JSON.parse(localStorage.getItem(CHANGES) ?? "{}")' "$(sed -n '/^function changesOf(/,/^}/p' "$MAIN")"
-  assert_contains "const rows = agentList(agents(), this.records, changesOf(), Date.now());" "$(render_list_method)"
+  assert_contains "const rows = agentList(agents(), this.records, changesOf(), Date.now(), shared(AGENTS) ?? []);" "$(render_list_method)"
 }
 
 function test_stored_stamps_that_are_not_a_plain_object_read_as_none() {

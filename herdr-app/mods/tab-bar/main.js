@@ -5,7 +5,9 @@
 // (tab-bar.agents). A click on the Changes button shows or hides the changes panel.
 // In the open list, alt-a closes it: keys.json runs overlay.close for mod:tab-bar,
 // because the list has the keyboard. The keys j and k move like the arrows.
-// select-agent-N (alt-1..9) goes to agent N of that list.
+// The list puts the agents in focus order, the focused agent first, and it opens
+// on the agent focused before. select-agent-N (alt-1..9) goes to agent N in tab
+// order, which is the number that its row shows.
 //
 // A key has no position, so the count keeps its place from the pointer, a press
 // or a move over it. It stores the place in shared state, as distances from the
@@ -27,8 +29,8 @@ import { h_flex } from "gpui-base";
 import { spaces, panes, agents, terminals, run, theme, openOverlay, closeOverlay, props, window as win, shared, setShared, nextCommand, notify, exec, hc, checking, appHome, readTextFile, writeTextFile, layout } from "herdr";
 import { tabText } from "./label.js";
 import { agentRows, ROW } from "./agent-list.js";
-import { agentsText, needsText, agentList, listKey, machineLabel, timeText, untilNextMinute, stampChanges } from "./status.js";
-import { observeTabs, observeSpaces, lastTab } from "./history.js";
+import { agentsText, needsText, agentList, openingRow, listKey, machineLabel, timeText, untilNextMinute, stampChanges } from "./status.js";
+import { observeTabs, observeSpaces, observeAgents, lastTab } from "./history.js";
 import { programIcon } from "./program-icon.js";
 import { barMark } from "./status-mark.js";
 import { lead } from "./lead.js";
@@ -40,6 +42,7 @@ import { changesShown, toggleChanges } from "./changes-panel.js";
 const HISTORY = "tab-bar.tab-history";
 const NUMBERS = "tab-bar.tab-numbers";
 const SPACES = "tab-bar.space-history";
+const AGENTS = "tab-bar.agent-history";
 const RECORDS = "tab-bar.agent-records";
 const COUNT_AT = "tab-bar.count-at";
 // In localStorage, so the times of the agent list outlive a restart.
@@ -212,7 +215,7 @@ export default class TerminalsBar extends View {
   }
 
   renderList() {
-    const rows = agentList(agents(), this.records, changesOf(), Date.now());
+    const rows = agentList(agents(), this.records, changesOf(), Date.now(), shared(AGENTS) ?? []);
     return agentRows(theme(), rows, Math.min(this.chosen, rows.length - 1), (a) => this.goTo(a))
       .id("tm-agent-list")
       .track_focus(this.handle)
@@ -262,7 +265,8 @@ export default class TerminalsBar extends View {
   openAgents() {
     const at = shared(COUNT_AT);
     const { width, height } = window.viewport_size();
-    openList(at && { x: width - at.right - LIST_WIDTH, bottom: height - at.bottom - 6 }, agentList(agents(), shared(RECORDS) ?? {}).length);
+    const rows = agentList(agents(), shared(RECORDS) ?? {}, {}, 0, shared(AGENTS) ?? []);
+    openList(at && { x: width - at.right - LIST_WIDTH, bottom: height - at.bottom - 6 }, rows.length, openingRow(rows));
   }
 
   placeCount(bounds) {
@@ -308,6 +312,9 @@ export default class TerminalsBar extends View {
     const seen = shared(SPACES) ?? [];
     const recent = observeSpaces(seen, spaces());
     if (JSON.stringify(recent) !== JSON.stringify(seen)) setShared(SPACES, recent);
+    const focusedBefore = shared(AGENTS) ?? [];
+    const byFocus = observeAgents(focusedBefore, agents());
+    if (JSON.stringify(byFocus) !== JSON.stringify(focusedBefore)) setShared(AGENTS, byFocus);
     return after;
   }
 

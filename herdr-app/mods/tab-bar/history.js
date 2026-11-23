@@ -1,3 +1,5 @@
+const AGENTS_KEPT = 30;
+
 export function observeTabs(history, spaces) {
   const space = shown(spaces);
   const tab = space?.tabs.find((t) => t.active);
@@ -13,6 +15,12 @@ export function observeSpaces(history, spaces) {
   if (!space) return history;
   const open = new Set(spaces.map((s) => s.id));
   return [space.id, ...history.filter((id) => open.has(id) && id !== space.id)];
+}
+
+export function observeAgents(history, agents) {
+  const agent = agents.find((a) => a.focused);
+  if (!agent) return history;
+  return [agent.address, ...history.filter((id) => id !== agent.address)].slice(0, AGENTS_KEPT);
 }
 
 export function lastTab(history, spaces) {

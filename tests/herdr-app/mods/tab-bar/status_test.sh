@@ -131,6 +131,36 @@ function test_a_child_record_in_error_reads_as_blocked_and_a_done_one_as_idle() 
   assert_same "blocked idle working" "$(status_of 'agentList([{ address: "t3" }], { t3: { "sub/a": { state: "error" }, "sub/b": { state: "done" }, "sub/c": { state: "working" } } }).slice(1).map((r) => r.status).join(" ")')"
 }
 
+function test_the_agents_come_by_focus_recency_and_the_agents_never_focused_last_in_tab_order() {
+  assert_same "t3 t1 t2 t4" "$(status_of 'agentList(["t1", "t2", "t3", "t4"].map((address) => ({ address })), {}, {}, 0, ["t3", "t1"]).map((a) => a.address).join(" ")')"
+}
+
+# alt-N goes to agent N in tab order, so the number of a row does not move
+# with the focus.
+function test_an_agent_keeps_the_number_of_its_place_in_tab_order_in_the_recency_order() {
+  assert_same "t3=3 t1=1 t2=2 t4=4" "$(status_of 'agentList(["t1", "t2", "t3", "t4"].map((address) => ({ address })), {}, {}, 0, ["t3", "t1"]).map((a) => `${a.address}=${a.number}`).join(" ")')"
+}
+
+function test_the_child_rows_of_an_agent_follow_it_in_the_recency_order() {
+  assert_same "t3 t3:sub/a t1 t2" "$(status_of 'agentList([{ address: "t1" }, { address: "t2" }, { address: "t3" }], { t3: { "sub/a": {} } }, {}, 0, ["t3", "t1"]).map((r) => r.key).join(" ")')"
+}
+
+# So alt-a and then enter goes back to the agent before, as the recent picker
+# does with the space before.
+function test_the_list_opens_on_the_agent_focused_before_the_focused_agent() {
+  assert_same "2" "$(status_of 'openingRow([{ address: "t1", focused: true }, { depth: 1 }, { address: "t2" }])')"
+}
+
+# With the focus on a pane with no agent, the agent focused last is the one
+# before.
+function test_the_list_opens_on_the_first_agent_while_no_agent_has_the_focus() {
+  assert_same "0" "$(status_of 'openingRow([{ address: "t1" }, { address: "t2" }])')"
+}
+
+function test_the_list_opens_on_the_focused_agent_when_it_is_the_only_agent() {
+  assert_same "0" "$(status_of 'openingRow([{ address: "t1", focused: true }, { depth: 1 }])')"
+}
+
 # Prints the value of $1, a call to the exports of status.js, at local time.
 status_of() {
   CALL="$1" STATUS="$STATUS" mise x node@latest -- node --input-type=module -e '

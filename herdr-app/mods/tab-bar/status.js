@@ -16,11 +16,15 @@ export function needsText(list) {
   return needs ? `· ${needs} needs you` : "";
 }
 
-export function agentList(list, records = {}, changed = {}, now = 0) {
-  return list.flatMap((a, i) => [
-    { ...a, key: a.address, number: i < 9 ? i + 1 : null, time: a.address in changed ? duration(now - changed[a.address].at) : "" },
-    ...childRows(a.address, records[a.address] ?? {}),
-  ]);
+export function agentList(list, records = {}, changed = {}, now = 0, history = []) {
+  const rank = (a) => (history.includes(a.address) ? history.indexOf(a.address) : history.length);
+  const numbered = list.map((a, i) => ({ ...a, key: a.address, number: i < 9 ? i + 1 : null, time: a.address in changed ? duration(now - changed[a.address].at) : "" }));
+  return numbered.sort((a, b) => rank(a) - rank(b)).flatMap((a) => [a, ...childRows(a.address, records[a.address] ?? {})]);
+}
+
+export function openingRow(rows) {
+  if (!rows[0]?.focused) return 0;
+  return Math.max(0, rows.findIndex((r, i) => i > 0 && !r.depth));
 }
 
 export function listKey(key, at, rows) {
