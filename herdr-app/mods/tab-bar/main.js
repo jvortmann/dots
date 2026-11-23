@@ -486,7 +486,7 @@ export default class TerminalsBar extends View {
               .text_size(13)
               .text_color(C.dim)
               .hover((s) => s.text_color(C.text))
-              .on_click(() => openOverlay({ mod: "picker", kind: "popup", at: "top", offset: 40, width: 640, height: 0.8 }))
+              .on_click(() => run("mod.open", { name: "recent-picker" }))
               .child(svg("mods/tab-bar/stack.svg").size(15))
               .child(div().max_w(160).truncate().text_color(C.text).child(space.name)),
           )

@@ -35,6 +35,18 @@ function test_the_space_chip_and_the_tabs_fill_the_height_of_the_bar_up_to_the_p
   assert_same ".h_full() .h_full() .h_full() .h_full() " "$({ row_of_the_space_chip; space_chip_chain; tray_chain; tab_chain; } | heights)"
 }
 
+# The same command as ctrl-a f, ctrl-a ctrl-f and cmd-p in keys.json.
+function test_a_click_on_the_space_chip_opens_the_recent_picker_as_its_keys_do() {
+  assert_same '"mod.open:recent-picker" "mod.open:recent-picker" "mod.open:recent-picker"' "$(jq -c '.global["ctrl-a f"], .global["ctrl-a ctrl-f"], .global["cmd-p"]' "$ROOT/herdr-app/keys.json" | tr '\n' ' ' | sed 's/ $//')"
+  assert_contains '.on_click(() => run("mod.open", { name: "recent-picker" }))' "$(space_chip_chain)"
+  assert_not_contains 'openOverlay(' "$(space_chip_chain)"
+}
+
+function test_the_space_chip_shows_a_hand_cursor_and_lightens_under_the_pointer_like_the_other_buttons() {
+  assert_contains '.cursor_pointer()' "$(space_chip_chain)"
+  assert_contains '.hover((s) => s.text_color(C.text))' "$(space_chip_chain)"
+}
+
 function test_the_space_chip_touches_the_tray_of_the_tabs() {
   assert_contains "h_flex()" "$(row_of_the_space_chip)"
   assert_same "" "$(row_of_the_space_chip | gaps)"
