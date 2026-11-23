@@ -28,14 +28,16 @@ export function openingRow(rows) {
 }
 
 export function listKey(key, at, rows) {
+  if (key === "tab") return { filter: 1 };
+  if (key === "shift-tab") return { filter: -1 };
+  if (key === "escape") return { escape: true };
   const count = rows.length;
   if (count === 0) return null;
   const chosen = Math.min(at, count - 1);
-  if (key === "down" || key === "j") return { chosen: Math.min(count - 1, chosen + 1) };
-  if (key === "up" || key === "k") return { chosen: Math.max(0, chosen - 1) };
+  if (key === "down" || key === "ctrl-j") return { chosen: Math.min(count - 1, chosen + 1) };
+  if (key === "up" || key === "ctrl-k") return { chosen: Math.max(0, chosen - 1) };
   if (key === "enter") return { go: chosen };
-  const numbered = /^[1-9]$/.test(key) ? rows.findIndex((r) => r.number === Number(key)) : -1;
-  return numbered === -1 ? null : { go: numbered };
+  return null;
 }
 
 export function stampChanges(changed, list, now) {

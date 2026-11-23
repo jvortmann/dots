@@ -173,8 +173,18 @@ function test_the_agent_list_copy_draws_only_the_list_and_moves_no_tab() {
 }
 
 function test_the_agent_list_shows_a_row_for_each_agent_in_the_order_and_numbers_of_alt_n() {
-  assert_contains "const rows = agentList(agents(), this.records, changesOf(), Date.now(), shared(AGENTS) ?? []);" "$(render_list_method)"
-  assert_contains "agentRows(theme(), rows" "$(render_list_method)"
+  assert_contains "return agentList(agents(), this.records, changesOf(), Date.now(), shared(AGENTS) ?? []);" "$(all_rows_method)"
+  assert_contains "const all = this.allRows();" "$(render_list_method)"
+  assert_contains "agentRows(t, rows" "$(render_list_method)"
+}
+
+# The search and the filter tab choose the rows. The counts follow the search.
+function test_the_agent_list_shows_the_search_field_and_the_filter_tabs_over_the_rows_they_keep() {
+  assert_contains "const rows = filterRows(all, this.filter, this.query);" "$(render_list_method)"
+  assert_contains ".child(agentHead(t, this.input, this.filter, filterCounts(all, this.query), (f, cx) => this.pickFilter(f, cx)))" "$(render_list_method)"
+  assert_contains 'this.input = InputState.new({ placeholder: "Search agents", value: this.query });' "$(init_list_method)"
+  assert_contains 'this.query = props().query ?? "";' "$(init_list_method)"
+  assert_contains 'this.filter = props().filter ?? "all";' "$(init_list_method)"
 }
 
 # terminals() and agents() do not carry the child records, and hc get does.
@@ -183,25 +193,69 @@ function test_the_agent_list_reads_the_records_of_each_agent_with_hc_while_it_is
   assert_contains "this.records = shared(RECORDS) ?? {};" "$(init_list_method)"
   assert_contains "if (!checking()) cx.timer.every(2000, (cx) => this.readRecords(cx));" "$(init_list_method)"
   assert_contains 'hc(["get", address, "--json"])' "$(records_of_function)"
-  assert_contains "const rows = agentList(agents(), this.records, changesOf(), Date.now(), shared(AGENTS) ?? []);" "$(render_list_method)"
+  assert_contains "return agentList(agents(), this.records, changesOf(), Date.now(), shared(AGENTS) ?? []);" "$(all_rows_method)"
   assert_same "1" "$(grep -c 'hc(\[' "$MAIN")"
 }
 
 function test_going_to_an_agent_from_the_list_closes_the_list_and_focuses_the_agent() {
-  assert_contains "agentRows(theme(), rows, Math.min(this.chosen, rows.length - 1), (a) => this.goTo(a))" "$(render_list_method)"
+  assert_contains "agentRows(t, rows, Math.min(this.chosen, rows.length - 1), (a) => this.goTo(a)," "$(render_list_method)"
   assert_contains "closeOverlay(props().overlay);" "$(go_to_method)"
   assert_contains 'run("agent.focus", { terminal: a.address });' "$(go_to_method)"
 }
 
+# The search field holds the keyboard, as in the recent picker. A key it does
+# not take goes on to the list.
 function test_the_agent_list_takes_the_keyboard_and_reads_each_key_as_listkey_says() {
-  assert_contains "this.handle.focus();" "$(sed -n '/^  initList(/,/^  }/p' "$MAIN")"
+  assert_contains "this.input.focus();" "$(init_list_method)"
+  assert_contains "cx.timer.after(600, () => this.input.focus());" "$(init_list_method)"
   assert_contains ".track_focus(this.handle)" "$(render_list_method)"
   assert_contains ".on_key_down((e, cx) => this.listKeyDown(e, rows, cx))" "$(render_list_method)"
   assert_contains "listKey(e.keystroke, this.chosen, rows)" "$(sed -n '/^  listKeyDown(/,/^  }/p' "$MAIN")"
 }
 
+# A key the list takes stops there, so Tab does not move the keyboard on.
+function test_tab_switches_the_filter_and_escape_clears_the_search_before_it_closes_the_list() {
+  assert_contains "cx.stop_propagation();" "$(list_key_down_method)"
+  assert_contains 'if ("filter" in key) return this.pickFilter(nextFilter(this.filter, key.filter), cx);' "$(list_key_down_method)"
+  assert_contains 'if ("escape" in key) return this.query ? this.clearSearch(cx) : closeOverlay(props().overlay);' "$(list_key_down_method)"
+  assert_contains 'this.input.set_value("");' "$(sed -n '/^  clearSearch(/,/^  }/p' "$MAIN")"
+  assert_contains 'this.search("", cx);' "$(sed -n '/^  clearSearch(/,/^  }/p' "$MAIN")"
+}
+
+# The field can take Enter as its submit, as in the recent picker, and the key
+# can reach the list too. The list goes to the agent once.
+function test_enter_in_the_search_field_goes_to_the_chosen_agent_once() {
+  assert_contains 'this.input.on("submit", () => this.goChosen());' "$(init_list_method)"
+  assert_contains "const rows = this.shownRows();" "$(sed -n '/^  goChosen(/,/^  }/p' "$MAIN")"
+  assert_contains "if (this.gone) return;" "$(go_to_method)"
+  assert_contains "this.gone = true;" "$(go_to_method)"
+}
+
+# The popup takes the height of its content. The rows keep the height the
+# popup opened for, so the list does not shrink to the field while a search
+# leaves fewer rows.
+function test_the_rows_keep_the_height_the_list_opened_for() {
+  assert_contains '"No agents").h(props().height - HEAD));' "$(render_list_method)"
+}
+
+# A command reaches every shown copy, so the list takes only the filter
+# commands, and a swap still runs once.
+function test_the_list_takes_the_filter_commands_of_its_keys_and_no_other_command() {
+  assert_contains "const wanted = filterOfCommand(await nextCommand());" "$(init_list_method)"
+  assert_contains "if (wanted) this.pickFilter(pickedFilter(this.filter, wanted), cx);" "$(init_list_method)"
+}
+
+# With agents, an empty list means that the search or the filter hides them.
+function test_a_list_that_the_search_or_filter_empties_says_no_matches() {
+  assert_contains '(a) => this.goTo(a), all.length ? "No matches" : "No agents")' "$(render_list_method)"
+}
+
+function list_key_down_method() {
+  sed -n '/^  listKeyDown(/,/^  }/p' "$MAIN"
+}
+
 function test_the_agent_list_opens_above_the_agent_count_with_its_right_edge_on_the_count() {
-  assert_contains "return 8 + Math.min(Math.max(count, 1), 12) * ROW;" "$(sed -n '/^function listHeight(/,/^}/p' "$MAIN")"
+  assert_contains "return 8 + HEAD + Math.min(Math.max(count, 1), 12) * ROW;" "$(sed -n '/^function listHeight(/,/^}/p' "$MAIN")"
   assert_contains "openList(at && { x: width - at.right - LIST_WIDTH, bottom: height - at.bottom - 6 }," "$(open_agents_method)"
   assert_contains "at: anchor ? { x: anchor.x, y: anchor.bottom - height } : \"pointer\"" "$(open_list_function)"
 }
@@ -212,14 +266,26 @@ function test_the_height_of_the_agent_list_counts_the_child_rows_that_the_list_s
 }
 
 function test_the_agent_list_opens_on_the_row_that_openingrow_chooses_in_the_recency_order() {
-  assert_contains "openList(at && { x: width - at.right - LIST_WIDTH, bottom: height - at.bottom - 6 }, rows.length, openingRow(rows));" "$(open_agents_method)"
+  assert_contains "const chosen = openingRow(rows);" "$(open_agents_method)"
+  assert_contains "openList(at && { x: width - at.right - LIST_WIDTH, bottom: height - at.bottom - 6 }, rows.length, chosen, { prefer: rows[chosen]?.key ?? null });" "$(open_agents_method)"
+}
+
+function test_a_new_search_or_filter_chooses_the_agent_the_list_opened_on_while_it_shows_or_else_the_first_row() {
+  assert_contains "this.prefer = props().prefer ?? null;" "$(init_list_method)"
+  assert_contains 'this.input.on("change", (_e, cx) => this.search(this.input.value(), cx));' "$(init_list_method)"
+  assert_contains "this.chosen = rowOf(this.shownRows(), this.prefer);" "$(sed -n '/^  choose(/,/^  }/p' "$MAIN")"
+  assert_contains "return filterRows(this.allRows(), this.filter, this.query);" "$(sed -n '/^  shownRows(/,/^  }/p' "$MAIN")"
+  assert_contains "this.choose();" "$(sed -n '/^  search(/,/^  }/p' "$MAIN")"
+  assert_contains "this.choose();" "$(sed -n '/^  pickFilter(/,/^  }/p' "$MAIN")"
 }
 
 # A popup cannot change its size, so the list opens again in its place.
 function test_the_agent_list_opens_again_at_the_new_height_when_the_records_change_its_rows() {
   assert_contains "if (anchor && listHeight(count) !== height) {" "$(read_records_method)"
   assert_contains "closeOverlay(overlay);" "$(read_records_method)"
-  assert_contains "openList(anchor, count, this.chosen);" "$(read_records_method)"
+  assert_contains "openList(anchor, count, this.chosen, { query: this.query, filter: this.filter, prefer: this.prefer });" "$(read_records_method)"
+  assert_contains "function openList(anchor, count, chosen = 0, state = {}) {" "$(open_list_function)"
+  assert_contains 'props: { popup: "agents", anchor, height, chosen, ...state },' "$(open_list_function)"
   assert_contains "this.chosen = props().chosen ?? 0;" "$(init_list_method)"
 }
 
@@ -284,7 +350,7 @@ function test_each_render_of_the_bar_stamps_the_changes_of_the_agents_in_its_sto
   assert_contains "const after = stampChanges(before, list, Date.now());" "$(stamp_method)"
   assert_contains "localStorage.setItem(CHANGES, JSON.stringify(after));" "$(stamp_method)"
   assert_contains 'JSON.parse(localStorage.getItem(CHANGES) ?? "{}")' "$(sed -n '/^function changesOf(/,/^}/p' "$MAIN")"
-  assert_contains "const rows = agentList(agents(), this.records, changesOf(), Date.now(), shared(AGENTS) ?? []);" "$(render_list_method)"
+  assert_contains "return agentList(agents(), this.records, changesOf(), Date.now(), shared(AGENTS) ?? []);" "$(all_rows_method)"
 }
 
 function test_stored_stamps_that_are_not_a_plain_object_read_as_none() {
@@ -393,6 +459,10 @@ function read_records_method() {
 
 function records_of_function() {
   sed -n '/^async function recordsOf(/,/^}/p' "$MAIN"
+}
+
+function all_rows_method() {
+  sed -n '/^  allRows(/,/^  }/p' "$MAIN"
 }
 
 function render_list_method() {

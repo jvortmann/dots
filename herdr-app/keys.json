@@ -123,6 +123,10 @@
     "f2": "terminal"
   },
   "mod:tab-bar": {
-    "alt-a": "overlay.close"
+    "alt-a": "overlay.close",
+    "alt-l": "tab-bar.filter-all",
+    "alt-n": "tab-bar.filter-blocked",
+    "alt-w": "tab-bar.filter-working",
+    "alt-d": "tab-bar.filter-done"
   }
 }

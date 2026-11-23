@@ -62,20 +62,27 @@ function test_the_arrows_move_the_chosen_row_and_stop_at_the_ends_of_the_list() 
   assert_same '{"chosen":1} {"chosen":1} {"chosen":0} {"chosen":0}' "$(status_of '[listKey("down", 0, [{}, {}]), listKey("down", 1, [{}, {}]), listKey("up", 1, [{}, {}]), listKey("up", 0, [{}, {}])].map((k) => JSON.stringify(k)).join(" ")')"
 }
 
-function test_j_and_k_move_the_chosen_row_down_and_up_as_in_vi() {
-  assert_same '{"chosen":1} {"chosen":0}' "$(status_of '[listKey("j", 0, [{}, {}]), listKey("k", 1, [{}, {}])].map((k) => JSON.stringify(k)).join(" ")')"
+# The search takes j and k as text.
+function test_ctrl_j_and_ctrl_k_move_the_chosen_row_and_j_and_k_do_not() {
+  assert_same '{"chosen":1} {"chosen":0} null null' "$(status_of '[listKey("ctrl-j", 0, [{}, {}]), listKey("ctrl-k", 1, [{}, {}]), listKey("j", 0, [{}, {}]), listKey("k", 1, [{}, {}])].map((k) => JSON.stringify(k)).join(" ")')"
 }
 
 function test_enter_goes_to_the_chosen_row() {
   assert_same '{"go":1}' "$(status_of 'JSON.stringify(listKey("enter", 1, [{}, {}]))')"
 }
 
-function test_a_digit_goes_to_the_agent_with_that_number_and_a_number_no_agent_holds_does_nothing() {
-  assert_same '{"go":1} null' "$(status_of '[listKey("2", 0, [{ number: 1 }, { number: 2 }, { number: 3 }]), listKey("4", 0, [{ number: 1 }, { number: 2 }, { number: 3 }])].map((k) => JSON.stringify(k)).join(" ")')"
+# The search takes a digit as text. alt-N goes to agent N from anywhere.
+function test_a_digit_in_the_list_is_text_for_the_search() {
+  assert_same "null" "$(status_of 'JSON.stringify(listKey("2", 0, [{ number: 1 }, { number: 2 }]))')"
 }
 
-function test_a_digit_goes_to_the_agent_with_that_number_past_the_child_rows() {
-  assert_same '{"go":2}' "$(status_of 'JSON.stringify(listKey("2", 0, [{ number: 1 }, { depth: 1 }, { number: 2 }]))')"
+# A filter can leave no rows, and the next one must stay in reach.
+function test_tab_and_shift_tab_go_to_the_next_and_the_previous_filter_also_on_an_empty_list() {
+  assert_same '{"filter":1} {"filter":-1}' "$(status_of '[listKey("tab", 0, []), listKey("shift-tab", 0, [{}])].map((k) => JSON.stringify(k)).join(" ")')"
+}
+
+function test_escape_asks_to_clear_the_search_or_close_also_on_an_empty_list() {
+  assert_same '{"escape":true}' "$(status_of 'JSON.stringify(listKey("escape", 0, []))')"
 }
 
 function test_keys_on_an_empty_list_do_nothing() {

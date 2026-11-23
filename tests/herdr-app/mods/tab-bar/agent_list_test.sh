@@ -79,9 +79,57 @@ function test_an_agent_with_no_time_has_no_time_cell() {
   assert_same "" "$(grep -oE 'text_size\([0-9.]+\)' "$LIST" | grep -v -e '^text_size(13)$' -e '^text_size(11)$' | tr '\n' ' ')"
 }
 
-function test_a_list_with_no_agents_says_so() {
+function test_a_list_with_no_rows_says_why() {
   assert_contains '.when(rows.length === 0, (el) => el.child(' "$(rows_function)"
-  assert_contains '"No agents"' "$(rows_function)"
+  assert_contains '.child(empty)' "$(rows_function)"
+}
+
+function test_the_search_field_has_the_look_of_the_field_of_the_recent_picker() {
+  assert_contains '.child(h_flex().h(FIELD).px(10).gap(8).items_center().rounded(4).border_1().border_color(t.accent).bg(t.background)' "$(head_function | tr -d '\n' | tr -s ' ' | sed 's/( /(/g; s/ \././g')"
+  assert_contains '.child(svg("mods/workspace-chrome/search.svg").size(15).text_color(t.dim))' "$(head_function)"
+  assert_contains '.child(Input.new(input).flex_1().h_full().text_size(13).text_color(t.foreground))' "$(head_function)"
+}
+
+function test_a_tab_for_each_filter_shows_its_name_and_count_and_a_click_picks_it() {
+  assert_contains 'import { FILTERS } from "./search.js";' "$(cat "$LIST")"
+  assert_contains '.child(h_flex().gap(2).children(FILTERS.map((f) => filterTab(t, f, counts[f], f === filter, pick))))' "$(head_function)"
+  assert_contains 'const LABELS = { all: "All", blocked: "Needs you", working: "Working", done: "Done" };' "$(cat "$LIST")"
+  assert_contains '.on_click((_e, cx) => pick(f, cx))' "$(filter_tab_function)"
+  assert_contains '.child(LABELS[f])' "$(filter_tab_function)"
+}
+
+# Like the chosen row, the 1 px edge takes 1 px of the padding.
+function test_the_chosen_filter_has_the_fill_and_edge_of_the_chosen_row() {
+  assert_contains '.when(chosen, (el) => el.px(5).bg(t.surface).border_1().border_color(alpha(t.border, 1 / 4)).text_color(t.foreground))' "$(filter_tab_function)"
+  assert_contains '.text_color(t.muted)' "$(filter_tab_function)"
+  assert_contains '.hover((s) => s.text_color(t.foreground))' "$(filter_tab_function)"
+}
+
+# A tab that cannot shrink keeps its words on one line. With counts of 99,
+# the four tabs fit the 400 px list with these paddings and gaps.
+function test_a_filter_tab_takes_the_11_px_of_the_time_and_keeps_its_width() {
+  assert_contains '.text_size(11)' "$(filter_tab_function)"
+  assert_contains '.flex_none()' "$(filter_tab_function)"
+  assert_contains '.px(6)
+    .gap(4)' "$(filter_tab_function)"
+  assert_contains 'const LIST_WIDTH = 400;' "$(cat "$ROOT/herdr-app/mods/tab-bar/main.js")"
+}
+
+# "All 7 (⌥l)". On the active tab the count takes the color of its status, or
+# the text color for All. On another tab it is muted, as its name. The key is dim.
+function test_a_filter_tab_reads_its_name_its_count_and_its_key_dim() {
+  assert_contains 'const KEYS = { all: "(⌥l)", blocked: "(⌥n)", working: "(⌥w)", done: "(⌥d)" };' "$(cat "$LIST")"
+  assert_contains '.child(LABELS[f])
+    .child(div().when(chosen, (el) => el.text_color(f === "all" ? t.foreground : t[f])).child(String(count)))
+    .child(div().text_color(t.dim).child(KEYS[f]));' "$(filter_tab_function)"
+}
+
+function filter_tab_function() {
+  sed -n '/^function filterTab(/,/^}/p' "$LIST"
+}
+
+function head_function() {
+  sed -n '/^export function agentHead(/,/^}/p' "$LIST"
 }
 
 function rows_function() {

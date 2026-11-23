@@ -129,6 +129,17 @@ function test_alt_a_in_the_agent_list_closes_it() {
   assert_same '"overlay.close"' "$(binding mod:tab-bar "alt-a")"
 }
 
+# On macOS, Option types a character in the search field, so a binding takes
+# the key before the field. alt-a closes the list, so All is on alt-l.
+function test_alt_l_n_w_and_d_in_the_agent_list_pick_all_needs_you_working_and_done() {
+  assert_same '"tab-bar.filter-all" "tab-bar.filter-blocked" "tab-bar.filter-working" "tab-bar.filter-done"' \
+    "$(binding mod:tab-bar "alt-l") $(binding mod:tab-bar "alt-n") $(binding mod:tab-bar "alt-w") $(binding mod:tab-bar "alt-d")"
+}
+
+function test_alt_l_n_w_and_d_stay_free_outside_the_agent_list() {
+  assert_same "null null null null" "$(binding global "alt-l") $(binding global "alt-n") $(binding global "alt-w") $(binding global "alt-d")"
+}
+
 function test_prefix_f_prefix_ctrl_f_and_cmd_p_open_the_same_picker_of_recent_spaces() {
   assert_same '"mod.open:recent-picker"' "$(binding global "ctrl-a f")"
   assert_same '"mod.open:recent-picker"' "$(binding global "ctrl-a ctrl-f")"

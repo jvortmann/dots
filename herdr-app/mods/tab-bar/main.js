@@ -4,7 +4,11 @@
 // the time. A click on the count opens the agent list above it, and so does alt-a
 // (tab-bar.agents). A click on the Changes button shows or hides the changes panel.
 // In the open list, alt-a closes it: keys.json runs overlay.close for mod:tab-bar,
-// because the list has the keyboard. The keys j and k move like the arrows.
+// because the list has the keyboard. Typed text searches the list, ctrl-j and
+// ctrl-k move like the arrows, and Tab and shift-Tab change the filter tab. Esc
+// clears the search, and with no search it closes the list. In keys.json,
+// alt-l, alt-n, alt-w and alt-d pick All, Needs you, Working and Done, and the
+// key of the active filter goes back to All.
 // The list puts the agents in focus order, the focused agent first, and it opens
 // on the agent focused before. select-agent-N (alt-1..9) goes to agent N in tab
 // order, which is the number that its row shows.
@@ -25,10 +29,11 @@
 // the list opens again in place when its height changes.
 
 import { View, div, svg } from "gpui-kit";
-import { h_flex } from "gpui-base";
+import { h_flex, v_flex, InputState } from "gpui-base";
 import { spaces, panes, agents, terminals, run, theme, openOverlay, closeOverlay, props, window as win, shared, setShared, nextCommand, notify, exec, hc, checking, appHome, readTextFile, writeTextFile, layout } from "herdr";
 import { tabText } from "./label.js";
-import { agentRows, ROW } from "./agent-list.js";
+import { agentHead, agentRows, ROW, HEAD } from "./agent-list.js";
+import { filterRows, filterCounts, nextFilter, pickedFilter, filterOfCommand, rowOf } from "./search.js";
 import { agentsText, needsText, agentList, openingRow, listKey, machineLabel, timeText, untilNextMinute, stampChanges } from "./status.js";
 import { observeTabs, observeSpaces, observeAgents, lastTab } from "./history.js";
 import { programIcon } from "./program-icon.js";
@@ -48,7 +53,7 @@ const RECORDS = "tab-bar.agent-records";
 const COUNT_AT = "tab-bar.count-at";
 // In localStorage, so the times of the agent list outlive a restart.
 const CHANGES = "agent-changes";
-const LIST_WIDTH = 360;
+const LIST_WIDTH = 400;
 
 function colors(t) {
   return {
@@ -104,14 +109,14 @@ function own(el, press = () => {}) {
 }
 
 // The anchor holds the left edge and the bottom edge of the list, above the agent count.
-function openList(anchor, count, chosen = 0) {
+function openList(anchor, count, chosen = 0, state = {}) {
   const height = listHeight(count);
   openOverlay({
     mod: "tab-bar",
     kind: "popup",
     width: LIST_WIDTH,
     height,
-    props: { popup: "agents", anchor, height, chosen },
+    props: { popup: "agents", anchor, height, chosen, ...state },
     at: anchor ? { x: anchor.x, y: anchor.bottom - height } : "pointer",
   });
 }
@@ -126,7 +131,7 @@ function changesOf() {
 }
 
 function listHeight(count) {
-  return 8 + Math.min(Math.max(count, 1), 12) * ROW;
+  return 8 + HEAD + Math.min(Math.max(count, 1), 12) * ROW;
 }
 
 // The child records of a terminal, as OSC 7501 reports them.
@@ -160,7 +165,7 @@ function windowButton(C, id, icon, command) {
 
 export default class TerminalsBar extends View {
   // The list is this mod opened as a popup, and a command reaches every shown
-  // copy, so the list copy skips the command loop or a swap runs twice.
+  // copy, so the list copy takes only its filter commands, or a swap runs twice.
   init(_props, cx) {
     if (props()?.popup) return this.initList(cx);
     this.host = "";
@@ -190,8 +195,21 @@ export default class TerminalsBar extends View {
     this.listing = true;
     this.chosen = props().chosen ?? 0;
     this.records = shared(RECORDS) ?? {};
+    this.query = props().query ?? "";
+    this.filter = props().filter ?? "all";
+    this.prefer = props().prefer ?? null;
+    this.input = InputState.new({ placeholder: "Search agents", value: this.query });
+    this.input.on("change", (_e, cx) => this.search(this.input.value(), cx));
+    this.input.on("submit", () => this.goChosen());
+    this.input.focus();
+    cx.timer.after(600, () => this.input.focus());
     this.handle = cx.focus_handle();
-    this.handle.focus();
+    cx.spawn(async (cx) => {
+      for (;;) {
+        const wanted = filterOfCommand(await nextCommand());
+        if (wanted) this.pickFilter(pickedFilter(this.filter, wanted), cx);
+      }
+    });
     if (!checking()) cx.timer.every(2000, (cx) => this.readRecords(cx));
     if (!checking()) this.readRecords(cx);
   }
@@ -207,7 +225,7 @@ export default class TerminalsBar extends View {
       const count = agentList(agents(), records).length;
       if (anchor && listHeight(count) !== height) {
         closeOverlay(overlay);
-        openList(anchor, count, this.chosen);
+        openList(anchor, count, this.chosen, { query: this.query, filter: this.filter, prefer: this.prefer });
         return;
       }
       this.reading = false;
@@ -215,17 +233,55 @@ export default class TerminalsBar extends View {
     });
   }
 
+  allRows() {
+    return agentList(agents(), this.records, changesOf(), Date.now(), shared(AGENTS) ?? []);
+  }
+
   renderList() {
-    const rows = agentList(agents(), this.records, changesOf(), Date.now(), shared(AGENTS) ?? []);
-    return agentRows(theme(), rows, Math.min(this.chosen, rows.length - 1), (a) => this.goTo(a))
+    const t = theme();
+    const all = this.allRows();
+    const rows = filterRows(all, this.filter, this.query);
+    return v_flex()
       .id("tm-agent-list")
+      .size_full()
+      .bg(t.canvas)
       .track_focus(this.handle)
-      .on_key_down((e, cx) => this.listKeyDown(e, rows, cx));
+      .on_key_down((e, cx) => this.listKeyDown(e, rows, cx))
+      .child(agentHead(t, this.input, this.filter, filterCounts(all, this.query), (f, cx) => this.pickFilter(f, cx)))
+      .child(agentRows(t, rows, Math.min(this.chosen, rows.length - 1), (a) => this.goTo(a), all.length ? "No matches" : "No agents").h(props().height - HEAD));
+  }
+
+  pickFilter(filter, cx) {
+    this.filter = filter;
+    this.choose();
+    cx.notify();
+  }
+
+  search(query, cx) {
+    this.query = query;
+    this.choose();
+    cx.notify();
+  }
+
+  clearSearch(cx) {
+    this.input.set_value("");
+    this.search("", cx);
+  }
+
+  choose() {
+    this.chosen = rowOf(this.shownRows(), this.prefer);
+  }
+
+  shownRows() {
+    return filterRows(this.allRows(), this.filter, this.query);
   }
 
   listKeyDown(e, rows, cx) {
     const key = listKey(e.keystroke, this.chosen, rows);
     if (!key) return;
+    cx.stop_propagation();
+    if ("filter" in key) return this.pickFilter(nextFilter(this.filter, key.filter), cx);
+    if ("escape" in key) return this.query ? this.clearSearch(cx) : closeOverlay(props().overlay);
     if ("go" in key) {
       if (rows[key.go]) this.goTo(rows[key.go]);
       return;
@@ -234,7 +290,15 @@ export default class TerminalsBar extends View {
     cx.notify();
   }
 
+  goChosen() {
+    const rows = this.shownRows();
+    const a = rows[Math.min(this.chosen, rows.length - 1)];
+    if (a) this.goTo(a);
+  }
+
   goTo(a) {
+    if (this.gone) return;
+    this.gone = true;
     closeOverlay(props().overlay);
     run("agent.focus", { terminal: a.address });
   }
@@ -267,7 +331,8 @@ export default class TerminalsBar extends View {
     const at = shared(COUNT_AT);
     const { width, height } = window.viewport_size();
     const rows = agentList(agents(), shared(RECORDS) ?? {}, {}, 0, shared(AGENTS) ?? []);
-    openList(at && { x: width - at.right - LIST_WIDTH, bottom: height - at.bottom - 6 }, rows.length, openingRow(rows));
+    const chosen = openingRow(rows);
+    openList(at && { x: width - at.right - LIST_WIDTH, bottom: height - at.bottom - 6 }, rows.length, chosen, { prefer: rows[chosen]?.key ?? null });
   }
 
   placeCount(bounds) {
