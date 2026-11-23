@@ -28,7 +28,7 @@ function test_the_layout_shows_the_window_mod_so_that_it_maximizes_the_window_at
 
 function test_the_tab_bar_shows_below_the_terminals() {
   assert_same "active tab-bar" "$(jq -r '.. | objects | select(.type? == "column") | .children
-    | map(if .content?.tab? == "active" then "active"
+    | map(if any(.. | objects; .content?.tab? == "active") then "active"
       elif any(.. | objects; .content?.mod? == "tab-bar") then "tab-bar" else empty end)
     | select(length == 2) | join(" ")' "$LAYOUT")"
 }
@@ -50,6 +50,14 @@ function test_the_sidebar_that_cmd_b_shows_starts_hidden() {
   local sidebar
   sidebar="$(jq -r '.global["cmd-b"] | ltrimstr("layout.toggle:")' "$KEYS")"
   assert_same "true" "$(jq -r --arg id "$sidebar" '.. | objects | select(.id? == $id) | .hidden' "$LAYOUT")"
+}
+
+# The tab bar shows and hides the panel by these ids, as the stock tabs mod does.
+function test_the_changes_panel_of_the_stock_layout_starts_hidden_beside_the_terminals() {
+  assert_same "main panel" "$(jq -r '.. | objects | select(.type? == "row") | .children | map(.id)
+    | select(index("panel")) | join(" ")' "$LAYOUT")"
+  assert_same "true panel-body changes changes" "$(jq -r '.. | objects | select(.id? == "panel")
+    | [.hidden, (.children[] | .id, .active, (.children[] | .content.mod))] | join(" ")' "$LAYOUT")"
 }
 
 function test_the_macos_window_buttons_sit_out_of_view() {

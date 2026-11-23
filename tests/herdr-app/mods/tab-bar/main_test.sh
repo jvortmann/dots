@@ -77,8 +77,26 @@ function test_the_status_on_the_right_takes_no_accent_color() {
   assert_same "" "$(grep -oE 't\.accent|C\.status\b' "$MAIN" | tr '\n' ' ')"
 }
 
-function test_the_right_side_shows_the_agents_then_the_machine_then_the_time() {
-  assert_same "agents dots needs machine time " "$(right_side | right_parts)"
+function test_the_right_side_shows_the_agents_then_the_changes_button_then_the_machine_then_the_time() {
+  assert_same "agents dots needs changes machine time " "$(right_side | right_parts)"
+}
+
+function test_the_changes_button_shows_the_icon_of_the_stock_changes_mod_then_the_word() {
+  assert_contains '.child(svg("mods/changes/changes.svg").size(14)).child("Changes")' "$(changes_button_function)"
+}
+
+function test_a_click_on_the_changes_button_shows_or_hides_the_changes_panel_of_the_shown_layout() {
+  assert_contains 'toggleChanges } from "./changes-panel.js";' "$(cat "$MAIN")"
+  assert_contains '.on_click(() => toggleChanges(layout()).forEach(([command, args]) => run(command, args)))' "$(changes_button_function)"
+}
+
+function test_the_changes_button_shows_a_hand_cursor_and_lightens_under_the_pointer_like_the_agent_count() {
+  assert_contains '.gap(6).items_center().cursor_pointer().hover((s) => s.text_color(C.text))' "$(changes_button_function)"
+}
+
+function test_the_changes_button_stays_bright_while_the_panel_shows_the_changes() {
+  assert_contains '.child(changesButton(C, changesShown(layout())))' "$(right_side | tr -d '\n' | tr -s ' ' | sed 's/) \./)./g')"
+  assert_contains '.when(shown, (el) => el.text_color(C.text))' "$(changes_button_function)"
 }
 
 function test_each_agent_that_is_not_idle_shows_a_dot_in_its_status_color() {
@@ -274,7 +292,7 @@ function right_side() {
 }
 
 function right_parts() {
-  awk '/agentsText\(/ { print "agents" } /status !== "idle"/ { print "dots" } /needsText\(/ { print "needs" } /machineLabel\(/ { print "machine" } /timeText\(/ { print "time" }' | tr '\n' ' '
+  awk '/agentsText\(/ { print "agents" } /status !== "idle"/ { print "dots" } /needsText\(/ { print "needs" } /changesButton\(C/ { print "changes" } /machineLabel\(/ { print "machine" } /timeText\(/ { print "time" }' | tr '\n' ' '
 }
 
 function tab_parts() {
@@ -375,6 +393,10 @@ function place_count_method() {
 
 function open_list_function() {
   sed -n '/^function openList(/,/^}/p' "$MAIN" | tr '\n' ' ' | tr -s ' '
+}
+
+function changes_button_function() {
+  sed -n '/^function changesButton(/,/^}/p' "$MAIN" | tr -d '\n' | tr -s ' ' | sed 's/) \./)./g'
 }
 
 function machine_function() {

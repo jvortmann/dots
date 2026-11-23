@@ -47,19 +47,44 @@
       "gap": 0,
       "children": [
         {
-          "id": "main",
-          "type": "block",
-          "content": {
-            "tab": "active",
-            "pane": {
-              "background": "background",
-              "border": { "width": 1, "color": "border" },
-              "focus": { "width": 1, "color": "accent" },
-              "radius": 0,
-              "gap": 0,
-              "lone": true
+          "id": "work-body",
+          "type": "row",
+          "gap": 4,
+          "children": [
+            {
+              "id": "main",
+              "type": "block",
+              "content": {
+                "tab": "active",
+                "pane": {
+                  "background": "background",
+                  "border": { "width": 1, "color": "border" },
+                  "focus": { "width": 1, "color": "accent" },
+                  "radius": 0,
+                  "gap": 0,
+                  "lone": true
+                }
+              }
+            },
+            {
+              "id": "panel",
+              "type": "column",
+              "hidden": true,
+              "size": { "px": 368 },
+              "min": 280,
+              "max": 900,
+              "children": [
+                {
+                  "id": "panel-body",
+                  "type": "stack",
+                  "active": "changes",
+                  "children": [
+                    { "id": "changes", "type": "block", "content": { "mod": "changes" } }
+                  ]
+                }
+              ]
             }
-          }
+          ]
         },
         {
           "id": "bottom",

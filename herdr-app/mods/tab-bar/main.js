@@ -1,7 +1,8 @@
 // The bar at the bottom of the layout: space picker, tabs, status, and window
 // controls. The status is the agent count with a dot for each agent that is not
-// idle, then the agents that need you, the machine label and the time. A click
-// on the count opens the agent list above it, and so does alt-a (tab-bar.agents).
+// idle, then the agents that need you, the Changes button, the machine label and
+// the time. A click on the count opens the agent list above it, and so does alt-a
+// (tab-bar.agents). A click on the Changes button shows or hides the changes panel.
 // In the open list, alt-a closes it: keys.json runs overlay.close for mod:tab-bar,
 // because the list has the keyboard. The keys j and k move like the arrows.
 // select-agent-N (alt-1..9) goes to agent N of that list.
@@ -23,7 +24,7 @@
 
 import { View, div, svg } from "gpui-kit";
 import { h_flex } from "gpui-base";
-import { spaces, panes, agents, terminals, run, theme, openOverlay, closeOverlay, props, window as win, shared, setShared, nextCommand, notify, exec, hc, checking, appHome, readTextFile, writeTextFile } from "herdr";
+import { spaces, panes, agents, terminals, run, theme, openOverlay, closeOverlay, props, window as win, shared, setShared, nextCommand, notify, exec, hc, checking, appHome, readTextFile, writeTextFile, layout } from "herdr";
 import { tabText } from "./label.js";
 import { agentRows, ROW } from "./agent-list.js";
 import { agentsText, needsText, agentList, listKey, machineLabel, timeText, untilNextMinute, stampChanges } from "./status.js";
@@ -32,6 +33,7 @@ import { programIcon } from "./program-icon.js";
 import { lead } from "./lead.js";
 import { numberTabs, nextMove, swapNumbers, tabNumbered } from "./numbers.js";
 import { PI_ICON, syncPiIcon } from "./pi-icon.js";
+import { changesShown, toggleChanges } from "./changes-panel.js";
 
 // Shared state, not a field: another layout, a save or a restart starts the mod fresh.
 const HISTORY = "tab-bar.tab-history";
@@ -69,6 +71,21 @@ function machine(C, { icon, name }) {
     .on_click(() => run("mod.open", { name: "machine-add" }))
     .child(svg(`mods/workspace-chrome/${icon}.svg`).size(13))
     .child(name);
+}
+
+// The stock panel button. The stock tabs mod shows it only when the shared
+// workspace.panels lists "changes". This bar always shows it.
+function changesButton(C, shown) {
+  return own(h_flex())
+    .id("tm-changes")
+    .gap(6)
+    .items_center()
+    .cursor_pointer()
+    .hover((s) => s.text_color(C.text))
+    .when(shown, (el) => el.text_color(C.text))
+    .on_click(() => toggleChanges(layout()).forEach(([command, args]) => run(command, args)))
+    .child(svg("mods/changes/changes.svg").size(14))
+    .child("Changes");
 }
 
 // A control in the draggable bar: the press is its own, not the window's
@@ -432,6 +449,7 @@ export default class TerminalsBar extends View {
               .child(h_flex().gap(3).children(list.filter((a) => a.status !== "idle").map((a) => div().size(6).rounded(3).bg(t[a.status]))))
               .when(Boolean(needsText(list)), (el) => el.child(div().text_color(t.blocked).child(needsText(list)))),
           )
+          .child(changesButton(C, changesShown(layout())))
           .child(machine(C, machineLabel(space, this.host)))
           .child(timeText(new Date())),
       )
