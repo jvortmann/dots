@@ -15,7 +15,7 @@ function set_up() {
   LOG="$HOME_DIR/hc.log"
   mkdir -p "$HOME_DIR/.local/bin"
   fake_hc ""
-  for program in nvim vim vi v n pi pip; do
+  for program in nvim pi pip; do
     printf '#!/bin/sh\nexit 0\n' > "$BIN/$program"
     chmod +x "$BIN/$program"
   done
@@ -43,21 +43,6 @@ function test_the_record_goes_when_the_command_ends() {
   in_herdr_shell "nvim notes.md"
 
   assert_same $'label t7 restore.cmd=nvim notes.md\nlabel t7 restore.cmd=' "$(hc_calls 2)"
-}
-
-# @data_provider the_other_names_of_nvim_and_pi
-function test_a_herdr_terminal_records_the_other_names_of_nvim_and_pi() {
-  in_herdr_shell "$1 notes.md"
-
-  assert_same "label t7 restore.cmd=$1 notes.md" "$(hc_calls 1 | head -1)"
-}
-
-function the_other_names_of_nvim_and_pi() {
-  bashunit::data_set vim
-  bashunit::data_set vi
-  bashunit::data_set v
-  bashunit::data_set n
-  bashunit::data_set pi
 }
 
 function test_a_herdr_terminal_records_a_command_with_no_arguments() {

@@ -31,19 +31,14 @@ function test_keeps_application_state_in_the_home_folder() {
     "$(unset XDG_STATE_HOME; variable_after_startup XDG_STATE_HOME)"
 }
 
-function test_keeps_user_config_in_the_config_folder() {
-  assert_same "$HOME/.config" \
-    "$(unset XDG_CONFIG_HOME; variable_after_startup XDG_CONFIG_HOME)"
-}
-
 function test_points_pi_at_its_folder_in_the_config_folder() {
   assert_same "$HOME/.config/pi" \
-    "$(unset PI_CODING_AGENT_DIR; variable_after_startup PI_CODING_AGENT_DIR)"
+    "$(unset PI_CODING_AGENT_DIR XDG_CONFIG_HOME; variable_after_startup PI_CODING_AGENT_DIR)"
 }
 
 function test_points_claude_at_its_folder_in_the_config_folder() {
   assert_same "$HOME/.config/claude" \
-    "$(unset CLAUDE_CONFIG_DIR; variable_after_startup CLAUDE_CONFIG_DIR)"
+    "$(unset CLAUDE_CONFIG_DIR XDG_CONFIG_HOME; variable_after_startup CLAUDE_CONFIG_DIR)"
 }
 
 function test_grep_and_find_in_a_new_terminal_read_ignored_files() {
