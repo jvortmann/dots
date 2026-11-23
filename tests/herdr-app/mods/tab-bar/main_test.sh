@@ -99,8 +99,9 @@ function test_the_changes_button_stays_bright_while_the_panel_shows_the_changes(
   assert_contains '.when(shown, (el) => el.text_color(C.text))' "$(changes_button_function)"
 }
 
-function test_each_agent_that_is_not_idle_shows_a_dot_in_its_status_color() {
-  assert_contains '.children(list.filter((a) => a.status !== "idle").map((a) => div().size(6).rounded(3).bg(t[a.status])))' "$(right_side | tr -d '\n' | tr -s ' ')"
+function test_each_agent_that_is_not_idle_shows_its_mark_for_the_bar() {
+  assert_contains 'import { barMark } from "./status-mark.js";' "$(cat "$MAIN")"
+  assert_contains '.child(h_flex().children(list.filter((a) => a.status !== "idle").map((a) => barMark(t, a.status))))' "$(right_side | tr -d '\n' | tr -s ' ')"
 }
 
 function test_the_agents_that_need_you_take_the_blocked_color() {
@@ -131,9 +132,11 @@ function test_the_machine_label_lightens_under_the_pointer_like_the_space_chip()
   assert_contains ".hover((s) => s.text_color(C.text))" "$(machine_function)"
 }
 
-function test_the_agent_count_has_the_dim_dot_of_the_stock_status_bar() {
+# The icon takes the color of the count, as the icon of the Changes button
+# takes the color of its word.
+function test_the_agent_count_shows_the_agent_icon_of_the_app_at_the_size_of_the_changes_icon() {
   assert_contains ".gap(6).items_center()" "$(agents_group)"
-  assert_contains ".child(div().size(6).rounded(3).bg(C.dim)).child(agentsText(list))" "$(agents_group)"
+  assert_contains '.child(svg("mods/tab-bar/agent.svg").size(14)).child(agentsText(list))' "$(agents_group)"
 }
 
 function test_a_click_on_the_agent_count_opens_the_agent_list_of_the_tab_bar_as_a_popup() {

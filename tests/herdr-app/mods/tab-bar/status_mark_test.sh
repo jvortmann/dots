@@ -28,6 +28,16 @@ function test_an_idle_agent_shows_the_ring_of_the_sidebar_in_the_idle_color() {
   assert_same 'div().size(7).mx(3).flex_none().rounded(4).border(1.5).border_color("#586e75")' "$(drawn_by "$MARK" 'statusMark(t, "idle")')"
 }
 
+# The bar says "N needs you" after the marks, so a pill would say it twice.
+function test_in_the_bar_a_blocked_agent_shows_a_dot_in_the_blocked_color_and_no_pill() {
+  assert_same 'div().size(7).mx(3).flex_none().rounded(4).bg("#dc322f")' "$(drawn_by "$MARK" 'barMark(t, "blocked")')"
+}
+
+function test_in_the_bar_a_working_or_done_agent_shows_the_mark_of_the_sidebar() {
+  assert_same 'svg("mods/workspace-chrome/spinner.svg").size(12).mx(1).flex_none().text_color("#b58900").spin(900) div().size(7).mx(3).flex_none().rounded(4).bg("#859900")' \
+    "$(drawn_by "$MARK" '`${barMark(t, "working")} ${barMark(t, "done")}`')"
+}
+
 # A child record can have no state. The sidebar draws a clear dot for it.
 function test_a_status_with_no_mark_keeps_the_place_of_the_mark_empty() {
   assert_same 'div().size(7).mx(3).flex_none()' "$(drawn_by "$MARK" 'statusMark(t, undefined)')"
