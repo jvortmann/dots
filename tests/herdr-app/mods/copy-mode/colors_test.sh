@@ -67,6 +67,14 @@ function test_draws_plain_text_in_the_default_colors_when_the_app_shows_copy_mod
   assert_not_contains ';2;' "$plain"
 }
 
+function test_draws_the_scroll_position_in_the_colors_that_the_mod_gives() {
+  SELECTION='{"fg": "#654321", "bg": "#123456"}'
+
+  copy_mode_screen $'\e[48;2;18;52;86m[' 'printf "\033[31mred\033[0m plain\n"'
+
+  assert_contains $'\e[38;2;101;67;33m\e[48;2;18;52;86m[' "$(grep -ao '.\{0,40\}\[[0-9]*/[0-9]*\]' "$SCRATCH/screen")"
+}
+
 # Runs the shell code in $2 in a terminal, and opens copy mode on that
 # terminal in a warm nvim, the way the mod does. Presses the other arguments
 # there as keys. Writes the bytes that draw copy mode to the file screen. It

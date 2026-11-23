@@ -25,12 +25,20 @@ function tear_down() {
   rm -f "${TMUX_TMPDIR:-/tmp}/tmux-$(id -u)/$SERVER"
 }
 
-function test_in_a_herdr_terminal_ctrl_l_moves_the_herdr_pane_right() {
+# @data_provider keys_and_directions
+function test_in_a_herdr_terminal_ctrl_h_j_k_l_move_the_herdr_pane() {
   shell_in_terminal t7
 
-  tmux -L "$SERVER" send-keys C-l
+  tmux -L "$SERVER" send-keys "$1"
 
-  assert_same 'do pane.go {"direction":"right"}' "$(logged pane.go)"
+  assert_same "do pane.go {\"direction\":\"$2\"}" "$(logged pane.go)"
+}
+
+function keys_and_directions() {
+  bashunit::data_set C-h left
+  bashunit::data_set C-j down
+  bashunit::data_set C-k up
+  bashunit::data_set C-l right
 }
 
 # herdr-app prints {"ok": true}, and a job notice would show on the screen too.
