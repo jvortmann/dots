@@ -168,6 +168,15 @@ function test_the_list_opens_on_the_focused_agent_when_it_is_the_only_agent() {
   assert_same "0" "$(status_of 'openingRow([{ address: "t1", focused: true }, { depth: 1 }])')"
 }
 
+# The order is that of the stock sidebar. The list shows each agent.
+function test_the_bar_shows_only_the_statuses_that_an_agent_has() {
+  assert_same "working" "$(status_of 'barStatuses(["idle", "working"].map((status) => ({ status }))).join(" ")')"
+}
+
+function test_the_bar_shows_each_status_once_blocked_then_done_then_working_and_no_idle() {
+  assert_same "blocked done working" "$(status_of 'barStatuses(["working", "idle", "done", "working", "blocked", "done"].map((status) => ({ status }))).join(" ")')"
+}
+
 # Prints the value of $1, a call to the exports of status.js, at local time.
 status_of() {
   CALL="$1" STATUS="$STATUS" mise x node@latest -- node --input-type=module -e '

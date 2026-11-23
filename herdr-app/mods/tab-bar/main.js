@@ -1,5 +1,5 @@
 // The bar at the bottom of the layout: space picker, tabs, status, and window
-// controls. The status is the agent count with a mark for each agent that is not
+// controls. The status is the agent count with one mark for each status except
 // idle, then the agents that need you, the Changes button, the machine label and
 // the time. A click on the count opens the agent list above it, and so does alt-a
 // (tab-bar.agents). A click on the Changes button shows or hides the changes panel.
@@ -34,7 +34,7 @@ import { spaces, panes, agents, terminals, run, theme, openOverlay, closeOverlay
 import { tabText } from "./label.js";
 import { agentHead, agentRows, ROW, HEAD } from "./agent-list.js";
 import { filterRows, filterCounts, nextFilter, pickedFilter, filterOfCommand, rowOf } from "./search.js";
-import { agentsText, needsText, agentList, openingRow, listKey, machineLabel, timeText, untilNextMinute, stampChanges } from "./status.js";
+import { agentsText, needsText, barStatuses, agentList, openingRow, listKey, machineLabel, timeText, untilNextMinute, stampChanges } from "./status.js";
 import { observeTabs, observeSpaces, observeAgents, lastTab } from "./history.js";
 import { programIcon } from "./program-icon.js";
 import { barMark } from "./status-mark.js";
@@ -520,7 +520,7 @@ export default class TerminalsBar extends View {
               .on_mouse_move((e) => this.placeCount(e.bounds))
               .child(svg("mods/tab-bar/agent.svg").size(14))
               .child(agentsText(list))
-              .child(h_flex().children(list.filter((a) => a.status !== "idle").map((a) => barMark(t, a.status))))
+              .child(h_flex().children(barStatuses(list).map((status) => barMark(t, status))))
               .when(Boolean(needsText(list)), (el) => el.child(div().text_color(t.blocked).child(needsText(list)))),
           )
           .child(changesButton(C, changesShown(layout())))

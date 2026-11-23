@@ -16,6 +16,10 @@ export function needsText(list) {
   return needs ? `· ${needs} needs you` : "";
 }
 
+export function barStatuses(list) {
+  return ["blocked", "done", "working"].filter((status) => list.some((a) => a.status === status));
+}
+
 export function agentList(list, records = {}, changed = {}, now = 0, history = []) {
   const rank = (a) => (history.includes(a.address) ? history.indexOf(a.address) : history.length);
   const numbered = list.map((a, i) => ({ ...a, key: a.address, number: i < 9 ? i + 1 : null, time: a.address in changed ? duration(now - changed[a.address].at) : "" }));

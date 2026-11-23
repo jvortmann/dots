@@ -112,9 +112,10 @@ function test_the_changes_button_stays_bright_while_the_panel_shows_the_changes(
   assert_contains '.when(shown, (el) => el.text_color(C.text))' "$(changes_button_function)"
 }
 
-function test_each_agent_that_is_not_idle_shows_its_mark_for_the_bar() {
+# The list shows each agent, so the bar shows each status once.
+function test_each_status_of_the_agents_shows_one_mark_for_the_bar() {
   assert_contains 'import { barMark } from "./status-mark.js";' "$(cat "$MAIN")"
-  assert_contains '.child(h_flex().children(list.filter((a) => a.status !== "idle").map((a) => barMark(t, a.status))))' "$(right_side | tr -d '\n' | tr -s ' ')"
+  assert_contains '.child(h_flex().children(barStatuses(list).map((status) => barMark(t, status))))' "$(right_side | tr -d '\n' | tr -s ' ')"
 }
 
 function test_the_agents_that_need_you_take_the_blocked_color() {
@@ -386,7 +387,7 @@ function right_side() {
 }
 
 function right_parts() {
-  awk '/agentsText\(/ { print "agents" } /status !== "idle"/ { print "dots" } /needsText\(/ { print "needs" } /changesButton\(C/ { print "changes" } /machineLabel\(/ { print "machine" } /timeText\(/ { print "time" }' | tr '\n' ' '
+  awk '/agentsText\(/ { print "agents" } /barStatuses\(/ { print "dots" } /needsText\(/ { print "needs" } /changesButton\(C/ { print "changes" } /machineLabel\(/ { print "machine" } /timeText\(/ { print "time" }' | tr '\n' ' '
 }
 
 function tab_parts() {

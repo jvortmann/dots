@@ -10,7 +10,7 @@ export function statusMark(t, status) {
   return div().size(7).mx(3).flex_none();
 }
 
-// The mark of an agent in the bar. The bar names a blocked agent in "N needs
+// The mark of a status in the bar. The bar names a blocked agent in "N needs
 // you", so it shows a dot and not the pill.
 export function barMark(t, status) {
   if (status === "blocked") return dot(t.blocked);
