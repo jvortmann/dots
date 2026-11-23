@@ -1,9 +1,12 @@
 # vim: ft=zsh
 
 # In a Herdr terminal, ctrl-h/j/k/l move the Herdr pane left, down, up and
-# right. keys.json sends these keys to the program, so nvim keeps them for its
-# windows. Here zsh loses their widgets, such as kill-line on ctrl-k and the
-# clear on ctrl-l.
+# right. keys.json no longer sends these keys to the program. The nav mod
+# (herdr-app/mods/nav) moves the pane, and sends the key on to nvim for its
+# windows. These widgets stay as a fallback. Herdr updates the program of a
+# pane 0.4 to 0.9 seconds late, so just after nvim quits the mod can still send
+# the key on to zsh. Here zsh loses their widgets, such as kill-line on ctrl-k
+# and the clear on ctrl-l.
 # keys.json sends ctrl-a ctrl-k as ctrl-alt-k in the CSI u form (\e[107;7u),
 # and ctrl-a ctrl-j as ctrl-alt-j (\e[106;7u). It sends ctrl-a ctrl-l as the
 # CSI u form of ctrl-l. pi cannot tell the CSI u form of ctrl-k from ctrl-k,

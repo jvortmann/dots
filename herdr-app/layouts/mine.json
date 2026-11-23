@@ -109,6 +109,12 @@
               "type": "block",
               "size": { "px": 1 },
               "content": { "mod": "window" }
+            },
+            {
+              "id": "nav",
+              "type": "block",
+              "size": { "px": 1 },
+              "content": { "mod": "nav" }
             }
           ]
         }

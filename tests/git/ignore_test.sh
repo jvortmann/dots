@@ -38,6 +38,10 @@ function test_keeps_the_own_recent_picker_mod_in_the_herdr_app_folder() {
   assert_same "" "$(ignored herdr-app/mods/recent-picker/main.js)"
 }
 
+function test_keeps_the_own_nav_mod_in_the_herdr_app_folder() {
+  assert_same "" "$(ignored herdr-app/mods/nav/main.js)"
+}
+
 function test_keeps_the_own_program_table_in_the_herdr_app_folder() {
   assert_same "" "$(ignored herdr-app/programs.json)"
 }

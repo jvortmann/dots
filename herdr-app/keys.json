@@ -116,10 +116,10 @@
     "ctrl-a ctrl-j": "send:\u001b[106;7u",
     "ctrl-a ctrl-k": "send:\u001b[107;7u",
     "ctrl-a ctrl-l": "send:\u001b[108;5u",
-    "ctrl-h": "terminal",
-    "ctrl-j": "terminal",
-    "ctrl-k": "terminal",
-    "ctrl-l": "terminal",
+    "ctrl-h": "nav.left",
+    "ctrl-j": "nav.down",
+    "ctrl-k": "nav.up",
+    "ctrl-l": "nav.right",
     "f2": "terminal"
   },
   "mod:tab-bar": {
