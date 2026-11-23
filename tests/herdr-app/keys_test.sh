@@ -59,7 +59,8 @@ function test_prefix_ctrl_h_goes_to_the_pane_left() {
   assert_same '"pane.go:left"' "$(binding global "ctrl-a ctrl-h")"
 }
 
-# In Herdr, pi moves the pane on ctrl-j, and it adds a line on ctrl-alt-j.
+# In Herdr, the nav mod moves the pane on ctrl-j, and pi adds a line on
+# ctrl-alt-j.
 function test_prefix_ctrl_j_in_a_terminal_sends_ctrl_alt_j_in_the_csi_u_form() {
   assert_same '"send:\u001b[106;7u"' "$(binding terminal "ctrl-a ctrl-j")"
   assert_same "null" "$(binding global "ctrl-a ctrl-j")"
@@ -159,8 +160,8 @@ function test_prefix_ctrl_l_in_a_terminal_sends_ctrl_l_in_the_csi_u_form() {
   assert_same '"send:\u001b[108;5u"' "$(binding terminal "ctrl-a ctrl-l")"
 }
 
-# In Herdr, zsh and pi move the pane on ctrl-k, and they delete to the end of
-# the line on ctrl-alt-k. pi cannot tell the CSI u form of ctrl-k from ctrl-k.
+# In Herdr, the nav mod moves the pane on ctrl-k. zsh and pi delete to the end
+# of the line on ctrl-alt-k. pi cannot tell the CSI u form of ctrl-k from ctrl-k.
 function test_prefix_ctrl_k_in_a_terminal_sends_ctrl_alt_k_in_the_csi_u_form() {
   assert_same '"send:\u001b[107;7u"' "$(binding terminal "ctrl-a ctrl-k")"
 }
