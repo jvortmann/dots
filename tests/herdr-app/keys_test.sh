@@ -13,6 +13,14 @@ function test_ctrl_h_j_k_l_in_a_terminal_go_to_the_program() {
     "$(jq -r '.terminal | [."ctrl-h", ."ctrl-j", ."ctrl-k", ."ctrl-l"] | join(" ")' "$KEYS")"
 }
 
+function test_f2_in_a_terminal_goes_to_the_program() {
+  assert_same '"terminal"' "$(binding terminal "f2")"
+}
+
+function test_f2_renames_no_tab() {
+  assert_same "" "$(jq -r '[.[] | to_entries[] | select(.key == "f2" and .value == "tab.rename") | .key] | join(" ")' "$KEYS")"
+}
+
 function test_no_key_opens_or_feeds_a_prefix_mod() {
   assert_same "" "$(jq -r '[(keys[] | select(. == "mod:prefix")),
     (.[] | to_entries[] | select(.value | tostring | test("prefix")) | .key)] | join(" ")' "$KEYS")"

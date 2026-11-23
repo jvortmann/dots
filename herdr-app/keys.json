@@ -32,7 +32,6 @@
     "cmd-alt-shift-right": "pane.swap:right",
     "cmd-alt-shift-up": "pane.swap:up",
     "cmd-alt-shift-down": "pane.swap:down",
-    "f2": "tab.rename",
     "shift-f2": "space.rename",
     "cmd-/": "app.help",
     "cmd-shift-/": "app.help",
@@ -120,7 +119,8 @@
     "ctrl-h": "terminal",
     "ctrl-j": "terminal",
     "ctrl-k": "terminal",
-    "ctrl-l": "terminal"
+    "ctrl-l": "terminal",
+    "f2": "terminal"
   },
   "mod:tab-bar": {
     "alt-a": "overlay.close"
