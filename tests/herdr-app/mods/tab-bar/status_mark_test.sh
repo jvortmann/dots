@@ -20,6 +20,10 @@ function test_a_blocked_agent_shows_the_needs_you_pill_of_the_sidebar_with_squar
     "$(drawn_by "$MARK" 'statusMark(t, "blocked")')"
 }
 
+function test_the_fill_of_the_pill_keeps_the_share_of_a_blocked_color_with_an_alpha_of_its_own() {
+  assert_contains '.bg("#e06c751f")' "$(drawn_by "$MARK" 'statusMark({ ...t, blocked: "#e06c75cc" }, "blocked")')"
+}
+
 function test_a_done_agent_shows_the_dot_of_the_sidebar_in_the_done_color() {
   assert_same 'div().size(7).mx(3).flex_none().rounded(4).bg("#859900")' "$(drawn_by "$MARK" 'statusMark(t, "done")')"
 }

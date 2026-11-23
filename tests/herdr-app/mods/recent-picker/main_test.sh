@@ -29,7 +29,8 @@ function test_the_picker_sits_on_the_canvas_like_the_tabs_that_are_not_shown() {
 }
 
 function test_the_chosen_row_has_the_fill_edge_and_corners_of_the_shown_tab() {
-  assert_contains 'const edge = quarter(t.border);' "$(render_method)"
+  assert_contains 'import { alpha } from "./alpha.js";' "$(cat "$MAIN")"
+  assert_contains 'const edge = alpha(t.border, 1 / 4);' "$(render_method)"
   assert_same "2" "$(grep -cF '.when(on, (el) => el.px(9).bg(t.surface).border_1().border_color(edge).text_color(t.foreground))' "$MAIN")"
   assert_same "" "$(grep -oE '\.rounded\([0-9]+\)' "$MAIN" | grep -v '^\.rounded(4)$' | tr '\n' ' ')"
 }

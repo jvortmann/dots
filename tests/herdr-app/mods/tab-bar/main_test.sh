@@ -47,7 +47,8 @@ function test_the_shown_tab_has_the_same_slim_edge_on_all_four_sides_like_a_butt
 }
 
 function test_the_edge_of_the_shown_tab_is_the_border_color_at_a_quarter_strength() {
-  assert_contains 'tabEdge: `${t.border}40`,' "$(colors_function)"
+  assert_contains 'import { alpha } from "./alpha.js";' "$(cat "$MAIN")"
+  assert_contains 'tabEdge: alpha(t.border, 1 / 4),' "$(colors_function)"
 }
 
 function test_the_shown_tab_takes_the_surface_fill_one_step_up_from_the_bar() {

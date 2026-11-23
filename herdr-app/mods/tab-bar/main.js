@@ -33,6 +33,7 @@ import { agentsText, needsText, agentList, openingRow, listKey, machineLabel, ti
 import { observeTabs, observeSpaces, observeAgents, lastTab } from "./history.js";
 import { programIcon } from "./program-icon.js";
 import { barMark } from "./status-mark.js";
+import { alpha } from "./alpha.js";
 import { lead } from "./lead.js";
 import { numberTabs, nextMove, swapNumbers, tabNumbered } from "./numbers.js";
 import { PI_ICON, syncPiIcon } from "./pi-icon.js";
@@ -53,7 +54,7 @@ function colors(t) {
   return {
     // The shown tab has a fill, an edge and bright text; a hovered tab gets only bright text.
     tab: t.surface,
-    tabEdge: `${t.border}40`,
+    tabEdge: alpha(t.border, 1 / 4),
     edge: t.border,
     chip: t.chrome,
     text: t.foreground,

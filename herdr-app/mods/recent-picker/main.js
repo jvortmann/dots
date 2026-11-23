@@ -13,7 +13,7 @@ import { View, div, svg } from "gpui-kit";
 import { v_flex, h_flex, InputState, Input } from "gpui-base";
 import { agents, panes, spaces, terminals, run, hc, theme, settings, props, closeOverlay, openOverlay, shared, setShared } from "herdr";
 import { recentSpaces, openingTab } from "./order.js";
-import { quarter } from "./edge.js";
+import { alpha } from "./alpha.js";
 import { programIcon } from "./program-icon.js";
 import { lead } from "./lead.js";
 
@@ -114,7 +114,7 @@ export default class Picker extends View {
 
   render() {
     const t = theme();
-    const edge = quarter(t.border);
+    const edge = alpha(t.border, 1 / 4);
     const rows = this.rows();
     const pickable = rows.filter((r) => r.kind !== "head");
     if (this.at === null) {

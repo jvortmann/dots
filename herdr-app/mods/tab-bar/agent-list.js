@@ -6,7 +6,7 @@
 import { div } from "gpui-kit";
 import { h_flex, v_flex } from "gpui-base";
 import { statusMark } from "./status-mark.js";
-import { quarter } from "./edge.js";
+import { alpha } from "./alpha.js";
 import { programGlyph } from "./program-icon.js";
 
 export const ROW = 28;
@@ -23,7 +23,7 @@ export function agentRows(t, rows, chosen, go) {
 }
 
 function row(t, a, chosen, go) {
-  const edge = quarter(t.border);
+  const edge = alpha(t.border, 1 / 4);
   return h_flex()
     .id(`tm-list-${a.key}`)
     .h(ROW)
