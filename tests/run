@@ -10,6 +10,12 @@
 # bashunit gives no file name in its parallel output, so this is how each line
 # of progress shows the area of its test. The area is the path under the
 # folder, with no suffix.
+#
+# Each test file gets a TMUX_TMPDIR of its own in /tmp. A path under TMPDIR
+# makes the socket path 103 bytes long, the limit of macOS. A test that the
+# limit stops does not run its tear_down, and its tmux server keeps a pipe of
+# the output open. So the run ends the tmux servers of each file when its
+# runner ends, and ends them all when the run exits.
 
 # Turns each result line of TAP into one line of progress: a mark, the area of
 # the test and its name. Both runners write TAP. awk writes each line with one
@@ -25,7 +31,7 @@ PROGRESS_LINES='/^ *(not )?ok [0-9]+ - / {
 main() {
   local suite=${1:-tests} limit=${TESTS_TEST_TIMEOUT:-10} budget=${TESTS_BUDGET_MS:-8000} pool=14
   local -A areas
-  local work nodes shells file runner out outs=() area width=0 running=0 start total progress pass=✓ fail=✗ dim= plain= status=0
+  local work tmux nodes shells file runner out outs=() area width=0 running=0 start total progress pass=✓ fail=✗ dim= plain= status=0
   if [[ -t 1 ]]; then
     pass=$'\e[32m✓\e[0m' fail=$'\e[31m✗\e[0m' dim=$'\e[2m' plain=$'\e[0m'
   fi
@@ -49,6 +55,14 @@ main() {
     ((${#areas[$file]} > width)) && width=${#areas[$file]}
   done
   work=$(mktemp -d "${TMPDIR:-/tmp}/tests-run.XXXXXX")
+  tmux=$(mktemp -d /tmp/tests-run-tmux.XXXXXX) || return 1
+  export -f end_tmux_servers
+  # tmux is local to main, so the EXIT trap takes its value now.
+  # shellcheck disable=SC2064
+  trap "end_tmux_servers_of_run $(printf %q "$tmux")" EXIT
+  # timeout sends TERM to the run and then to its group. A second TERM would
+  # stop the EXIT trap.
+  trap 'trap "" TERM; exit 143' TERM
   exec {progress}>&1
   start=$(now_ms)
   # Each bashunit gets COLUMNS=500. It cuts each name to the width of its
@@ -63,6 +77,8 @@ main() {
     [[ $file == *_test.sh ]] && runner=bashunit
     printf -v out '%s/%s-%03d' "$work" "$runner" "${#outs[@]}"
     outs+=("$out")
+    export TMUX_TMPDIR=$tmux/${out##*/}
+    mkdir "$TMUX_TMPDIR"
     if [[ $runner == bashunit ]]; then
       COLUMNS=500 run_part "$out" "$area" bashunit "$file" -j 4 --pass-with-no-tests \
         --test-timeout "$limit" --output tap --report-json "$out.json" &
@@ -105,11 +121,32 @@ run_part() {
   local out=$1 area=$2 input
   shift 2
   exec {input}> >(exec script -q /dev/null bash -c \
-    '"${@:7}" 2>&1 | tee "$1.log" | { awk -v pass="$4" -v fail="$5" -v area="$6" "$3" >&"$2"; cat > /dev/null; }; echo "${PIPESTATUS[0]}" > "$1.code"' \
+    '{ "${@:7}"; code=$?; end_tmux_servers "$TMUX_TMPDIR"; exit "$code"; } 2>&1 | tee "$1.log" | { awk -v pass="$4" -v fail="$5" -v area="$6" "$3" >&"$2"; cat > /dev/null; }; echo "${PIPESTATUS[0]}" > "$1.code"' \
     _ "$out" "$progress" "$PROGRESS_LINES" "$pass" "$fail" "$area" "$@" > "$out.pty" 2>&1)
   wait "$!"
   exec {input}>&-
   echo "$(($(now_ms) - start))" > "$out.ms"
+}
+
+# Ends each tmux server with a socket in the TMUX_TMPDIR $1, and removes the
+# sockets and the folder.
+end_tmux_servers() {
+  local socket
+  for socket in "$1"/tmux-*/*; do
+    [[ -S $socket ]] && tmux -S "$socket" kill-server 2> /dev/null
+    rm -f "$socket"
+  done
+  rmdir "$1"/tmux-* "$1" 2> /dev/null
+}
+
+# Ends the tmux servers of each test file of the run, and removes the folder $1
+# of their sockets.
+end_tmux_servers_of_run() {
+  local part
+  for part in "$1"/*; do
+    [[ -d $part ]] && end_tmux_servers "$part"
+  done
+  rmdir "$1"
 }
 
 print_failures() {

@@ -21,6 +21,16 @@ function test_notes_the_input_of_its_terminal() {
 }'
 STUCK_CASE='import { test } from "node:test";
 test("waits a minute", () => new Promise((resolve) => setTimeout(resolve, 60000)));'
+TMUX_TEST='function test_starts_a_tmux_server_and_reads_the_terminal() {
+  tmux -L "tests-run-$$" -f /dev/null new-session -d -P -F "#{pid} #{socket_path}" cat > server
+  echo "$TMUX_TMPDIR" > tmux_tmpdir
+  read -r < /dev/tty
+}'
+STARTED_TMUX_TEST='function test_starts_a_tmux_server_says_so_and_reads_the_terminal() {
+  tmux -L "tests-run-$$" -f /dev/null new-session -d -P -F "#{pid} #{socket_path}" cat > server
+  echo started > started
+  read -r < /dev/tty
+}'
 
 # Each scenario runs tests/run on a small suite of its own. All the runs start
 # before the first test.
@@ -47,7 +57,26 @@ function set_up_before_script() {
   start_run bash_fails
   start_run node_fails
   start_run stuck TESTS_TEST_TIMEOUT=1
+  suite tmux a_test.sh "$TMUX_TEST" b.test.mjs "$PASSING_CASE"
+  start_run tmux TESTS_TEST_TIMEOUT=1
+  suite terminated a_test.sh "$STARTED_TMUX_TEST" b.test.mjs "$PASSING_CASE"
+  start_run --interrupted TERM terminated TESTS_TEST_TIMEOUT=1
+  suite stopped_with_ctrl_c a_test.sh "$STARTED_TMUX_TEST" b.test.mjs "$PASSING_CASE"
+  start_run --interrupted INT stopped_with_ctrl_c TESTS_TEST_TIMEOUT=1
   wait
+}
+
+# Ends each tmux server that a planted test started and a run left, by its
+# socket, and removes the socket.
+function tear_down_after_script() {
+  local file pid socket
+  for file in "$SUITES"/*/server; do
+    read -r pid socket < "$file"
+    [[ -S $socket ]] || continue
+    timeout 5 tmux -S "$socket" kill-server 2> /dev/null || true
+    rm -f "$socket"
+  done
+  return 0
 }
 
 function test_a_passing_suite_passes() {
@@ -190,6 +219,26 @@ function test_counts_a_node_case_over_the_limit_as_failed() {
   assert_contains "node: 0 passed, 1 failed" "$(output_of stuck)"
 }
 
+function test_ends_the_tmux_server_of_a_test_over_the_limit() {
+  assert_same "ended" "$(server_state tmux)"
+}
+
+function test_ends_the_tmux_server_of_a_test_when_the_run_gets_term() {
+  assert_same "ended" "$(cat "$SUITES/terminated/state")"
+}
+
+function test_ends_the_tmux_server_of_a_test_when_ctrl_c_stops_the_run() {
+  assert_same "ended" "$(cat "$SUITES/stopped_with_ctrl_c/state")"
+}
+
+function test_leaves_no_folder_of_tmux_sockets() {
+  local folder
+  folder=$(cat "$SUITES/tmux/tmux_tmpdir")
+
+  assert_matches "^/tmp/" "$folder"
+  assert_directory_not_exists "${folder%/*}"
+}
+
 # Writes the suite $1. Each pair of arguments after it is a file name and its
 # text.
 suite() {
@@ -207,12 +256,19 @@ suite() {
 # it, such as TESTS_BUDGET_MS=1. With --in-a-terminal as the first argument,
 # the output of tests/run goes to a terminal of its own. The run gets no
 # variable of this bashunit run and no setting of the tests/run around it, as a
-# run from a shell does.
+# run from a shell does. A run that lasts 10 seconds gets KILL, so a hung run
+# cannot stop this file. With --interrupted and a signal as the first two
+# arguments, the run gets that signal once its test says that it started. The
+# file `state` of the suite then tells whether the tmux server of that test
+# still runs after the run.
 start_run() {
-  local runner=("$ROOT/tests/run" tests) name setting code=0 dir
+  local runner=(timeout -s KILL 10 "$ROOT/tests/run" tests) name setting code=0 dir
   if [[ $1 == --in-a-terminal ]]; then
     runner=(script -q /dev/null "${runner[@]}")
     shift
+  elif [[ $1 == --interrupted ]]; then
+    runner=(interrupt_run "$3" "$2" "${runner[@]}")
+    shift 2
   fi
   dir="$SUITES/$1"
   shift
@@ -225,6 +281,39 @@ start_run() {
     "${runner[@]}" > output 2>&1 < /dev/null || code=$?
     echo "$code" > code
   ) &
+}
+
+# Runs the command $3... in a process group of its own, and sends the signal $2
+# to that group when the planted test writes to the FIFO started, as Ctrl-C
+# does. Then it writes the state of the tmux server of that test to the file
+# state, for the suite $1. A test that never writes gets the signal after 5
+# seconds.
+interrupt_run() {
+  local suite=$1 signal=$2 started pid
+  shift 2
+  mkfifo started
+  exec {started}<> started
+  set -m
+  "$@" &
+  pid=$!
+  read -r -t 5 -u "$started" _ || true
+  kill -"$signal" -- -"$pid"
+  wait "$pid" || true
+  server_state "$suite" > state
+}
+
+# Prints whether the tmux server that the planted test of the suite $1 started
+# is running or ended.
+server_state() {
+  local pid
+  read -r pid _ < "$SUITES/$1/server"
+  if [[ ! $pid =~ ^[0-9]+$ ]]; then
+    echo "no server"
+  elif kill -0 "$pid" 2> /dev/null; then
+    echo "running"
+  else
+    echo "ended"
+  fi
 }
 
 output_of() {
