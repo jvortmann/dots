@@ -4,6 +4,16 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 ZSHENV="$ROOT/zsh/zshenv"
 ZSHRC="$ROOT/zsh/zshrc"
 HOMEBREW_ZSH=/opt/homebrew/bin/zsh
+# A test runs pass_time in place of slow work. It moves each startup mark that
+# the shell recorded so far back by the given seconds, so the time passes with
+# no sleep. A mark recorded after it is not moved, as with real time. Only the
+# marks move, so a clock outside them, as in the time tracker, sees no time pass.
+PASS_TIME='pass_time() {
+  local mark
+  for mark in ${(k)STARTUP_MARKS}; do
+    STARTUP_MARKS[$mark]=$(( STARTUP_MARKS[$mark] - $1 ))
+  done
+}'
 
 function set_up() {
   [[ -f $ZSHRC ]] || bashunit::fail "missing the file under test: $ZSHRC"
@@ -13,7 +23,7 @@ function set_up() {
 }
 
 function test_the_first_prompt_time_counts_the_files_read_before_the_zshrc() {
-  ZSHENV_EXTRA="sleep 0.3"
+  ZSHENV_EXTRA="pass_time 0.3"
 
   assert_greater_or_equal_than 300 "$(at_prompts 'print -r -- $LAST_COMMAND_TIME')"
 }
@@ -21,13 +31,13 @@ function test_the_first_prompt_time_counts_the_files_read_before_the_zshrc() {
 # zsh reads the command lines from a pipe and can have no terminal, so the test
 # sets TTY. The time tracker then records each command as it does in a terminal.
 function test_a_later_prompt_shows_the_time_of_the_last_command() {
-  ZSHENV_EXTRA="sleep 0.3"
+  ZSHENV_EXTRA="pass_time 0.3"
 
   assert_less_than 300 "$(at_prompts 'TTY=/dev/tty' 'true' 'print -r -- $LAST_COMMAND_TIME')"
 }
 
 function test_the_prompt_after_reading_the_zshrc_again_shows_the_time_of_that_command() {
-  ZSHENV_EXTRA="sleep 0.3"
+  ZSHENV_EXTRA="pass_time 0.3"
 
   assert_less_than 300 "$(at_prompts 'TTY=/dev/tty' 'source $ZDOTDIR/.zshrc' 'print -r -- $LAST_COMMAND_TIME')"
 }
@@ -50,7 +60,7 @@ total" "$(at_prompts startup-times | phase_names)"
 }
 
 function test_startup_times_counts_a_precmd_function_added_before_the_zshrc_in_the_precmd_phase() {
-  ZSHENV_EXTRA="function slow { sleep 0.3; }; precmd_functions=(slow)"
+  ZSHENV_EXTRA="function slow { pass_time 0.3; }; precmd_functions=(slow)"
 
   assert_greater_or_equal_than 300 "$(at_prompts startup-times | phase_ms precmd)"
 }
@@ -67,7 +77,7 @@ function test_startup_times_after_reading_the_zshrc_again_shows_no_negative_phas
 at_prompts() {
   local zdotdir
   zdotdir=$(bashunit::temp_dir "zdotdir")
-  printf 'source %q\n%s\n' "$ZSHENV" "$ZSHENV_EXTRA" > "$zdotdir/.zshenv"
+  printf 'source %q\n%s\n%s\n' "$ZSHENV" "$PASS_TIME" "$ZSHENV_EXTRA" > "$zdotdir/.zshenv"
   printf 'source %q\n' "$ZSHRC" > "$zdotdir/.zshrc"
   printf '%s\n' "$@" | (cd "$FOLDER" && env -i HOME="$HOME" USER="$USER" \
     TERM=xterm-256color ZDOTDIR="$zdotdir" SHELL="$HOMEBREW_ZSH" \
