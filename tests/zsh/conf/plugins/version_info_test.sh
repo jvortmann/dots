@@ -1,18 +1,21 @@
 #!/bin/bash
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
-ZSHRC="$ROOT/zsh/zshrc"
+DEFAULTS="$ROOT/zsh/conf/defaults"
+COLORS="$ROOT/zsh/conf/lib/colors"
 PLUGIN="$ROOT/zsh/conf/plugins/version_info.zsh"
+THEME="$ROOT/zsh/themes/jvortmann.zsh"
 HOMEBREW_ZSH=/opt/homebrew/bin/zsh
 
-# Run a command in zsh started as a terminal starts it, where grg and mise
-# come from the mise shims. Only the command's own stderr is kept.
-in_terminal_zsh() {
-  local zdotdir
-  zdotdir=$(bashunit::temp_dir "zdotdir")
-  printf 'source %q\n' "$ZSHRC" > "$zdotdir/.zshrc"
-  (cd "$FOLDER" && env -i HOME="$HOME" USER="$USER" TERM=xterm-256color ZDOTDIR="$zdotdir" \
-    SHELL="$HOMEBREW_ZSH" PATH=/usr/bin:/bin:/usr/sbin:/sbin "$HOMEBREW_ZSH" -l -i -c "$1" < /dev/null 2> /dev/null)
+# Run a command in the test folder, in a zsh that loads only the defaults, the
+# colors, the plugin and the theme with the right prompt, in the order of
+# zsh/init.zsh. The theme also adds the precmd of the left prompt, which needs
+# the git plugin, so the shell removes it. Only the command's own stderr is kept.
+in_plugin_zsh() {
+  (cd "$FOLDER" && env -i HOME="$HOME" USER="$USER" TERM=xterm-256color \
+    PATH=/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin "$HOMEBREW_ZSH" -f -c \
+    "source ${DEFAULTS@Q}; source ${COLORS@Q}; source ${PLUGIN@Q}; source ${THEME@Q}
+    precmd_functions=(\${precmd_functions:#_prompt_parts_precmd}); $1" < /dev/null 2> /dev/null)
 }
 
 function set_up() {
@@ -25,14 +28,14 @@ function set_up() {
 function test_language_info_prints_nothing_where_mise_does_not_trust_the_config() {
   printf '[tools]\nnode = "20"\n\n[env]\nGREETING = "{{ env.HOME }}"\n' > "$FOLDER/mise.toml"
 
-  assert_same "" "$(in_terminal_zsh 'language_info 2>&1')"
+  assert_same "" "$(in_plugin_zsh 'language_info 2>&1')"
 }
 
 function test_language_info_shows_the_local_tools_without_running_grep() {
   printf '[tools]\nnode = "20"\n' > "$FOLDER/mise.toml"
 
   local output
-  output=$(in_terminal_zsh 'function grep { print GREP_CALLED; }; language_info')
+  output=$(in_plugin_zsh 'function grep { print GREP_CALLED; }; language_info')
 
   assert_not_contains "GREP_CALLED" "$output"
   assert_contains "[node:20" "$output"
@@ -43,7 +46,7 @@ function test_the_right_prompt_runs_mise_once_for_two_draws_in_one_folder() {
 
   local calls output
   calls=$(bashunit::temp_file "mise_calls")
-  output=$(in_terminal_zsh "$(count_mise "$calls"); $DRAW; $DRAW")
+  output=$(in_plugin_zsh "$(count_mise "$calls"); $DRAW; $DRAW")
 
   assert_contains "[node:20" "$output"
   assert_same "1" "$(wc -l < "$calls" | tr -d ' ')"
@@ -55,7 +58,7 @@ function test_the_right_prompt_shows_a_new_version_after_the_config_changes() {
   printf '[tools]\npython = "3.10"\n' > "$FOLDER/next.toml"
 
   local output
-  output=$(in_terminal_zsh "$DRAW > /dev/null; mv next.toml mise.toml; $DRAW")
+  output=$(in_plugin_zsh "$DRAW > /dev/null; mv next.toml mise.toml; $DRAW")
 
   assert_contains "[python:3.10" "$output"
 }
@@ -71,7 +74,7 @@ function test_the_right_prompt_shows_a_new_version_after_an_install() {
   local install="mkdir $data/installs/node/26.11.0; print -n 26.11.0 > $version"
 
   local output
-  output=$(in_terminal_zsh "$stub; $DRAW > /dev/null; $install; $DRAW")
+  output=$(in_plugin_zsh "$stub; $DRAW > /dev/null; $install; $DRAW")
 
   assert_contains "[node:26.11.0]" "$output"
 }
@@ -82,7 +85,7 @@ function test_the_right_prompt_shows_the_tools_of_the_folder_it_moves_to() {
   printf '[tools]\npython = "3.10"\n' > "$FOLDER/python/mise.toml"
 
   local output
-  output=$(in_terminal_zsh "cd node; $DRAW > /dev/null; cd ../python; $DRAW")
+  output=$(in_plugin_zsh "cd node; $DRAW > /dev/null; cd ../python; $DRAW")
 
   assert_contains "[python:3.10" "$output"
 }

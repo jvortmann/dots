@@ -1,17 +1,17 @@
 #!/bin/bash
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
-ZSHRC="$ROOT/zsh/zshrc"
+DEFAULTS="$ROOT/zsh/conf/defaults"
+COLORS="$ROOT/zsh/conf/lib/colors"
 PLUGIN="$ROOT/zsh/conf/plugins/gitstatus.zsh"
 HOMEBREW_ZSH=/opt/homebrew/bin/zsh
 
-# Run a command in zsh started as a terminal starts it, in the test repository.
-in_terminal_zsh() {
-  local zdotdir
-  zdotdir=$(bashunit::temp_dir "zdotdir")
-  printf 'source %q\n' "$ZSHRC" > "$zdotdir/.zshrc"
-  (cd "$REPO" && env -i HOME="$HOME" USER="$USER" TERM=xterm-256color ZDOTDIR="$zdotdir" \
-    SHELL="$HOMEBREW_ZSH" PATH=/usr/bin:/bin:/usr/sbin:/sbin "$HOMEBREW_ZSH" -l -i -c "$1" < /dev/null 2> /dev/null)
+# Run a command in the test repository, in a zsh that loads only the defaults,
+# the colors and the plugin, in the order of zsh/init.zsh.
+in_plugin_zsh() {
+  (cd "$REPO" && env -i HOME="$HOME" USER="$USER" TERM=xterm-256color \
+    PATH=/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin "$HOMEBREW_ZSH" -f -c \
+    "source ${DEFAULTS@Q}; source ${COLORS@Q}; source ${PLUGIN@Q}; $1" < /dev/null 2> /dev/null)
 }
 
 # The git part of the prompt as plain text, without its color codes.
@@ -33,32 +33,32 @@ function set_up() {
 }
 
 function test_git_prompt_shows_no_mark_in_a_clean_repository() {
-  assert_same "" "$(in_terminal_zsh "$MARKS")"
+  assert_same "" "$(in_plugin_zsh "$MARKS")"
 }
 
 function test_git_prompt_marks_an_untracked_file() {
   printf 'new\n' > "$REPO/new.txt"
 
-  assert_same "UNTRACKED " "$(in_terminal_zsh "$MARKS")"
+  assert_same "UNTRACKED " "$(in_plugin_zsh "$MARKS")"
 }
 
 function test_git_prompt_marks_a_modified_file() {
   printf 'changed\n' > "$REPO/kept.txt"
 
-  assert_same "MODIFIED " "$(in_terminal_zsh "$MARKS")"
+  assert_same "MODIFIED " "$(in_plugin_zsh "$MARKS")"
 }
 
 function test_git_prompt_marks_a_deleted_file() {
   rm "$REPO/gone.txt"
 
-  assert_same "DELETED " "$(in_terminal_zsh "$MARKS")"
+  assert_same "DELETED " "$(in_plugin_zsh "$MARKS")"
 }
 
 function test_git_prompt_marks_a_staged_file() {
   printf 'changed\n' > "$REPO/kept.txt"
   in_repo add kept.txt
 
-  assert_same "STAGED " "$(in_terminal_zsh "$MARKS")"
+  assert_same "STAGED " "$(in_plugin_zsh "$MARKS")"
 }
 
 function test_git_prompt_marks_a_merge_conflict() {
@@ -70,51 +70,51 @@ function test_git_prompt_marks_a_merge_conflict() {
   in_repo commit -q -am "Main"
   in_repo merge -q side > /dev/null 2>&1
 
-  assert_same "MERGING " "$(in_terminal_zsh "$MARKS")"
+  assert_same "MERGING " "$(in_plugin_zsh "$MARKS")"
 }
 
 function test_git_prompt_marks_a_change_without_running_grep() {
   printf 'new\n' > "$REPO/new.txt"
 
-  assert_same "UNTRACKED " "$(in_terminal_zsh "function grep { print GREP_CALLED; }; $MARKS")"
+  assert_same "UNTRACKED " "$(in_plugin_zsh "function grep { print GREP_CALLED; }; $MARKS")"
 }
 
 function test_git_prompt_shows_the_branch() {
-  assert_same "[main]" "$(in_terminal_zsh "$SHOW")"
+  assert_same "[main]" "$(in_plugin_zsh "$SHOW")"
 }
 
 function test_git_prompt_shows_commits_ahead_of_the_upstream() {
   track_upstream
   in_repo commit -q --allow-empty -m "Ahead"
 
-  assert_same "[main][↑1]" "$(in_terminal_zsh "$SHOW")"
+  assert_same "[main][↑1]" "$(in_plugin_zsh "$SHOW")"
 }
 
 function test_git_prompt_shows_commits_behind_the_upstream() {
   track_upstream
   push_from_another_clone
 
-  assert_same "[main][↓1]" "$(in_terminal_zsh "$SHOW")"
+  assert_same "[main][↓1]" "$(in_plugin_zsh "$SHOW")"
 }
 
 function test_git_prompt_shows_a_detached_head() {
   in_repo commit -q --allow-empty -m "Next"
   in_repo switch -q --detach HEAD~1
 
-  assert_same "[HEAD detached at $(in_repo rev-parse --short HEAD)]" "$(in_terminal_zsh "$SHOW")"
+  assert_same "[HEAD detached at $(in_repo rev-parse --short HEAD)]" "$(in_plugin_zsh "$SHOW")"
 }
 
 function test_git_prompt_shows_nothing_before_the_first_commit() {
   REPO=$(bashunit::temp_dir "unborn")
   in_repo init -q -b main
 
-  assert_same "" "$(in_terminal_zsh "$SHOW")"
+  assert_same "" "$(in_plugin_zsh "$SHOW")"
 }
 
 function test_git_prompt_shows_nothing_outside_a_repository() {
   REPO=$(bashunit::temp_dir "plain")
 
-  assert_same "" "$(in_terminal_zsh "$SHOW")"
+  assert_same "" "$(in_plugin_zsh "$SHOW")"
 }
 
 function test_git_prompt_runs_git_once() {
@@ -122,7 +122,7 @@ function test_git_prompt_runs_git_once() {
 
   local calls
   calls=$(bashunit::temp_file "git_calls")
-  in_terminal_zsh "function git { print \$1 >> $calls; command git \"\$@\"; }; git_prompt_string" > /dev/null
+  in_plugin_zsh "function git { print \$1 >> $calls; command git \"\$@\"; }; git_prompt_string" > /dev/null
 
   assert_same "1" "$(wc -l < "$calls" | tr -d ' ')"
 }
