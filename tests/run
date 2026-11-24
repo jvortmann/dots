@@ -6,13 +6,29 @@
 # TESTS_BUDGET_MS is the limit for the whole run, in milliseconds (8000 by
 # default). The run fails when it takes longer.
 #
-# bashunit runs its files one after another. It runs in parallel only the
-# tests of one file. So the run splits the files into 4 shards and starts one
-# bashunit for each shard.
+# Each test file runs in a bashunit or a node of its own, 14 files at a time.
+# bashunit gives no file name in its parallel output, so this is how each line
+# of progress shows the area of its test. The area is the path under the
+# folder, with no suffix.
+
+# Turns each result line of TAP into one line of progress: a mark, the area of
+# the test and its name. Both runners write TAP. awk writes each line with one
+# write, so the lines of two files do not mix.
+PROGRESS_LINES='/^ *(not )?ok [0-9]+ - / {
+  mark = /^ *not ok/ ? fail : pass
+  name = $0
+  sub(/^ *(not )?ok [0-9]+ - /, "", name)
+  print mark " " area "  " name
+  fflush()
+}'
 
 main() {
-  local suite=${1:-tests} limit=${TESTS_TEST_TIMEOUT:-10} budget=${TESTS_BUDGET_MS:-8000} shards=4
-  local work nodes start total shard status=0
+  local suite=${1:-tests} limit=${TESTS_TEST_TIMEOUT:-10} budget=${TESTS_BUDGET_MS:-8000} pool=14
+  local -A areas
+  local work nodes shells file runner out outs=() area width=0 running=0 start total progress pass=✓ fail=✗ dim= plain= status=0
+  if [[ -t 1 ]]; then
+    pass=$'\e[32m✓\e[0m' fail=$'\e[31m✗\e[0m' dim=$'\e[2m' plain=$'\e[0m'
+  fi
   # node --test with no file searches for test files itself. With an empty
   # path, it uses all of the CPU and ignores TERM. So node gets only files
   # that exist, and the run stops when it finds none.
@@ -21,13 +37,42 @@ main() {
     echo "no node test file in $suite"
     return 1
   fi
-  work=$(mktemp -d "${TMPDIR:-/tmp}/tests-run.XXXXXX")
-  start=$(now_ms)
-  for ((shard = 1; shard <= shards; shard++)); do
-    run_part "$work/bashunit$shard" bashunit "$suite" --shard "$shard/$shards" -j 4 --pass-with-no-tests \
-      --test-timeout "$limit" --no-progress --report-json "$work/bashunit$shard.json" &
+  mapfile -t shells < <(find "$suite" -name '*_test.sh' | sort)
+  if ((${#shells[@]} == 0)); then
+    echo "no bashunit test file in $suite"
+    return 1
+  fi
+  for file in "${shells[@]}" "${nodes[@]}"; do
+    area=${file#"${suite%/}"/}
+    area=${area%_test.sh}
+    areas[$file]=${area%.test.mjs}
+    ((${#areas[$file]} > width)) && width=${#areas[$file]}
   done
-  run_part "$work/node" node --test --test-timeout="$((limit * 1000))" --test-force-exit --test-reporter=spec "${nodes[@]}" &
+  work=$(mktemp -d "${TMPDIR:-/tmp}/tests-run.XXXXXX")
+  exec {progress}>&1
+  start=$(now_ms)
+  # Each bashunit gets COLUMNS=500. It cuts each name to the width of its
+  # terminal, which is 80 here.
+  for file in "${nodes[@]}" "${shells[@]}"; do
+    if ((running == pool)); then
+      wait -n
+      ((running--))
+    fi
+    printf -v area '%s%-*s%s' "$dim" "$width" "${areas[$file]}" "$plain"
+    runner=node
+    [[ $file == *_test.sh ]] && runner=bashunit
+    printf -v out '%s/%s-%03d' "$work" "$runner" "${#outs[@]}"
+    outs+=("$out")
+    if [[ $runner == bashunit ]]; then
+      COLUMNS=500 run_part "$out" "$area" bashunit "$file" -j 4 --pass-with-no-tests \
+        --test-timeout "$limit" --output tap --report-json "$out.json" &
+    else
+      run_part "$out" "$area" node --test --test-timeout="$((limit * 1000))" --test-force-exit \
+        --test-reporter=tap --test-reporter-destination=stdout \
+        --test-reporter=spec --test-reporter-destination="$out.spec" "$file" &
+    fi
+    ((++running))
+  done
   wait
   total=$(($(now_ms) - start))
   print_failures "$work"
@@ -37,10 +82,9 @@ main() {
     printf 'over the budget: %s s is more than %s s\n' "$(seconds "$total")" "$(seconds "$budget")"
     status=1
   fi
-  for ((shard = 1; shard <= shards; shard++)); do
-    [[ $(cat "$work/bashunit$shard.code" 2> /dev/null) == 0 ]] || status=1
+  for out in "${outs[@]}"; do
+    [[ $(cat "$out.code" 2> /dev/null) == 0 ]] || status=1
   done
-  [[ $(cat "$work/node.code" 2> /dev/null) == 0 ]] || status=1
   rm -f "$work"/*
   rmdir "$work"
   return "$status"
@@ -51,16 +95,18 @@ now_ms() {
   echo "$((micro / 1000))"
 }
 
-# Runs a command in a terminal of its own, with script. The command writes its
-# output to $1.log and its exit status to $1.code. The input of the terminal
-# is a pipe that stays open and empty. A test that reads the terminal then
-# waits until its limit. It never reads the keys of the user.
+# Runs a command in a terminal of its own, with script, for the test file with
+# the area $2. The command writes its output to $1.log and its exit status to
+# $1.code. As each test ends, a line of progress also goes to the output of the
+# run. The input of the terminal is a pipe that stays open and empty. A test
+# that reads the terminal then waits until its limit. It never reads the keys
+# of the user.
 run_part() {
-  local out=$1 start input
-  shift
-  start=$(now_ms)
-  exec {input}> >(exec script -q /dev/null bash -c '"${@:2}" > "$1.log" 2>&1; echo "$?" > "$1.code"' _ "$out" "$@" \
-    > "$out.pty" 2>&1)
+  local out=$1 area=$2 input
+  shift 2
+  exec {input}> >(exec script -q /dev/null bash -c \
+    '"${@:7}" 2>&1 | tee "$1.log" | { awk -v pass="$4" -v fail="$5" -v area="$6" "$3" >&"$2"; cat > /dev/null; }; echo "${PIPESTATUS[0]}" > "$1.code"' \
+    _ "$out" "$progress" "$PROGRESS_LINES" "$pass" "$fail" "$area" "$@" > "$out.pty" 2>&1)
   wait "$!"
   exec {input}>&-
   echo "$(($(now_ms) - start))" > "$out.ms"
@@ -68,29 +114,29 @@ run_part() {
 
 print_failures() {
   jq -r '.tests[] | select(.status == "failed") | "✗ \(.file): \(.name)", (.message | split("\n")[] | "  " + .)' \
-    "$1"/bashunit*.json
-  sed -n '/^✖ failing tests:/,$ { /^[[:space:]]*at /!p; }' "$1/node.log"
+    "$1"/bashunit-*.json
+  awk 'FNR == 1 { on = 0 } /^✖ failing tests:/ { on = 1 } on && !/^[[:space:]]*at / { print }' "$1"/node-*.spec
 }
 
 print_counts() {
   printf 'bashunit: %s passed, %s failed, %s s\n' \
-    "$(jq -s 'map(.summary.passed) | add' "$1"/bashunit*.json)" \
-    "$(jq -s 'map(.summary.failed) | add' "$1"/bashunit*.json)" \
-    "$(seconds "$(sort -n "$1"/bashunit*.ms | tail -n 1)")"
+    "$(jq -s 'map(.summary.passed) | add' "$1"/bashunit-*.json)" \
+    "$(jq -s 'map(.summary.failed) | add' "$1"/bashunit-*.json)" \
+    "$(seconds "$(sort -n "$1"/bashunit-*.ms | tail -n 1)")"
   printf 'node: %s passed, %s failed, %s s\n' \
-    "$(node_count pass "$1/node.log")" \
-    "$(($(node_count fail "$1/node.log") + $(node_count cancelled "$1/node.log")))" \
-    "$(seconds "$(< "$1/node.ms")")"
+    "$(node_count pass "$1")" \
+    "$(($(node_count fail "$1") + $(node_count cancelled "$1")))" \
+    "$(seconds "$(sort -n "$1"/node-*.ms | tail -n 1)")"
 }
 
 seconds() {
   printf '%d.%02d' "$(($1 / 1000))" "$(($1 % 1000 / 10))"
 }
 
+# Adds the numbers on the lines "ℹ $1" of the spec reports of the node files in
+# the folder $2.
 node_count() {
-  local count
-  count=$(sed -n "s/^ℹ $1 //p" "$2")
-  echo "${count:-0}"
+  awk -v key="ℹ $1 " 'index($0, key) == 1 { sum += substr($0, length(key) + 1) } END { print sum + 0 }' "$2"/node-*.spec
 }
 
 main "$@"
