@@ -13,10 +13,13 @@ function set_up() {
   mkdir -p "$SCRATCH/bin"
   fake pbcopy 'cat > "$SCRATCH/clipboard"'
   fake herdr-app 'printf "%s\n" "$*" >> "$SCRATCH/herdr-app"; '"$FAKE_REPORT"
+  # The fake attach ends after the first paint, so copy mode reads it at once.
+  # The real attach stays open, and copy mode waits for 30 ms of quiet.
+  # leaves_out_output_that_comes_after_the_first_paint covers that wait.
   fake hc 'case $1 in
     get) printf "{\"cols\":40,\"rows\":%s}\n" "$(cat "$SCRATCH/rows")" ;;
     label) printf "%s %s\n" "$2" "$3" >> "$SCRATCH/labels"; '"$FAKE_REPORT"' ;;
-    *) printf "%s\n" "$*" > "$SCRATCH/hc.args"; cat "$SCRATCH/paint"; '"$FAKE_STAY"' ;;
+    *) printf "%s\n" "$*" > "$SCRATCH/hc.args"; cat "$SCRATCH/paint" ;;
   esac'
   paint "old 1|old 2" "out a|out b|prompt> ls" 3 11
 }
