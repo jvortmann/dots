@@ -29,6 +29,43 @@ function test_a_closed_tab_is_no_longer_the_last_tab() {
   assert_same "null" "$(last_tab_after "*s1:*t1,t2" "*s1:t1,*t2" "*s1:*t1")"
 }
 
+function test_after_the_shown_tab_closes_the_bar_shows_the_tab_shown_before_it() {
+  assert_same "t1" "$(tab_shown_after_close "*s1:*t1,t2,t3" "*s1:t1,t2,*t3" "*s1:t1,*t2")"
+}
+
+function test_a_second_close_goes_back_to_the_tab_shown_before_the_first_one() {
+  assert_same "t1" "$(tab_shown_after_close \
+    "*s1:*t1,t2,t3,t4" \
+    "*s1:t1,*t2,t3,t4" \
+    "*s1:t1,t2,*t3,t4" \
+    "*s1:t1,t2,*t4" \
+    "*s1:t1,*t2,t4" \
+    "*s1:t1,*t4")"
+}
+
+function test_a_switch_with_no_close_selects_no_other_tab() {
+  assert_same "null" "$(tab_shown_after_close "*s1:*t1,t2,t3" "*s1:t1,*t2,t3" "*s1:t1,t2,*t3")"
+}
+
+function test_a_switch_to_a_space_whose_shown_tab_closed_meanwhile_selects_no_other_tab() {
+  assert_same "null" "$(tab_shown_after_close \
+    "*s1:*t1,t2,t3 s2:*u1" \
+    "*s1:t1,*t2,t3 s2:*u1" \
+    "*s1:t1,t2,*t3 s2:*u1" \
+    "s1:t1,t2,*t3 *s2:*u1" \
+    "s1:t1,*t2 *s2:*u1" \
+    "*s1:*t1,t2 s2:*u1")"
+}
+
+function test_after_the_bar_goes_back_the_last_tab_is_not_the_tab_the_app_showed() {
+  assert_same "t1" "$(last_tab_after \
+    "*s1:*t1,t2,t3,t4" \
+    "*s1:t1,*t2,t3,t4" \
+    "*s1:t1,t2,*t3,t4" \
+    "*s1:t1,t2,*t4" \
+    "*s1:t1,*t2,t4")"
+}
+
 function test_the_record_forgets_a_closed_space() {
   assert_same "s1" "$(spaces_in_record_after "*s1:*t1 s2:*u1" "s1:*t1 *s2:*u1" "*s1:*t1")"
 }
@@ -68,6 +105,12 @@ last_tab_after() {
 }
 
 # Shows each argument to the history in turn, as last_tab_after does, and
+# prints the tab that the bar selects after the last one, or null.
+tab_shown_after_close() {
+  observe back "$@"
+}
+
+# Shows each argument to the history in turn, as last_tab_after does, and
 # prints the spaces that the record keeps.
 spaces_in_record_after() {
   observe spaces "$@"
@@ -90,12 +133,13 @@ agents_by_recency_after() {
 
 observe() {
   PRINT="$1" HISTORY="$HISTORY" SHOTS="$SHOTS" mise x node@latest -- node --input-type=module -e '
-    const { observeTabs, observeSpaces, lastTab } = await import(process.env.HISTORY);
+    const { observeTabs, observeSpaces, lastTab, tabToReturnTo } = await import(process.env.HISTORY);
     const { parseShot } = await import(process.env.SHOTS);
     const shots = process.argv.slice(1).map(parseShot);
     const history = shots.reduce((seen, shot) => observeTabs(seen, shot), {});
     if (process.env.PRINT === "recency") console.log(shots.reduce((seen, shot) => observeSpaces(seen, shot), []).join(" "));
     else if (process.env.PRINT === "spaces") console.log(Object.keys(history).join(" "));
+    else if (process.env.PRINT === "back") console.log(String(tabToReturnTo(history, shots.at(-1))));
     else console.log(String(lastTab(history, shots.at(-1))));
   ' "${@:2}"
 }

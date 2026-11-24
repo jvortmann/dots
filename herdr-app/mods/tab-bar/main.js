@@ -19,6 +19,8 @@
 // list opens at the pointer.
 //
 // The bar runs last-tab (ctrl-a ctrl-a), which selects the tab shown before.
+// When the shown tab closes, the bar selects the tab shown before it, and not
+// the tab beside it that the app shows.
 // Each tab keeps its number, as in tmux: the bar numbers each new tab and moves
 // it into number order, and select-N selects by number.
 //
@@ -35,7 +37,7 @@ import { tabText } from "./label.js";
 import { agentHead, agentRows, ROW, HEAD } from "./agent-list.js";
 import { filterRows, filterCounts, nextFilter, pickedFilter, filterOfCommand, rowOf } from "./search.js";
 import { agentsText, needsText, barStatuses, agentList, openingRow, listKey, machineLabel, timeText, untilNextMinute, stampChanges } from "./status.js";
-import { observeTabs, observeSpaces, observeAgents, lastTab } from "./history.js";
+import { observeTabs, observeSpaces, observeAgents, lastTab, tabToReturnTo } from "./history.js";
 import { programIcon } from "./program-icon.js";
 import { barMark } from "./status-mark.js";
 import { alpha } from "./alpha.js";
@@ -316,6 +318,13 @@ export default class TerminalsBar extends View {
     else notify({ title: "No previous tab", level: "info" });
   }
 
+  // After the shown tab closes, the app shows the tab beside it. The bar then
+  // selects the tab shown before the closed tab, as tmux does.
+  returnAfterClose(history) {
+    const id = tabToReturnTo(history, spaces());
+    if (id) run("tab.select", { id });
+  }
+
   selectNumber(number) {
     const space = spaces().find((s) => s.active);
     const id = space && tabNumbered(this.number(), space, number);
@@ -411,7 +420,7 @@ export default class TerminalsBar extends View {
 
   render(cx) {
     if (this.listing) return this.renderList();
-    this.observe();
+    this.returnAfterClose(this.observe());
     const numbers = this.number();
     this.place(numbers);
     const t = theme();
