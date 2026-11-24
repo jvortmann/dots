@@ -82,44 +82,45 @@ function test_a_herdr_terminal_records_a_command_with_no_arguments() {
   assert_same "label t7 restore.cmd=pi" "$(hc_calls | head -1)"
 }
 
-# The pi line comes last. Had pip called hc, the first logged call would be
-# the one of pip.
+# The pi line comes last. The log holds its three calls and none of pip.
 function test_another_command_leaves_the_labels_alone() {
   in_herdr_shell "pip list" "pi"
 
-  assert_same "label t7 restore.cmd=pi" "$(head -1 "$LOG")"
+  assert_same $'label t7 restore.cmd=\nlabel t7 restore.cmd=pi\nlabel t7 restore.nvim= restore.pi=' "$(sort "$LOG")"
 }
 
-# An nvim that saves no session, such as nvim --clean, must not leave the
-# label of an earlier nvim. An nvim that saves one labels itself again.
-function test_a_herdr_terminal_clears_the_nvim_session_when_nvim_starts() {
-  in_herdr_shell "nvim notes.md"
+# A program that saves no session, such as nvim --clean, must not leave the
+# label of an earlier nvim or pi. A program that saves one labels itself again.
+# @data_provider programs_that_label_their_session
+function test_a_herdr_terminal_clears_the_sessions_when_the_program_starts() {
+  in_herdr_shell "$1"
 
-  assert_same "label t7 restore.nvim=" "$(logged restore.nvim=)"
+  assert_same "label t7 restore.nvim= restore.pi=" "$(logged restore.nvim=)"
 }
 
-# nvim labels itself at start, so a clear that lands later removes that label.
-# The clear of the nvim session blocks until the test releases it. The test
-# waits until the record and this clear reached hc. Had the shell not waited
-# for the clear, nvim would start in that time.
-function test_the_nvim_session_clears_before_nvim_starts() {
-  fake_hc "case \"\$*\" in *restore.nvim=) $HOLD ;; esac"
+function programs_that_label_their_session() {
+  bashunit::data_set "nvim notes.md"
+  bashunit::data_set pi
+}
+
+# nvim and pi label themselves at start, so a clear that lands later removes
+# that label. The clear of the sessions blocks until the test releases it. The
+# test waits until the record and this clear reached hc. Had the shell not
+# waited for the clear, the program would start in that time.
+# @data_provider programs_that_label_their_session
+function test_the_sessions_clear_before_the_program_starts() {
+  local program=${1%% *}
+  fake_hc "case \"\$*\" in *restore.nvim=*) $HOLD ;; esac"
   open_gate "$HOME_DIR/.local/bin/hc"
   listen_to hc
-  fake_program "$BIN" nvim "echo 'nvim started' >> $(printf %q "$LOG")"
+  fake_program "$BIN" "$program" "echo '$program started' >> $(printf %q "$LOG")"
 
-  in_herdr_shell "nvim notes.md" &
+  in_herdr_shell "$1" &
   reported hc 2
   release
   wait $!
 
-  assert_same $'label t7 restore.nvim=\nnvim started' "$(grep -e restore.nvim= -e 'nvim started' "$LOG")"
-}
-
-function test_a_pi_line_leaves_the_nvim_session_alone() {
-  in_herdr_shell "pi"
-
-  assert_same $'label t7 restore.cmd=pi\nlabel t7 restore.cmd=' "$(cat "$LOG")"
+  assert_same "label t7 restore.nvim= restore.pi="$'\n'"$program started" "$(grep -e restore.nvim= -e "$program started" "$LOG")"
 }
 
 function test_an_nvim_line_runs_with_the_mark_of_the_shell() {
@@ -196,7 +197,7 @@ function test_a_shell_that_a_shutdown_ends_keeps_the_record() {
   kill "-$1" "$SHELL_PID" "$(cat "$HOME_DIR/pi.pid")"
   shell_ended
 
-  assert_same "label t7 restore.cmd=pi" "$(cat "$LOG")"
+  assert_same "label t7 restore.cmd=pi" "$(hc_calls)"
 }
 
 function shutdown_signals() {
@@ -218,9 +219,9 @@ function test_a_shell_that_lives_on_after_sigterm_clears_the_next_record() {
 
 # The clear blocks. A record of pi that does not wait for it runs first, and the
 # clear then removes the record of pi while pi runs. Before pi runs, the first
-# line calls hc three times: the record, the clear of the nvim session and the
-# clear. The fake sleep reports when the record of pi waits, and only then the
-# test lets the clear go.
+# line calls hc three times: the record, the clear of the sessions and the
+# clear. The pi line then clears the sessions. The fake sleep reports when the
+# record of pi waits, and only then the test lets the clear go.
 function test_the_clear_of_a_command_does_not_remove_the_record_of_the_next() {
   fake_hc "case \"\$*\" in *restore.cmd=) $HOLD ;; esac"
   open_gate "$HOME_DIR/.local/bin/hc"
@@ -231,7 +232,7 @@ function test_the_clear_of_a_command_does_not_remove_the_record_of_the_next() {
   listen_to sleep
   reported sleep
   release
-  reported hc 2
+  reported hc 3
 
   assert_same $'label t7 restore.cmd=nvim --version\nlabel t7 restore.cmd=\nlabel t7 restore.cmd=pi' "$(hc_calls)"
 }
@@ -247,12 +248,21 @@ function test_a_lost_terminal_that_ran_pi_starts_pi_again_with_its_session() {
   assert_same "pi --session $session" "$(logged '^pi ')"
 }
 
-# The label restore.nvim can stay from an earlier nvim, so a pi line must ignore it.
-function test_a_lost_terminal_that_ran_pi_ignores_the_nvim_session() {
+function test_a_lost_terminal_with_both_sessions_starts_nvim_again() {
   touch "$HOME_DIR/session.jsonl" "$HOME_DIR/session.vim"
 
   lost_terminal_with_labels "$(jq -n --arg pi "$HOME_DIR/session.jsonl" --arg nvim "$HOME_DIR/session.vim" \
     '{"restore.cmd": "pi", "restore.pi": $pi, "restore.nvim": $nvim}')"
+  reported nvim
+
+  assert_same "nvim -S $HOME_DIR/session.vim" "$(logged '^nvim ')"
+}
+
+function test_a_lost_terminal_whose_nvim_session_file_is_gone_starts_pi_again() {
+  touch "$HOME_DIR/session.jsonl"
+
+  lost_terminal_with_labels "$(jq -n --arg pi "$HOME_DIR/session.jsonl" --arg nvim "$HOME_DIR/none.vim" \
+    '{"restore.pi": $pi, "restore.nvim": $nvim}')"
   reported pi
 
   assert_same "pi --session $HOME_DIR/session.jsonl" "$(logged '^pi ')"
@@ -278,7 +288,7 @@ function test_the_shell_stays_when_the_relaunched_program_ends() {
 
 # The next loss of the terminal then starts the program again. The relaunch
 # calls hc five times: the read, the clear of the labels, the record, the clear
-# of the nvim session and the clear of the record.
+# of the sessions and the clear of the record.
 function test_the_relaunched_program_records_itself_again() {
   lost_terminal_with_labels '{"restore.cmd": "v notes.md"}'
   reported hc 5
@@ -313,6 +323,16 @@ function test_a_lost_terminal_that_ran_nvim_starts_nvim_again_with_its_session()
   assert_same "nvim -S $session" "$(logged '^nvim ')"
 }
 
+# restore.cmd is gone, as when zsh reached a prompt and cleared it.
+function test_a_lost_terminal_with_only_an_nvim_session_starts_nvim_again_with_it() {
+  touch "$HOME_DIR/t7.vim"
+
+  lost_terminal_with_labels "$(jq -n --arg file "$HOME_DIR/t7.vim" '{"restore.nvim": $file}')"
+  reported nvim
+
+  assert_same "nvim -S $HOME_DIR/t7.vim" "$(logged '^nvim ')"
+}
+
 # A clean quit of nvim removes its session file.
 function test_a_lost_terminal_that_ran_nvim_with_no_session_file_runs_its_command_line_again() {
   lost_terminal_with_labels "$(jq -n --arg file "$HOME_DIR/none.vim" '{"restore.cmd": "v notes.md", "restore.nvim": $file}')"
@@ -329,15 +349,14 @@ function test_a_terminal_with_no_labels_stays_a_shell() {
   assert_same "get t7 --json" "$(grep -v shell-ready "$LOG")"
 }
 
-# The pi extension writes the session file to restore.pi and nothing removes it,
-# so the label stays after pi ends. Only restore.cmd tells that pi still ran.
-function test_a_terminal_where_pi_ended_stays_a_shell() {
+# restore.cmd is gone, as when zsh reached a prompt and cleared it.
+function test_a_lost_terminal_with_only_a_pi_session_starts_pi_again_with_it() {
   touch "$HOME_DIR/session.jsonl"
+
   lost_terminal_with_labels "$(jq -n --arg file "$HOME_DIR/session.jsonl" '{"restore.pi": $file}')"
+  reported pi
 
-  run_in_shell 'print -r -- shell-ready >> $HOME/hc.log'
-
-  assert_same "get t7 --json" "$(grep -v shell-ready "$LOG")"
+  assert_same "pi --session $HOME_DIR/session.jsonl" "$(logged '^pi ')"
 }
 
 function test_a_login_shell_outside_herdr_calls_no_hc() {

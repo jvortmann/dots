@@ -1,12 +1,19 @@
 # vim: ft=zsh
 
-# In a Herdr terminal, record the command line of nvim or pi in the label
-# restore.cmd of the terminal, so that a lost terminal can start it again. The
-# label goes when the command ends. A shell clears only a label that it wrote,
-# because a new shell in a lost terminal must keep the label of the program
-# that it replaces. hc is not on PATH. The writes of restore.cmd run in the
-# background, so the command and the prompt do not wait for them. Only the clear
-# of restore.nvim on an nvim line runs before the command starts.
+# In a Herdr terminal, nvim and pi each name their session file in a label of
+# the terminal: restore.nvim or restore.pi. When the user quits, nvim removes
+# its file and pi removes its label. A signal or a crash removes neither. At
+# shutdown, nvim or pi can end before zsh gets SIGTERM. zsh then reaches its
+# prompt and clears restore.cmd. So a label that names a file that exists tells
+# the new shell to start that program again.
+#
+# This plugin also records the command line of nvim or pi in the label
+# restore.cmd, for a program that left no session file. The label goes when the
+# command ends. A shell clears only a label that it wrote, because a new shell
+# in a lost terminal must keep the label of the program that it replaces. hc is
+# not on PATH. The writes of restore.cmd run in the background, so the command
+# and the prompt do not wait for them. Only the clear of restore.nvim and
+# restore.pi runs before the command starts.
 #
 # In a Herdr terminal, an nvim line also runs with HERDR_RESTORE_NVIM=1 in its
 # environment. The variable tells nvim that a typed line started it, so nvim
@@ -24,14 +31,14 @@ _herdr_restore_preexec() {
   [[ -n $HC_TERMINAL_ID && $word == ($~_herdr_restore_nvim|pi) ]] || return
   _herdr_restore_label_after "$_herdr_restore_clearing" "$1"
   _herdr_restore_recorded=$!
-  # An nvim line also clears restore.nvim, the label that names the session
-  # file of an earlier nvim. The new nvim labels itself again, and nvim --clean
-  # saves no session, so it leaves no label. The call runs in the foreground,
-  # because one in the background could land after the label of the new nvim. It
-  # costs about 9 milliseconds.
-  [[ $word == $~_herdr_restore_nvim ]] || return
-  export HERDR_RESTORE_NVIM=1
-  $HOME/.local/bin/hc label $HC_TERMINAL_ID restore.nvim= > /dev/null 2>&1
+  # A line of nvim or pi also clears restore.nvim and restore.pi, the labels of
+  # an earlier program. The new program labels itself again, and a program that
+  # saves no session, such as nvim --clean, leaves no label. So only the label
+  # of the last program stays. The call runs in the foreground, because one in
+  # the background could land after the label of the new program. It costs
+  # about 9 milliseconds.
+  $HOME/.local/bin/hc label $HC_TERMINAL_ID restore.nvim= restore.pi= > /dev/null 2>&1
+  [[ $word == $~_herdr_restore_nvim ]] && export HERDR_RESTORE_NVIM=1
 }
 
 _herdr_restore_precmd() {
@@ -67,35 +74,28 @@ TRAPTERM() {
 # has none, and its shell stays a shell. The shell types the line after the
 # whole zsh config loads, so the aliases and the PATH from mise apply. The line
 # runs as a typed command: the shell stays when it ends, and preexec records it
-# again. pi resumes its session file, or continues the last session when pi
-# wrote no file. nvim loads its session file when restore.nvim names a file that
-# exists. A clean quit of nvim removes the file, so the shell then runs the
-# typed line. A restore.pi label with no pi in restore.cmd comes from a pi
-# that ended, so the shell stays a shell. The shell removes the labels before it
-# runs the line, so a program that fails at once does not start again in the
-# next shell.
+# again. When restore.nvim names a file that exists, nvim loads that session.
+# If not, when restore.pi names a file that exists, pi resumes that session.
+# Both work with no restore.cmd. With no session file, the shell uses
+# restore.cmd: pi continues the last session, and nvim runs the typed line. The
+# shell removes the labels before it runs the line, so a program that fails at
+# once does not start again in the next shell.
 _herdr_restore_relaunch() {
   add-zle-hook-widget -d line-init _herdr_restore_relaunch
   local -a labels=("${(@0)$($HOME/.local/bin/hc get $HC_TERMINAL_ID --json 2> /dev/null |
     jq --raw-output0 '.labels | .["restore.cmd"] // "", .["restore.pi"] // "", .["restore.nvim"] // ""' 2> /dev/null)}")
   local cmd=$labels[1] file=$labels[2] session=$labels[3]
-  case ${${(Az)cmd}[1]} in
-    (pi)
-      if [[ -f $file ]]; then
-        BUFFER="pi --session ${(q)file}"
-      else
-        BUFFER="pi --continue"
-      fi
-      ;;
-    ($~_herdr_restore_nvim)
-      if [[ -f $session ]]; then
-        BUFFER="nvim -S ${(q)session}"
-      else
-        BUFFER=$cmd
-      fi
-      ;;
-    (*) return ;;
-  esac
+  if [[ -f $session ]]; then
+    BUFFER="nvim -S ${(q)session}"
+  elif [[ -f $file ]]; then
+    BUFFER="pi --session ${(q)file}"
+  else
+    case ${${(Az)cmd}[1]} in
+      (pi) BUFFER="pi --continue" ;;
+      ($~_herdr_restore_nvim) BUFFER=$cmd ;;
+      (*) return ;;
+    esac
+  fi
   $HOME/.local/bin/hc label $HC_TERMINAL_ID restore.cmd= restore.pi= restore.nvim= > /dev/null 2>&1
   zle .accept-line
 }
