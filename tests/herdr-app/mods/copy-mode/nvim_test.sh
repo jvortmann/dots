@@ -2,6 +2,10 @@
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
 CONFIG="$ROOT/herdr-app/mods/copy-mode/nvim.lua"
+# shellcheck source=../../../fakes/fakes.sh
+source "$ROOT/tests/fakes/fakes.sh"
+# shellcheck source=../../../wait.sh
+source "$ROOT/tests/wait.sh"
 
 function set_up() {
   SERVER=""
@@ -20,6 +24,7 @@ function set_up() {
 }
 
 function tear_down() {
+  release_fakes "$SCRATCH/bin"
   [[ -n ${SERVER:-} ]] || return 0
   nvim --server "$SERVER" --remote-expr 'execute("qa!")' < /dev/null > /dev/null 2>&1 || true
 }
@@ -346,12 +351,14 @@ function test_escape_in_a_selection_cancels_only_the_selection() {
 
 function test_ctrl_l_moves_to_the_herdr_pane_on_the_right() {
   press '<C-l>'
+  wait_until 5 moves_logged 1
 
   assert_same 'do pane.go {"direction":"right"}' "$(cat "$SCRATCH/herdr-app" 2> /dev/null)"
 }
 
 function test_ctrl_h_j_and_k_move_to_the_herdr_pane_on_the_left_below_and_above() {
   press '<C-h><C-j><C-k>'
+  wait_until 5 moves_logged 3
 
   assert_same 'do pane.go {"direction":"left"}
 do pane.go {"direction":"down"}
@@ -359,7 +366,7 @@ do pane.go {"direction":"up"}' "$(sort_moves)"
 }
 
 function test_does_not_wait_for_the_pane_move() {
-  fake herdr-app 'exec sleep 3'
+  fake herdr-app "$FAKE_GATE"
   local start=$SECONDS
 
   press '<C-l>q'
@@ -375,24 +382,30 @@ function test_a_modeline_in_the_text_changes_no_option() {
   assert_same "foo" "$(cat "$SCRATCH/clipboard")"
 }
 
-# Opens copy mode on the terminal t7, which hc gives a size of 40 columns
-# and the rows of the last paint, and types the keys in $1. After 400 ms it
-# redraws and writes the top row of the screen to the file top. It then
-# writes "open" to the file open, so that file exists only when copy mode is
-# still running after the keys.
+# Opens copy mode on the terminal t7 and types the keys in $1. hc gives that
+# terminal a size of 40 columns and the rows of the last paint. It waits until
+# nvim reads each key and stays idle for 30 ms, or for 2 seconds at most. Then
+# it redraws and writes the top row of the screen to the file top. It then
+# writes "open" to the file open. That file exists only when copy mode still
+# runs after the keys.
 press() {
   SCRATCH="$SCRATCH" PATH="$SCRATCH/bin:$PATH" \
     nvim --clean --headless -u "$CONFIG" --noplugin -n \
     -c "lua copy_mode_open('t7', {})" \
     -c "lua vim.api.nvim_input('$1')" \
-    -c "lua vim.defer_fn(function()
+    -c "lua local timer, idle, start = vim.uv.new_timer(), 0, vim.uv.now()
+    timer:start(10, 10, vim.schedule_wrap(function()
+      local busy = vim.fn.getchar(1) ~= 0 or vim.api.nvim_get_mode().blocking
+      idle = busy and 0 or idle + 1
+      if idle < 3 and vim.uv.now() - start < 2000 then return end
+      timer:stop()
       vim.cmd('redraw')
       local top = {}
       for column = 1, vim.o.columns do top[column] = vim.fn.screenstring(1, column) end
       vim.fn.writefile({ table.concat(top) }, '$SCRATCH/top')
       vim.fn.writefile({ 'open' }, '$SCRATCH/open')
       vim.cmd('qa!')
-    end, 400)" \
+    end))" \
     < /dev/null
 }
 
@@ -407,11 +420,8 @@ start_standby() {
 # prints the rest of the label.
 wait_for_label() {
   local line
-  for _ in {1..200}; do
-    line=$(grep -F "$1" "$SCRATCH/labels" 2> /dev/null | tail -1)
-    [[ -n $line ]] && break
-    sleep 0.01
-  done
+  wait_until 2 grep -qF "$1" "$SCRATCH/labels" 2> /dev/null
+  line=$(grep -F "$1" "$SCRATCH/labels" 2> /dev/null | tail -1)
   printf '%s' "${line#"$1"}"
 }
 
@@ -453,9 +463,13 @@ sort_moves() {
   done
 }
 
+# Succeeds when the fake herdr-app logged $1 calls or more.
+moves_logged() {
+  [[ $(grep -c . "$SCRATCH/herdr-app" 2> /dev/null) -ge $1 ]]
+}
+
 # Puts a program called $1 first on the PATH of nvim, which runs the shell
 # code in $2.
 fake() {
-  printf '#!/bin/sh\n%s\n' "$2" > "$SCRATCH/bin/$1"
-  chmod +x "$SCRATCH/bin/$1"
+  fake_program "$SCRATCH/bin" "$1" "$2"
 }

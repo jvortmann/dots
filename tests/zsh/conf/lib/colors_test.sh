@@ -3,6 +3,8 @@
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
 COLORS="$ROOT/zsh/conf/lib/colors"
 HOMEBREW_ZSH=/opt/homebrew/bin/zsh
+# shellcheck source=../../../fakes/fakes.sh
+source "$ROOT/tests/fakes/fakes.sh"
 
 # Source the colors file in a plain zsh, and print each variable it sets as
 # NAME=value, with the escape codes quoted so they compare as text.
@@ -45,8 +47,7 @@ function test_loading_the_colors_starts_no_tput_process() {
   local bin calls
   bin=$(bashunit::temp_dir "fake_tput")
   calls="$bin/calls"
-  printf '#!/bin/sh\necho "$*" >> "%s"\n' "$calls" > "$bin/tput"
-  chmod +x "$bin/tput"
+  fake_program "$bin" tput "$(printf 'echo "$*" >> %q' "$calls")"
 
   PATH="$bin:$PATH" TERM=xterm-256color "$HOMEBREW_ZSH" -f -c 'source "$1"' _ "$COLORS"
 

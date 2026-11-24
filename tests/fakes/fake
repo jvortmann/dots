@@ -1,0 +1,6 @@
+#!/bin/sh
+# The one fake program of the tests. fake_program in fakes.sh links a name to
+# this file. It writes the code of that name beside the link, as <name>.sh.
+# macOS checks each new program file at its first start. That costs 150 to 450
+# milliseconds. A link to this file skips that check after the first start.
+. "$0.sh"

@@ -3,6 +3,8 @@
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
 CLEAR="$ROOT/zsh/conf/lib/clear-screen"
 HOMEBREW_ZSH=/opt/homebrew/bin/zsh
+# shellcheck source=../../../wait.sh
+source "$ROOT/tests/wait.sh"
 
 function set_up() {
   SERVER=""
@@ -18,10 +20,7 @@ function set_up() {
 function tear_down() {
   [[ -n $SERVER ]] || return 0
   tmux -L "$SERVER" send-keys exit Enter 2> /dev/null || true
-  for _ in {1..50}; do
-    tmux -L "$SERVER" has-session 2> /dev/null || break
-    sleep 0.1
-  done
+  wait_until 5 server_gone
   rm -f "${TMUX_TMPDIR:-/tmp}/tmux-$(id -u)/$SERVER"
 }
 
@@ -46,16 +45,22 @@ shell_of_24_rows() {
 # that matches $2.
 type_and_wait() {
   tmux -L "$SERVER" send-keys "$1" Enter
-  for _ in {1..50}; do
-    tmux -L "$SERVER" capture-pane -p | grep -q "$2" && return
-    sleep 0.1
-  done
+  wait_until 5 screen_has "$2"
 }
 
 # Waits at most 5 seconds until the screen has $1 rows with text.
 wait_for_screen_rows() {
-  for _ in {1..50}; do
-    [[ $(tmux -L "$SERVER" capture-pane -p | grep -c .) == "$1" ]] && return
-    sleep 0.1
-  done
+  wait_until 5 screen_rows_are "$1"
+}
+
+screen_has() {
+  tmux -L "$SERVER" capture-pane -p | grep -q "$1"
+}
+
+screen_rows_are() {
+  [[ $(tmux -L "$SERVER" capture-pane -p | grep -c .) == "$1" ]]
+}
+
+server_gone() {
+  ! tmux -L "$SERVER" has-session 2> /dev/null
 }

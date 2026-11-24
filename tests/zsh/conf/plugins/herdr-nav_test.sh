@@ -6,6 +6,8 @@ CLEAR="$ROOT/zsh/conf/lib/clear-screen"
 HOMEBREW_ZSH=/opt/homebrew/bin/zsh
 # shellcheck source=../../../herdr-app/fake_herdr_app.sh
 source "$ROOT/tests/herdr-app/fake_herdr_app.sh"
+# shellcheck source=../../../wait.sh
+source "$ROOT/tests/wait.sh"
 
 function set_up() {
   SERVER=""
@@ -20,6 +22,7 @@ function set_up() {
 
 # The tmux server leaves its socket file, so tear_down removes it.
 function tear_down() {
+  release_fakes "$HOME_DIR/.local/bin"
   [[ -n $SERVER ]] || return 0
   tmux -L "$SERVER" kill-server 2> /dev/null || true
   rm -f "${TMUX_TMPDIR:-/tmp}/tmux-$(id -u)/$SERVER"
@@ -52,7 +55,7 @@ function test_a_pane_move_leaves_the_screen_alone() {
 }
 
 function test_the_shell_does_not_wait_for_the_pane_move() {
-  fake_herdr_app "sleep 2"
+  fake_herdr_app "$FAKE_GATE"
   shell_in_terminal t7
   SECONDS=0
 
@@ -146,25 +149,25 @@ kill_with_ctrl_alt_k() {
 
 # Waits at most 5 seconds until the screen has a line that matches $1.
 wait_for_screen() {
-  for _ in {1..50}; do
-    tmux -L "$SERVER" capture-pane -p | grep -q -- "$1" && return
-    sleep 0.1
-  done
+  wait_until 5 screen_has "$1"
 }
 
 # Waits at most 5 seconds until the screen has $1 rows with text.
 wait_for_screen_rows() {
-  for _ in {1..50}; do
-    [[ $(tmux -L "$SERVER" capture-pane -p | grep -c .) == "$1" ]] && return
-    sleep 0.1
-  done
+  wait_until 5 screen_rows_are "$1"
 }
 
 # Waits at most 5 seconds until a line of the log matches $1, then prints the
 # first such line.
 logged() {
-  for _ in {1..50}; do
-    grep -m 1 -- "$1" "$LOG" 2> /dev/null && return
-    sleep 0.1
-  done
+  wait_until 5 grep -q -- "$1" "$LOG" 2> /dev/null
+  grep -m 1 -- "$1" "$LOG" 2> /dev/null
+}
+
+screen_has() {
+  tmux -L "$SERVER" capture-pane -p | grep -q -- "$1"
+}
+
+screen_rows_are() {
+  [[ $(tmux -L "$SERVER" capture-pane -p | grep -c .) == "$1" ]]
 }

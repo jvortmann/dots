@@ -3,6 +3,8 @@
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 CONFIG="$ROOT/tmux/tmux.conf"
 HOMEBREW_ZSH=/opt/homebrew/bin/zsh
+# shellcheck source=../wait.sh
+source "$ROOT/tests/wait.sh"
 
 # Start a tmux server of its own, with an empty home so that no plugin loads
 # and no saved session comes back. SHELL is /bin/zsh, as in a desktop session
@@ -27,16 +29,16 @@ function tear_down() {
 }
 
 function test_a_new_pane_runs_the_homebrew_zsh() {
-  run_in_new_session "$HOME_DIR" "echo \$ZSH_VERSION > $HOME_DIR/version; sleep 5"
-  sleep 1
+  run_in_new_session "$HOME_DIR" "echo \$ZSH_VERSION > $HOME_DIR/version; exec cat"
+  wait_until 5 test -s "$HOME_DIR/version"
 
   assert_same "$("$HOMEBREW_ZSH" -f -c 'echo $ZSH_VERSION')" "$(cat "$HOME_DIR/version")"
 }
 
 function test_a_new_pane_does_not_inherit_a_dynamic_library_path() {
   DYLD_LIBRARY_PATH=/opt/homebrew/opt/expat/lib run_in_new_session "$HOME_DIR" \
-    "echo \${DYLD_LIBRARY_PATH-unset} > $HOME_DIR/dyld; sleep 5"
-  sleep 1
+    "echo \${DYLD_LIBRARY_PATH-unset} > $HOME_DIR/dyld; exec cat"
+  wait_until 5 test -s "$HOME_DIR/dyld"
 
   assert_same "unset" "$(cat "$HOME_DIR/dyld")"
 }
