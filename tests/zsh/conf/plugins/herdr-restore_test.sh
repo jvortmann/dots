@@ -38,11 +38,12 @@ function set_up() {
   done
 }
 
-# Types exit, so zsh ends and the tmux server ends with its last session. The
-# server leaves its socket file, so tear_down removes it.
+# Ends the tmux server of the test, and the shell in it. A typed exit can
+# stay unread, and the server then keeps running. The server leaves its
+# socket file, so tear_down removes it.
 function tear_down() {
   if [[ -n $SERVER ]]; then
-    tmux -L "$SERVER" send-keys exit Enter 2> /dev/null
+    tmux -L "$SERVER" kill-server 2> /dev/null
     rm -f "${TMUX_TMPDIR:-/tmp}/tmux-$(id -u)/$SERVER"
   fi
   [[ -n $INPUT ]] || return 0
