@@ -7,12 +7,19 @@
 # that it replaces. hc is not on PATH. The writes of restore.cmd run in the
 # background, so the command and the prompt do not wait for them. Only the clear
 # of restore.nvim on an nvim line runs before the command starts.
+#
+# In a Herdr terminal, an nvim line also runs with HERDR_RESTORE_NVIM=1 in its
+# environment. The variable tells nvim that a typed line started it, so nvim
+# can save its session and a lost terminal can start it again. The shell gives
+# the variable to no nvim that another program starts, such as the commit
+# editor of git. preexec removes the variable before each command, so no other
+# command keeps it.
 
 # The names of nvim: the command and its aliases in zsh/conf/lib/aliases.
 _herdr_restore_nvim='(nvim|vim|vi|v|n)'
 
 _herdr_restore_preexec() {
-  unset _herdr_restore_ending
+  unset _herdr_restore_ending HERDR_RESTORE_NVIM
   local word=${${(Az)1}[1]}
   [[ -n $HC_TERMINAL_ID && $word == ($~_herdr_restore_nvim|pi) ]] || return
   _herdr_restore_label_after "$_herdr_restore_clearing" "$1"
@@ -23,6 +30,7 @@ _herdr_restore_preexec() {
   # because one in the background could land after the label of the new nvim. It
   # costs about 9 milliseconds.
   [[ $word == $~_herdr_restore_nvim ]] || return
+  export HERDR_RESTORE_NVIM=1
   $HOME/.local/bin/hc label $HC_TERMINAL_ID restore.nvim= > /dev/null 2>&1
 }
 

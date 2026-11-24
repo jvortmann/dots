@@ -122,6 +122,36 @@ function test_a_pi_line_leaves_the_nvim_session_alone() {
   assert_same $'label t7 restore.cmd=pi\nlabel t7 restore.cmd=' "$(cat "$LOG")"
 }
 
+function test_an_nvim_line_runs_with_the_mark_of_the_shell() {
+  fakes_that_log_the_mark
+
+  in_herdr_shell "nvim notes.md"
+
+  assert_same "nvim HERDR_RESTORE_NVIM=1" "$(cat "$MARKS")"
+}
+
+# @data_provider commands_that_are_not_nvim
+function test_a_command_after_an_nvim_line_runs_without_the_mark() {
+  fakes_that_log_the_mark
+
+  in_herdr_shell "nvim notes.md" "$1"
+
+  assert_same "$1 HERDR_RESTORE_NVIM=" "$(tail -1 "$MARKS")"
+}
+
+function commands_that_are_not_nvim() {
+  bashunit::data_set pi
+  bashunit::data_set pip
+}
+
+function test_a_shell_outside_herdr_runs_nvim_without_the_mark() {
+  fakes_that_log_the_mark
+
+  TERMINAL_ID="" in_herdr_shell "nvim notes.md"
+
+  assert_same "nvim HERDR_RESTORE_NVIM=" "$(cat "$MARKS")"
+}
+
 function test_a_shell_outside_herdr_calls_no_hc() {
   TERMINAL_ID="" in_herdr_shell "nvim notes.md"
 
@@ -332,6 +362,15 @@ function test_a_shell_that_is_no_login_shell_calls_no_hc() {
 # log.
 fake_hc() {
   fake_program "$HOME_DIR/.local/bin" hc "$1"$'\n'"echo \"\$*\" >> $(printf %q "$LOG")"$'\n'"$FAKE_REPORT"
+}
+
+# Puts fakes of nvim, pi and pip on PATH that log their name and the value of
+# HERDR_RESTORE_NVIM to the file MARKS.
+fakes_that_log_the_mark() {
+  MARKS="$HOME_DIR/marks.log"
+  for program in nvim pi pip; do
+    fake_program "$BIN" "$program" "echo \"$program HERDR_RESTORE_NVIM=\${HERDR_RESTORE_NVIM-}\" >> $(printf %q "$MARKS")"
+  done
 }
 
 # Opens the channel of the fake $1 (hc, nvim, pi or sleep), so that the test
