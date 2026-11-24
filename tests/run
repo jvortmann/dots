@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+# Runs the suite from the root of the repo. It runs bashunit and node --test
+# side by side. Usage: tests/run [folder]
+#
+# TESTS_TEST_TIMEOUT is the limit for each test, in seconds (10 by default).
+# TESTS_BUDGET_MS is the limit for the whole run, in milliseconds (8000 by
+# default). The run fails when it takes longer.
+#
+# bashunit runs its files one after another. It runs in parallel only the
+# tests of one file. So the run splits the files into 4 shards and starts one
+# bashunit for each shard.
+
+main() {
+  local suite=${1:-tests} limit=${TESTS_TEST_TIMEOUT:-10} budget=${TESTS_BUDGET_MS:-8000} shards=4
+  local work nodes start total shard status=0
+  # node --test with no file searches for test files itself. With an empty
+  # path, it uses all of the CPU and ignores TERM. So node gets only files
+  # that exist, and the run stops when it finds none.
+  mapfile -t nodes < <(find "$suite" -name '*.test.mjs' | sort)
+  if ((${#nodes[@]} == 0)); then
+    echo "no node test file in $suite"
+    return 1
+  fi
+  work=$(mktemp -d "${TMPDIR:-/tmp}/tests-run.XXXXXX")
+  start=$(now_ms)
+  for ((shard = 1; shard <= shards; shard++)); do
+    run_part "$work/bashunit$shard" bashunit "$suite" --shard "$shard/$shards" -j 4 --pass-with-no-tests \
+      --test-timeout "$limit" --no-progress --report-json "$work/bashunit$shard.json" &
+  done
+  run_part "$work/node" node --test --test-timeout="$((limit * 1000))" --test-force-exit --test-reporter=spec "${nodes[@]}" &
+  wait
+  total=$(($(now_ms) - start))
+  print_failures "$work"
+  print_counts "$work"
+  printf 'total: %s s\n' "$(seconds "$total")"
+  if ((total > budget)); then
+    printf 'over the budget: %s s is more than %s s\n' "$(seconds "$total")" "$(seconds "$budget")"
+    status=1
+  fi
+  for ((shard = 1; shard <= shards; shard++)); do
+    [[ $(cat "$work/bashunit$shard.code" 2> /dev/null) == 0 ]] || status=1
+  done
+  [[ $(cat "$work/node.code" 2> /dev/null) == 0 ]] || status=1
+  rm -f "$work"/*
+  rmdir "$work"
+  return "$status"
+}
+
+now_ms() {
+  local micro=${EPOCHREALTIME/./}
+  echo "$((micro / 1000))"
+}
+
+# Runs a command in a terminal of its own, with script. The command writes its
+# output to $1.log and its exit status to $1.code. The input of the terminal
+# is a pipe that stays open and empty. A test that reads the terminal then
+# waits until its limit. It never reads the keys of the user.
+run_part() {
+  local out=$1 start input
+  shift
+  start=$(now_ms)
+  exec {input}> >(exec script -q /dev/null bash -c '"${@:2}" > "$1.log" 2>&1; echo "$?" > "$1.code"' _ "$out" "$@" \
+    > "$out.pty" 2>&1)
+  wait "$!"
+  exec {input}>&-
+  echo "$(($(now_ms) - start))" > "$out.ms"
+}
+
+print_failures() {
+  jq -r '.tests[] | select(.status == "failed") | "✗ \(.file): \(.name)", (.message | split("\n")[] | "  " + .)' \
+    "$1"/bashunit*.json
+  sed -n '/^✖ failing tests:/,$ { /^[[:space:]]*at /!p; }' "$1/node.log"
+}
+
+print_counts() {
+  printf 'bashunit: %s passed, %s failed, %s s\n' \
+    "$(jq -s 'map(.summary.passed) | add' "$1"/bashunit*.json)" \
+    "$(jq -s 'map(.summary.failed) | add' "$1"/bashunit*.json)" \
+    "$(seconds "$(sort -n "$1"/bashunit*.ms | tail -n 1)")"
+  printf 'node: %s passed, %s failed, %s s\n' \
+    "$(node_count pass "$1/node.log")" \
+    "$(($(node_count fail "$1/node.log") + $(node_count cancelled "$1/node.log")))" \
+    "$(seconds "$(< "$1/node.ms")")"
+}
+
+seconds() {
+  printf '%d.%02d' "$(($1 / 1000))" "$(($1 % 1000 / 10))"
+}
+
+node_count() {
+  local count
+  count=$(sed -n "s/^ℹ $1 //p" "$2")
+  echo "${count:-0}"
+}
+
+main "$@"

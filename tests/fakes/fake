@@ -5,7 +5,9 @@
 # milliseconds. A link to this file skips that check after the first start.
 #
 # The fake closes each file descriptor above 2 that it got from the test. A
-# gate or a channel that the test holds open then ends with the test.
+# gate or a channel that the test holds open then ends with the test. A shell
+# such as dash cannot close a descriptor above 9. So the fake runs in bash.
+[ -n "${BASH_VERSION-}" ] || exec /bin/bash "$0" "$@"
 for fd in 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30; do
   eval "exec $fd>&-"
 done
