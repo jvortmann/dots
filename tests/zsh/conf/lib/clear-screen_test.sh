@@ -3,8 +3,8 @@
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
 CLEAR="$ROOT/zsh/conf/lib/clear-screen"
 HOMEBREW_ZSH=/opt/homebrew/bin/zsh
-# shellcheck source=../../../wait.sh
-source "$ROOT/tests/wait.sh"
+# shellcheck source=../../../tmux_shell.sh
+source "$ROOT/tests/tmux_shell.sh"
 
 function set_up() {
   SERVER=""
@@ -14,22 +14,19 @@ function set_up() {
   SERVER="bashunit-$$-$RANDOM"
 }
 
-# Types exit, so zsh ends and the tmux server ends with its last session. The
-# server leaves its socket file, so tear_down waits at most 5 seconds for the
-# server to end, then removes the file.
+# The tmux server leaves its socket file, so tear_down removes it.
 function tear_down() {
   [[ -n $SERVER ]] || return 0
-  tmux -L "$SERVER" send-keys exit Enter 2> /dev/null || true
-  wait_until 5 server_gone
+  tmux -L "$SERVER" kill-server 2> /dev/null || true
   rm -f "${TMUX_TMPDIR:-/tmp}/tmux-$(id -u)/$SERVER"
 }
 
 function test_a_clear_keeps_the_lines_of_the_screen_in_the_history() {
   shell_of_24_rows
-  type_and_wait "source $CLEAR; seq 1 30" '^30$'
+  run_in_shell "source $CLEAR; seq 1 30"
 
   tmux -L "$SERVER" send-keys C-l
-  wait_for_screen_rows 1
+  run_in_shell ":"
 
   assert_same "1" "$(tmux -L "$SERVER" capture-pane -p -S - | grep -cx 30)"
 }
@@ -39,28 +36,4 @@ function test_a_clear_keeps_the_lines_of_the_screen_in_the_history() {
 shell_of_24_rows() {
   tmux -L "$SERVER" -f /dev/null new-session -d -x 80 -y 24 "$HOMEBREW_ZSH -f" \; \
     set -g scroll-on-clear off < /dev/null
-}
-
-# Types $1 and enter, and waits at most 5 seconds until the screen has a line
-# that matches $2.
-type_and_wait() {
-  tmux -L "$SERVER" send-keys "$1" Enter
-  wait_until 5 screen_has "$2"
-}
-
-# Waits at most 5 seconds until the screen has $1 rows with text.
-wait_for_screen_rows() {
-  wait_until 5 screen_rows_are "$1"
-}
-
-screen_has() {
-  tmux -L "$SERVER" capture-pane -p | grep -q "$1"
-}
-
-screen_rows_are() {
-  [[ $(tmux -L "$SERVER" capture-pane -p | grep -c .) == "$1" ]]
-}
-
-server_gone() {
-  ! tmux -L "$SERVER" has-session 2> /dev/null
 }

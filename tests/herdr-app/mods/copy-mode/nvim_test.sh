@@ -4,8 +4,6 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
 CONFIG="$ROOT/herdr-app/mods/copy-mode/nvim.lua"
 # shellcheck source=../../../fakes/fakes.sh
 source "$ROOT/tests/fakes/fakes.sh"
-# shellcheck source=../../../wait.sh
-source "$ROOT/tests/wait.sh"
 
 function set_up() {
   SERVER=""
@@ -14,32 +12,35 @@ function set_up() {
   SCRATCH=$(bashunit::temp_dir "copy-mode")
   mkdir -p "$SCRATCH/bin"
   fake pbcopy 'cat > "$SCRATCH/clipboard"'
-  fake herdr-app 'printf "%s\n" "$*" >> "$SCRATCH/herdr-app"'
+  fake herdr-app 'printf "%s\n" "$*" >> "$SCRATCH/herdr-app"; '"$FAKE_REPORT"
   fake hc 'case $1 in
     get) printf "{\"cols\":40,\"rows\":%s}\n" "$(cat "$SCRATCH/rows")" ;;
-    label) printf "%s %s\n" "$2" "$3" >> "$SCRATCH/labels" ;;
-    *) printf "%s\n" "$*" > "$SCRATCH/hc.args"; cat "$SCRATCH/paint"; exec sleep 5 ;;
+    label) printf "%s %s\n" "$2" "$3" >> "$SCRATCH/labels"; '"$FAKE_REPORT"' ;;
+    *) printf "%s\n" "$*" > "$SCRATCH/hc.args"; cat "$SCRATCH/paint"; '"$FAKE_STAY"' ;;
   esac'
   paint "old 1|old 2" "out a|out b|prompt> ls" 3 11
 }
 
 function tear_down() {
-  release_fakes "$SCRATCH/bin"
   [[ -n ${SERVER:-} ]] || return 0
   nvim --server "$SERVER" --remote-expr 'execute("qa!")' < /dev/null > /dev/null 2>&1 || true
 }
 
 function test_tells_the_mod_where_its_server_listens() {
+  open_channel "$SCRATCH/bin/hc"
   start_standby
 
-  SERVER=$(wait_for_label "t5 copy-mode.standby=")
+  read_reports 1
+  SERVER=$(label_value "t5 copy-mode.standby=")
 
   assert_same "2" "$(nvim --server "$SERVER" --remote-expr '1+1' < /dev/null)"
 }
 
 function test_opens_copy_mode_on_the_terminal_the_mod_names() {
+  open_channel "$SCRATCH/bin/hc"
   start_standby
-  SERVER=$(wait_for_label "t5 copy-mode.standby=")
+  read_reports 1
+  SERVER=$(label_value "t5 copy-mode.standby=")
 
   nvim --server "$SERVER" --remote-expr 'v:lua.copy_mode_open("t8", {})' < /dev/null > /dev/null 2>&1
 
@@ -47,10 +48,13 @@ function test_opens_copy_mode_on_the_terminal_the_mod_names() {
 }
 
 function test_is_no_longer_ready_for_the_mod_once_copy_mode_opens() {
+  open_channel "$SCRATCH/bin/hc"
   start_standby
-  SERVER=$(wait_for_label "t5 copy-mode.standby=")
+  read_reports 1
+  SERVER=$(label_value "t5 copy-mode.standby=")
 
   nvim --server "$SERVER" --remote-expr 'v:lua.copy_mode_open("t8", {})' < /dev/null > /dev/null 2>&1
+  read_reports 1
 
   assert_same "t5 copy-mode.standby=" "$(tail -1 "$SCRATCH/labels")"
 }
@@ -252,7 +256,11 @@ function test_shows_the_screen_of_the_terminal_at_the_top_of_the_window() {
 }
 
 function test_leaves_out_output_that_comes_after_the_first_paint() {
-  fake hc 'cat "$SCRATCH/paint"; sleep 0.2; printf "\033[3;1Hlive output"; exec sleep 5'
+  fake hc 'case $1 in
+    get) printf "{\"cols\":40,\"rows\":%s}\n" "$(cat "$SCRATCH/rows")" ;;
+    label) ;;
+    *) cat "$SCRATCH/paint"; sleep 0.1; printf "\033[3;1Hlive output"; '"$FAKE_STAY"' ;;
+  esac'
 
   press "Vy"
 
@@ -350,15 +358,17 @@ function test_escape_in_a_selection_cancels_only_the_selection() {
 }
 
 function test_ctrl_l_moves_to_the_herdr_pane_on_the_right() {
+  open_channel "$SCRATCH/bin/herdr-app"
   press '<C-l>'
-  wait_until 5 moves_logged 1
+  read_reports 1
 
   assert_same 'do pane.go {"direction":"right"}' "$(cat "$SCRATCH/herdr-app" 2> /dev/null)"
 }
 
 function test_ctrl_h_j_and_k_move_to_the_herdr_pane_on_the_left_below_and_above() {
+  open_channel "$SCRATCH/bin/herdr-app"
   press '<C-h><C-j><C-k>'
-  wait_until 5 moves_logged 3
+  read_reports 3
 
   assert_same 'do pane.go {"direction":"left"}
 do pane.go {"direction":"down"}
@@ -367,11 +377,14 @@ do pane.go {"direction":"up"}' "$(sort_moves)"
 
 function test_does_not_wait_for_the_pane_move() {
   fake herdr-app "$FAKE_GATE"
+  open_gate "$SCRATCH/bin/herdr-app"
+  open_channel "$SCRATCH/bin/herdr-app"
   local start=$SECONDS
 
   press '<C-l>q'
 
   assert_less_than 2 $((SECONDS - start))
+  read_reports 1
 }
 
 function test_a_modeline_in_the_text_changes_no_option() {
@@ -383,29 +396,31 @@ function test_a_modeline_in_the_text_changes_no_option() {
 }
 
 # Opens copy mode on the terminal t7 and types the keys in $1. hc gives that
-# terminal a size of 40 columns and the rows of the last paint. It waits until
-# nvim reads each key and stays idle for 30 ms, or for 2 seconds at most. Then
-# it redraws and writes the top row of the screen to the file top. It then
-# writes "open" to the file open. That file exists only when copy mode still
-# runs after the keys.
+# terminal a size of 40 columns and the rows of the last paint.
+#
+# The keys end with a command that runs after each key before it. It waits
+# for the event SafeState, when nvim has nothing left to do. Then it
+# schedules the read of the screen. A quit that a key such as y scheduled
+# runs first. nvim still runs scheduled work while it quits, so the read
+# does nothing once nvim sets v:exiting.
+#
+# The read redraws and writes the top row of the screen to the file top. It
+# then writes "open" to the file open. That file exists only when copy mode
+# still runs after the keys.
 press() {
   SCRATCH="$SCRATCH" PATH="$SCRATCH/bin:$PATH" \
     nvim --clean --headless -u "$CONFIG" --noplugin -n \
     -c "lua copy_mode_open('t7', {})" \
-    -c "lua vim.api.nvim_input('$1')" \
-    -c "lua local timer, idle, start = vim.uv.new_timer(), 0, vim.uv.now()
-    timer:start(10, 10, vim.schedule_wrap(function()
-      local busy = vim.fn.getchar(1) ~= 0 or vim.api.nvim_get_mode().blocking
-      idle = busy and 0 or idle + 1
-      if idle < 3 and vim.uv.now() - start < 2000 then return end
-      timer:stop()
+    -c "lua function _G.copy_mode_test_screen() vim.api.nvim_create_autocmd('SafeState', { once = true, callback = function() vim.schedule(function()
+      if vim.v.exiting ~= vim.NIL then return end
       vim.cmd('redraw')
       local top = {}
       for column = 1, vim.o.columns do top[column] = vim.fn.screenstring(1, column) end
       vim.fn.writefile({ table.concat(top) }, '$SCRATCH/top')
       vim.fn.writefile({ 'open' }, '$SCRATCH/open')
       vim.cmd('qa!')
-    end))" \
+    end) end }) end" \
+    -c "lua vim.api.nvim_input('$1<Cmd>lua copy_mode_test_screen()<CR>')" \
     < /dev/null
 }
 
@@ -416,11 +431,10 @@ start_standby() {
     nvim --clean --headless -u "$CONFIG" --noplugin -n < /dev/null > /dev/null 2>&1 &
 }
 
-# Waits about 2 seconds for nvim to set a label that starts with $1, and
-# prints the rest of the label.
-wait_for_label() {
+# Prints the rest of the last label that starts with $1. The fake hc reports
+# each label, so call it after read_reports.
+label_value() {
   local line
-  wait_until 2 grep -qF "$1" "$SCRATCH/labels" 2> /dev/null
   line=$(grep -F "$1" "$SCRATCH/labels" 2> /dev/null | tail -1)
   printf '%s' "${line#"$1"}"
 }
@@ -463,10 +477,6 @@ sort_moves() {
   done
 }
 
-# Succeeds when the fake herdr-app logged $1 calls or more.
-moves_logged() {
-  [[ $(grep -c . "$SCRATCH/herdr-app" 2> /dev/null) -ge $1 ]]
-}
 
 # Puts a program called $1 first on the PATH of nvim, which runs the shell
 # code in $2.

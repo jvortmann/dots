@@ -3,4 +3,10 @@
 # this file. It writes the code of that name beside the link, as <name>.sh.
 # macOS checks each new program file at its first start. That costs 150 to 450
 # milliseconds. A link to this file skips that check after the first start.
+#
+# The fake closes each file descriptor above 2 that it got from the test. A
+# gate or a channel that the test holds open then ends with the test.
+for fd in 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30; do
+  eval "exec $fd>&-"
+done
 . "$0.sh"
