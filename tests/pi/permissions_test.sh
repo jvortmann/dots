@@ -4,13 +4,35 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 POLICY="$ROOT/pi/pi-permissions.jsonc"
 EXTENSION="$ROOT/pi/git/github.com/jvortmann/pi-permission-system"
 
+# One bun decides each command that a test checks, before the first test.
+# A command that is not in this list gives "missing", not a decision.
+function set_up_before_script() {
+  PI_MODULES="$(mise where npm:@earendil-works/pi-coding-agent 2> /dev/null)/lib/node_modules"
+  DECISIONS=""
+  [[ -f $POLICY && -f $EXTENSION/src/permission-manager.ts && -d $PI_MODULES/@earendil-works/pi-coding-agent ]] || return 0
+  command -v bun > /dev/null || return 0
+  local scratch
+  scratch=$(bashunit::temp_dir "permissions")
+  DECISIONS="$scratch/decisions"
+  decide "$scratch" \
+    "env" "env -0" "env | sort" "env|sort" "env > vars.txt" "env; ls" "env && ls" \
+    "cd repo && env" "cd repo && env | sort" "cd repo ; env" "cd repo ; env | sort" \
+    "printenv" "printenv | sort" "printenv > vars.txt" "printenv -0" \
+    "cd repo && printenv" "cd repo && printenv | sort" \
+    "export" "export -p" "set" "set | less" "set > vars.txt" \
+    "declare -x" "declare -x | sort" "declare -p" "declare -p | sort" \
+    'echo $(env)' 'echo $(printenv)' 'echo `env`' \
+    "printenv HOME" "printenv HOME | head" 'echo $PI_SESSION_FILE' \
+    "declare -p FOO" "set -e" "export FOO=1" \
+    "env FOO=bar make" "env -i make" "envsubst < template.txt" "python -m venv env" \
+    > "$DECISIONS"
+}
+
 function set_up() {
   [[ -f $POLICY ]] || bashunit::fail "missing the file under test: $POLICY"
   [[ -f $EXTENSION/src/permission-manager.ts ]] || bashunit::skip "needs the pi-permission-system extension installed"
   command -v bun > /dev/null || bashunit::skip "needs bun"
-  PI_MODULES="$(mise where npm:@earendil-works/pi-coding-agent 2> /dev/null)/lib/node_modules"
   [[ -d $PI_MODULES/@earendil-works/pi-coding-agent ]] || bashunit::skip "needs pi installed with mise"
-  EMPTY=$(bashunit::temp_dir "permissions")
 }
 
 function test_denies_env_with_no_command_to_run() {
@@ -91,10 +113,26 @@ function test_still_allows_a_command_that_only_contains_the_word_env() {
 allow python -m venv env" "$(decisions_for "envsubst < template.txt" "python -m venv env")"
 }
 
-# Prints "<decision> <command>" for each argument, as the extension decides
-# under the real policy file. It checks each command and never runs it.
+# Prints "<decision> <command>" for each argument, from the decisions of
+# set_up_before_script.
 decisions_for() {
-  NODE_PATH="$PI_MODULES" POLICY="$POLICY" EXTENSION="$EXTENSION" EMPTY="$EMPTY" bun -e '
+  local wanted state line
+  for wanted in "$@"; do
+    state=missing
+    while IFS= read -r line; do
+      [[ ${line#* } == "$wanted" ]] && state=${line%% *}
+    done < "$DECISIONS"
+    echo "$state $wanted"
+  done
+}
+
+# Prints "<decision> <command>" for each argument after the first, which is
+# the scratch folder, as the extension decides under the real policy file. It
+# checks each command and never runs it.
+decide() {
+  local empty=$1
+  shift
+  NODE_PATH="$PI_MODULES" POLICY="$POLICY" EXTENSION="$EXTENSION" EMPTY="$empty" bun -e '
     const { PermissionManager } = await import(process.env.EXTENSION + "/src/permission-manager.ts");
     const manager = new PermissionManager({
       globalConfigPath: process.env.POLICY,
