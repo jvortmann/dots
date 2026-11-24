@@ -2,6 +2,8 @@
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 SCRIPT="$ROOT/pi/update-impeccable.sh"
+# shellcheck source=../fakes/fakes.sh
+source "$ROOT/tests/fakes/fakes.sh"
 
 function set_up() {
   [[ -f $SCRIPT ]] || bashunit::fail "missing the file under test: $SCRIPT"
@@ -13,9 +15,10 @@ function set_up() {
   printf '"github:pbakaus/impeccable" = { version = "latest", version_prefix = "engine-v", postinstall = "$HOME/.dots/pi/update-impeccable.sh" }\n' \
     > "$DOTS/mise/config.toml"
   CALLER=$(bashunit::temp_dir "caller")
-  INSTALLER=$(bashunit::temp_file "impeccable")
-  fake_installer > "$INSTALLER"
-  chmod +x "$INSTALLER"
+  local bin
+  bin=$(bashunit::temp_dir "bin")
+  fake_program "$bin" impeccable "$(fake_installer)"
+  INSTALLER="$bin/impeccable"
 }
 
 function test_replaces_the_skill_files_with_the_new_release() {
@@ -61,6 +64,7 @@ function test_leaves_the_mise_engine_version_alone() {
 function test_removes_its_temporary_folder() {
   run_update
 
+  assert_file_exists "$INSTALLER.root"
   assert_directory_not_exists "$(cat "$INSTALLER.root")"
 }
 
@@ -69,6 +73,7 @@ function test_removes_its_temporary_folder_when_the_install_fails() {
 
   run_update
 
+  assert_file_exists "$INSTALLER.root"
   assert_directory_not_exists "$(cat "$INSTALLER.root")"
 }
 
@@ -87,10 +92,9 @@ run_update() {
 # in $0.root, and fails when $0.fail exists.
 fake_installer() {
   cat <<'EOF'
-#!/bin/bash
-[[ " $* " == *" --scope=project "* ]] || exit 1
+case " $* " in *" --scope=project "*) ;; *) exit 1 ;; esac
 printf '%s\n' "$PWD" > "$0.root"
-[[ ! -e "$0.fail" ]] || exit 1
+[ ! -e "$0.fail" ] || exit 1
 new="$PWD/.pi/skills/impeccable"
 mkdir -p "$new/reference" "$new/scripts/bin"
 printf -- '---\nname: impeccable\ndescription: Upstream description.\n---\nNew body.\n' > "$new/SKILL.md"
