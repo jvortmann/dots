@@ -1,11 +1,12 @@
-export FZF_DEFAULT_OPTS="--color=dark --border=sharp --preview-window=border-sharp"
+export FZF_THEME=dark
+export FZF_DEFAULT_OPTS="--color=$FZF_THEME --border=sharp --preview-window=border-sharp"
 export FZF_DEFAULT_COMMAND="fd --type file --type symlink --hidden --strip-cwd-prefix --exclude .git --exclude '*.keep'"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="fd --type directory --hidden --strip-cwd-prefix --exclude .git"
 
 eval "$(fzf --zsh)"
 
-export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always --line-range :500 {}'"
+export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always --line-range :500 --theme=\$FZF_THEME {}'"
 export FZF_ALT_C_OPTS="--preview 'lsd --tree --color=always {} | head -200'"
 
 # Advanced customization of fzf options via _fzf_comprun function
@@ -19,6 +20,6 @@ _fzf_comprun() {
     cd)           fzf --preview 'lsd --tree --color=always {} | head -200' "$@" ;;
     export|unset) fzf --preview "eval 'echo $'{}"         "$@" ;;
     ssh)          fzf --preview 'dig {}'                   "$@" ;;
-    *)            fzf --preview "bat -n --color=always --line-range :500 {}" "$@" ;;
+    *)            fzf --preview "bat -n --color=always --line-range :500 --theme=$FZF_THEME {}" "$@" ;;
   esac
 }

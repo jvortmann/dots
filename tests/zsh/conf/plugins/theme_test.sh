@@ -61,6 +61,15 @@ function test_a_swap_leaves_the_bat_config_unchanged() {
   assert_same "$(cat "$ROOT/bat/config")" "$(cat "$HOME_DIR/.config/bat/config")"
 }
 
+function test_a_swap_to_light_sets_the_fzf_theme_of_the_real_fzf_config() {
+  mkdir -p "$DOTS/zsh/conf/plugins"
+  cp "$ROOT/zsh/conf/plugins/fzf.zsh" "$DOTS/zsh/conf/plugins/fzf.zsh"
+
+  swap_theme_from_to dark light
+
+  assert_same "export FZF_THEME=light" "$(rg '^export FZF_THEME=' "$DOTS/zsh/conf/plugins/fzf.zsh")"
+}
+
 # Every path the swap edits starts at HOME. The scratch HOME holds only the
 # files that the test writes, so the other gsed calls find no file and the run
 # changes no file of the user.

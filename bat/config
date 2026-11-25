@@ -1,5 +1,5 @@
 --map-syntax "*.avsc:JSON"
 --map-syntax "*.bats:Bourne Again Shell (bash)"
---theme=auto:always
+--theme=auto
 --theme-light="Solarized (light)"
 --theme-dark="Solarized (dark)"
