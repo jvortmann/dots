@@ -83,6 +83,8 @@ becomes one commit.
 - Say what a step does, and never paste its code. The code comes when the
   step runs.
 - Make the last step a review of the documentation near the changed code.
+  It also runs each "Done when" item, one by one. The progress log records
+  the command and its result. An item with no recorded result is not done.
 
 Split the steps by kind, because each step is one commit:
 
