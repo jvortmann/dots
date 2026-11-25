@@ -1,4 +1,5 @@
 export FZF_THEME=dark
+[[ -f ~/.local/state/dots/theme ]] && FZF_THEME=$(<~/.local/state/dots/theme)
 export FZF_DEFAULT_OPTS="--color=$FZF_THEME --border=sharp --preview-window=border-sharp"
 export FZF_DEFAULT_COMMAND="fd --type file --type symlink --hidden --strip-cwd-prefix --exclude .git --exclude '*.keep'"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"

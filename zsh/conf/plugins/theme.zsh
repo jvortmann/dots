@@ -14,11 +14,12 @@ swap-theme-to-light()
 
 swap-theme-from-to()
 {
-  gsed -i"" -E "s/^(theme = .*)-$1$/\1-$2/" ~/.dots/ghostty/config
-  gsed -i"" -E "s/$1/$2/" ~/.dots/tmux/theme.tmux
-  gsed -i"" -E "s/(--color=)$1/\1$2/" ~/.dots/tmux/switch-popup.tmux
-  gsed -i"" -E "s/^(export FZF_THEME=)$1$/\1$2/" ~/.dots/zsh/conf/plugins/fzf.zsh
-  gsed -i"" -E "s/(syntax-theme = \"[^\"]*\()$1(\)\")/\1$2\2/" ~/.dots/git/config
+  local state=~/.local/state/dots
+  [[ -d $state ]] || mkdir -p $state
+  print $2 > $state/theme
+  print "theme = solarized-$2" > $state/theme.ghostty
+  print "[delta]\n  syntax-theme = \"Solarized ($2)\"" > $state/theme.gitconfig
+  print "source \"\$HOME/.dots/tmux/style/$2.tmux\"" > $state/theme.tmux
   gsed -i"" -E "s/(\"appearance\": \")$1\"/\1$2\"/" ~/.dots/herdr-app/settings.json
 }
 
@@ -34,11 +35,12 @@ swap-theme-refresh()
 
 swap-theme()
 {
-  if grep -q "theme = .*-dark" ~/.dots/ghostty/config;
+  local state=~/.local/state/dots/theme
+  if [[ -f $state && $(<$state) == light ]];
   then
-    swap-theme-to-light
-  else
     swap-theme-to-dark
+  else
+    swap-theme-to-light
   fi
 }
 

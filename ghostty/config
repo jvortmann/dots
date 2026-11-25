@@ -1,6 +1,9 @@
 # vim ft=ghostty
 
 theme = solarized-dark
+# swap-theme writes the theme of the current mode here, and it overrides the
+# theme above. The ? skips a missing file.
+config-file = ?~/.local/state/dots/theme.ghostty
 
 # window configuration
 window-decoration = false

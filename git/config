@@ -55,6 +55,11 @@
   true-color = always
   syntax-theme = "Solarized (dark)"
 
+# swap-theme writes the delta theme of the current mode here. It comes after
+# [delta], so it overrides syntax-theme. Git skips a missing file.
+[include]
+  path = ~/.local/state/dots/theme.gitconfig
+
 [delta "decorations"]
   commit-decoration-style = bold yellow box ul
   file-style = bold yellow ul
