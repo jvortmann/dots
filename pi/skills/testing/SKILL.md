@@ -46,6 +46,21 @@ database or a file system, prefer a local stand-in over a mock. Never mock a
 module or a collaborator of your own. The test then checks your guess about
 that module, and not the module.
 
+## Pin the output you parse
+
+Code can parse the output of a program you do not own, such as git, a CLI or
+a service. The settings of the user can change that output. Name each setting
+and env var that does. Pin each one with a flag or option in the call, and
+give each pin a test. Its fixture sets the hostile value and shows the output
+stays right.
+
+- For `git log`, `log.showSignature` adds signature lines, and
+  `i18n.logOutputEncoding` changes the bytes. The pins are
+  `--no-show-signature` and `--encoding=UTF-8`.
+- Find the settings in the documentation, such as `man git-log` and
+  `man git-config`. Never run `env`, `git config --list` or any command that
+  prints the settings of the user. They can hold tokens and personal data.
+
 ## Design for a test
 
 - **Accept a dependency, do not create it.** `processOrder(order, gateway)`
