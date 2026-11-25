@@ -50,9 +50,20 @@ function test_a_swap_changes_the_appearance_of_the_real_herdr_app_settings() {
   assert_same "$to" "$(jq -r '.appearance' "$SETTINGS")"
 }
 
+# Bat picks the light or dark theme from the terminal background, so the swap
+# must leave its config alone.
+function test_a_swap_leaves_the_bat_config_unchanged() {
+  mkdir -p "$HOME_DIR/.config/bat"
+  cp "$ROOT/bat/config" "$HOME_DIR/.config/bat/config"
+
+  swap_theme_from_to light dark
+
+  assert_same "$(cat "$ROOT/bat/config")" "$(cat "$HOME_DIR/.config/bat/config")"
+}
+
 # Every path the swap edits starts at HOME. The scratch HOME holds only the
-# settings.json that the test writes, so the other gsed calls find no file and
-# the run changes no file of the user.
+# files that the test writes, so the other gsed calls find no file and the run
+# changes no file of the user.
 swap_theme_from_to() {
   HOME="$HOME_DIR" "$HOMEBREW_ZSH" -f -c "source ${PLUGIN@Q}; swap-theme-from-to $1 $2" > /dev/null 2>&1
 }

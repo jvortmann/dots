@@ -17,7 +17,6 @@ swap-theme-from-to()
   gsed -i"" -E "s/^(theme = .*)-$1$/\1-$2/" ~/.dots/ghostty/config
   gsed -i"" -E "s/$1/$2/" ~/.dots/tmux/theme.tmux
   gsed -i"" -E "s/(--color=)$1/\1$2/" ~/.dots/tmux/switch-popup.tmux
-  gsed -i"" -E "s/$1/$2/" ~/.config/bat/config
   gsed -i"" -E "s/(--color=)$1/\1$2/" ~/.dots/zsh/conf/plugins/fzf.zsh
   gsed -i"" -E "s/(vim\.opt\.background = )'$1'/\1'$2'/" ~/.config/nvim/lua/config/guioptions.lua
   gsed -i"" -E "s/(syntax-theme = \"[^\"]*\()$1(\)\")/\1$2\2/" ~/.dots/git/config
