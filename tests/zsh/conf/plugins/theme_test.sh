@@ -61,6 +61,16 @@ function test_a_swap_leaves_the_bat_config_unchanged() {
   assert_same "$(cat "$ROOT/bat/config")" "$(cat "$HOME_DIR/.config/bat/config")"
 }
 
+function test_a_swap_leaves_the_nvim_background_unchanged() {
+  local guioptions="$HOME_DIR/.config/nvim/lua/config/guioptions.lua"
+  mkdir -p "$(dirname "$guioptions")"
+  echo "vim.opt.background = 'dark'" > "$guioptions"
+
+  swap_theme_from_to dark light
+
+  assert_same "vim.opt.background = 'dark'" "$(cat "$guioptions")"
+}
+
 function test_a_swap_to_light_sets_the_fzf_theme_of_the_real_fzf_config() {
   mkdir -p "$DOTS/zsh/conf/plugins"
   cp "$ROOT/zsh/conf/plugins/fzf.zsh" "$DOTS/zsh/conf/plugins/fzf.zsh"
