@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
-import { registerHooks } from "node:module";
 import { test } from "node:test";
+import { fakeModules, NEXT_COMMAND } from "../fake-modules.mjs";
 
 const HC = (key) => `exec ["/home/me/.local/bin/hc",["keys","t7","${key}"],{"timeout":5000}]`;
 const FAILED = (body) => `notify [{"title":"Nav failed","body":"${body}","level":"error"}]`;
@@ -22,21 +22,9 @@ const herdr = `
   export const focused = () => ({ space: "s1", tab: "w1", pane: "p1", terminal: "t7", shown: null });
   export const panes = () => [{ pane: "p1", terminal: "t7", program: { key: app().program } }];
   export const terminals = () => [{ address: "t7", labels: app().server ? { "nvim.server": app().server } : {} }];
-  export const nextCommand = () => {
-    const app_ = app();
-    if (app_.commands.length) return Promise.resolve(app_.commands.shift());
-    app_.waiting();
-    return new Promise(() => {});
-  };
+  ${NEXT_COMMAND}
 `;
-const kit = "export class View {}; export const div = () => ({});";
-const url = (code) => `data:text/javascript,${encodeURIComponent(code)}`;
-registerHooks({
-  resolve: (specifier, context, next) =>
-    specifier === "herdr" ? { url: url(herdr), shortCircuit: true }
-    : specifier === "gpui-kit" ? { url: url(kit), shortCircuit: true }
-    : next(specifier, context),
-});
+fakeModules({ herdr, "gpui-kit": "export class View {}; export const div = () => ({});" });
 const { default: Nav } = await import("../../../../herdr-app/mods/nav/main.js");
 
 test("a key in nvim reaches nvim through hc keys", async () => {

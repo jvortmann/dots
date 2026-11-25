@@ -98,7 +98,8 @@
     "ctrl-a [": "copy-mode.open",
     "ctrl-a f": "mod.open:recent-picker",
     "ctrl-a ctrl-f": "mod.open:recent-picker",
-    "ctrl-a ?": "app.help"
+    "ctrl-a ?": "app.help",
+    "ctrl-a t": "tab-bar.swap-theme"
   },
   "terminal": {
     "cmd-f": "terminal.search",

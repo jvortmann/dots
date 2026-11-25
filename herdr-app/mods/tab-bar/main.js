@@ -21,6 +21,8 @@
 // The bar runs last-tab (ctrl-a ctrl-a), which selects the tab shown before.
 // When the shown tab closes, the bar selects the tab shown before it, and not
 // the tab beside it that the app shows.
+// The bar runs swap-theme (ctrl-a t), the zsh function that swaps the light and
+// dark themes. A key action cannot run a program, so the bar runs it for the key.
 // Each tab keeps its number, as in tmux: the bar numbers each new tab and moves
 // it into number order, and select-N selects by number.
 //
@@ -187,6 +189,7 @@ export default class TerminalsBar extends View {
         else if (command === "swap-left") this.swap(-1);
         else if (command === "swap-right") this.swap(1);
         else if (command === "agents") this.openAgents();
+        else if (command === "swap-theme") await this.swapTheme();
         else if (command.startsWith("select-agent-")) this.selectAgent(Number(command.slice("select-agent-".length)));
         else if (command.startsWith("select-")) this.selectNumber(Number(command.slice("select-".length)));
       }
@@ -310,6 +313,15 @@ export default class TerminalsBar extends View {
       cx.notify();
       this.tick(cx);
     });
+  }
+
+  async swapTheme() {
+    try {
+      const swapped = await exec("zsh", ["-c", "source ~/.dots/zsh/conf/plugins/theme.zsh; swap-theme"], { timeout: 5000 });
+      if (swapped.code !== 0) throw new Error(swapped.stderr.trim() || `swap-theme exited with code ${swapped.code}`);
+    } catch (error) {
+      notify({ title: "Theme swap failed", body: String(error?.message ?? error), level: "error" });
+    }
   }
 
   selectLastTab() {

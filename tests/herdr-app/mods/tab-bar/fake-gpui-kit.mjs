@@ -19,6 +19,7 @@ const fake = `
     });
     return self;
   };
+  export class View {}
   export const div = (...a) => element("div", a);
   export const svg = (...a) => element("svg", a);
   export const image = (...a) => element("image", a);
