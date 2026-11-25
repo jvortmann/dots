@@ -15,7 +15,7 @@
       "min": 44,
       "max": 480,
       "background": "chrome",
-      "resizable": false,
+      "resizable": true,
       "children": [
         {
           "id": "brand",
@@ -61,7 +61,7 @@
                   "border": { "width": 1, "color": "border" },
                   "focus": { "width": 1, "color": "accent" },
                   "radius": 0,
-                  "gap": 0,
+                  "gap": 1,
                   "lone": true
                 }
               }
