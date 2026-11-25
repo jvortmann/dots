@@ -1,6 +1,8 @@
 #!/bin/bash
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
+# shellcheck source=../../../fakes/fakes.sh
+source "$ROOT/tests/fakes/fakes.sh"
 PLUGIN="$ROOT/zsh/conf/plugins/theme.zsh"
 HOMEBREW_ZSH=/opt/homebrew/bin/zsh
 
@@ -80,11 +82,38 @@ function test_a_swap_to_light_sets_the_fzf_theme_of_the_real_fzf_config() {
   assert_same "export FZF_THEME=light" "$(rg '^export FZF_THEME=' "$DOTS/zsh/conf/plugins/fzf.zsh")"
 }
 
+function test_a_refresh_with_no_tmux_server_prints_nothing() {
+  fake_tmux 'echo "error connecting to /private/tmp/tmux-501/default (No such file or directory)" >&2; exit 1'
+
+  assert_same "" "$(swap_theme_refresh)"
+}
+
+function test_a_refresh_with_a_tmux_server_shows_the_errors_of_both_tmux_files() {
+  fake_tmux '[ "$1" = has-session ] && exit 0; echo "error in $2" >&2; exit 1'
+
+  assert_same "error in $HOME_DIR/.dots/tmux/theme.tmux
+error in $HOME_DIR/.dots/tmux/switch-popup.tmux" "$(swap_theme_refresh)"
+}
+
 # Every path the swap edits starts at HOME. The scratch HOME holds only the
 # files that the test writes, so the other gsed calls find no file and the run
 # changes no file of the user.
 swap_theme_from_to() {
   HOME="$HOME_DIR" "$HOMEBREW_ZSH" -f -c "source ${PLUGIN@Q}; swap-theme-from-to $1 $2" > /dev/null 2>&1
+}
+
+# Runs the refresh with the fake tmux and an empty fzf config, and prints all
+# that it writes.
+swap_theme_refresh() {
+  mkdir -p "$DOTS/zsh/conf/plugins"
+  : > "$DOTS/zsh/conf/plugins/fzf.zsh"
+  HOME="$HOME_DIR" PATH="$HOME_DIR/bin:$PATH" "$HOMEBREW_ZSH" -f -c "source ${PLUGIN@Q}; swap-theme-refresh" 2>&1 < /dev/null
+}
+
+# Puts a fake tmux that runs the shell code $1 first on the PATH of the
+# refresh.
+fake_tmux() {
+  fake_program "$HOME_DIR/bin" tmux "$1"
 }
 
 # Herdr app settings as the app writes them, with the given line before the

@@ -24,10 +24,12 @@ swap-theme-from-to()
 
 swap-theme-refresh()
 {
-  tmux source ~/.dots/tmux/theme.tmux
-  tmux source ~/.dots/tmux/switch-popup.tmux
+  if tmux has-session 2>/dev/null;
+  then
+    tmux source ~/.dots/tmux/theme.tmux
+    tmux source ~/.dots/tmux/switch-popup.tmux
+  fi
   source ~/.dots/zsh/conf/plugins/fzf.zsh
-  echo "After a change to this script, run 'source ~/.dots/zsh/conf/plugins/theme.zsh'."
 }
 
 swap-theme()
