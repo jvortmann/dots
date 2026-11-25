@@ -61,6 +61,25 @@ stays right.
   `man git-config`. Never run `env`, `git config --list` or any command that
   prints the settings of the user. They can hold tokens and personal data.
 
+## Mark low-value tests for removal
+
+A low-value test has one job after the change. It restates a value of config,
+or it checks that a removed line stays gone. During the cycle it still earns
+its place, because it is the specification and the RED that drives the change.
+Write it. At the end of the task, mark it for removal. The user decides
+whether to cut it, so never delete it on your own judgment.
+
+A change can need several such checks on settings. Write one table-driven
+test over a list of expected key/value pairs. A new setting is one more row,
+not one more test.
+
+```typescript
+const expected = { background: "dark", number: true };
+for (const [key, value] of Object.entries(expected)) {
+  t.is(readSetting(key), value, key);
+}
+```
+
 ## Design for a test
 
 - **Accept a dependency, do not create it.** `processOrder(order, gateway)`

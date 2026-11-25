@@ -46,7 +46,10 @@ When every scenario passes:
    call it done. Your reply opens with its outcome line, `verified` or
    `not verified`. A behavior that no test covers goes under not verified,
    never as "should work".
-8. **Load the `git-commit` skill, and draft the message** — the user commits.
+8. **Name the removal candidates** — before the message, list each test of
+   the task that is low-value by the `testing` skill, with why. The user
+   decides whether to cut it before the commit.
+9. **Load the `git-commit` skill, and draft the message** — the user commits.
 
 ## One slice at a time
 

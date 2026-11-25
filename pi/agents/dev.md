@@ -31,8 +31,8 @@ The rules you inherit expect a person in the loop. For this run:
   both changes touch the same file.
 
 These hold without exception: never run `git commit`, `git commit --amend`,
-`git reset`, `git rebase`, `git stash`, `git checkout`, `git push --force` or
-`rm -rf`, and never install anything.
+`git reset`, `git rebase`, `git stash` in any form (`list` included),
+`git checkout`, `git push --force` or `rm -rf`, and never install anything.
 
 ## The work
 
@@ -94,6 +94,7 @@ Test review: <what you shared> | none
 - <behavior> — <test name> — RED: <the failing assertion line, as printed> — GREEN
 - <behavior> — <test name> — guard: <how you proved it can fail>
 <the refactor line of each cycle>
+Removal candidates: <test name — why> | none
 
 ## Review
 First review: <the findings>
