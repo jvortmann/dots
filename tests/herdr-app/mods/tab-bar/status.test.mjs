@@ -24,7 +24,7 @@ test("counts every agent", () => {
 });
 
 test("counts the agents that need you", () => {
-  assert.equal(needsText([{ status: "blocked" }, { status: "working" }, { status: "blocked" }]), "· 2 needs you");
+  assert.equal(needsText([{ status: "blocked" }, { status: "working" }, { status: "blocked" }]), "2 needs you");
 });
 
 test("says nothing of needs while no agent is blocked", () => {
@@ -209,12 +209,13 @@ test("the list opens on the focused agent when it is the only agent", () => {
   assert.equal(openingRow([{ address: "t1", focused: true }, { depth: 1 }]), 0);
 });
 
-// The order is that of the stock sidebar. The list shows each agent.
+// The bar orders done, working, blocked. So the red blocked dot sits last,
+// next to the red "N needs you" count. The list shows each agent.
 test("the bar shows only the statuses that an agent has", () => {
   assert.equal(barStatuses(["idle", "working"].map((status) => ({ status }))).join(" "), "working");
 });
 
-test("the bar shows each status once blocked then done then working and no idle", () => {
+test("the bar shows each status once done then working then blocked and no idle", () => {
   const statuses = ["working", "idle", "done", "working", "blocked", "done"].map((status) => ({ status }));
-  assert.equal(barStatuses(statuses).join(" "), "blocked done working");
+  assert.equal(barStatuses(statuses).join(" "), "done working blocked");
 });

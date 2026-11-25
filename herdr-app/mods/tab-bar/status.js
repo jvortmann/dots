@@ -13,11 +13,11 @@ export function agentsText(list) {
 
 export function needsText(list) {
   const needs = list.filter((a) => a.status === "blocked").length;
-  return needs ? `· ${needs} needs you` : "";
+  return needs ? `${needs} needs you` : "";
 }
 
 export function barStatuses(list) {
-  return ["blocked", "done", "working"].filter((status) => list.some((a) => a.status === status));
+  return ["done", "working", "blocked"].filter((status) => list.some((a) => a.status === status));
 }
 
 export function agentList(list, records = {}, changed = {}, now = 0, history = []) {
