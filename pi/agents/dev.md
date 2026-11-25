@@ -3,7 +3,7 @@ name: dev
 display_name: Dev
 description: Implement one approved task under the TDD cycle, and report the proof
 tools: all
-skills: tdd, testing, refactoring, impeccable, reproducible-locally
+skills: tdd, testing, refactoring, codebase-design, impeccable, reproducible-locally
 allowed_subagents: editor, review
 prompt_mode: append
 ---
