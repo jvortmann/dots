@@ -51,9 +51,12 @@ names that place. A command that you give the user to run is not proof, so
 give it under not verified.
 
 A change on the screen needs a screenshot that a script compares. Take it with
-a capture that the app makes of itself, such as `herdr-app shot`, or use one
-that the user gives. Never use `screencapture`, because macOS then shows the
-user a prompt. When neither exists, the outcome is not verified.
+a capture that the app makes of itself, or use one that the user gives. For
+Herdr, run `herdr-app shot` on a scratch window, never on the window of the
+user. Give that window its own `HERDR_APP_HOME`, as the AGENTS.md of the
+dots repository says. Never use `screencapture`, because macOS then shows the
+user a prompt. When the app makes no capture and the user gives none, the
+outcome is not verified.
 
 ## Report one outcome
 

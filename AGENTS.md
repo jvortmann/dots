@@ -56,14 +56,14 @@ Check a change in a scratch core and a scratch window:
   `XDG_STATE_HOME`. The function `in_scratch` in
   `tests/herdr-core/config_test.sh` shows how.
 - Give the scratch window its own `HERDR_APP_HOME`, with its current folder in
-  `/tmp`.
+  a scratch folder under `/tmp/scratch`.
 - Stop each scratch core before you finish. Run `hc server stop` with the same
   scratch values, as `in_scratch` does. A bare `hc server stop` stops the core
   of the user.
 
 Never run these on the window or the core of the user:
 
-- `herdr-app do`, or a start of the app from a shell
+- `herdr-app do`, `herdr-app shot`, or a start of the app from a shell
 - `hc server`, `hc label`, `hc send` or `hc keys`
 
 When a check needs the window of the user, stop and give the user the steps.
