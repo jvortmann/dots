@@ -130,6 +130,19 @@ FOLLOWED_TEMP_DELETES=(
   'rm -r "/tmp/scratch/step42.Ab12Cd"; ls /tmp/scratch' 'rm -r "/tmp/scratch/step42.Ab12Cd" && git status'
   'rm -r "/tmp/scratch/${d:?}"; ls /tmp/scratch' 'rm -rf /tmp/scratch/${d:?} && git status'
 )
+ASKED_AFTER_TEMP_DELETES=(
+  "rm -r /tmp/out; kill 1" "rm -rf /private/tmp/out && pkill tmux" "rm -R /var/folders/ab/cd/T/out; killall tmux"
+  'rm -r "/tmp/scratch/out" && kill -9 1' 'rm -r /tmp/${d:?}; sudo ls' 'rm -r /tmp/scratch/${d:?} && brew upgrade'
+  'rm -r "/tmp/scratch/${d:?}"; mise install node' "rm -fr /private/var/folders/ab/cd/T/out && mise use node"
+  "rm -r /tmp/out && git push" "rm -r /tmp/out; docker run x" "rm -r /tmp/out; docker exec x sh" "rm -r /tmp/out && aws s3 ls"
+  "rm -r /tmp/out; gh pr create" "rm -r /tmp/out && gh pr merge 1" "rm -r /tmp/out; curl -o y z" "rm -r /tmp/out; curl -X POST z"
+  "rm -r /tmp/out; curl -d a z" "rm -r /tmp/out && defaults write x y z" "rm -r /tmp/out; osascript -e 'beep'"
+  "rm -r /tmp/out && find ~ -name hc" "rm -r /tmp/out; find / -name hc" "rm -r /tmp/out && rm -rf build"
+  "rm -r /tmp/out; .pi/skills/impeccable/scripts/impeccable live" "rm -r /tmp/out && .pi/skills/impeccable/scripts/impeccable detect"
+)
+DENIED_AFTER_TEMP_DELETES=(
+  "rm -r /tmp/out; git commit -m x" 'rm -r "/tmp/scratch/${d:?}" && git stash' "rm -rf /private/tmp/out && git -C repo commit"
+)
 # Each ~ below stays as text, because the policy checks the command as text.
 # shellcheck disable=SC2088
 END_SCRATCH_CALLS=(
@@ -214,7 +227,7 @@ function set_up_before_script() {
     'rm -Rf "$HOME"' 'rm -r "$HOME/"' 'rm -r $HOME/*' \
     'rm -r "$d/out"' 'rm -r $d/out' 'cd repo && rm -fR "${out}/cache"' 'rm -R "$HOME/prj/x"' \
     "${SYSTEM_DELETES[@]}" "${LIBRARY_DELETES[@]}" "${TEMP_DELETES[@]}" "${MIXED_DELETES[@]}" "${OTHER_TEMP_DELETES[@]}" "${FILE_DELETES[@]}" "${CLIMBING_DELETES[@]}" \
-    "${FOLLOWED_TEMP_DELETES[@]}" "${DANGER_AFTER_TEMP_DELETES[@]}" "${SCRATCH_DELETES[@]}" "${SCRATCH_EMPTY_NAMES[@]}" "${SCRATCH_GUARDED_DELETES[@]}" \
+    "${FOLLOWED_TEMP_DELETES[@]}" "${DANGER_AFTER_TEMP_DELETES[@]}" "${ASKED_AFTER_TEMP_DELETES[@]}" "${DENIED_AFTER_TEMP_DELETES[@]}" "${SCRATCH_DELETES[@]}" "${SCRATCH_EMPTY_NAMES[@]}" "${SCRATCH_GUARDED_DELETES[@]}" \
     "${SCRATCH_ROOT_DELETES[@]}" "${TEMP_EMPTY_NAMES[@]}" "${TEMP_GUARDED_DELETES[@]}" "${TEMP_ROOT_DELETES[@]}" \
     'rm -rf build && echo $?' "rm -f out.txt; printf '%s' \"\$x\"" "rm -rf build && cd ~" \
     "rm -rf /tmp/out && /usr/bin/find . -name y" "rm -rf build && ls ~/Library/Logs" "rm -rf Game/Library" \
@@ -487,6 +500,14 @@ function test_asks_before_a_delete_of_the_whole_scratch_folder() {
 
 function test_denies_a_dangerous_delete_after_a_temp_delete() {
   assert_same "$(printf 'deny %s\n' "${DANGER_AFTER_TEMP_DELETES[@]}")" "$(decisions_for "${DANGER_AFTER_TEMP_DELETES[@]}")"
+}
+
+function test_asks_before_a_command_that_asks_when_it_follows_a_temp_delete() {
+  assert_same "$(printf 'ask %s\n' "${ASKED_AFTER_TEMP_DELETES[@]}")" "$(decisions_for "${ASKED_AFTER_TEMP_DELETES[@]}")"
+}
+
+function test_denies_a_git_commit_or_stash_that_follows_a_temp_delete() {
+  assert_same "$(printf 'deny %s\n' "${DENIED_AFTER_TEMP_DELETES[@]}")" "$(decisions_for "${DENIED_AFTER_TEMP_DELETES[@]}")"
 }
 
 function test_asks_when_a_temp_delete_climbs_out_of_the_temp_folder() {
