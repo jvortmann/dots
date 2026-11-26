@@ -289,14 +289,15 @@ BARE_TMUX_BETWEEN_SEPARATORS=(
 
 # One bun decides each command that a test checks, before the first test.
 # A command that is not in this list gives "missing", not a decision.
+# Each key of DECIDED starts with "=", because bash rejects an empty key.
 function set_up_before_script() {
   PI_MODULES="$(mise where npm:@earendil-works/pi-coding-agent 2> /dev/null)/lib/node_modules"
-  DECISIONS=""
+  declare -gA DECIDED=()
   [[ -f $POLICY && -f $EXTENSION/src/permission-manager.ts && -d $PI_MODULES/@earendil-works/pi-coding-agent ]] || return 0
   command -v bun > /dev/null || return 0
-  local scratch
+  local scratch decisions line
   scratch=$(bashunit::temp_dir "permissions")
-  DECISIONS="$scratch/decisions"
+  decisions="$scratch/decisions"
   decide "$scratch" \
     "env" "env -0" "env | sort" "env|sort" "env > vars.txt" "env; ls" "env && ls" \
     "cd repo && env" "cd repo && env | sort" "cd repo ; env" "cd repo ; env | sort" \
@@ -335,7 +336,10 @@ function set_up_before_script() {
     "${SCRATCH_PKILLS[@]}" "${WORK_FOLDER_PKILLS[@]}" "${SOCKET_PKILLS[@]}" "${CHAINED_PKILLS[@]}" "${SECOND_PATTERN_PKILLS[@]}" "${CLIMBING_PKILLS[@]}" "${SCRATCH_ROOT_PKILLS[@]}" \
     "${TEST_SERVER_STOPS[@]}" "${TEST_SOCKET_PATH_STOPS[@]}" "${OTHER_SERVER_STOPS[@]}" "${DEFAULT_SERVER_COMMANDS[@]}" "${CLIMBING_SERVER_STOPS[@]}" "${CHAINED_SERVER_STOPS[@]}" \
     "${TEST_SERVER_COMMANDS[@]}" "${PLAIN_TMUX_COMMANDS[@]}" "${LATER_PLAIN_TMUX_COMMANDS[@]}" "${BARE_TMUX_BETWEEN_SEPARATORS[@]}" "${TMUX_PATHS[@]}" \
-    > "$DECISIONS"
+    > "$decisions"
+  while IFS= read -r line; do
+    DECIDED[=${line#* }]=${line%% *}
+  done < "$decisions"
 }
 
 function set_up() {
@@ -772,14 +776,11 @@ function test_still_allows_a_command_on_a_path_with_tmux_in_it() {
 # Prints "<decision> <command>" for each argument, from the decisions of
 # set_up_before_script.
 decisions_for() {
-  local wanted encoded state line
+  local wanted encoded
   for wanted in "$@"; do
-    state=missing
-    while IFS= read -r line; do
-      encoded=${wanted//\\/\\\\}
-      [[ ${line#* } == "${encoded//$'\n'/\\n}" ]] && state=${line%% *}
-    done < "$DECISIONS"
-    echo "$state $wanted"
+    encoded=${wanted//\\/\\\\}
+    encoded=${encoded//$'\n'/\\n}
+    echo "${DECIDED[=$encoded]-missing} $wanted"
   done
 }
 
