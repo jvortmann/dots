@@ -81,6 +81,10 @@ drops.
   or its own copy of the prohibitions.
 - The agent file outranks its caller for `max_turns`, `model` and `thinking`.
   A value the caller passes has no effect when the file sets one.
+- A new agent file sets `persist_session: true`. Without it, a nested run of
+  the agent leaves only an `.output` file, which macOS purges. A built-in
+  agent with no file, such as `general-purpose`, gets the key only from an
+  override file of the same name.
 
 ## Prove that it fires
 

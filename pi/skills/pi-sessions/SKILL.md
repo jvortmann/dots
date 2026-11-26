@@ -16,8 +16,12 @@ when that variable is unset. Each project gets one folder, named from its path
 with `/` turned to `-`, such as `--Users-alice-prj-app--`. A file name starts
 with its UTC start time and ends with the session id.
 
-- **A subagent writes its own session** in the same project folder as its
-  parent. Find it by its first user message, which is the prompt it got.
+- **A subagent that the main session starts writes its own session** in the
+  same project folder as its parent. Its first line holds `parentSession`, the
+  path of the session that started it. Its `session_info` event names it
+  `<type>#<id>`, such as `review#d09ea633`, and `<id>` starts the agentId of
+  its `.output` file. Find it by that path, or by its first user message,
+  which is the prompt it got.
 - **The parent session also holds that prompt**, so a text search matches both.
   Leave the parent out by its id before you trust a match.
 - **The history can run to tens of GB.** One scan of all of it took every
@@ -70,5 +74,14 @@ time as early as you can.
   than `=`. The bundled scripts and queries already do this.
 - `~` does not expand in SQL. Use an absolute path or `getenv('HOME')`.
 - Read the JSONL with `format='newline_delimited'` and `ignore_errors=true`.
+- A nested subagent, such as a `review` that a `dev` starts, writes no session
+  file unless its agent file sets `persist_session: true`. Its only transcript
+  is then
+  `$TMPDIR/pi-subagents-<uid>/<cwd>/<root-session-id>/tasks/<agentId>.output`,
+  and macOS purges `$TMPDIR`. Copy that file before you need it.
+- No session file holds the system prompt.
+- A `/reload` stops each subagent that runs at that time. Its session file
+  then ends on a tool call with no result, and it holds no report. Its
+  `.output` file ends on a message with `stopReason` `aborted`.
 
 The full event schema is in `references/schema.md`.
