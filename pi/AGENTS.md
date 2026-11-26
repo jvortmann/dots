@@ -137,9 +137,10 @@ to `dev`.
   In `<cwd>`, each `/` of the working directory becomes `-`, with no
   leading `-`. A RED in that transcript counts when the new `dev` runs the
   test again and sees the same failure.
-- **Background** — an Agent call runs in the background by default, and its
-  result comes back when the agent ends. Keep that default for every agent.
-  Set `run_in_background: false` only when the next step needs the result.
+- **Background** — at the top level, an Agent call runs in the background by
+  default, and its result comes back when the agent ends. Keep that default
+  for every agent. Set `run_in_background: false` only when the next step
+  needs the result. A nested Agent call runs in the foreground by default.
 - **Stop a subagent** — no tool stops an agent that the Agent tool started.
   `TaskStop` stops only a bash task or an agent that `TaskExecute` started.
   Send the stop with `steer_subagent`. When the agent goes on, ask the user
@@ -160,6 +161,9 @@ to `dev`.
   to the plan and deletes each file that it applied. After the last round,
   it deletes the empty folder by its literal path. Only one plan editor
   runs at a time, so a later file waits for the next round.
+
+  The brief of this `editor` tells it to load
+  `$PI_CODING_AGENT_DIR/skills/plan/SKILL.md` at that time.
 - **Questions** — settle the open design questions with the user before the
   handover, because `dev` cannot ask. When `dev` stops with a question, ask
   the user. Then resume that `dev` run with the answer. The Agent tool

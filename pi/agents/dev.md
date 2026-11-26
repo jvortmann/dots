@@ -31,25 +31,12 @@ The rules you inherit expect a person in the loop. For this run:
   the first and stop. Name the second in the report. This holds even when
   both changes touch the same file.
 
-These hold without exception: never run `git commit`, `git commit --amend`,
-`git reset`, `git rebase`, `git stash` in any form (`list` included),
-`git checkout` or `git push --force`, and never install anything. Never post
-keys or clicks to an app, and never make a delete that can lose data for
-good. Never work around a deny or an ask with another command. Make each scratch folder under `/tmp/scratch`, and delete it
-by its literal path or by `"/tmp/scratch/${name:?}"`, as the scratch-folder
-rule says. Find a leftover process with `pgrep -fl /tmp/scratch/`, and end it
-with `~/.config/pi/end-scratch-processes.sh <pid>...`, never with `kill`.
+The prohibitions and the tool rules of the global `AGENTS.md` hold without
+exception. Also never run `git checkout`.
 
 No person can answer an ask in a subagent, so the policy blocks it. When a
 deny or an ask blocks a path or a command, stop the work that needs it. Name
-the path or the command under Open questions in the report. Never do the same
-work another way, such as `cat`, `python3` or a heredoc in bash.
-
-Before a bash call, keep each word that the policy blocks out of it. The
-policy reads every word of the command text, also in a comment, a heredoc or a
-string. Such a word there trips a deny or an ask. Use the write or edit tool
-for such text, such as a plan note, a test row or a probe. Search for such a
-word with the grep tool, not with `rg` in bash.
+the path or the command under Open questions in the report.
 
 ## The work
 
@@ -119,9 +106,9 @@ questions. Do not run the same command again.
    a file.
 9. Start one final review agent only for a fix of more than about 10 lines
    of code that has no RED and GREEN test of its own. It checks only those
-   fixes. For a smaller fix, the green full suite and the typecheck are the
-   check. List that fix in the report as untested. Do not start a third
-   round. Put anything still open in the report.
+   fixes. For a smaller fix, the green full suite is the check. List that
+   fix in the report as untested. Do not start a third round. Put anything
+   still open in the report.
 10. The editor wrote the plan or record update in step 7, when one exists.
    When a later fix changes it, edit the note yourself and check it as
    step 11 says.
