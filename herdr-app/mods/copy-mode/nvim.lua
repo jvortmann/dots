@@ -43,7 +43,7 @@ function _G.copy_mode_open(source, selection)
   standby("")
   set_colors(selection)
   vim.api.nvim_create_autocmd("OptionSet", { pattern = "background", callback = function() set_colors(selection) end })
-  local size = vim.system({ "hc", "get", "--json", source })
+  local size = vim.system({ "hc", "get", "--json", source }, { timeout = 2000 })
   local paint = capture_first_paint(source)
   if paint == "" then vim.cmd("qa!") end
   fit_to(size:wait())

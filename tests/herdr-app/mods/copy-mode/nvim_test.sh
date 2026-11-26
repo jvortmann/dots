@@ -266,6 +266,18 @@ function test_fits_the_window_to_the_rows_of_the_terminal_when_hc_gives_them_lat
   assert_same "prompt>" "$(cat "$SCRATCH/clipboard")"
 }
 
+function test_stops_hc_get_when_it_gives_no_size_within_2_seconds() {
+  fake hc 'case $1 in
+    get) exec perl -e '\''$SIG{TERM} = sub { open my $f, ">", $ARGV[0]; exit }; alarm 3; select(undef, undef, undef, undef)'\'' "$SCRATCH/get.stopped" ;;
+    label) ;;
+    *) cat "$SCRATCH/paint" ;;
+  esac'
+
+  press "q"
+
+  assert_file_exists "$SCRATCH/get.stopped"
+}
+
 function test_shows_the_screen_of_the_terminal_at_the_top_of_the_window() {
   press "HVy"
 
