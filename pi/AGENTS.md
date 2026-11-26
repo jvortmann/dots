@@ -81,15 +81,18 @@ Every piece of work gets a task before its first edit. That includes a request m
 
 1. **Complete only the current task** and make it committable
 2. **Validate** — it works independently and does not break existing code
-3. **Update the plan or the local work record** after every task, whenever one exists for the work. It can live anywhere, so look for it. Mark the task done, record what changed from the plan and why, and name what the next task now needs. When `dev` ran the task, `dev` updates that record, and the main agent checks the Record line of its report. Do it before the commit message, so the record and the commit describe the same state
+3. **Update the plan or the local work record** after every task, whenever one exists for the work. It can live anywhere, so look for it. Mark the task done, record what changed from the plan and why, and name what the next task now needs. When `dev` ran the task, `dev` updates that record and the main agent checks its Record line, except after parallel devs. Do it before the commit message, so the record and the commit describe the same state
 4. **Prepare the commit** — draft the message and copy it to the clipboard (see Commits), then stop. **Never run `git commit` yourself** — the user commits. The only exception is the exact phrase "you can commit"
 5. **Mark the task completed** (`TaskUpdate`), present results, and **STOP**
 6. **Ask permission** — "May I proceed with the next task: [description]?" — then wait
 
 When the user approves parallel work for a set of tasks, that approval
 covers the whole set. Start each task as soon as the tasks it depends on
-finish. Do not ask again for each one. Tasks that change the same file
-still run one after the other.
+finish. Do not ask again for each one. A task on the same file as an
+earlier task waits for its commit, so the diffs do not mix. A task that
+depends on a task in another file starts once that task reports. Run
+`/reload` only when no subagent runs, because a reload stops every
+subagent.
 
 Each task still gets its own report and its own commit message. Each task
 also stops for its own commit, because the user runs every commit. That
@@ -115,16 +118,22 @@ to `dev`.
   "Agent ID:" line of the Agent result. Never use a name you make up. A
   follow-up can be an answer, a change from the user, or a new commit
   message. Never start a second `dev` for the task.
+- **Parallel devs** — when several `dev` agents work in one tree, the brief
+  of each lists the files that it may change. It tells `dev` to use
+  `git diff -- <its files>` in place of a bare `git diff`, to stage
+  nothing, and to leave the plan alone. The main session updates the plan
+  from each report, in place of `dev`.
 - **Questions** — settle the open design questions with the user before the
   handover, because `dev` cannot ask. When `dev` stops with a question, ask
   the user. Then resume that `dev` run with the answer. The Agent tool
   `resume` keeps its context.
 - **After the report** — take the report as it stands, and do not run the
   `review` agent, because `dev` did. Do not reword the commit message,
-  and do not update the plan or record. Show the user the outcome from the
-  report with its Review section, and `git diff --stat`. Run the two checks
-  of the `git-commit` skill again on the message from the report, then copy
-  it with `pbcopy`. Then continue with the steps of "One task at a time".
+  and do not update the plan or record, except after parallel devs. Show
+  the user the outcome from the report with its Review section, and
+  `git diff --stat`. Run the two checks of the `git-commit` skill again on
+  the message from the report, then copy it with `pbcopy`. Then continue
+  with the steps of "One task at a time".
 - **Several commits waiting** — when more than one commit waits for the
   user, write each message to its own file in `/tmp` first, from the report
   of each `dev`. Run `ste-lint` and the commit-msg hook on each file. End
@@ -139,6 +148,8 @@ to `dev`.
   - The `-n` skips the commit-msg and pre-commit hooks, because the checks
     and the tests ran before the commit. Use `-n` only in this block, never
     for a single commit.
+  - Remove the line of a commit as soon as `git log` shows that commit. A
+    stale line commits the draft of another task under the wrong message.
 - **A check fails** — when a check fails on a message from a report, resume
   that `dev` to fix the message. A word the hook rejects stays when the
   report lists it for `zg`, so name it to the user.
