@@ -154,6 +154,59 @@
     "* kill*": "ask",
     "pkill*": "ask",
     "* pkill*": "ask",
+    // A pkill of the leftover processes of agents and of tests/run runs with
+    // no ask. These are the processes that pi/end-scratch-processes.sh ends.
+    // The allows follow the pkill asks above, because the last match wins.
+    "pkill -f /tmp/scratch/?*": "allow",
+    "pkill -KILL -f /tmp/scratch/?*": "allow",
+    "pkill -TERM -f /tmp/scratch/?*": "allow",
+    "pkill -f /tmp/tests-run.?*": "allow",
+    "pkill -KILL -f /tmp/tests-run.?*": "allow",
+    "pkill -TERM -f /tmp/tests-run.?*": "allow",
+    "pkill -f /var/folders/*/T/tests-run.?*": "allow",
+    "pkill -KILL -f /var/folders/*/T/tests-run.?*": "allow",
+    "pkill -TERM -f /var/folders/*/T/tests-run.?*": "allow",
+    "pkill -f \"tmux -L tests-run-?*\"": "allow",
+    "pkill -KILL -f \"tmux -L tests-run-?*\"": "allow",
+    "pkill -TERM -f \"tmux -L tests-run-?*\"": "allow",
+    "pkill -f 'tmux -L tests-run-?*'": "allow",
+    "pkill -KILL -f 'tmux -L tests-run-?*'": "allow",
+    "pkill -TERM -f 'tmux -L tests-run-?*'": "allow",
+    // A second command or a substitution in the line asks again.
+    "pkill -*;*": "ask",
+    "pkill -*&*": "ask",
+    "pkill -*|*": "ask",
+    "pkill -*>*": "ask",
+    "pkill -*<*": "ask",
+    "pkill -*$*": "ask",
+    "pkill -*`*": "ask",
+    "pkill -*\n*": "ask",
+    // pkill takes more than one pattern, so a second word asks: a space or a
+    // tab after a path, or a third quote after a quoted socket.
+    "pkill -* /* ?*": "ask",
+    "pkill -*\t*": "ask",
+    "pkill -*\"*\"*\"*": "ask",
+    "pkill -*'*'*'*": "ask",
+    // A `..` asks, as in the delete rules. pkill reads it as two wildcards,
+    // not as a parent folder.
+    "pkill -*..*": "ask",
+    // pkill reads its pattern as a regular expression. A group, a bracket or
+    // a count can match a process outside these folders, so each asks.
+    "pkill -*(*": "ask",
+    "pkill -*[*": "ask",
+    "pkill -*{*": "ask",
+    // A pkill of every process in /tmp/scratch ends the work of all agents,
+    // so it asks. A `?` stands for a `*` or a `.`, so a name of one
+    // character asks too. A `.*` matches any name, and a quote after a path
+    // can leave the name empty. The matcher reads a backslash as a `/`, so an
+    // escape such as `\.\*` right after the folder asks. A pattern cannot
+    // name a literal `*` or `?`, so `/tmp/scratch/s*` still runs, and pkill
+    // can then match each process in /tmp/scratch.
+    "pkill -*/scratch/?": "ask",
+    "pkill -*/scratch/.*": "ask",
+    "pkill -*/scratch//*": "ask",
+    "pkill -* /*'*": "ask",
+    "pkill -* /*\"*": "ask",
     "git push*": "ask",
     "* git push*": "ask",
     "docker run*": "ask",

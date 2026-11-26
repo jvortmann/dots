@@ -142,6 +142,39 @@ PROCESS_SIGNALS=(
   "kill 4242" "kill -9 4242" "cd repo && kill 4242" "pkill -f bashunit" "killall tmux" "cd repo && killall tmux"
   '~/.config/pi/end-scratch-processes.sh 4242; kill 4343' '~/.config/pi/end-scratch-processes.sh 4242 && pkill tmux'
 )
+SCRATCH_PKILLS=(
+  "pkill -f /tmp/scratch/step57.Ab12Cd" "pkill -KILL -f /tmp/scratch/step57.Ab12Cd/fake"
+  "pkill -TERM -f /tmp/scratch/step57"
+)
+WORK_FOLDER_PKILLS=(
+  "pkill -f /tmp/tests-run.Ab12Cd" "pkill -KILL -f /var/folders/ab/cd/T/tests-run.Ab12Cd"
+  "pkill -TERM -f /var/folders/ab/cd/T/tests-run.Ab12Cd/bashunit"
+)
+SOCKET_PKILLS=(
+  'pkill -f "tmux -L tests-run-4242"' "pkill -KILL -f 'tmux -L tests-run-4242'" 'pkill -TERM -f "tmux -L tests-run-4242 "'
+)
+CHAINED_PKILLS=(
+  "pkill -f /tmp/scratch/x; kill 1" "pkill -f /tmp/scratch/x && kill 1" "pkill -KILL -f /tmp/scratch/x || killall tmux"
+  "pkill -f /tmp/scratch/x | sh" "pkill -f /tmp/scratch/x&kill 1" $'pkill -f /tmp/scratch/x\nkill 1'
+  'pkill -f /tmp/scratch/x$(kill 1)' 'pkill -f /tmp/scratch/x`kill 1`' "pkill -f /tmp/tests-run.x>/tmp/out.txt"
+  'pkill -f /tmp/scratch/x<(kill 1)'
+  'pkill -f "tmux -L tests-run-4242"; kill 1' "pkill -TERM -f 'tmux -L tests-run-4242' && kill 1"
+  'pkill -f "tmux -L tests-run-$(kill 1)"' "ls; pkill -f /tmp/scratch/x" "cd repo && pkill -f /tmp/scratch/x"
+)
+SECOND_PATTERN_PKILLS=(
+  "pkill -f /tmp/scratch/x bash" "pkill -KILL -f /var/folders/a bash /T/tests-run.x" "pkill -f /tmp/scratch/x' bash'"
+  'pkill -f "tmux -L tests-run-4242" "bash"' "pkill -TERM -f 'tmux -L tests-run-4242' 'bash'"
+  $'pkill -f /tmp/scratch/x\tbash'
+)
+CLIMBING_PKILLS=(
+  "pkill -f /tmp/scratch/../x" "pkill -KILL -f /var/folders/../../etc/T/tests-run.x"
+  'pkill -f /var/folders/\(/T/tests-run.x\)\?'
+)
+SCRATCH_ROOT_PKILLS=(
+  "pkill -f /tmp/scratch" "pkill -f /tmp/scratch/" "pkill -KILL -f /tmp/scratch/*" "pkill -f /tmp/scratch/.*"
+  "pkill -f /tmp/scratch/''" 'pkill -TERM -f /tmp/scratch/""' "pkill -f /tmp/scratch/[^/]" "pkill -f /tmp/scratch/x{0}"
+  'pkill -f /tmp/scratch/\.\*'
+)
 
 # One bun decides each command that a test checks, before the first test.
 # A command that is not in this list gives "missing", not a decision.
@@ -188,6 +221,7 @@ function set_up_before_script() {
     "${UI_CONTROL[@]}" "${WIDE_SEARCHES[@]}" "${PROTECTED_READS[@]}" "${NARROW_READS[@]}" \
     "${RESEARCH_READS[@]}" "${RESEARCH_WRITES[@]}" "${WORK_READS[@]}" "${WORK_WRITES[@]}" \
     "${PROTECTED_INSIDE_OPEN[@]}" "${GH_TOKEN_READS[@]}" "${END_SCRATCH_CALLS[@]}" "${PROCESS_SIGNALS[@]}" \
+    "${SCRATCH_PKILLS[@]}" "${WORK_FOLDER_PKILLS[@]}" "${SOCKET_PKILLS[@]}" "${CHAINED_PKILLS[@]}" "${SECOND_PATTERN_PKILLS[@]}" "${CLIMBING_PKILLS[@]}" "${SCRATCH_ROOT_PKILLS[@]}" \
     > "$DECISIONS"
 }
 
@@ -516,6 +550,34 @@ function test_allows_the_script_that_ends_leftover_processes_by_its_path() {
 
 function test_asks_before_kill_pkill_or_killall_also_after_the_script() {
   assert_same "$(printf 'ask %s\n' "${PROCESS_SIGNALS[@]}")" "$(decisions_for "${PROCESS_SIGNALS[@]}")"
+}
+
+function test_allows_a_pkill_of_the_processes_in_a_scratch_folder() {
+  assert_same "$(printf 'allow %s\n' "${SCRATCH_PKILLS[@]}")" "$(decisions_for "${SCRATCH_PKILLS[@]}")"
+}
+
+function test_allows_a_pkill_of_the_processes_in_a_work_folder_of_tests_run() {
+  assert_same "$(printf 'allow %s\n' "${WORK_FOLDER_PKILLS[@]}")" "$(decisions_for "${WORK_FOLDER_PKILLS[@]}")"
+}
+
+function test_allows_a_pkill_of_a_tmux_server_on_a_socket_of_tests_run() {
+  assert_same "$(printf 'allow %s\n' "${SOCKET_PKILLS[@]}")" "$(decisions_for "${SOCKET_PKILLS[@]}")"
+}
+
+function test_asks_before_a_pkill_of_scratch_processes_with_another_command_in_the_line() {
+  assert_same "$(printf 'ask %s\n' "${CHAINED_PKILLS[@]}")" "$(decisions_for "${CHAINED_PKILLS[@]}")"
+}
+
+function test_asks_before_a_pkill_that_holds_a_second_pattern() {
+  assert_same "$(printf 'ask %s\n' "${SECOND_PATTERN_PKILLS[@]}")" "$(decisions_for "${SECOND_PATTERN_PKILLS[@]}")"
+}
+
+function test_asks_before_a_pkill_whose_pattern_climbs_out_of_the_folder() {
+  assert_same "$(printf 'ask %s\n' "${CLIMBING_PKILLS[@]}")" "$(decisions_for "${CLIMBING_PKILLS[@]}")"
+}
+
+function test_asks_before_a_pkill_of_every_process_in_the_scratch_folder() {
+  assert_same "$(printf 'ask %s\n' "${SCRATCH_ROOT_PKILLS[@]}")" "$(decisions_for "${SCRATCH_ROOT_PKILLS[@]}")"
 }
 
 # Prints "<decision> <command>" for each argument, from the decisions of
