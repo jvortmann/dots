@@ -130,6 +130,18 @@ FOLLOWED_TEMP_DELETES=(
   'rm -r "/tmp/scratch/step42.Ab12Cd"; ls /tmp/scratch' 'rm -r "/tmp/scratch/step42.Ab12Cd" && git status'
   'rm -r "/tmp/scratch/${d:?}"; ls /tmp/scratch' 'rm -rf /tmp/scratch/${d:?} && git status'
 )
+# Each ~ below stays as text, because the policy checks the command as text.
+# shellcheck disable=SC2088
+END_SCRATCH_CALLS=(
+  '~/.config/pi/end-scratch-processes.sh 4242 4343' '$HOME/.config/pi/end-scratch-processes.sh 4242'
+  '"$HOME/.config/pi/end-scratch-processes.sh" 4242' "pi/end-scratch-processes.sh 4242"
+  "/Users/someone/prj/config/dots/pi/end-scratch-processes.sh 4242"
+)
+# shellcheck disable=SC2088
+PROCESS_SIGNALS=(
+  "kill 4242" "kill -9 4242" "cd repo && kill 4242" "pkill -f bashunit" "killall tmux" "cd repo && killall tmux"
+  '~/.config/pi/end-scratch-processes.sh 4242; kill 4343' '~/.config/pi/end-scratch-processes.sh 4242 && pkill tmux'
+)
 
 # One bun decides each command that a test checks, before the first test.
 # A command that is not in this list gives "missing", not a decision.
@@ -175,7 +187,7 @@ function set_up_before_script() {
     "rm -rf /tmp/out && /usr/bin/find . -name y" "rm -rf build && ls ~/Library/Logs" "rm -rf Game/Library" \
     "${UI_CONTROL[@]}" "${WIDE_SEARCHES[@]}" "${PROTECTED_READS[@]}" "${NARROW_READS[@]}" \
     "${RESEARCH_READS[@]}" "${RESEARCH_WRITES[@]}" "${WORK_READS[@]}" "${WORK_WRITES[@]}" \
-    "${PROTECTED_INSIDE_OPEN[@]}" "${GH_TOKEN_READS[@]}" \
+    "${PROTECTED_INSIDE_OPEN[@]}" "${GH_TOKEN_READS[@]}" "${END_SCRATCH_CALLS[@]}" "${PROCESS_SIGNALS[@]}" \
     > "$DECISIONS"
 }
 
@@ -496,6 +508,14 @@ function test_allows_a_subagent_to_read_the_sibling_repositories_and_home_tmp() 
 
 function test_allows_a_write_or_an_edit_in_the_sibling_repositories_and_home_tmp() {
   assert_same "$(printf 'allow %s\n' "${WORK_WRITES[@]}")" "$(decisions_for "${WORK_WRITES[@]}")"
+}
+
+function test_allows_the_script_that_ends_leftover_processes_by_its_path() {
+  assert_same "$(printf 'allow %s\n' "${END_SCRATCH_CALLS[@]}")" "$(decisions_for "${END_SCRATCH_CALLS[@]}")"
+}
+
+function test_asks_before_kill_pkill_or_killall_also_after_the_script() {
+  assert_same "$(printf 'ask %s\n' "${PROCESS_SIGNALS[@]}")" "$(decisions_for "${PROCESS_SIGNALS[@]}")"
 }
 
 # Prints "<decision> <command>" for each argument, from the decisions of
