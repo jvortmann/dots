@@ -1,6 +1,9 @@
 #!/bin/bash
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# A planted run that lasts this many seconds is hung. Under the load of other
+# suites, a run that works can take more than 10 seconds.
+HUNG_RUN_SECONDS=60
 
 PASSING_TEST='function test_passes() { assert_same 1 1; }'
 LONG_NAME_TEST='function test_has_a_name_that_is_longer_than_the_80_columns_of_a_terminal_that_gives_no_size() {
@@ -256,13 +259,13 @@ suite() {
 # it, such as TESTS_BUDGET_MS=1. With --in-a-terminal as the first argument,
 # the output of tests/run goes to a terminal of its own. The run gets no
 # variable of this bashunit run and no setting of the tests/run around it, as a
-# run from a shell does. A run that lasts 10 seconds gets KILL, so a hung run
-# cannot stop this file. With --interrupted and a signal as the first two
+# run from a shell does. A run that lasts HUNG_RUN_SECONDS gets KILL, so a hung
+# run cannot stop this file. With --interrupted and a signal as the first two
 # arguments, the run gets that signal once its test says that it started. The
 # file `state` of the suite then tells whether the tmux server of that test
 # still runs after the run.
 start_run() {
-  local runner=(timeout -s KILL 10 "$ROOT/tests/run" tests) name setting code=0 dir
+  local runner=(timeout -s KILL "$HUNG_RUN_SECONDS" "$ROOT/tests/run" tests) name setting code=0 dir
   if [[ $1 == --in-a-terminal ]]; then
     runner=(script -q /dev/null "${runner[@]}")
     shift
@@ -286,17 +289,22 @@ start_run() {
 # Runs the command $3... in a process group of its own, and sends the signal $2
 # to that group when the planted test writes to the FIFO started, as Ctrl-C
 # does. Then it writes the state of the tmux server of that test to the file
-# state, for the suite $1. A test that never writes gets the signal after 5
-# seconds.
+# state, for the suite $1. The command writes to started when it ends, so a
+# test that never writes stops the wait when its run ends. The trap keeps the
+# writer alive until the run ends.
 interrupt_run() {
   local suite=$1 signal=$2 started pid
   shift 2
   mkfifo started
   exec {started}<> started
   set -m
-  "$@" &
+  {
+    trap : "$signal"
+    "$@"
+    echo ended >&"$started"
+  } &
   pid=$!
-  read -r -t 5 -u "$started" _ || true
+  read -r -u "$started" _
   kill -"$signal" -- -"$pid"
   wait "$pid" || true
   server_state "$suite" > state
