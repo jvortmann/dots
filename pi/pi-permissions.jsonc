@@ -421,6 +421,46 @@
     "pkill -*/scratch//*": "ask",
     "pkill -* /*'*": "ask",
     "pkill -* /*\"*": "ask",
+    // A test runs a private tmux server and stops it at its end. An agent
+    // must stop a server that a hung test left, so that stop runs with no ask.
+    // It needs a socket name of the tests, or a socket path in a scratch
+    // folder, in a tmux folder of tests/run or in the temp folder. The allows
+    // follow the kill asks above, so the last match is an allow.
+    "tmux -L tests-run-?* kill-server": "allow",
+    "tmux -L bashunit-?* kill-server": "allow",
+    "tmux -L screen_test_?* kill-server": "allow",
+    "tmux -S /tmp/scratch/?* kill-server": "allow",
+    "tmux -S /private/tmp/scratch/?* kill-server": "allow",
+    "tmux -S /tmp/tests-run-tmux.?* kill-server": "allow",
+    "tmux -S /private/tmp/tests-run-tmux.?* kill-server": "allow",
+    "tmux -S /var/folders/*/T/?* kill-server": "allow",
+    "tmux -S /private/var/folders/*/T/?* kill-server": "allow",
+    // A second command, a substitution or a second word in the line asks.
+    // A second `-L default` would stop the server of the user.
+    "tmux -? * * kill-server": "ask",
+    "tmux -*\t* kill-server": "ask",
+    "tmux -*;* kill-server": "ask",
+    "tmux -*&* kill-server": "ask",
+    "tmux -*|* kill-server": "ask",
+    "tmux -*$* kill-server": "ask",
+    "tmux -*`* kill-server": "ask",
+    "tmux -*\n* kill-server": "ask",
+    "tmux -*>* kill-server": "ask",
+    "tmux -*<* kill-server": "ask",
+    // A `..` can climb to the socket of the user, so it asks.
+    "tmux -*..* kill-server": "ask",
+    // The default server is the server of the user, so each command on it
+    // by name asks.
+    "tmux -L default *": "ask",
+    "* tmux -L default *": "ask",
+    "tmux -Ldefault*": "ask",
+    "* tmux -Ldefault*": "ask",
+    "tmux -L \"default\"*": "ask",
+    "* tmux -L \"default\"*": "ask",
+    "tmux -L 'default'*": "ask",
+    "* tmux -L 'default'*": "ask",
+    "tmux -L default\t*": "ask",
+    "* tmux -L default\t*": "ask",
     "git push*": "ask",
     "* git push*": "ask",
     "docker run*": "ask",

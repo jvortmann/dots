@@ -188,6 +188,39 @@ SCRATCH_ROOT_PKILLS=(
   "pkill -f /tmp/scratch/''" 'pkill -TERM -f /tmp/scratch/""' "pkill -f /tmp/scratch/[^/]" "pkill -f /tmp/scratch/x{0}"
   'pkill -f /tmp/scratch/\.\*'
 )
+TEST_SERVER_STOPS=(
+  "tmux -L tests-run-4242 kill-server" "tmux -L bashunit-4242-1234 kill-server" "tmux -L screen_test_4242_1 kill-server"
+)
+TEST_SOCKET_PATH_STOPS=(
+  "tmux -S /tmp/scratch/step5.Ab12Cd/tmux-501/default kill-server"
+  "tmux -S /private/tmp/scratch/step5.Ab12Cd/sock kill-server"
+  "tmux -S /tmp/tests-run-tmux.Ab12Cd/out.1/tmux-501/bashunit-1-2 kill-server"
+  "tmux -S /private/tmp/tests-run-tmux.Ab12Cd/out.1/tmux-501/default kill-server"
+  "tmux -S /var/folders/ab/cd/T/bashunit.X/tmux-501/default kill-server"
+  "tmux -S /private/var/folders/ab/cd/T/bashunit.X/sock kill-server"
+)
+OTHER_SERVER_STOPS=(
+  "tmux kill-server" "tmux -L default kill-server" "tmux -L work kill-server" "tmux -S /Users/someone/sock kill-server"
+  "tmux kill-session -t main" "tmux -L tests-run-1 kill-session -t x" "rm -r /tmp/out; tmux -L tests-run-1 kill-server"
+)
+DEFAULT_SERVER_COMMANDS=(
+  "tmux -L default ls" "tmux -L default send-keys -t main q" "cd repo && tmux -L default ls"
+  "rm -r /tmp/out; tmux -L default ls" "tmux -Ldefault ls" 'tmux -L "default" ls' "tmux -L 'default' ls" "tmux -L default"
+  $'tmux -L default\tls' "cd repo && tmux -Ldefault ls"
+)
+CLIMBING_SERVER_STOPS=(
+  "tmux -S /tmp/scratch/../tmux-501/default kill-server" "tmux -S /var/folders/ab/cd/T/../../../../tmp/tmux-501/default kill-server"
+  "tmux -S /tmp/tests-run-tmux.x/../tmux-501/default kill-server" "tmux -L tests-run-x/../default kill-server"
+  "tmux -S /tmp/tmux-501/default kill-server" "tmux -S /private/tmp/tmux-501/default kill-server"
+)
+CHAINED_SERVER_STOPS=(
+  "tmux -L tests-run-1 kill-server; kill 1" "tmux -L tests-run-1 kill-server && kill 1" "cd repo && tmux -L tests-run-1 kill-server"
+  "tmux -L tests-run-1;kill 1;tmux -L tests-run-2 kill-server" "tmux -L tests-run-1;reboot;tests-run-2 kill-server"
+  "tmux -L tests-run-1&reboot&tests-run-2 kill-server" "tmux -L tests-run-1|sh|tests-run-2 kill-server"
+  'tmux -L tests-run-$(reboot) kill-server' 'tmux -L tests-run-`reboot` kill-server' $'tmux -L tests-run-1\nreboot\ntests-run-2 kill-server'
+  "tmux -L tests-run-1>/tmp/x kill-server" "tmux -L tests-run-1<x kill-server" "tmux -L tests-run-1 -L default kill-server"
+  $'tmux -L tests-run-1\t-L default kill-server'
+)
 
 # One bun decides each command that a test checks, before the first test.
 # A command that is not in this list gives "missing", not a decision.
@@ -235,6 +268,7 @@ function set_up_before_script() {
     "${RESEARCH_READS[@]}" "${RESEARCH_WRITES[@]}" "${WORK_READS[@]}" "${WORK_WRITES[@]}" \
     "${PROTECTED_INSIDE_OPEN[@]}" "${GH_TOKEN_READS[@]}" "${END_SCRATCH_CALLS[@]}" "${PROCESS_SIGNALS[@]}" \
     "${SCRATCH_PKILLS[@]}" "${WORK_FOLDER_PKILLS[@]}" "${SOCKET_PKILLS[@]}" "${CHAINED_PKILLS[@]}" "${SECOND_PATTERN_PKILLS[@]}" "${CLIMBING_PKILLS[@]}" "${SCRATCH_ROOT_PKILLS[@]}" \
+    "${TEST_SERVER_STOPS[@]}" "${TEST_SOCKET_PATH_STOPS[@]}" "${OTHER_SERVER_STOPS[@]}" "${DEFAULT_SERVER_COMMANDS[@]}" "${CLIMBING_SERVER_STOPS[@]}" "${CHAINED_SERVER_STOPS[@]}" \
     > "$DECISIONS"
 }
 
@@ -599,6 +633,30 @@ function test_asks_before_a_pkill_whose_pattern_climbs_out_of_the_folder() {
 
 function test_asks_before_a_pkill_of_every_process_in_the_scratch_folder() {
   assert_same "$(printf 'ask %s\n' "${SCRATCH_ROOT_PKILLS[@]}")" "$(decisions_for "${SCRATCH_ROOT_PKILLS[@]}")"
+}
+
+function test_allows_a_tmux_server_stop_on_a_socket_name_of_a_test() {
+  assert_same "$(printf 'allow %s\n' "${TEST_SERVER_STOPS[@]}")" "$(decisions_for "${TEST_SERVER_STOPS[@]}")"
+}
+
+function test_allows_a_tmux_server_stop_on_a_socket_path_in_a_test_or_temp_folder() {
+  assert_same "$(printf 'allow %s\n' "${TEST_SOCKET_PATH_STOPS[@]}")" "$(decisions_for "${TEST_SOCKET_PATH_STOPS[@]}")"
+}
+
+function test_asks_before_a_stop_of_any_other_tmux_server_or_session() {
+  assert_same "$(printf 'ask %s\n' "${OTHER_SERVER_STOPS[@]}")" "$(decisions_for "${OTHER_SERVER_STOPS[@]}")"
+}
+
+function test_asks_before_any_tmux_command_on_the_default_server_by_name() {
+  assert_same "$(printf 'ask %s\n' "${DEFAULT_SERVER_COMMANDS[@]}")" "$(decisions_for "${DEFAULT_SERVER_COMMANDS[@]}")"
+}
+
+function test_asks_before_a_tmux_server_stop_whose_socket_climbs_out_of_the_folder() {
+  assert_same "$(printf 'ask %s\n' "${CLIMBING_SERVER_STOPS[@]}")" "$(decisions_for "${CLIMBING_SERVER_STOPS[@]}")"
+}
+
+function test_asks_before_a_tmux_server_stop_with_another_command_or_word_in_the_line() {
+  assert_same "$(printf 'ask %s\n' "${CHAINED_SERVER_STOPS[@]}")" "$(decisions_for "${CHAINED_SERVER_STOPS[@]}")"
 }
 
 # Prints "<decision> <command>" for each argument, from the decisions of
