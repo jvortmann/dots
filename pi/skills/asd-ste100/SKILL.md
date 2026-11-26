@@ -90,5 +90,7 @@ Give a draft with no file of its own, such as a commit message, a `.txt`
 name. `ste-lint` skips a name such as `x.msg`, or one with no extension, and
 reports no fault.
 
-It reads Markdown, plain text and the comments in a source file. It cannot
-judge whether the text says the right thing, so read the result once yourself.
+It reads Markdown and plain text. In a source file, it reads a `#` or `//`
+comment only on line 1. Until the tool gets a fix, lint a code comment
+as a `.txt` copy. It cannot judge whether the text says the right thing, so
+read the result once yourself.
