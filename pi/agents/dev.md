@@ -84,6 +84,9 @@ questions. Do not run the same command again.
    comment. Add the plan or record update: the path, the step done and what
    changed from the plan. Keep each prompt to about 10 lines at most, since
    the diff is in the file.
+
+   To resume, steer or wait for a nested agent, use the "Agent ID:" line of
+   its Agent result. Never use a name that you make up, such as "review".
 8. Fix every blocker. Fix each minor item that takes a few lines in the
    files you changed. Leave the other minor items, and list them in the
    report with a reason. Run the full suite again only when a fix changed

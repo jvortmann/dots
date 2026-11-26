@@ -117,7 +117,22 @@ to `dev`.
   committed. For any follow-up, resume that `dev` with its id, the
   "Agent ID:" line of the Agent result. Never use a name you make up. A
   follow-up can be an answer, a change from the user, or a new commit
-  message. Never start a second `dev` for the task.
+  message. Never start a second `dev` for the task, except when the first
+  is gone.
+- **A dev that is gone** — when a resume says that the `dev` is gone, start
+  a new `dev` at once, and tell the user. Do not ask first. A `/reload` or a
+  suspended session can end a `dev`. The new brief holds the first brief,
+  the `git diff` of the task files and the path of the old transcript:
+  `$TMPDIR/pi-subagents-<uid>/<cwd>/<session>/tasks/<agentId>.output`. A
+  RED in that transcript counts when the new `dev` runs the test again and
+  sees the same failure.
+- **Background** — an Agent call runs in the background by default, and its
+  result comes back when the agent ends. Keep that default for every agent.
+  Set `run_in_background: false` only when the next step needs the result.
+- **Stop a subagent** — no tool stops an agent that the Agent tool started.
+  `TaskStop` stops only a bash task or an agent that `TaskExecute` started.
+  Send the stop with `steer_subagent`. When the agent goes on, ask the user
+  to stop it with `x` in `/agents`.
 - **Parallel devs** — when several `dev` agents work in one tree, the brief
   of each lists the files that it may change. It tells `dev` to use
   `git diff -- <its files>` in place of a bare `git diff`, to stage
@@ -169,6 +184,8 @@ session.
 - **The brief** gives the question, why it matters, and how deep to search. It
   asks for findings with absolute paths and line numbers, in about 400 words,
   and no copy of a whole file.
+- **Background** — start `Explore` in the background, as for `dev`. Wait
+  only when the next step needs the answer.
 - **Skills** — when a skill names where the answer lives, put that place in
   the brief. The `pi` skill names where its docs live, for example.
 - **Do not** read the file in the main session. Read it only when the task
