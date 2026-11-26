@@ -83,7 +83,9 @@ Good: Raise the pi version in settings
 
 ## Check the draft
 
-Write the draft to a temporary file and run both checks against it.
+Write the draft to a temporary file and run both checks against it. Give
+the file a `.txt` name. `ste-lint` skips a name such as `x.msg`, or one
+with no extension, and passes its text with no check.
 
 ```sh
 M=$(mktemp -t msg).txt
