@@ -57,9 +57,11 @@ work another way, such as `cat`, `python3` or a heredoc in bash.
 1. Draft the text. For an edit, take the count of the committed file first, and
    keep it. Use this command, and no other git call for it:
    `O=$(mktemp -t old).md; git show HEAD:<file> > "$O"; ste-lint "$O"; rm "$O"`
-2. Check it. Write a message to a file from `mktemp`, then run `ste-lint` on
-   it and `bash ~/.config/git/hooks/commit-msg` on it. Run `ste-lint` alone
-   for other text.
+2. Check it. Write a draft that has no file of its own, such as a message,
+   to a file with a `.txt` name: `M=$(mktemp -t msg).txt`. `ste-lint` skips
+   a `.msg` name, or one with no extension, and reports no fault. Run
+   `ste-lint` on the file, and for a message also run
+   `bash ~/.config/git/hooks/commit-msg` on it.
 3. Read the reason for each fault of the run. Fix all the faults in one edit,
    then check again. When the same `ste-lint` fault comes back on a sentence,
    split that sentence in two. Never trick a check by splitting a word or by
