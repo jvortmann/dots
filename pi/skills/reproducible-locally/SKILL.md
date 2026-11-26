@@ -29,6 +29,10 @@ a file on disk.
   can run again.
 - Reading a setting back after you wrote it proves the write, not the effect.
   Check the effect.
+- A probe never holds the text that it expects back. When the prompt or the
+  fixture holds the answer, the agent can repeat it without the behavior.
+  Assert a fact that only the behavior makes, such as a read of the file in
+  the session record.
 
 Devise the proof for each change. There is no standing recipe, because each
 change fails in its own way.
@@ -39,6 +43,13 @@ Find every place that runs the changed code before you choose the proof, and
 cover the ones that differ. A check in your own shell can pass while the same
 code fails elsewhere. Look at a run without a terminal, inside tmux, in a
 preview, in CI, and in a worktree.
+
+When your check cannot run in one of those places, build a harness that
+can. A program that reads the terminal needs a pseudo-terminal. A change on
+the screen needs a screenshot that a script compares. When you cannot
+build one, the outcome is not verified, and the report names that place. A
+command that you give the user to run is not proof, so give it under not
+verified.
 
 ## Report one outcome
 

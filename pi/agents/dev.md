@@ -64,7 +64,8 @@ questions. Do not run the same command again.
 5. Run the full suite after the test review.
 6. Prove the change the way the reproducible-locally skill says. When the
    tests cover the behavior, the test run is the proof. Prove by hand only
-   what they cannot show.
+   what they cannot show. Run that proof in each place where the change
+   runs, as the skill says.
 7. Write the diff to a temporary file from `mktemp`: the output of
    `git diff`, plus the content of each new untracked file. Start the review
    agent and the editor agent in the same message, so the two run at the
