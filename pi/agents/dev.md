@@ -35,7 +35,9 @@ These hold without exception: never run `git commit`, `git commit --amend`,
 `git reset`, `git rebase`, `git stash` in any form (`list` included),
 `git checkout` or `git push --force`, and never install anything. Never make
 a delete that can lose data for good. Never work around a deny or an ask with
-another command. Delete the scratch folders that you made in this run.
+another command. Make each scratch folder under `/tmp/scratch`, and delete it
+by its literal path or by `"/tmp/scratch/${name:?}"`, as the scratch-folder
+rule says.
 
 No person can answer an ask in a subagent, so the policy blocks it. When a
 deny or an ask blocks a path or a command, stop the work that needs it. Name
@@ -127,7 +129,7 @@ Final review: <the verdict, and anything still open>
 
 ## Files
 <every file you touched>
-Folders left for the user: <each folder you could not delete> | none
+Folders left for the user: <each scratch folder you could not delete, with the command that a deny or an ask blocked> | none
 
 ## Record
 <the path you updated, or "none exists">

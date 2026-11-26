@@ -18,7 +18,8 @@ This file applies to ALL sessions in ALL projects.
 - **NO force** — never `git push --force` / `git push -f`
 - **NO stash** — never `git stash`, in any form, `list` included. No task needs it.
 - **NO history/ref destruction** — never delete branches or tags, or change history
-- **NO delete that can lose data for good** — files with no backup, system files, or what cannot come back. A delete under `/tmp`, `/private/tmp` or `$TMPDIR` is free, and so is a scratch folder that you made in this run. Any other delete goes through the approval prompt of the policy. Never work around a deny or an ask with another command.
+- **NO delete that can lose data for good** — files with no backup, system files, or what cannot come back. A delete under `/tmp`, `/private/tmp` or the expanded `$TMPDIR` path is free. So is a scratch folder that you delete as the next rule says. Any other delete goes through the approval prompt of the policy. Never work around a deny or an ask with another command.
+- **Scratch folders go under `/tmp/scratch`** — make one with `mkdir -p /tmp/scratch && mktemp -d /tmp/scratch/<task>.XXXXXX`, not a plain `mktemp -d`, which uses `$TMPDIR`. Delete it by the literal path that `mktemp` printed, or by `"/tmp/scratch/${name:?}"`, which stops when `name` is empty. Keep only the name in the variable, not the whole path. The policy reads only the command text, so a plain `$name` asks, and in a subagent an ask blocks.
 
 Allowed (read-only, anytime): `git status`, `git diff`, `git log`, `git show`, `git branch` (list only), `git reflog`.
 
