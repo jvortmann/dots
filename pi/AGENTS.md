@@ -138,6 +138,12 @@ session.
 - **Do not** read the file in the main session. Read it only when the task
   changes that file, or to check one line that `Explore` cited.
 - **Exception** — the user asks the main session to read it.
+- **Experiments** — `Explore` only reads, so it cannot run an experiment.
+  Give an experiment or a measurement, such as a probe or a timing, to
+  `general-purpose`. Its brief names the files and folders that it may
+  write, and tells it to end each process with `timeout`, not `kill`. A
+  live diagnosis of the processes, apps or settings of this machine stays
+  in the main session.
 
 ### Ask with the tool
 
