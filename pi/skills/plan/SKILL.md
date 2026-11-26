@@ -83,8 +83,9 @@ becomes one commit.
 - Say what a step does, and never paste its code. The code comes when the
   step runs.
 - Make the last step a review of the documentation near the changed code.
-  It also runs each "Done when" item, one by one. The progress log records
-  the command and its result. An item with no recorded result is not done.
+  It also runs each "Done when" item, one by one. The progress log or its
+  archive records the command and its result. An item with no recorded
+  result is not done.
 
 Split the steps by kind, because each step is one commit:
 
@@ -101,9 +102,18 @@ The plan is also the record of the work. Keep two lists at its end:
 
 - **Steps**, a checkbox for each step, marked with the date it finished.
 - **Progress log**, a row for each task with the date, what happened, and the
-  outcome.
+  outcome. A row is one line of at most 300 characters. The detail goes in the
+  commit message or in the report of the task.
 
 After each task, mark its step, add its row, and update the status, the current
-focus and the last-updated date. Record what changed from the plan and why. A
-plan that still describes the first idea after five steps misleads the agent
-that reads it next.
+focus and the last-updated date. Record what changed from the plan and why.
+Then archive the log when it has more than 20 rows. A plan that still
+describes the first idea after five steps misleads the agent that reads it
+next.
+
+To archive the log, move all rows except the last 10 to the end of a file
+beside the plan. Keep their order. Name the file after the plan, with `-log`
+before `.md`: `plans/auth.md` gets `plans/auth-log.md`. When that file does
+not exist, start it with the table header. Under the log heading of the plan,
+add a line that gives the path of the archive. A long log makes the plan
+large, and an edit of a large plan fails more often.
