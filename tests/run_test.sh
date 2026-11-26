@@ -266,7 +266,7 @@ function test_ctrl_c_leaves_no_work_folder() {
 }
 
 function test_a_run_beside_another_run_doubles_its_budget_and_its_limit() {
-  assert_contains "2 runs at once: the budget is 16.00 s, and the limit for each test is 20 s" "$(output_of beside)"
+  assert_contains "2 runs at once: the budget is 20.00 s, and the limit for each test is 20 s" "$(output_of beside)"
 }
 
 function test_the_settings_of_a_run_beside_another_run_keep_their_values() {

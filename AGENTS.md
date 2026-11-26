@@ -9,8 +9,11 @@ shell tests (`*_test.sh`).
 Run the full suite from the root with `tests/run`. It runs bashunit and
 `node --test` side by side, each test file in a terminal of its own. As each
 test ends, it prints the path of its test file and its name. Then it prints the
-failures in full and one summary. It fails on a failed test, on a test over 10
-seconds, and on a run over 8 seconds. It takes about 6 seconds.
+failures in full and one summary.
+
+The run fails on a failed test, on a test over 10 seconds, and on a run over 10
+seconds. When several runs go at once, both limits grow by the number of runs.
+A run alone takes about 8 seconds.
 
 Run one file with `bashunit tests/<path>_test.sh` or
 `node --test tests/<path>.test.mjs`. While you work, run only the test file

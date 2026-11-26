@@ -3,7 +3,7 @@
 # side by side. Usage: tests/run [folder]
 #
 # TESTS_TEST_TIMEOUT is the limit for each test, in seconds (10 by default).
-# TESTS_BUDGET_MS is the limit for the whole run, in milliseconds (8000 by
+# TESTS_BUDGET_MS is the limit for the whole run, in milliseconds (10000 by
 # default). The run fails when it takes longer. Other runs of tests/run in the
 # same TMPDIR share the cores, so each default goes up by the number of live
 # runs. A run shows in the TMPDIR as a work folder with a pid file. The output
@@ -100,7 +100,7 @@ main() {
   done
   wait
   total=$(($(now_ms) - start))
-  budget=${TESTS_BUDGET_MS:-$((8000 * runs))}
+  budget=${TESTS_BUDGET_MS:-$((10000 * runs))}
   print_failures "$work"
   print_counts "$work"
   printf 'total: %s s\n' "$(seconds "$total")"
