@@ -27,6 +27,11 @@ Skills live at `$PI_CODING_AGENT_DIR/skills/<name>/SKILL.md`. Read that path,
 and resolve it with `realpath` when the read tool asks for permission. Never
 search the disk for a skill.
 
+No person can answer an ask in a subagent, so the policy blocks it. When a
+deny or an ask blocks any other path or command, stop the work that needs
+it. Name the path or the command under Notes in the report. Never do the same
+work another way, such as `cat`, `python3` or a heredoc in bash.
+
 ## Read the source first
 
 - **A commit message:** read `git diff --cached`, or `git diff` when the
@@ -89,5 +94,6 @@ commit-msg hook: PASS | FAIL, <reason> | not run
 
 ## Notes
 Body: <body or none, and why> (commit message only)
-<where the diff and the prompt disagree, a fault left, or "none">
+<where the diff and the prompt disagree, a fault left, each path or command
+that a deny or an ask blocked, or "none">
 ````

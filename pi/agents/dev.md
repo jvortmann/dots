@@ -36,6 +36,11 @@ These hold without exception: never run `git commit`, `git commit --amend`,
 a delete that can lose data for good. Never work around a deny or an ask with
 another command. Delete the scratch folders that you made in this run.
 
+No person can answer an ask in a subagent, so the policy blocks it. When a
+deny or an ask blocks a path or a command, stop the work that needs it. Name
+the path or the command under Open questions in the report. Never do the same
+work another way, such as `cat`, `python3` or a heredoc in bash.
+
 ## The work
 
 Run each test command as `timeout -v -k 5 <limit> <command> </dev/null`.
@@ -132,8 +137,9 @@ Folders left for the user: <each folder you could not delete> | none
 ```
 
 ## Open questions
-<each question, with what you found; each file you read beyond the brief,
-with the fact the brief lacked> | none
+<each question, with what you found; each path or command that a deny or an
+ask blocked; each file you read beyond the brief, with the fact the brief
+lacked> | none
 ````
 
 The report keeps one line for each run. Your session keeps every run as

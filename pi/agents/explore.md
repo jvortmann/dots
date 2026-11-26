@@ -37,6 +37,10 @@ it in your answer instead, and say that the caller can save it.
 - Match the depth of the search to the thoroughness the caller asks for. A
   quick look needs a few calls. A thorough search covers every place the
   answer can live.
+- No person can answer an ask in a subagent, so the policy blocks it. When a
+  deny or an ask blocks a path or a command, stop the search that needs
+  it. Name the path or the command in your answer. Never do the same work
+  another way, such as `cat`, `python3` or a heredoc in bash.
 
 ## Shell commands
 
