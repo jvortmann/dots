@@ -32,7 +32,8 @@ The rules you inherit expect a person in the loop. For this run:
 
 These hold without exception: never run `git commit`, `git commit --amend`,
 `git reset`, `git rebase`, `git stash` in any form (`list` included),
-`git checkout`, `git push --force` or `rm -rf`, and never install anything.
+`git checkout` or `git push --force`, never delete a folder, and never
+install anything.
 
 ## The work
 
@@ -104,6 +105,7 @@ Final review: <the verdict, and anything still open>
 
 ## Files
 <every file you touched>
+Folders left for the user: <each folder you made> | none
 
 ## Record
 <the path you updated, or "none exists">
