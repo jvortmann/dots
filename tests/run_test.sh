@@ -266,11 +266,13 @@ suite() {
 # it, such as TESTS_BUDGET_MS=1. With --in-a-terminal as the first argument,
 # the output of tests/run goes to a terminal of its own. The run gets no
 # variable of this bashunit run and no setting of the tests/run around it, as a
-# run from a shell does. A run that lasts HUNG_RUN_SECONDS gets KILL, so a hung
-# run cannot stop this file. With --interrupted and a signal as the first two
-# arguments, the run gets that signal once its test says that it started. The
-# file `state` of the suite then tells whether the tmux server of that test
-# still runs after the run.
+# run from a shell does. Only its budget is different: it is the same as the
+# KILL limit, unless a setting gives another one. So the load of other suites
+# does not fail a run that works. A run that lasts HUNG_RUN_SECONDS gets KILL,
+# so a hung run cannot stop this file. With --interrupted and a signal as the
+# first two arguments, the run gets that signal once its test says that it
+# started. The file `state` of the suite then tells whether the tmux server of
+# that test still runs after the run.
 start_run() {
   local runner=(timeout -s KILL "$HUNG_RUN_SECONDS" "$ROOT/tests/run" tests) name setting code=0 dir
   if [[ $1 == --in-a-terminal ]]; then
@@ -287,6 +289,7 @@ start_run() {
     for name in $(compgen -e); do
       [[ $name == *BASHUNIT* || $name == TESTS_* ]] && { unset "$name" 2> /dev/null || true; }
     done
+    export TESTS_BUDGET_MS=$((HUNG_RUN_SECONDS * 1000))
     for setting in "$@"; do export "${setting?}"; done
     "${runner[@]}" > output 2>&1 < /dev/null || code=$?
     echo "$code" > code
