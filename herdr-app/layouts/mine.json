@@ -62,7 +62,7 @@
                   "focus": { "width": 1, "color": "accent" },
                   "radius": 0,
                   "gap": 1,
-                  "lone": false
+                  "lone": true
                 }
               }
             },
