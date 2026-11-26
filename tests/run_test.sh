@@ -31,6 +31,7 @@ TMUX_TEST='function test_starts_a_tmux_server_and_reads_the_terminal() {
 }'
 STARTED_TMUX_TEST='function test_starts_a_tmux_server_says_so_and_waits_for_go() {
   tmux -L "tests-run-$$" -f /dev/null new-session -d -P -F "#{pid} #{socket_path}" cat > server
+  echo "$BASHPID" > test_pid
   { echo started > started; read -r _; } < go
 }'
 HELD_TEST='function test_says_it_started_and_waits_for_go() {
@@ -256,6 +257,14 @@ function test_ends_the_tmux_server_of_a_test_when_ctrl_c_stops_the_run() {
   assert_same "ended" "$(cat "$SUITES/stopped_with_ctrl_c/state")"
 }
 
+function test_ctrl_c_ends_the_test_files_of_the_run() {
+  assert_same "ended" "$(cat "$SUITES/stopped_with_ctrl_c/test_state")"
+}
+
+function test_ctrl_c_leaves_no_work_folder() {
+  assert_same "" "$(compgen -G "$SUITES/stopped_with_ctrl_c/tmp/tests-run.*")"
+}
+
 function test_a_run_beside_another_run_doubles_its_budget_and_its_limit() {
   assert_contains "2 runs at once: the budget is 16.00 s, and the limit for each test is 20 s" "$(output_of beside)"
 }
@@ -393,6 +402,7 @@ interrupt_run() {
   echo ended >&"$started"
   wait "$watch"
   server_state "$suite" > state
+  planted_test_state "$suite" > test_state
   echo >&"$go"
   return "$code"
 }
@@ -405,6 +415,18 @@ server_state() {
   if [[ ! $pid =~ ^[0-9]+$ ]]; then
     echo "no server"
   elif kill -0 "$pid" 2> /dev/null; then
+    echo "running"
+  else
+    echo "ended"
+  fi
+}
+
+# Prints running or ended for the planted test of the suite $1. A test that
+# KILL ended stays a zombie until a parent reaps it. A zombie counts as ended.
+planted_test_state() {
+  local pid
+  read -r pid < "$SUITES/$1/test_pid"
+  if [[ $(ps -o stat= -p "$pid") == [^Z]* ]]; then
     echo "running"
   else
     echo "ended"

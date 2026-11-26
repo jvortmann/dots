@@ -67,6 +67,9 @@ main() {
   # timeout sends TERM to the run and then to its group. A second TERM would
   # stop the EXIT trap.
   trap 'trap "" TERM; exit 143' TERM
+  # Ctrl-C sends INT to the run. A test file runs in a background job, which
+  # ignores INT, so the run ends the test files itself.
+  trap stop_on_ctrl_c INT
   exec {progress}>&1
   start=$(now_ms)
   # Each bashunit gets COLUMNS=500. It cuts each name to the width of its
@@ -112,9 +115,37 @@ main() {
   for out in "${outs[@]}"; do
     [[ $(cat "$out.code" 2> /dev/null) == 0 ]] || status=1
   done
-  rm -f "$work"/*
-  rmdir "$work"
+  remove_work_folder "$work"
   return "$status"
+}
+
+# Ends each process of each test file with KILL, waits until each one is gone,
+# and removes the work folder. bashunit can leave a process of a test behind
+# when it ends. So the run does not stop at the runner of the file. A second
+# INT does not stop the wait. A process can start while lsof reads the list.
+# So the run reads the list again until no process holds a file.
+stop_on_ctrl_c() {
+  trap "" INT
+  : > "$work/interrupted"
+  while end_holders "$work"/*.held; do :; done
+  while [[ -n $(jobs -pr) ]]; do wait; done
+  remove_work_folder "$work"
+  exit 130
+}
+
+# Ends with KILL each process that holds one of the files $@ open. Returns 1
+# when no process holds one.
+end_holders() {
+  local pids
+  mapfile -t pids < <(lsof -t "$@" 2> /dev/null)
+  ((${#pids[@]})) || return 1
+  kill -KILL "${pids[@]}" 2> /dev/null
+  return 0
+}
+
+remove_work_folder() {
+  rm -f "$1"/*
+  rmdir "$1"
 }
 
 # Prints the number of live runs of tests/run in TMPDIR, this run included, or
@@ -139,14 +170,26 @@ now_ms() {
 # run. The input of the terminal is a pipe that stays open and empty. A test
 # that reads the terminal then waits until its limit. It never reads the keys
 # of the user.
+#
+# Each process of the test file holds the file $1.held open, and the end of a
+# pipe to a reader. After Ctrl-C, the run ends each process that holds
+# $1.held. Then run_part waits until the reader gets the end of the pipe.
 run_part() {
-  local out=$1 area=$2 input
+  local out=$1 area=$2 input alive reader held
   shift 2
+  : > "$out.held"
+  exec {alive}> >(exec cat > /dev/null)
+  reader=$!
+  # shellcheck disable=SC2034
   exec {input}> >(exec script -q /dev/null bash -c \
     '{ "${@:7}"; code=$?; end_tmux_servers "$TMUX_TMPDIR"; exit "$code"; } 2>&1 | tee "$1.log" | { awk -v pass="$4" -v fail="$5" -v area="$6" "$3" >&"$2"; cat > /dev/null; }; echo "${PIPESTATUS[0]}" > "$1.code"' \
-    _ "$out" "$progress" "$PROGRESS_LINES" "$pass" "$fail" "$area" "$@" > "$out.pty" 2>&1)
+    _ "$out" "$progress" "$PROGRESS_LINES" "$pass" "$fail" "$area" "$@" > "$out.pty" 2>&1 {held}< "$out.held")
+  exec {alive}>&-
   wait "$!"
   exec {input}>&-
+  if [[ -e ${out%/*}/interrupted ]]; then
+    wait "$reader"
+  fi
   echo "$(($(now_ms) - start))" > "$out.ms"
 }
 
