@@ -252,6 +252,20 @@ function test_fits_the_window_to_the_rows_of_the_terminal() {
   assert_same "prompt>" "$(cat "$SCRATCH/clipboard")"
 }
 
+function test_fits_the_window_to_the_rows_of_the_terminal_when_hc_gives_them_late() {
+  fake hc 'case $1 in
+    get) read -r -t 5 _ < "$0.channel"; sleep 0.7; printf "{\"cols\":40,\"rows\":%s}\n" "$(cat "$SCRATCH/rows")" ;;
+    label) ;;
+    *) cat "$SCRATCH/paint"; '"$FAKE_REPORT"' ;;
+  esac'
+  open_channel "$SCRATCH/bin/hc"
+  ROWS=6 paint "old 1" "s1|s2|s3|s4|s5|prompt>" 6 8
+
+  press "LVy"
+
+  assert_same "prompt>" "$(cat "$SCRATCH/clipboard")"
+}
+
 function test_shows_the_screen_of_the_terminal_at_the_top_of_the_window() {
   press "HVy"
 

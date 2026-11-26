@@ -46,7 +46,7 @@ function _G.copy_mode_open(source, selection)
   local size = vim.system({ "hc", "get", "--json", source })
   local paint = capture_first_paint(source)
   if paint == "" then vim.cmd("qa!") end
-  fit_to(size:wait(500))
+  fit_to(size:wait())
   show(paint)
   show_position()
   vim.api.nvim_create_autocmd({ "CursorMoved", "WinScrolled" }, { callback = show_position })
