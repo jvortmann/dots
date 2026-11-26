@@ -62,11 +62,9 @@ work another way, such as `cat`, `python3` or a heredoc in bash.
    Use this command:
    `mkdir -p /tmp/scratch; C=$(basename "$(mktemp /tmp/scratch/cmt.XXXXXX)"); rg -P '^\s*(#(?!!)|//|-- )' <(git show HEAD:<file>) > "/tmp/scratch/$C.txt"; ste-lint "/tmp/scratch/$C.txt"; rm "/tmp/scratch/${C:?}" "/tmp/scratch/${C:?}.txt"`
 2. Check it. Write a draft that has no file of its own, such as a message,
-   to a file with a `.txt` name: `M=$(mktemp -t msg).txt`. `ste-lint` skips
-   a `.msg` name, or one with no extension, and reports no fault. `mktemp`
-   makes the file without `.txt`, so remove both at the end:
-   `rm "${M%.txt}" "$M"`. Run
-   `ste-lint` on the file, and for a message also run
+   to a file as "Check the draft" in the `git-commit` skill says. Remove both
+   files that it makes at the end: `rm <path> <path>.txt`. Run `ste-lint` on
+   the file, and for a message also run
    `bash ~/.config/git/hooks/commit-msg` on it. For a comment in code, run the
    command of step 1 with `<file>` in place of `<(git show HEAD:<file>)`, so
    the two counts compare.

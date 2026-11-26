@@ -113,11 +113,10 @@ questions. Do not run the same command again.
    When a later fix changes it, edit the note yourself and check it as
    step 11 says.
 11. When a fix changes a sentence of the message, a comment or the plan
-   note, change it yourself. Write the message to a `.txt` file, as the
-   `git-commit` skill shows, because `ste-lint` skips a name with no
-   extension. Then run `ste-lint` on each file and the commit-msg hook on
-   the message, and fix what they report. Ask the editor
-   again only for new text of more than two sentences. Do not commit or
+   note, change it yourself. Write the message to a file, as "Check the
+   draft" in the `git-commit` skill says. Then run `ste-lint` on each file
+   and the commit-msg hook on the message, and fix what they report. Ask the
+   editor again only for new text of more than two sentences. Do not commit or
    touch the clipboard, which belongs to the caller, and put the message in
    the report. When the hook rejects only a tool or code name that the
    editor listed for `zg`, the message is final.

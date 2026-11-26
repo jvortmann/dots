@@ -86,8 +86,11 @@ Good: Raise the pi version in settings
 Write the draft to a temporary file with the write tool, and run both
 checks against it. Never write it with a heredoc in bash. The policy reads
 every word of a bash line. A word of the message can trip a deny or an ask
-there. Give the file a `.txt` name. `ste-lint` skips a name such as `x.msg`,
-or one with no extension, and passes its text with no check.
+there.
+
+Give the file a `.txt` name. `ste-lint` skips a name such as `x.msg`, or one
+with no extension, and passes its text with no check. This holds for each
+draft with no file of its own, such as a pull request body.
 
 1. Run `mktemp -t msg`. It makes an empty file and prints its path, here
    `<path>`.
