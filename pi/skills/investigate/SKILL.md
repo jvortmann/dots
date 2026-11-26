@@ -16,6 +16,11 @@ a named cause, and not at a fix.
 - An empty result proves nothing until a positive control passes. Run the same
   query against a case you know exists. A wrong field, time window or pattern
   also comes back empty.
+- An input that you cannot read blocks the diagnosis. A photo, a screenshot or
+  a log on another machine are examples. Ask for it at once, as an exact path
+  or as text. Until you read it, the outcome is inconclusive. Do not search a
+  folder that macOS protects or take a screenshot to get it. Each one can make
+  macOS show the user a privacy prompt.
 
 ## The order
 
