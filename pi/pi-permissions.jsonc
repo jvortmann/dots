@@ -318,6 +318,17 @@
     // makes its scratch folders. The temp rules check only a name directly
     // under a temp folder. A name that can be empty asks. A `${name:?}` name
     // runs, also in quotes. A delete of the whole folder asks.
+    //
+    // A scratch folder delete, then a scratch file delete, runs with more
+    // commands after them. Without these rules, the space in the file delete
+    // looks like a second target to the asks above. The folder delete keeps
+    // one target, so a space or a tab before the file delete still asks.
+    "rm -? /tmp/scratch/?*; rm /tmp/scratch/?*": "allow",
+    "rm -?? /tmp/scratch/?*; rm /tmp/scratch/?*": "allow",
+    "rm -? /tmp/scratch/* *; rm /tmp/scratch/*": "ask",
+    "rm -?? /tmp/scratch/* *; rm /tmp/scratch/*": "ask",
+    "rm -? /tmp/scratch/*\t*; rm /tmp/scratch/*": "ask",
+    "rm -?? /tmp/scratch/*\t*; rm /tmp/scratch/*": "ask",
     "rm -*/tmp/scratch/$*": "ask",
     "rm -? /tmp/scratch/${*:?}": "allow",
     "rm -?? /tmp/scratch/${*:?}": "allow",

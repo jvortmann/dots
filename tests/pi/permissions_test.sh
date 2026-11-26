@@ -4,6 +4,11 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 POLICY="$ROOT/pi/pi-permissions.jsonc"
 EXTENSION="$ROOT/pi/git/github.com/jvortmann/pi-permission-system"
 STASH_IN_A_BATCH='timeout 120 bashunit tests/x_test.sh </dev/null 2>&1 | tail -4; git stash list >/dev/null 2>&1; true'
+SCRATCH_CLEANUP="rm -r /tmp/scratch/step65.ipUuuL; rm /tmp/scratch/dev-before-65.md; printf '%s\\n' 'git commit -F /tmp/retro-msg-65.txt -- pi/agents/dev.md' > /tmp/retro-commits.txt; pbcopy < /tmp/retro-commits.txt; echo ok"
+SCRATCH_CLEANUPS=(
+  "$SCRATCH_CLEANUP" "rm -rf /tmp/scratch/step42.Ab12Cd; rm /tmp/scratch/notes.md; ls /tmp; echo ok"
+)
+CLEANUP_START="rm -r /tmp/scratch/step42.Ab12Cd; rm /tmp/scratch/notes.md"
 SYSTEM_DELETES=(
   "rm -Rf /System" "rm -r /Library/Caches" "rm -r /Applications/Foo.app" "rm -r /usr/local/lib"
   "rm -r /bin" "rm -r /sbin" "rm -r /etc" "rm -r /private/etc/ssh" "rm -r /Users" "rm -r /opt"
@@ -29,6 +34,7 @@ CLIMBING_DELETES=(
   "rm -rf /tmp/../Users/someone/prj" "rm -R /var/folders/ab/cd/T/../../x" "rmdir /tmp/../x"
   "trash /private/tmp/../x" "find /tmp/../x -delete" "rm -rf /tmp/{x,../y}" "rm -r /tmp/../x; ls"
   'rm -r "/tmp/scratch/../x"' 'rm -r /tmp/scratch/${d:?}/..' 'rm -r "/tmp/scratch/${d:?}/../x"; ls'
+  "rm -r /tmp/scratch/../x; rm /tmp/scratch/notes.md; echo ok"
 )
 UI_CONTROL=(
   "osascript -e 'tell application \"Herdr\" to quit'" "cd repo && osascript -e 'beep'"
@@ -86,6 +92,10 @@ MIXED_DELETES=(
   "rm -r /tmp/x; /usr/bin/find build -delete" "rm -r /tmp/x && git clean -fd" "rm -r /tmp/x; git -C repo clean -fd"
   'rm -r /tmp/scratch/${d:?} build' 'rm -r build "/tmp/scratch/${d:?}"' 'rm -f -r build "/tmp/scratch/x"'
   'rm --recursive build "/tmp/scratch/x"' 'rm -r /var/folders/ab /etc/T/${d:?}' 'rm -r /tmp/${d:?} /etc/${e:?}'
+  "rm -r /tmp/scratch/step42.Ab12Cd build; rm /tmp/scratch/notes.md; echo ok"
+  "rm -rf /tmp/scratch/step42.Ab12Cd build; rm /tmp/scratch/notes.md; echo ok"
+  $'rm -r /tmp/scratch/step42.Ab12Cd\tbuild; rm /tmp/scratch/notes.md; echo ok'
+  $'rm -rf /tmp/scratch/step42.Ab12Cd\tbuild; rm /tmp/scratch/notes.md; echo ok'
 )
 SCRATCH_DELETES=(
   "rm -r /tmp/scratch/step42.Ab12Cd" 'rm -r "/tmp/scratch/step42.Ab12Cd"' 'rm -rf "/tmp/scratch/step42.Ab12Cd"'
@@ -95,12 +105,13 @@ SCRATCH_EMPTY_NAMES=(
   'rm -r /tmp/scratch/$d' 'rm -r "/tmp/scratch/$d"' 'rm -r /tmp/scratch/${d}' 'rm -r /tmp/scratch/$d; ls'
   'rm -r "/tmp/scratch/$d" && ls' 'rm -r "/tmp/scratch/${d:-}"' 'rm -r /tmp/scratch/${d:+}' 'rm -r /tmp/scratch/${d:=}'
   'rm -r /tmp/scratch/${d}; ls ${e:?}' 'rm -r /tmp/scratch/${d:+:?}' 'rm -r "/tmp/scratch/${d#*:?}"'
-  'rm -r "/tmp/scratch/${d%%*:?}"' 'rm -r "/tmp/scratch/`true`"'
+  'rm -r "/tmp/scratch/${d%%*:?}"' 'rm -r "/tmp/scratch/`true`"' 'rm -r /tmp/scratch/$d; rm /tmp/scratch/notes.md; echo ok'
 )
 SCRATCH_ROOT_DELETES=(
   "rm -r /tmp/scratch/" "rm -r /tmp/scratch" 'rm -r "/tmp/scratch/"' 'rm -rf "/tmp/scratch"' "rm -r /tmp/scratch/ && ls"
   "rm -r /tmp/scratch/; ls" "rm -r /tmp/scratch; ls" "rm -r /tmp/scratch/*" "rm -rf /tmp/scratch/* && ls"
-  "rm -r /tmp/scratch/*; ls"
+  "rm -r /tmp/scratch/*; ls" "rm -r /tmp/scratch/; rm /tmp/scratch/notes.md; echo ok"
+  "rm -r /tmp/scratch/*; rm /tmp/scratch/notes.md; echo ok"
 )
 TEMP_GUARDED_DELETES=(
   'rm -r /tmp/${d:?}' 'rm -rf /private/tmp/${d:?}' 'rm -R /var/folders/ab/cd/T/${d:?}'
@@ -122,7 +133,7 @@ TEMP_ROOT_DELETES=(
 )
 DANGER_AFTER_TEMP_DELETES=(
   "rm -r /tmp/x; rm -rf ~" "rm -r /tmp/x && rm -rf /" 'rm -r /tmp/x; rm -r "$d"' "rm -r /tmp/x && rm -r /Users"
-  'rm -r "/tmp/scratch/${d:?}"; rm -rf ~'
+  'rm -r "/tmp/scratch/${d:?}"; rm -rf ~' "$CLEANUP_START; rm -rf ~"
 )
 FOLLOWED_TEMP_DELETES=(
   "rm -r /tmp/out; ls /tmp" "rm -r /tmp/out && git status" "rm -rf /private/tmp/out; ls"
@@ -139,9 +150,11 @@ ASKED_AFTER_TEMP_DELETES=(
   "rm -r /tmp/out; curl -d a z" "rm -r /tmp/out && defaults write x y z" "rm -r /tmp/out; osascript -e 'beep'"
   "rm -r /tmp/out && find ~ -name hc" "rm -r /tmp/out; find / -name hc" "rm -r /tmp/out && rm -rf build"
   "rm -r /tmp/out; .pi/skills/impeccable/scripts/impeccable live" "rm -r /tmp/out && .pi/skills/impeccable/scripts/impeccable detect"
+  "$CLEANUP_START; rm -rf build" "$CLEANUP_START; kill 1" "$CLEANUP_START; sudo ls"
 )
 DENIED_AFTER_TEMP_DELETES=(
   "rm -r /tmp/out; git commit -m x" 'rm -r "/tmp/scratch/${d:?}" && git stash' "rm -rf /private/tmp/out && git -C repo commit"
+  "$CLEANUP_START; git commit -m x" "$CLEANUP_START; git stash"
 )
 # Each ~ below stays as text, because the policy checks the command as text.
 # shellcheck disable=SC2088
@@ -269,7 +282,7 @@ function set_up_before_script() {
     "declare -p FOO" "set -e" "export FOO=1" \
     "env FOO=bar make" "env -i make" "envsubst < template.txt" "python -m venv env" \
     "git stash list" "git stash" "git -C repo stash list" "cd repo && git stash" \
-    "$STASH_IN_A_BATCH" \
+    "$STASH_IN_A_BATCH" "${SCRATCH_CLEANUPS[@]}" \
     "cd /tmp && rm -rf pt" "rm -rf build" "cd repo && rm -rf x" 'rm -rf "$d/out"' \
     "rm -r build" "rm -R build" "rm -fr build" "rm -fR build" "rm -Rf build" \
     "rm -r -f build" "rm -f -r build" "rm --recursive build" \
@@ -396,6 +409,10 @@ function test_denies_git_stash_after_another_command() {
 
 function test_denies_git_stash_list_inside_a_batch_of_checks() {
   assert_same "deny $STASH_IN_A_BATCH" "$(decisions_for "$STASH_IN_A_BATCH")"
+}
+
+function test_allows_a_scratch_folder_and_file_delete_that_more_commands_follow() {
+  assert_same "$(printf 'allow %s\n' "${SCRATCH_CLEANUPS[@]}")" "$(decisions_for "${SCRATCH_CLEANUPS[@]}")"
 }
 
 function test_asks_before_a_forced_recursive_delete_outside_the_temp_folders() {
