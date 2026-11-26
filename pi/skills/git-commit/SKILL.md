@@ -105,9 +105,11 @@ user reads a corrected message, never a warning.
 
 ## Hand it over
 
-Every reply that works on a message prints the final text in a fenced block,
-every time. The clipboard is not the handover, because nobody can read it. A
-reply that says the message is ready, and does not show it, delivered nothing.
+Print the final text in a fenced block one time, at the handover. Print it
+again only after a revision, or when the user asks for it. Print it again
+also when the last copy scrolled out of view. The clipboard is not the
+handover, because nobody can read it. A handover that says the message is
+ready or on the clipboard, and does not show it, delivered nothing.
 
 - Print the text that passed both checks, and never an earlier draft.
 - Put the message alone inside the block, with no comment of yours in it, so
