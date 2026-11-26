@@ -94,9 +94,14 @@ questions. Do not run the same command again.
    runs, as the skill says.
 7. Write the diff to a temporary file from `mktemp`: the output of
    `git diff`, plus the content of each new untracked file. Start the review
-   agent and the editor agent in the same message, so the two run at the
-   same time. Give the review agent the file path, the intent, the
-   scenarios with test names and the suite result line. Give the editor the
+   agent and the editor agent in the same message, and pass
+   `run_in_background: true` to both. A nested Agent call runs in the
+   foreground by default, and it blocks your run until that agent ends.
+   Wait for both results with `get_subagent_result` and `wait: true` before
+   step 8.
+
+   Give the review agent the file path, the intent, the scenarios with test
+   names and the suite result line. Give the editor the
    intent, the numbers from your proof, and each file where you wrote a
    comment. Add the plan or record update: the path, the step done and what
    changed from the plan. Keep each prompt to about 10 lines at most, since
