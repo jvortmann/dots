@@ -115,6 +115,11 @@ user reads a corrected message, never a warning.
 
 ## Hand it over
 
+Sometimes more than one commit waits for the user. Then the session the user
+reads follows "Several commits waiting" in `~/.config/pi/AGENTS.md`, and not
+this section. A subagent puts each message in its report and copies nothing.
+Each message stands alone and does not mention the others.
+
 Print the final text in a fenced block one time, at the handover. Print it
 again only after a revision, or when the user asks for it. Print it again
 also when the last copy scrolled out of view. The clipboard is not the
@@ -133,9 +138,6 @@ ready or on the clipboard, and does not show it, delivered nothing.
   handover. Print it, run both checks again on that exact text, and copy it.
   A report cannot prove its checks ran, and a hand-off can drop a newline.
 - Name the files the commit touches, and stop there.
-- When the change needs more than one commit, give a message for each and say
-  which one sits on the clipboard. Only one can. Each message stands alone
-  and does not mention the others.
 - When a file carries unrelated work as well, say so, and name `git add -p`.
 - When the spelling check rejects a tool name, a flag or an identifier, keep
   the word and name it in the reply. The user adds it with `zg`. Rewording a
