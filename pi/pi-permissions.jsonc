@@ -1,4 +1,8 @@
 {
+  // In each section the last pattern that matches wins, so an exception
+  // comes after its rule. A `*` matches any text, also a `/`, a space or a
+  // new line. A `?` matches one character, and a trailing ` *` also
+  // matches no text.
   "$schema": "./git/github.com/jvortmann/pi-permission-system/schemas/permissions.schema.json",
   "defaultPolicy": {
     "tools": "allow",
@@ -23,8 +27,8 @@
     "mcp__*": "allow",
     "*_mcp_resource*": "allow",
 
-    // The read-only folders below pass the directory check, so writing
-    // there needs its own guard. A later match wins over the allow above.
+    // The special section opens these folders to read, so a write or an
+    // edit in them asks.
     "write:/Users/*/Downloads/*": "ask",
     "edit:/Users/*/Downloads/*": "ask",
     "write:/Users/*/Library/Application Support/CleanShot/media/*": "ask",
@@ -63,12 +67,16 @@
     "edit:/Users/*/Documents/*": "ask",
     "write:/Users/*/Desktop/*": "ask",
     "edit:/Users/*/Desktop/*": "ask",
-    // A * also matches a /, so the asks above also match a folder such as
-    // Documents inside a sibling repository. A dev writes there.
+    // The asks above also match a folder such as Documents in a sibling
+    // repository, where a dev writes. So that write runs.
     "write:/Users/*/prj/config/*": "allow",
     "edit:/Users/*/prj/config/*": "allow"
   },
   "bash": {
+    // Each pattern matches the whole command line, with quoted text and
+    // heredoc bodies. A command that matches no pattern takes tools.bash,
+    // which is "allow", because an ask blocks a subagent. So a risky
+    // command needs its own ask or deny here.
     "git status*": "allow",
     "git diff*": "allow",
     "git log*": "allow",
@@ -101,21 +109,18 @@
     "make *": "allow",
     // A tmux command with no socket goes to the server of the user, so it
     // asks. A test names its own server with -L or -S, so that form runs.
-    // The rules further down still ask for a kill, the default server and a
-    // tmux later in the line.
+    // Rules further down ask again for a kill-server, for the default server
+    // and for a tmux later in the line.
     "tmux*": "ask",
     "tmux -L ?*": "allow",
     "tmux -S ?*": "allow",
     "jira *": "allow",
     "gh *": "allow",
     "gob *": "allow",
-    // Shutdown stops the jobs of every folder, so it asks while the other
-    // gob commands run. The last match wins, so this line follows "gob *".
+    // Shutdown stops the jobs of every folder, so it asks. The other gob
+    // commands run.
     "gob shutdown*": "ask",
-    // A pattern matches the whole command line, and the last match wins. A
-    // command that matches no bash pattern takes tools.bash, which is "allow".
-    // So the catch-all ask below is needed. The read verbs after it then run
-    // without asking.
+    // The impeccable script asks, except for the subcommands that only read.
     "*/skills/impeccable/scripts/impeccable*": "ask",
     "*/skills/impeccable/scripts/impeccable --version*": "allow",
     "*/skills/impeccable/scripts/impeccable context*": "allow",
@@ -135,9 +140,8 @@
     "*/skills/impeccable/scripts/impeccable live-resume*": "allow",
     "*/skills/impeccable/scripts/impeccable comp-spec --print*": "allow",
     "*/skills/impeccable/scripts/impeccable comp-spec --plate-prompt*": "allow",
-    // These forms of a read verb attach to a browser, fetch a URL or change
-    // files, so they ask. They follow the allow lines, because the last match
-    // wins.
+    // These forms of a read subcommand attach to a browser, read a URL or
+    // change files, so they ask.
     "*/skills/impeccable/scripts/impeccable detect*--cdp*": "ask",
     "*/skills/impeccable/scripts/impeccable detect*http*": "ask",
     "*/skills/impeccable/scripts/impeccable detect*file:*": "ask",
@@ -158,11 +162,9 @@
     "git clean*": "ask",
     "git -* clean*": "ask",
 
-    // A delete under the temp folders runs without asking. A `*` also
-    // matches a space or `&&`, so a recursive delete with a second space
-    // after its flag asks again: it holds another target or command. A
-    // quoted name in /tmp/scratch runs too, after a flag of one or two
-    // characters.
+    // A delete under a temp folder runs. A second space after the flag asks
+    // again, because it starts a second target or command. A quoted name in
+    // /tmp/scratch runs after a flag of one or two characters.
     "rm -r* /tmp/*": "allow",
     "rm -R* /tmp/*": "allow",
     "rm -fr* /tmp/*": "allow",
@@ -202,8 +204,8 @@
     "find * * -delete": "ask",
 
     // A temp delete that another command follows, after `; ` or ` && `,
-    // runs without asking. A second space before the separator asks again,
-    // because it holds a second target.
+    // runs. A second space before the separator asks again, because it
+    // starts a second target.
     "rm -* /tmp/*; *": "allow",
     "rm -* /tmp/* && *": "allow",
     "rm -* /private/tmp/*; *": "allow",
@@ -217,12 +219,11 @@
     "rm -* * ?*; *": "ask",
     "rm -* * ?* && *": "ask",
 
-    // The temp allows above also match a name from a variable. An empty name
-    // deletes the whole temp folder, with the scratch folders of all agents.
-    // So a recursive delete of a `$name` directly under a temp folder asks
-    // again. A `?` before the `$` catches a quote or a second `/`. `/T/`
-    // stands for the two var/folders roots. A file delete such as
-    // `rm -f "/tmp/$name"` still runs.
+    // An empty name from a variable deletes the whole temp folder, with the
+    // scratch folders of all agents. So a recursive delete of a `$name`
+    // directly under a temp folder asks again. A `?` before the `$` catches
+    // a quote or a second `/`, and `/T/` stands for both var/folders roots.
+    // A file delete such as `rm -f "/tmp/$name"` still runs.
     "rm -r*/tmp/$*": "ask",
     "rm -R*/tmp/$*": "ask",
     "rm -?r*/tmp/$*": "ask",
@@ -265,11 +266,11 @@
     "rm -?? /private/var/folders/*/T/${*:?}; *": "allow",
     "rm -? /private/var/folders/*/T/${*:?} && *": "allow",
     "rm -?? /private/var/folders/*/T/${*:?} && *": "allow",
-    // A `?` matches any character, so the allows above also match the forms
-    // `:-`, `:+` and `:=`. These forms, `#`, `%` and a backtick can give an
-    // empty name, so they ask. A plain `${name}` asks, even when a later
-    // `:?}` in the line matches an allow. The `*` of a var/folders root can
-    // hold a second target, so a second space before `/T/${` asks.
+    // The `?` of `:?` in the allows above also matches `:-`, `:+` and `:=`.
+    // These forms, `#`, `%` and a backtick can give an empty name, so they
+    // ask. So does a plain `${name}`, also when a later `:?}` in the line
+    // matches an allow. The `*` of a var/folders root can hold a second
+    // target, so a second space before `/T/${` asks.
     "rm -*/tmp/${*:-*": "ask",
     "rm -*/tmp/${*:+*": "ask",
     "rm -*/tmp/${*:=*": "ask",
@@ -313,15 +314,10 @@
     "rm -? /*/T/?;*": "ask",
     "rm -?? /*/T/?;*": "ask",
 
-    // Each agent makes its scratch folders in /tmp/scratch. The temp allows
-    // above also match a name from a variable and the folder itself, so
-    // these rules ask again. An empty name from a variable deletes the
-    // folders of all agents. A `${name:?}` name runs, because the shell
-    // stops on an empty name. The forms `:-`, `:+`, `:=`, `#` and `%` and a
-    // backtick can give an empty name, so they ask. A plain `${name}` asks
-    // too, even when a later `:?}` in the line would match the allow
-    // pattern. A `?` stands for the `*` of `/tmp/scratch/*`, so a name of
-    // one character also asks.
+    // These rules repeat the temp rules for /tmp/scratch, where each agent
+    // makes its scratch folders. The temp rules check only a name directly
+    // under a temp folder. A name that can be empty asks. A `${name:?}` name
+    // runs, also in quotes. A delete of the whole folder asks.
     "rm -*/tmp/scratch/$*": "ask",
     "rm -? /tmp/scratch/${*:?}": "allow",
     "rm -?? /tmp/scratch/${*:?}": "allow",
@@ -357,11 +353,8 @@
     "rm -? /tmp/scratch/?;*": "ask",
     "rm -?? /tmp/scratch/?;*": "ask",
 
-    // A command that matches no bash pattern runs, because tools.bash is
-    // "allow". A subagent has no UI and stops at an ask, so the fallback
-    // stays. These commands change state outside the repository, so they ask
-    // wherever they appear in the line. Each has a bare form and a `* ` form.
-    // They follow every allow, because the last match wins.
+    // These commands change state outside the repository. So they ask
+    // wherever they come in the line, also after a temp delete.
     "sudo*": "ask",
     "* sudo*": "ask",
     "brew*": "ask",
@@ -370,12 +363,10 @@
     "* mise install*": "ask",
     "mise use*": "ask",
     "* mise use*": "ask",
-    // A tmux later in the line asks, also with -L or -S, because a pattern
-    // cannot tell which of two tmux commands names a socket. The `?` keeps a
-    // line that starts with `tmux -L` or `tmux -S` out. A word such as
-    // `tests/tmux` at the end still runs. The word tmux as an argument also
-    // asks, such as in `rg tmux pi/`. The pkill and kill-server allows
-    // below follow, so they still run.
+    // A tmux later in the line asks, also with -L or -S. A pattern cannot
+    // tell which of two tmux commands names a socket. The `?` skips a tmux at
+    // the start of the line. The word tmux as an argument asks too, as in
+    // `rg tmux pi/`. A path such as `tests/tmux` at the end runs.
     "?*tmux ?*": "ask",
     "?*tmux\t*": "ask",
     "?*tmux\n*": "ask",
@@ -391,13 +382,14 @@
     "*&tmux": "ask",
     "*|tmux": "ask",
     "*\ntmux": "ask",
+    // A kill or a pkill asks, because it can stop the work of the user. The
+    // `* kill*` form also catches a tmux kill-server.
     "kill*": "ask",
     "* kill*": "ask",
     "pkill*": "ask",
     "* pkill*": "ask",
     // A pkill of the leftover processes of agents and of tests/run runs with
     // no ask. These are the processes that pi/end-scratch-processes.sh ends.
-    // The allows follow the pkill asks above, because the last match wins.
     "pkill -f /tmp/scratch/?*": "allow",
     "pkill -KILL -f /tmp/scratch/?*": "allow",
     "pkill -TERM -f /tmp/scratch/?*": "allow",
@@ -422,27 +414,26 @@
     "pkill -*$*": "ask",
     "pkill -*`*": "ask",
     "pkill -*\n*": "ask",
-    // pkill takes more than one pattern, so a second word asks: a space or a
-    // tab after a path, or a third quote after a quoted socket.
+    // pkill takes more than one pattern, so a second word asks. That is a
+    // space or a tab after a path, or a third quote after a quoted socket.
     "pkill -* /* ?*": "ask",
     "pkill -*\t*": "ask",
     "pkill -*\"*\"*\"*": "ask",
     "pkill -*'*'*'*": "ask",
-    // A `..` asks, as in the delete rules. pkill reads it as two wildcards,
-    // not as a parent folder.
+    // pkill reads its pattern as a regular expression. A `..`, a group, a
+    // bracket or a count can match a process outside these folders, so each
+    // asks.
     "pkill -*..*": "ask",
-    // pkill reads its pattern as a regular expression. A group, a bracket or
-    // a count can match a process outside these folders, so each asks.
     "pkill -*(*": "ask",
     "pkill -*[*": "ask",
     "pkill -*{*": "ask",
     // A pkill of every process in /tmp/scratch ends the work of all agents,
     // so it asks. A `?` stands for a `*` or a `.`, so a name of one
-    // character asks too. A `.*` matches any name, and a quote after a path
-    // can leave the name empty. The matcher reads a backslash as a `/`, so an
-    // escape such as `\.\*` right after the folder asks. A pattern cannot
-    // name a literal `*` or `?`, so `/tmp/scratch/s*` still runs, and pkill
-    // can then match each process in /tmp/scratch.
+    // character asks too. So do a `.*` and a quote that leaves the name
+    // empty. So does an escape such as `\.\*`, because the matcher reads a
+    // backslash as a `/`. A pattern cannot name a literal `*`, so
+    // `/tmp/scratch/s*` still runs, and pkill then matches each process in
+    // /tmp/scratch.
     "pkill -*/scratch/?": "ask",
     "pkill -*/scratch/.*": "ask",
     "pkill -*/scratch//*": "ask",
@@ -450,9 +441,8 @@
     "pkill -* /*\"*": "ask",
     // A test runs a private tmux server and stops it at its end. An agent
     // must stop a server that a hung test left, so that stop runs with no ask.
-    // It needs a socket name of the tests, or a socket path in a scratch
-    // folder, in a tmux folder of tests/run or in the temp folder. The allows
-    // follow the kill asks above, so the last match is an allow.
+    // It needs a socket name of the tests. A socket path also works in a
+    // scratch folder, a tmux folder of tests/run or a temp folder.
     "tmux -L tests-run-?* kill-server": "allow",
     "tmux -L bashunit-?* kill-server": "allow",
     "tmux -L screen_test_?* kill-server": "allow",
@@ -488,6 +478,7 @@
     "* tmux -L 'default'*": "ask",
     "tmux -L default\t*": "ask",
     "* tmux -L default\t*": "ask",
+    // Like sudo above, these commands change state outside the repository.
     "git push*": "ask",
     "* git push*": "ask",
     "docker run*": "ask",
@@ -508,13 +499,11 @@
     "* curl -d*": "ask",
     "defaults write*": "ask",
     "* defaults write*": "ask",
-    // The impeccable script asks, except for its read-only subcommands. After
-    // a temp delete, a temp allow beats that ask. So each call of the script
-    // after a delete asks here, also a read-only one.
+    // After a delete, a temp allow beats the impeccable ask above. So a call
+    // of the script after a delete asks here, also one that only reads.
     "rm -*/skills/impeccable/scripts/impeccable*": "ask",
 
-    // A `..` asks again, because it can climb out of the temp folder. These
-    // rules follow the allows above, and the last match wins.
+    // A `..` can climb out of the temp folder, so it asks again.
     "rm -r*..*": "ask",
     "rm -R*..*": "ask",
     "rm -fr*..*": "ask",
@@ -524,8 +513,8 @@
     "find *..* -delete": "ask",
 
     // A delete of a folder later in the line asks, also after a temp delete.
-    // The deny rules come later still, so a dangerous delete there is
-    // denied.
+    // The deny rules come later still, so they deny a dangerous delete
+    // there.
     "* rm -r*": "ask",
     "* rm -R*": "ask",
     "* rm -fr*": "ask",
@@ -543,8 +532,8 @@
     "* git clean*": "ask",
     "* git -* clean*": "ask",
 
-    // pi runs inside a terminal app, and macOS shows the user a privacy
-    // prompt for that app when a command controls the user interface.
+    // The terminal app that runs pi gets a privacy prompt from macOS when a
+    // command controls the user interface. So such a command asks.
     "osascript*": "ask",
     "* osascript*": "ask",
     "*System Events*": "ask",
@@ -568,8 +557,8 @@
     "* $HOME *": "ask",
     "* \"$HOME\"": "ask",
     "* \"$HOME\" *": "ask",
-    // These folders are protected by macOS. Each pattern starts with a bare
-    // `*`, so that a quoted path matches too. The user approved Desktop and
+    // macOS protects these folders. Each pattern starts with a bare `*`, so
+    // that a quoted path matches too. The user approved Desktop and
     // Documents in macOS, so they are not on the list.
     "*~/Pictures*": "ask",
     "*$HOME/Pictures*": "ask",
@@ -587,13 +576,13 @@
     "*$HOME/Library/Containers*": "ask",
     "*/Users/*/Library/Containers*": "ask",
 
-    // The denies below hold only for the target right after a flag of one or
-    // two characters. A `*` there would also match a later command in the
-    // line, such as `&& cd ~`.
+    // The delete denies below hold only for the target right after a flag of
+    // one or two characters. A `*` there would also match a later command in
+    // the line, such as `&& cd ~`.
     //
-    // A recursive delete of a variable is denied, because an empty one turns
-    // the target into the root. A path of two or more characters under the
-    // variable asks again. A `*` also matches `/`, so the deny comes first.
+    // The policy denies a recursive delete of a variable, because an empty
+    // variable turns the target into the root. A path of two or more
+    // characters under the variable asks again.
     "*rm -r $*": "deny",
     "*rm -r \"$*": "deny",
     "*rm -R $*": "deny",
@@ -619,8 +608,8 @@
     "*rm -?R $*/??*": "ask",
     "*rm -?R \"$*/??*": "ask",
 
-    // A delete of the root, the home folder or a glob in one of them is
-    // denied.
+    // The policy denies a delete of the root, the home folder or a glob in
+    // one of them.
     "*rm -? / *": "deny",
     "*rm -?? / *": "deny",
     "*rm -? /? *": "deny",
@@ -632,9 +621,10 @@
     "*rm -? ~/? *": "deny",
     "*rm -?? ~/? *": "deny",
 
-    // A system folder or a Library folder is denied, also for a single file
-    // in it. The temp folders sit under /var and /private, so those two are
-    // denied only as the whole folder.
+    // The policy denies a delete of a system folder or a Library folder, also
+    // of a single file in it. Agents use folders under /Users, /opt, /var and
+    // /private, such as the temp folders. So the policy denies each of these
+    // only as a whole folder.
     "*rm -? /Users *": "deny",
     "*rm -?? /Users *": "deny",
     "*rm -? /opt *": "deny",
@@ -670,15 +660,11 @@
     "*rm -? /Users/*/Library*": "deny",
     "*rm -?? /Users/*/Library*": "deny",
 
-    // Every deny sits below every allow, because the last pattern that matches
-    // wins: above `npm *`, a deny would lose to `npm test && git commit`.
-    //
-    // A pattern covers the whole command line, so the bare form fires only when
-    // the denied command starts it, and `cd repo && git stash` would run. Each
-    // rule therefore carries a `* ` twin that matches the command anywhere. A
-    // command that only mentions a denied string is denied as well, quoted text
-    // included. A flag before the subcommand, as in `git -C repo commit`, also
-    // hides it, so each rule carries two more forms with `-*` in between.
+    // Every deny sits below every allow. Above `npm *`, a deny would lose to
+    // `npm test && git commit`. A `* ` form catches the command later in the
+    // line, and a `-*` form catches a flag before the subcommand, as in
+    // `git -C repo commit`. The policy also denies a command that only names
+    // a denied string, as in quoted text.
     "git commit*": "deny",
     "* git commit*": "deny",
     "git -* commit*": "deny",
@@ -752,12 +738,11 @@
     "doom_loop": "deny",
     "external_directory": "ask",
 
-    // A subagent has no UI to answer an ask, so scratch work in /tmp stopped it
-    // cold. The extension compares paths as text and never resolves a link, so
-    // /tmp and its macOS target /private/tmp each need a rule. The same holds
-    // for $TMPDIR, where mktemp writes. Its folder differs per user, so the
-    // rule matches any of them. A tmp/ folder inside the working directory is
-    // not external and needs none.
+    // An ask blocks a subagent, so the temp folders are open. The extension
+    // compares paths as text and does not resolve links. So /tmp and its
+    // macOS target /private/tmp each need a rule. So does $TMPDIR, where
+    // mktemp writes, in a folder that differs per user. A tmp/ folder in the
+    // working directory is not external and needs no rule.
     "external_directory:/tmp/*": "allow",
     "external_directory:/private/tmp/*": "allow",
     "external_directory:/var/folders/*/T/*": "allow",
@@ -770,8 +755,9 @@
     "external_directory:/Users/*/Downloads/*": "allow",
     "external_directory:/Users/*/Library/Application Support/CleanShot/media/*": "allow",
 
-    // Agents read these folders for research: the config repositories, the
-    // installed tools and their docs, and the files the user hands over.
+    // Agents read these folders for research. They hold the config
+    // repositories, the installed tools and their docs, and the files that
+    // the user hands over.
     // ~/.config holds a token in gh, so only the named folders in it are open.
     "external_directory:/Users/*/.dots": "allow",
     "external_directory:/Users/*/.dots/*": "allow",
@@ -806,16 +792,15 @@
     "external_directory:/Users/*/Desktop": "allow",
     "external_directory:/Users/*/Desktop/*": "allow",
 
-    // A dev writes in a sibling repository, and an experiment in ~/tmp, so
-    // the tools section has no write ask for these two folders.
+    // A dev writes in a sibling repository, and an experiment writes in
+    // ~/tmp. So the tools section has no write ask for these two folders.
     "external_directory:/Users/*/prj/config": "allow",
     "external_directory:/Users/*/prj/config/*": "allow",
     "external_directory:/Users/*/tmp": "allow",
     "external_directory:/Users/*/tmp/*": "allow",
 
-    // A * in a key also matches a /, so the allows above also match inside
-    // the folders that macOS protects, such as Library/Containers/*/Data/tmp.
-    // The later match wins, so these asks come last.
+    // The allows above also match inside the folders that macOS protects,
+    // such as Library/Containers/*/Data/tmp, so these asks come last.
     "external_directory:/Users/*/Pictures*": "ask",
     "external_directory:/Users/*/.Trash*": "ask",
     "external_directory:/Users/*/Library/CloudStorage*": "ask",
