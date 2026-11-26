@@ -103,20 +103,23 @@ to `dev`.
   the user. Then resume that `dev` run with the answer. The Agent tool
   `resume` keeps its context.
 - **After the report** — take the report as it stands, and do not run the
-  `review` agent, because `dev` did. Do not check the commit
-  message again, reword it, or update the plan or record. A word the hook rejects stays when the report lists it for `zg`,
-  so name it to the user. Show the user the outcome from the report
-  with its Review section, and `git diff --stat`. Copy the commit message
-  from the report with `pbcopy`. Then continue with the steps of "One task
-  at a time".
+  `review` agent, because `dev` did. Do not reword the commit message,
+  and do not update the plan or record. Show the user the outcome from the
+  report with its Review section, and `git diff --stat`. Run the two checks
+  of the `git-commit` skill again on the message from the report, then copy
+  it with `pbcopy`. Then continue with the steps of "One task at a time".
 - **Several commits waiting** — when more than one commit waits for the
   user, write each message to its own file in `/tmp` first, from the report
-  of each `dev`. End the reply with one fenced block of the commands, one
-  line each, in the order the user runs them. Each line has the form
-  `git commit -F /tmp/<file> -- <paths>`. When a commit adds a new file,
-  put `git add <file> &&` before its command. Above the block, name each
+  of each `dev`. Run `ste-lint` and the commit-msg hook on each file. End
+  the reply with one fenced block of the commands, one line each, in the
+  order the user runs them. Each line has the form
+  `git commit -F /tmp/<file> -- <paths>`, with `git add <file> &&` before
+  it when a commit adds a new file. Above the block, name each
   word that the hook rejects and a report lists for `zg`. Copy the block
   with `pbcopy`, for the user to run.
+- **A check fails** — when a check fails on a message from a report, resume
+  that `dev` to fix the message. A word the hook rejects stays when the
+  report lists it for `zg`, so name it to the user.
 - **Do not** read the full diff or run the work again in the main session.
   The inner review of `dev` reads the diff.
 - **Exception** — the user asks the main session to make the change itself.
