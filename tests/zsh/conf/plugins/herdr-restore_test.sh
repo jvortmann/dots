@@ -228,7 +228,7 @@ function test_the_clear_of_a_command_does_not_remove_the_record_of_the_next() {
   fake_sleep
 
   shell_that_runs_pi "nvim --version"
-  reported hc 2
+  reported hc 3
   listen_to sleep
   reported sleep
   release
@@ -451,7 +451,10 @@ fake_sleep() {
 # Types each argument, then pi, into an interactive zsh in a Herdr terminal.
 # pi stays until a signal ends it. The shell reads its lines from a fifo, so it
 # keeps running until shell_ended or tear_down closes the fifo. Returns when pi
-# runs and the first call of hc ended. +Z turns off the line editor, which
+# runs. With no earlier lines, it also waits for the two calls of hc of the pi
+# line: the record and the clear of the sessions. The record runs in the
+# background, so it can end after the clear and after pi starts. With earlier
+# lines, the test counts the calls of hc. +Z turns off the line editor, which
 # reads the terminal and not the fifo.
 shell_that_runs_pi() {
   INPUT="$HOME_DIR/input"
@@ -468,7 +471,7 @@ shell_that_runs_pi() {
   exec 3> "$INPUT"
   printf '%s\n' "source ${PLUGIN@Q}" "$@" pi >&3
   reported pi
-  reported hc
+  (($#)) || reported hc 2
 }
 
 # Closes the input of the shell from shell_that_runs_pi, so zsh ends. Returns
