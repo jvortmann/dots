@@ -1,5 +1,7 @@
 {
-  "app.model.select": "ctrl+alt+l",
+  "app.model.cycleBackward": [],
+  "app.model.cycleForward": [],
+  "app.model.select": [],
   "tui.editor.deleteToLineEnd": ["ctrl+k", "ctrl+alt+k"],
   "tui.input.newLine": ["shift+enter", "ctrl+j", "ctrl+alt+j"]
 }
