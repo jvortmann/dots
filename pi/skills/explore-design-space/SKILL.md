@@ -6,7 +6,7 @@ description: Load whenever a plan, a design or an idea needs its open decisions 
 # Explore the design space
 
 Question the user until you both hold the same picture of the design. Nothing
-in it may rest on a guess. Change nothing while you explore.
+in it may rest on a guess. Change nothing in the project while you explore.
 
 ## The tree
 
@@ -21,6 +21,13 @@ not heard.
   never ask the user for it. A search that is still running holds back only
   the questions that depend on it.
 - **A decision** is a choice the user makes. Put it to the user, and wait.
+- **A tool behavior that nobody tried is a guess, not a fact.** When the
+  design rests on one, prove it with a short spike before the user confirms
+  the design. A spike is the smallest run that shows the behavior, in a
+  scratch folder, with no change to the project.
+- **A design that copies an outside system names the system it must match.**
+  For example, a command format can follow Claude Code or pi. When the target
+  is not clear, it is a decision for the user.
 
 ## Ask in rounds
 
@@ -36,6 +43,7 @@ Ask the whole frontier in one round, with the question tool when you have one.
 ## When it ends
 
 The exploration ends when the frontier is empty: every branch visited, and
-nothing left assumed without a word. Sum up the decisions in a short list, and
-ask the user to confirm it. Act only after the user confirms. When the design
-turns into a plan, load the `plan` skill.
+nothing left assumed without a word. A tool behavior that nobody tried keeps
+the exploration open. Sum up the decisions in a short list, and ask the user
+to confirm it. Act only after the user confirms. When the design turns into a
+plan, load the `plan` skill.
