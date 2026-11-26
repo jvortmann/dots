@@ -128,11 +128,16 @@ to `dev`.
   user, write each message to its own file in `/tmp` first, from the report
   of each `dev`. Run `ste-lint` and the commit-msg hook on each file. End
   the reply with one fenced block of the commands, one line each, in the
-  order the user runs them. Each line has the form
-  `git commit -F /tmp/<file> -- <paths>`, with `git add <file> &&` before
-  it when a commit adds a new file. Above the block, name each
-  word that the hook rejects and a report lists for `zg`. Copy the block
-  with `pbcopy`, for the user to run.
+  order the user runs them. Above the block, name each word that the hook
+  rejects and a report lists for `zg`. Copy the block with `pbcopy`, for
+  the user to run. The lines of the block:
+  - Each line has the form `git commit -n -F /tmp/<file> -- <paths>`, with
+    `git add <file> &&` before it when a commit adds a new file.
+  - Each line except the last ends with ` && \`. The user pastes the block
+    as one command, and a failed commit stops the rest.
+  - The `-n` skips the commit-msg and pre-commit hooks, because the checks
+    and the tests ran before the commit. Use `-n` only in this block, never
+    for a single commit.
 - **A check fails** — when a check fails on a message from a report, resume
   that `dev` to fix the message. A word the hook rejects stays when the
   report lists it for `zg`, so name it to the user.
