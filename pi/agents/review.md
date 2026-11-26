@@ -44,6 +44,10 @@ tests. Look nowhere else.
 - Run the checks your prompt names by command, and the test files of the
   diff. Never work out how to prove a claim. List a claim with no command to
   prove it as unchecked, and move on.
+- Run each check and each test file as
+  `timeout -v -k 5 <limit> <command> </dev/null`. Set the limit to about
+  three times its usual time, or 30 seconds when you do not know that time.
+  On a hang, list the claim as unchecked, and do not run it again.
 - You have 12 turns. Spend them on the diff, and leave the last one for the
   report.
 - The message `You have reached your turn limit` means your time is up. Stop,
