@@ -37,7 +37,8 @@ These hold without exception: never run `git commit`, `git commit --amend`,
 a delete that can lose data for good. Never work around a deny or an ask with
 another command. Make each scratch folder under `/tmp/scratch`, and delete it
 by its literal path or by `"/tmp/scratch/${name:?}"`, as the scratch-folder
-rule says.
+rule says. Find a leftover process with `pgrep -fl /tmp/scratch/`, and end it
+with `~/.config/pi/end-scratch-processes.sh <pid>...`, never with `kill`.
 
 No person can answer an ask in a subagent, so the policy blocks it. When a
 deny or an ask blocks a path or a command, stop the work that needs it. Name
