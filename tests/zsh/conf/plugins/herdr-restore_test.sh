@@ -205,6 +205,25 @@ function shutdown_signals() {
   bashunit::data_set HUP
 }
 
+# The fake hc holds the record of pi. After a SIGTERM, precmd skips the clear.
+# A record of nvim that does not wait for the record of pi lands first. Then the
+# record of pi lands last and leaves restore.cmd=pi. The test lets the record of
+# pi go only after nvim reports.
+function test_after_sigterm_the_next_record_lands_after_the_record_of_pi() {
+  nvim_that_waits
+  fake_hc "case \"\$*\" in *restore.cmd=pi) $HOLD ;; esac" "case \"\$*\" in *restore.cmd=nvim*) $WAKE_NVIM ;; esac"
+  open_gate "$HOME_DIR/.local/bin/hc"
+  shell_that_runs_pi
+  kill -TERM "$SHELL_PID" "$(cat "$HOME_DIR/pi.pid")"
+
+  printf '%s\n' "nvim notes.md" >&3
+  reported nvim
+  release
+  shell_ended
+
+  assert_same $'label t7 restore.cmd=pi\nlabel t7 restore.cmd=nvim notes.md\nlabel t7 restore.cmd=' "$(hc_calls)"
+}
+
 # A SIGTERM that ends no shutdown, such as a kill of the shell, leaves an
 # interactive zsh alive, and its next command must clear its record again.
 function test_a_shell_that_lives_on_after_sigterm_clears_the_next_record() {
@@ -378,9 +397,23 @@ function test_a_shell_that_is_no_login_shell_calls_no_hc() {
 
 # The hc of the user is not on PATH, so the plugin runs ~/.local/bin/hc. This
 # fake logs its arguments and reports. $1 is a shell line that runs before the
-# log.
+# log, and $2 one that runs after the report.
 fake_hc() {
-  fake_program "$HOME_DIR/.local/bin" hc "$1"$'\n'"echo \"\$*\" >> $(printf %q "$LOG")"$'\n'"$FAKE_REPORT"
+  fake_program "$HOME_DIR/.local/bin" hc "$1"$'\n'"echo \"\$*\" >> $(printf %q "$LOG")"$'\n'"$FAKE_REPORT"$'\n'"${2-}"
+}
+
+# Puts a fake nvim on PATH that reads one line from its gate, then reports and
+# ends. WAKE_NVIM holds shell code that writes that line. Its open does not
+# block, so it goes on when nothing reads. The test holds the gate open, so a
+# line that comes before nvim starts waits in the gate. A fake sleep runs it
+# too, so a write of hc that waits with sleep for an earlier write lets nvim end.
+nvim_that_waits() {
+  # shellcheck disable=SC2016
+  WAKE_NVIM='perl -MFcntl -e '\''sysopen(my $f, $ARGV[0], O_WRONLY | O_NONBLOCK) or exit; syswrite($f, "go\n")'\'' '$(printf %q "$BIN/nvim.gate")
+  fake_program "$BIN" nvim "exec 3< \"\$0.gate\"; read -r -t 5 _ <&3; $FAKE_REPORT"
+  fake_program "$BIN" sleep "$WAKE_NVIM"$'\nexec /bin/sleep "$@"'
+  open_gate "$BIN/nvim"
+  listen_to nvim
 }
 
 # Puts fakes of nvim, pi and pip on PATH that log their name and the value of

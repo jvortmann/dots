@@ -29,7 +29,9 @@ _herdr_restore_preexec() {
   unset _herdr_restore_ending HERDR_RESTORE_NVIM
   local word=${${(Az)1}[1]}
   [[ -n $HC_TERMINAL_ID && $word == ($~_herdr_restore_nvim|pi) ]] || return
-  _herdr_restore_label_after "$_herdr_restore_clearing" "$1"
+  # The record waits for the last write of restore.cmd. After a SIGTERM,
+  # precmd skips the clear, so that write is the record of the command before.
+  _herdr_restore_label_after "${_herdr_restore_recorded:-$_herdr_restore_clearing}" "$1"
   _herdr_restore_recorded=$!
   # A line of nvim or pi also clears restore.nvim and restore.pi, the labels of
   # an earlier program. The new program labels itself again, and a program that
