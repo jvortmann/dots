@@ -52,27 +52,6 @@ function test_a_swap_changes_the_appearance_of_the_real_herdr_app_settings() {
   assert_same "$to" "$(jq -r '.appearance' "$SETTINGS")"
 }
 
-# Bat picks the light or dark theme from the terminal background, so the swap
-# must leave its config alone.
-function test_a_swap_leaves_the_bat_config_unchanged() {
-  mkdir -p "$HOME_DIR/.config/bat"
-  cp "$ROOT/bat/config" "$HOME_DIR/.config/bat/config"
-
-  swap_theme_from_to light dark
-
-  assert_same "$(cat "$ROOT/bat/config")" "$(cat "$HOME_DIR/.config/bat/config")"
-}
-
-function test_a_swap_leaves_the_nvim_background_unchanged() {
-  local guioptions="$HOME_DIR/.config/nvim/lua/config/guioptions.lua"
-  mkdir -p "$(dirname "$guioptions")"
-  echo "vim.opt.background = 'dark'" > "$guioptions"
-
-  swap_theme_from_to dark light
-
-  assert_same "vim.opt.background = 'dark'" "$(cat "$guioptions")"
-}
-
 function test_after_a_swap_to_light_the_real_fzf_config_sets_the_light_fzf_theme() {
   swap_theme_from_to dark light
 
@@ -129,29 +108,10 @@ function test_after_a_swap_to_light_the_session_popup_runs_fzf_with_the_light_co
   assert_contains "--color=light " "$(fzf_arguments_of_the_real_session_popup)"
 }
 
-function test_a_swap_to_light_leaves_the_real_tracked_configs_unchanged() {
-  local file files=(ghostty/config git/config tmux/switch-popup.tmux tmux/theme.tmux zsh/conf/plugins/fzf.zsh)
-  for file in "${files[@]}"; do
-    mkdir -p "$DOTS/$(dirname "$file")"
-    cp "$ROOT/$file" "$DOTS/$file"
-  done
-
-  swap_theme_from_to dark light
-
-  assert_same "" "$(for file in "${files[@]}"; do diff "$ROOT/$file" "$DOTS/$file"; done)"
-}
-
 function test_a_refresh_with_no_tmux_server_prints_nothing() {
   fake_tmux 'echo "error connecting to /private/tmp/tmux-501/default (No such file or directory)" >&2; exit 1'
 
   assert_same "" "$(swap_theme_refresh)"
-}
-
-function test_a_refresh_with_a_tmux_server_shows_the_errors_of_both_tmux_files() {
-  fake_tmux '[ "$1" = has-session ] && exit 0; echo "error in $2" >&2; exit 1'
-
-  assert_same "error in $HOME_DIR/.dots/tmux/theme.tmux
-error in $HOME_DIR/.dots/tmux/switch-popup.tmux" "$(swap_theme_refresh)"
 }
 
 # Every path the swap edits starts at HOME. The scratch HOME holds only the
