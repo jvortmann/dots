@@ -114,9 +114,9 @@ function test_a_refresh_with_no_tmux_server_prints_nothing() {
   assert_same "" "$(swap_theme_refresh)"
 }
 
-# Every path the swap edits starts at HOME. The scratch HOME holds only the
-# files that the test writes, so the other gsed calls find no file and the run
-# changes no file of the user.
+# Every path the swap writes starts at HOME. The scratch HOME puts the state
+# files and the .dots link in a temporary folder, so the run changes no file of
+# the user.
 swap_theme_from_to() {
   HOME="$HOME_DIR" "$HOMEBREW_ZSH" -f -c "source ${PLUGIN@Q}; swap-theme-from-to $1 $2" > /dev/null 2>&1
 }
