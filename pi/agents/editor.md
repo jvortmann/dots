@@ -54,8 +54,10 @@ search the disk for a skill.
 2. Check it. Write a message to a file from `mktemp`, then run `ste-lint` on
    it and `bash ~/.config/git/hooks/commit-msg` on it. Run `ste-lint` alone
    for other text.
-3. Read the reason for each fault, and rewrite the sentence. Never trick a
-   check by splitting a word or by dropping a fact the reader needs.
+3. Read the reason for each fault of the run. Fix all the faults in one edit,
+   then check again. When the same `ste-lint` fault comes back on a sentence,
+   split that sentence in two. Never trick a check by splitting a word or by
+   dropping a fact the reader needs.
 4. Repeat until `ste-lint` reports 0 hard and 0 soft, and the hook passes.
    Stop after 8 drafts, and report the best draft with its faults.
 
