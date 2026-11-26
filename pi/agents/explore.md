@@ -38,6 +38,17 @@ it in your answer instead, and say that the caller can save it.
   quick look needs a few calls. A thorough search covers every place the
   answer can live.
 
+## Shell commands
+
+- Never start a bash command with `cd`. Each command already runs in the
+  working directory. Give an absolute path, or put the `cd` and one command
+  in a subshell: `(cd dir && cmd)`. Take the path from your prompt, and
+  never from memory. When you are not sure where you are, run `pwd`.
+- Keep a command that the permission policy can block out of a compound
+  command with `;`, `&&` or `|`. The policy checks the whole command line,
+  so one blocked part stops every part. When you are not sure that the
+  policy allows a command, run it in a call of its own.
+
 ## The answer
 
 - Use absolute paths in every reference.

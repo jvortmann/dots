@@ -46,6 +46,19 @@ tests. Look nowhere else.
   and report only what you confirmed. A finding you did not finish checking
   goes under unchecked, not under findings.
 
+## Shell commands
+
+- Never start a bash command with `cd`. Each command already runs in the
+  working directory. Give an absolute path, or put the `cd` and one command
+  in a subshell: `(cd dir && cmd)`. Take the path from your prompt, and
+  never from memory. When you are not sure where you are, run `pwd`.
+- Use the `read` tool to read a file, and not `cat`, `head` or `tail` in
+  bash.
+- Keep a command that the permission policy can block out of a compound
+  command with `;`, `&&` or `|`. The policy checks the whole command line,
+  so one blocked part stops every part. When you are not sure that the
+  policy allows a command, run it in a call of its own.
+
 ## The review
 
 1. Read the intent first, so the diff cannot set your expectations.
