@@ -221,6 +221,31 @@ CHAINED_SERVER_STOPS=(
   "tmux -L tests-run-1>/tmp/x kill-server" "tmux -L tests-run-1<x kill-server" "tmux -L tests-run-1 -L default kill-server"
   $'tmux -L tests-run-1\t-L default kill-server'
 )
+# The forms of the tmux calls in tests/ and in tests/support/screen.lua of
+# vim-files.
+TEST_SERVER_COMMANDS=(
+  'tmux -L bashunit-1-2 -f /dev/null new-session -d -x 80 -y 24 "zsh -f"' "tmux -L bashunit-1-2 send-keys C-l"
+  "tmux -L bashunit-1-2 send-keys -l x" "tmux -L bashunit-1-2 capture-pane -p -S - | grep -cx 30"
+  'tmux -L bashunit-1-2 -f /dev/null start-server \; set -g status off' "tmux -L bashunit-1-2 wait-for ran-1"
+  "tmux -L tests-run-1 ls" "tmux -L tests-run-1 list-sessions"
+  'tmux -L tests-run-1 -f /dev/null new-session -d -P -F "#{pid} #{socket_path}" cat'
+  "tmux -L screen_test_1_2 -f /dev/null set-option -g window-style bg=#fdf6e3 ; new-session -d -x 40 -y 10 nvim"
+  "tmux -L screen_test_1_2 capture-pane -p -e"
+  "tmux -S /tmp/tests-run-tmux.Ab12Cd/out.1/tmux-501/default ls" "tmux -S /tmp/scratch/step5.Ab12Cd/sock capture-pane -p"
+)
+PLAIN_TMUX_COMMANDS=(
+  "tmux" "tmux ls" "tmux send-keys -t main q" "tmux attach" "tmux -f /dev/null new-session -d" "tmux;ls" $'tmux\tls'
+)
+LATER_PLAIN_TMUX_COMMANDS=(
+  "cd repo && tmux send-keys -t main q" "cd repo && tmux" "TMUX=/tmp/x tmux ls" "env tmux ls" "timeout 5 tmux ls"
+  "/opt/homebrew/bin/tmux ls" "ls;tmux ls" "ls;tmux" "ls&&tmux ls" "ls|tmux ls" $'ls\ntmux ls' $'ls\ttmux ls'
+  'echo $(tmux ls)' 'echo $(tmux)' 'echo `tmux ls`' "sh -c 'tmux ls'" 'sh -c "tmux ls"' "cd repo && tmux;ls"
+  "rm -r /tmp/out; tmux send-keys -t main q" "tmux -L tests-run-1 ls; tmux send-keys -t main q" "tmux -L tests-run-1 ls;tmux ls"
+)
+TMUX_PATHS=("git diff -- tmux/tmux.conf" "bashunit tests/tmux" "ls ~/.config/tmux" "rg -n foo tests/tmux/tmux_test.sh")
+BARE_TMUX_BETWEEN_SEPARATORS=(
+  $'ls;tmux\tls' $'ls;tmux\nls' "ls;tmux&" "ls;tmux|cat" 'echo `tmux`' "sh -c 'tmux'" 'sh -c "tmux"' "ls&tmux" "ls|tmux" $'ls\ntmux'
+)
 
 # One bun decides each command that a test checks, before the first test.
 # A command that is not in this list gives "missing", not a decision.
@@ -269,6 +294,7 @@ function set_up_before_script() {
     "${PROTECTED_INSIDE_OPEN[@]}" "${GH_TOKEN_READS[@]}" "${END_SCRATCH_CALLS[@]}" "${PROCESS_SIGNALS[@]}" \
     "${SCRATCH_PKILLS[@]}" "${WORK_FOLDER_PKILLS[@]}" "${SOCKET_PKILLS[@]}" "${CHAINED_PKILLS[@]}" "${SECOND_PATTERN_PKILLS[@]}" "${CLIMBING_PKILLS[@]}" "${SCRATCH_ROOT_PKILLS[@]}" \
     "${TEST_SERVER_STOPS[@]}" "${TEST_SOCKET_PATH_STOPS[@]}" "${OTHER_SERVER_STOPS[@]}" "${DEFAULT_SERVER_COMMANDS[@]}" "${CLIMBING_SERVER_STOPS[@]}" "${CHAINED_SERVER_STOPS[@]}" \
+    "${TEST_SERVER_COMMANDS[@]}" "${PLAIN_TMUX_COMMANDS[@]}" "${LATER_PLAIN_TMUX_COMMANDS[@]}" "${BARE_TMUX_BETWEEN_SEPARATORS[@]}" "${TMUX_PATHS[@]}" \
     > "$DECISIONS"
 }
 
@@ -657,6 +683,26 @@ function test_asks_before_a_tmux_server_stop_whose_socket_climbs_out_of_the_fold
 
 function test_asks_before_a_tmux_server_stop_with_another_command_or_word_in_the_line() {
   assert_same "$(printf 'ask %s\n' "${CHAINED_SERVER_STOPS[@]}")" "$(decisions_for "${CHAINED_SERVER_STOPS[@]}")"
+}
+
+function test_allows_a_tmux_command_on_a_test_server_by_socket_name_or_path() {
+  assert_same "$(printf 'allow %s\n' "${TEST_SERVER_COMMANDS[@]}")" "$(decisions_for "${TEST_SERVER_COMMANDS[@]}")"
+}
+
+function test_asks_before_a_tmux_command_with_no_socket_name_or_path() {
+  assert_same "$(printf 'ask %s\n' "${PLAIN_TMUX_COMMANDS[@]}")" "$(decisions_for "${PLAIN_TMUX_COMMANDS[@]}")"
+}
+
+function test_asks_before_a_tmux_command_with_no_socket_after_another_command_or_a_prefix() {
+  assert_same "$(printf 'ask %s\n' "${LATER_PLAIN_TMUX_COMMANDS[@]}")" "$(decisions_for "${LATER_PLAIN_TMUX_COMMANDS[@]}")"
+}
+
+function test_asks_before_a_bare_tmux_between_two_separators_later_in_the_line() {
+  assert_same "$(printf 'ask %s\n' "${BARE_TMUX_BETWEEN_SEPARATORS[@]}")" "$(decisions_for "${BARE_TMUX_BETWEEN_SEPARATORS[@]}")"
+}
+
+function test_still_allows_a_command_on_a_path_with_tmux_in_it() {
+  assert_same "$(printf 'allow %s\n' "${TMUX_PATHS[@]}")" "$(decisions_for "${TMUX_PATHS[@]}")"
 }
 
 # Prints "<decision> <command>" for each argument, from the decisions of

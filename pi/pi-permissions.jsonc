@@ -99,7 +99,13 @@
     "sed *": "allow",
     "make": "allow",
     "make *": "allow",
-    "tmux *": "allow",
+    // A tmux command with no socket goes to the server of the user, so it
+    // asks. A test names its own server with -L or -S, so that form runs.
+    // The rules further down still ask for a kill, the default server and a
+    // tmux later in the line.
+    "tmux*": "ask",
+    "tmux -L ?*": "allow",
+    "tmux -S ?*": "allow",
     "jira *": "allow",
     "gh *": "allow",
     "gob *": "allow",
@@ -364,6 +370,27 @@
     "* mise install*": "ask",
     "mise use*": "ask",
     "* mise use*": "ask",
+    // A tmux later in the line asks, also with -L or -S, because a pattern
+    // cannot tell which of two tmux commands names a socket. The `?` keeps a
+    // line that starts with `tmux -L` or `tmux -S` out. A word such as
+    // `tests/tmux` at the end still runs. The word tmux as an argument also
+    // asks, such as in `rg tmux pi/`. The pkill and kill-server allows
+    // below follow, so they still run.
+    "?*tmux ?*": "ask",
+    "?*tmux\t*": "ask",
+    "?*tmux\n*": "ask",
+    "?*tmux;*": "ask",
+    "?*tmux&*": "ask",
+    "?*tmux|*": "ask",
+    "?*tmux)*": "ask",
+    "?*tmux`*": "ask",
+    "?*tmux\"*": "ask",
+    "?*tmux'*": "ask",
+    "* tmux": "ask",
+    "*;tmux": "ask",
+    "*&tmux": "ask",
+    "*|tmux": "ask",
+    "*\ntmux": "ask",
     "kill*": "ask",
     "* kill*": "ask",
     "pkill*": "ask",
