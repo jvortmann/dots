@@ -81,7 +81,7 @@ Every piece of work gets a task before its first edit. That includes a request m
 
 1. **Complete only the current task** and make it committable
 2. **Validate** — it works independently and does not break existing code
-3. **Update the plan or the local work record** after every task, whenever one exists for the work. It can live anywhere, so look for it. Mark the task done, record what changed from the plan and why, and name what the next task now needs. When `dev` ran the task, `dev` updates that record and the main agent checks its Record line, except after parallel devs. Do it before the commit message, so the record and the commit describe the same state
+3. **Update the plan or the local work record** after every task, whenever one exists for the work. It can live anywhere, so look for it. Mark the task done, record what changed from the plan and why, and name what the next task now needs. When `dev` ran the task, `dev` writes that record, and the main agent checks its Record line. Do it before the commit message, so the record and the commit describe the same state
 4. **Prepare the commit** — draft the message and copy it to the clipboard (see Commits), then stop. **Never run `git commit` yourself** — the user commits. The only exception is the exact phrase "you can commit"
 5. **Mark the task completed** (`TaskUpdate`), present results, and **STOP**
 6. **Ask permission** — "May I proceed with the next task: [description]?" — then wait
@@ -109,7 +109,8 @@ to `dev`.
 - **The brief** gives the task in the words of the user, the path of the plan
   or work record, and the decisions and constraints from the conversation.
   It also carries the research facts: what exists, where it is, and how the
-  tests run. It tells `dev` to update the plan or work record. It does not list the test scenarios, because `dev` derives them
+  tests run. It tells `dev` to update the plan or work record, or for
+  parallel devs to write its file of plan updates. It does not list the test scenarios, because `dev` derives them
   by the rule of the tdd skill. `dev` trusts these facts and does not search
   again. Add no delete rule of your own: the rule under Prohibited
   Operations holds for every agent.
@@ -136,18 +137,29 @@ to `dev`.
 - **Parallel devs** — when several `dev` agents work in one tree, the brief
   of each lists the files that it may change. It tells `dev` to use
   `git diff -- <its files>` in place of a bare `git diff`, to stage
-  nothing, and to leave the plan alone. The main session updates the plan
-  from each report, in place of `dev`.
+  nothing, and to leave the plan alone. The brief also names a plan
+  updates folder. Each `dev` writes its record there as a file of its own,
+  such as `/tmp/scratch/<plan>-updates/<task>.md`. The record gives the
+  step, what changed from the plan, and any new follow-up. A `dev` never
+  edits another file in that folder.
+- **Plan updates after a round** — after parallel devs, the main session
+  does not edit the plan itself, so that its context stays small. Make the
+  plan updates folder before the first parallel `dev` of a plan starts.
+  When the user says that a round of commits is in, add a file with their
+  hashes there. Then start one background `editor`, which applies each file
+  to the plan and deletes each file that it applied. After the last round,
+  it deletes the empty folder by its literal path. Only one plan editor
+  runs at a time, so a later file waits for the next round.
 - **Questions** — settle the open design questions with the user before the
   handover, because `dev` cannot ask. When `dev` stops with a question, ask
   the user. Then resume that `dev` run with the answer. The Agent tool
   `resume` keeps its context.
 - **After the report** — take the report as it stands, and do not run the
   `review` agent, because `dev` did. Do not reword the commit message,
-  and do not update the plan or record, except after parallel devs. Show
-  the user the outcome from the report with its Review section, and
-  `git diff --stat`. Run the two checks of the `git-commit` skill again on
-  the message from the report, then copy it with `pbcopy`. Then continue
+  and do not update the plan or record. Show the user the outcome from the
+  report with its Review section, and `git diff --stat`. Run the two checks
+  of the `git-commit` skill again on the message from the report, then copy
+  it with `pbcopy`. Then continue
   with the steps of "One task at a time".
 - **Several commits waiting** — when more than one commit waits for the
   user, write each message to its own file in `/tmp` first, from the report

@@ -85,6 +85,11 @@ questions. Do not run the same command again.
    changed from the plan. Keep each prompt to about 10 lines at most, since
    the diff is in the file.
 
+   When the brief names a plan updates folder, the editor writes one new
+   file there, such as `<task>.md`. The file gives the step, what changed
+   from the plan, and any new follow-up. The editor leaves the plan and the
+   other files in that folder as they are.
+
    To resume, steer or wait for a nested agent, use the "Agent ID:" line of
    its Agent result. Never use a name that you make up, such as "review".
 8. Fix every blocker. Fix each minor item that takes a few lines in the
@@ -135,7 +140,7 @@ Final review: <the verdict, and anything still open>
 Folders left for the user: <each scratch folder you could not delete, with the command that a deny or an ask blocked> | none
 
 ## Record
-<the path you updated, or "none exists">
+<the path you updated, such as your file in the plan updates folder, or "none exists">
 
 ## Commit message
 ```
