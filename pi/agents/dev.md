@@ -84,7 +84,10 @@ questions. Do not run the same command again.
    that two files copy into a shared module, the way the project's test rules
    say. Never import one test file from another. Run the project's duplicate
    check when it has one, and keep its output.
-5. Run the full suite after the test review.
+5. Run the full suite after the test review. A change to prose only has no
+   test of its own, and `ste-lint` is its check. Skip this run for it, and
+   give the review `not run yet` as the suite line. Run the full suite once,
+   after the review and its fixes, and not after each `ste-lint` run.
 6. Prove the change the way the reproducible-locally skill says. When the
    tests cover the behavior, the test run is the proof. Prove by hand only
    what they cannot show. Run that proof in each place where the change
