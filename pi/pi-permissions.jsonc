@@ -23,12 +23,50 @@
     "mcp__*": "allow",
     "*_mcp_resource*": "allow",
 
-    // The two read-only folders below pass the directory check, so writing
+    // The read-only folders below pass the directory check, so writing
     // there needs its own guard. A later match wins over the allow above.
     "write:/Users/*/Downloads/*": "ask",
     "edit:/Users/*/Downloads/*": "ask",
     "write:/Users/*/Library/Application Support/CleanShot/media/*": "ask",
-    "edit:/Users/*/Library/Application Support/CleanShot/media/*": "ask"
+    "edit:/Users/*/Library/Application Support/CleanShot/media/*": "ask",
+    "write:/Users/*/.dots/*": "ask",
+    "edit:/Users/*/.dots/*": "ask",
+    "write:/Users/*/.config/pi/*": "ask",
+    "edit:/Users/*/.config/pi/*": "ask",
+    "write:/Users/*/.config/nvim/*": "ask",
+    "edit:/Users/*/.config/nvim/*": "ask",
+    "write:/Users/*/.config/git/*": "ask",
+    "edit:/Users/*/.config/git/*": "ask",
+    "write:/Users/*/.config/herdr/*": "ask",
+    "edit:/Users/*/.config/herdr/*": "ask",
+    "write:/Users/*/.config/herdr-app/*": "ask",
+    "edit:/Users/*/.config/herdr-app/*": "ask",
+    "write:/Users/*/.config/ghostty/*": "ask",
+    "edit:/Users/*/.config/ghostty/*": "ask",
+    "write:/Users/*/.config/zsh/*": "ask",
+    "edit:/Users/*/.config/zsh/*": "ask",
+    "write:/Users/*/.config/aerospace/*": "ask",
+    "edit:/Users/*/.config/aerospace/*": "ask",
+    "write:/Users/*/.local/share/mise/installs/npm-*": "ask",
+    "edit:/Users/*/.local/share/mise/installs/npm-*": "ask",
+    "write:/Users/*/.local/share/nvim/*": "ask",
+    "edit:/Users/*/.local/share/nvim/*": "ask",
+    "write:/Users/*/.local/state/herdr*": "ask",
+    "edit:/Users/*/.local/state/herdr*": "ask",
+    "write:/Users/*/.local/state/dots/*": "ask",
+    "edit:/Users/*/.local/state/dots/*": "ask",
+    "write:/opt/homebrew/share/*": "ask",
+    "edit:/opt/homebrew/share/*": "ask",
+    "write:/opt/homebrew/Cellar/*/share/*": "ask",
+    "edit:/opt/homebrew/Cellar/*/share/*": "ask",
+    "write:/Users/*/Documents/*": "ask",
+    "edit:/Users/*/Documents/*": "ask",
+    "write:/Users/*/Desktop/*": "ask",
+    "edit:/Users/*/Desktop/*": "ask",
+    // A * also matches a /, so the asks above also match a folder such as
+    // Documents inside a sibling repository. A dev writes there.
+    "write:/Users/*/prj/config/*": "allow",
+    "edit:/Users/*/prj/config/*": "allow"
   },
   "bash": {
     "git status*": "allow",
@@ -437,6 +475,58 @@
     // works on any machine. The folder itself needs its own key for ls.
     "external_directory:/Users/*/Downloads": "allow",
     "external_directory:/Users/*/Downloads/*": "allow",
-    "external_directory:/Users/*/Library/Application Support/CleanShot/media/*": "allow"
+    "external_directory:/Users/*/Library/Application Support/CleanShot/media/*": "allow",
+
+    // Agents read these folders for research: the config repositories, the
+    // installed tools and their docs, and the files the user hands over.
+    // ~/.config holds a token in gh, so only the named folders in it are open.
+    "external_directory:/Users/*/.dots": "allow",
+    "external_directory:/Users/*/.dots/*": "allow",
+    "external_directory:/Users/*/.config/pi": "allow",
+    "external_directory:/Users/*/.config/pi/*": "allow",
+    "external_directory:/Users/*/.config/nvim": "allow",
+    "external_directory:/Users/*/.config/nvim/*": "allow",
+    "external_directory:/Users/*/.config/git": "allow",
+    "external_directory:/Users/*/.config/git/*": "allow",
+    "external_directory:/Users/*/.config/herdr": "allow",
+    "external_directory:/Users/*/.config/herdr/*": "allow",
+    "external_directory:/Users/*/.config/herdr-app": "allow",
+    "external_directory:/Users/*/.config/herdr-app/*": "allow",
+    "external_directory:/Users/*/.config/ghostty": "allow",
+    "external_directory:/Users/*/.config/ghostty/*": "allow",
+    "external_directory:/Users/*/.config/zsh": "allow",
+    "external_directory:/Users/*/.config/zsh/*": "allow",
+    "external_directory:/Users/*/.config/aerospace": "allow",
+    "external_directory:/Users/*/.config/aerospace/*": "allow",
+    "external_directory:/Users/*/.local/share/mise/installs/npm-*": "allow",
+    "external_directory:/Users/*/.local/share/nvim": "allow",
+    "external_directory:/Users/*/.local/share/nvim/*": "allow",
+    "external_directory:/Users/*/.local/state/herdr*": "allow",
+    "external_directory:/Users/*/.local/state/dots": "allow",
+    "external_directory:/Users/*/.local/state/dots/*": "allow",
+    "external_directory:/opt/homebrew/share": "allow",
+    "external_directory:/opt/homebrew/share/*": "allow",
+    "external_directory:/opt/homebrew/Cellar/*/share": "allow",
+    "external_directory:/opt/homebrew/Cellar/*/share/*": "allow",
+    "external_directory:/Users/*/Documents": "allow",
+    "external_directory:/Users/*/Documents/*": "allow",
+    "external_directory:/Users/*/Desktop": "allow",
+    "external_directory:/Users/*/Desktop/*": "allow",
+
+    // A dev writes in a sibling repository, and an experiment in ~/tmp, so
+    // the tools section has no write ask for these two folders.
+    "external_directory:/Users/*/prj/config": "allow",
+    "external_directory:/Users/*/prj/config/*": "allow",
+    "external_directory:/Users/*/tmp": "allow",
+    "external_directory:/Users/*/tmp/*": "allow",
+
+    // A * in a key also matches a /, so the allows above also match inside
+    // the folders that macOS protects, such as Library/Containers/*/Data/tmp.
+    // The later match wins, so these asks come last.
+    "external_directory:/Users/*/Pictures*": "ask",
+    "external_directory:/Users/*/.Trash*": "ask",
+    "external_directory:/Users/*/Library/CloudStorage*": "ask",
+    "external_directory:/Users/*/Library/Mobile Documents*": "ask",
+    "external_directory:/Users/*/Library/Containers*": "ask"
   }
 }

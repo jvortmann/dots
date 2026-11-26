@@ -49,6 +49,34 @@ NARROW_READS=(
   "ls ~/.config/pi" "ls ~/.local/state/herdr-core" "rg -n foo ~/prj/config/dots" "find /tmp/x -name y" "ls /tmp"
   "defaults read com.apple.HIToolbox" "ls ~/Desktop" 'ls "$HOME/Documents"' "git show HEAD~"
 )
+RESEARCH_FOLDERS=(
+  /Users/someone/.dots /Users/someone/.config/{pi,nvim,git,herdr,herdr-app,ghostty,zsh,aerospace}
+  /Users/someone/.local/share/mise/installs/npm-earendil-works-pi-coding-agent /Users/someone/.local/share/nvim
+  /Users/someone/.local/state/herdr-core /Users/someone/.local/state/dots /opt/homebrew/share
+  /opt/homebrew/Cellar/neovim/0.11.0/share /Users/someone/Documents /Users/someone/Desktop
+)
+RESEARCH_READS=()
+RESEARCH_WRITES=()
+for folder in "${RESEARCH_FOLDERS[@]}"; do
+  RESEARCH_READS+=("external_directory:$folder" "external_directory:$folder/x")
+  RESEARCH_WRITES+=("write:$folder/x" "edit:$folder/x")
+done
+PROTECTED_INSIDE_OPEN=(
+  "external_directory:/Users/someone/Library/Containers/com.x/Data/Documents/x"
+  "external_directory:/Users/someone/Library/Containers/com.x/Data/tmp/x"
+  "external_directory:/Users/someone/Library/Mobile Documents/com~apple~CloudDocs/Desktop/x"
+  "external_directory:/Users/someone/Library/CloudStorage/Drive/Documents/x"
+  "external_directory:/Users/someone/.Trash/Desktop/x" "external_directory:/Users/someone/Pictures/Documents/x"
+)
+GH_TOKEN_READS=("external_directory:/Users/someone/.config/gh" "external_directory:/Users/someone/.config/gh/hosts.yml")
+WORK_FOLDERS=(/Users/someone/prj/config /Users/someone/tmp)
+WORK_READS=()
+WORK_WRITES=()
+for folder in "${WORK_FOLDERS[@]}"; do
+  WORK_READS+=("external_directory:$folder" "external_directory:$folder/x")
+  WORK_WRITES+=("write:$folder/x" "edit:$folder/x")
+done
+WORK_WRITES+=("write:/Users/someone/prj/config/vim-files/Documents/x" "edit:/Users/someone/prj/config/vim-files/Desktop/x")
 MIXED_DELETES=(
   "rm -rf /tmp/x build" "rm -rf build /tmp/x" "rm -rf /tmp/x && rm -rf build" "rm -f /tmp/x && rm -rf build"
   "rmdir /tmp/x build" "trash /tmp/x && rm -rf build" "find /tmp/x build -delete"
@@ -96,6 +124,8 @@ function set_up_before_script() {
     'rm -rf build && echo $?' "rm -f out.txt; printf '%s' \"\$x\"" "rm -rf build && cd ~" \
     "rm -rf /tmp/x && /usr/bin/find . -name y" "rm -rf build && ls ~/Library/Logs" "rm -rf Game/Library" \
     "${UI_CONTROL[@]}" "${WIDE_SEARCHES[@]}" "${PROTECTED_READS[@]}" "${NARROW_READS[@]}" \
+    "${RESEARCH_READS[@]}" "${RESEARCH_WRITES[@]}" "${WORK_READS[@]}" "${WORK_WRITES[@]}" \
+    "${PROTECTED_INSIDE_OPEN[@]}" "${GH_TOKEN_READS[@]}" \
     > "$DECISIONS"
 }
 
@@ -358,6 +388,30 @@ function test_still_allows_a_read_of_a_folder_that_macos_does_not_protect() {
   assert_same "$(printf 'allow %s\n' "${NARROW_READS[@]}")" "$(decisions_for "${NARROW_READS[@]}")"
 }
 
+function test_allows_a_subagent_to_read_the_research_folders() {
+  assert_same "$(printf 'allow %s\n' "${RESEARCH_READS[@]}")" "$(decisions_for "${RESEARCH_READS[@]}")"
+}
+
+function test_asks_before_a_write_or_an_edit_in_the_research_folders() {
+  assert_same "$(printf 'ask %s\n' "${RESEARCH_WRITES[@]}")" "$(decisions_for "${RESEARCH_WRITES[@]}")"
+}
+
+function test_asks_before_a_subagent_reads_a_protected_folder_that_an_open_folder_name_matches() {
+  assert_same "$(printf 'ask %s\n' "${PROTECTED_INSIDE_OPEN[@]}")" "$(decisions_for "${PROTECTED_INSIDE_OPEN[@]}")"
+}
+
+function test_asks_before_a_subagent_reads_the_config_folder_that_holds_the_gh_token() {
+  assert_same "$(printf 'ask %s\n' "${GH_TOKEN_READS[@]}")" "$(decisions_for "${GH_TOKEN_READS[@]}")"
+}
+
+function test_allows_a_subagent_to_read_the_sibling_repositories_and_home_tmp() {
+  assert_same "$(printf 'allow %s\n' "${WORK_READS[@]}")" "$(decisions_for "${WORK_READS[@]}")"
+}
+
+function test_allows_a_write_or_an_edit_in_the_sibling_repositories_and_home_tmp() {
+  assert_same "$(printf 'allow %s\n' "${WORK_WRITES[@]}")" "$(decisions_for "${WORK_WRITES[@]}")"
+}
+
 # Prints "<decision> <command>" for each argument, from the decisions of
 # set_up_before_script.
 decisions_for() {
@@ -374,7 +428,8 @@ decisions_for() {
 
 # Prints "<decision> <command>" for each argument after the first, which is
 # the scratch folder, as the extension decides under the real policy file. It
-# checks each command and never runs it.
+# checks each command and never runs it. An argument such as `write:/path`
+# checks that path for that tool, in the form of a policy key.
 decide() {
   local empty=$1
   shift
@@ -388,7 +443,11 @@ decide() {
       mcpServerNames: [],
     });
     for (const command of process.argv.slice(1)) {
-      console.log(manager.checkPermission("bash", { command }).state + " " + command.replaceAll("\\", "\\\\").replaceAll("\n", "\\n"));
+      const path = command.match(/^(external_directory|write|edit):(\/.*)$/);
+      const check = path
+        ? manager.checkPermission(path[1], { path: path[2], cwd: process.env.EMPTY })
+        : manager.checkPermission("bash", { command });
+      console.log(check.state + " " + command.replaceAll("\\", "\\\\").replaceAll("\n", "\\n"));
     }
   ' "$@"
 }
