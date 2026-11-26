@@ -392,15 +392,16 @@ do pane.go {"direction":"down"}
 do pane.go {"direction":"up"}' "$(sort_moves)"
 }
 
+# The fake marks its end. press returns only when nvim quits, so the mark is
+# there when the key waited for the fake.
 function test_does_not_wait_for_the_pane_move() {
-  fake herdr-app "$FAKE_GATE"
+  fake herdr-app "trap ': > \"\$0.ended\"' EXIT; $FAKE_GATE"
   open_gate "$SCRATCH/bin/herdr-app"
   open_channel "$SCRATCH/bin/herdr-app"
-  local start=$SECONDS
 
   press '<C-l>q'
 
-  assert_less_than 2 $((SECONDS - start))
+  assert_file_not_exists "$SCRATCH/bin/herdr-app.ended"
   read_reports 1
 }
 

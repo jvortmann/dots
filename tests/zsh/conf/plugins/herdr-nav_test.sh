@@ -56,16 +56,17 @@ function test_a_pane_move_leaves_the_screen_alone() {
   assert_same "%" "$(tmux -L "$SERVER" capture-pane -p | grep .)"
 }
 
+# The fake marks its end. The shell runs the next line only after the widget
+# returns, so it prints held only when the widget did not wait for the fake.
 function test_the_shell_does_not_wait_for_the_pane_move() {
-  fake_herdr_app "$FAKE_GATE"
+  fake_herdr_app "trap ': > \"\$0.ended\"' EXIT; $FAKE_GATE"
   open_gate "$HOME_DIR/.local/bin/herdr-app"
   shell_in_terminal t7
-  SECONDS=0
 
   tmux -L "$SERVER" send-keys C-l
-  run_in_shell "print -r -- ready"
+  run_in_shell "[[ -e $(printf %q "$HOME_DIR/.local/bin/herdr-app.ended") ]] || print -r -- held"
 
-  assert_less_than 2 "$SECONDS"
+  assert_same "held" "$(tmux -L "$SERVER" capture-pane -p | grep -x held)"
   read_reports 1
 }
 
