@@ -45,11 +45,15 @@ code fails elsewhere. Look at a run without a terminal, inside tmux, in a
 preview, in CI, and in a worktree.
 
 When your check cannot run in one of those places, build a harness that
-can. A program that reads the terminal needs a pseudo-terminal. A change on
-the screen needs a screenshot that a script compares. When you cannot
-build one, the outcome is not verified, and the report names that place. A
-command that you give the user to run is not proof, so give it under not
-verified.
+can. A program that reads the terminal needs a pseudo-terminal. When you
+cannot build that harness, the outcome is not verified, and the report
+names that place. A command that you give the user to run is not proof, so
+give it under not verified.
+
+A change on the screen needs a screenshot that a script compares. Take it with
+a capture that the app makes of itself, such as `herdr-app shot`, or use one
+that the user gives. Never use `screencapture`, because macOS then shows the
+user a prompt. When neither exists, the outcome is not verified.
 
 ## Report one outcome
 
