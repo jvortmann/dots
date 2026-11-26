@@ -44,7 +44,9 @@ another command. Delete the scratch folders that you made in this run.
    report.
 2. Look for a plan or a local work record for the task. Note its path.
 3. Follow the tdd skill, one scenario at a time, and keep the output of each
-   RED and each GREEN run as it printed.
+   RED and each GREEN run as it printed. In the cycle, run only the test
+   files you change, and never the full suite. The full suite uses all the
+   cores, and other agents can run their suites at the same time.
 4. Review the tests you added against the test files beside them. Move setup
    that two files copy into a shared module, the way the project's test rules
    say. Never import one test file from another. Run the project's duplicate
@@ -64,7 +66,8 @@ another command. Delete the scratch folders that you made in this run.
    the diff is in the file.
 8. Fix every blocker. Fix each minor item that takes a few lines in the
    files you changed. Leave the other minor items, and list them in the
-   report with a reason. Run the full suite again after the fixes.
+   report with a reason. Run the full suite again only when a fix changed
+   a file.
 9. Start one final review agent only for a fix of more than about 10 lines
    of code that has no RED and GREEN test of its own. It checks only those
    fixes. For a smaller fix, the green full suite and the typecheck are the
