@@ -3,6 +3,7 @@
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 POLICY="$ROOT/pi/pi-permissions.jsonc"
 EXTENSION="$ROOT/pi/git/github.com/jvortmann/pi-permission-system"
+STASH_IN_A_BATCH='timeout 120 bashunit tests/x_test.sh </dev/null 2>&1 | tail -4; git stash list >/dev/null 2>&1; true'
 
 # One bun decides each command that a test checks, before the first test.
 # A command that is not in this list gives "missing", not a decision.
@@ -25,6 +26,9 @@ function set_up_before_script() {
     "printenv HOME" "printenv HOME | head" 'echo $PI_SESSION_FILE' \
     "declare -p FOO" "set -e" "export FOO=1" \
     "env FOO=bar make" "env -i make" "envsubst < template.txt" "python -m venv env" \
+    "git stash list" "git stash" "git -C repo stash list" "cd repo && git stash" \
+    "$STASH_IN_A_BATCH" \
+    "rm -rf /tmp/x" "cd /tmp && rm -rf pt" \
     > "$DECISIONS"
 }
 
@@ -111,6 +115,27 @@ allow env -i make" "$(decisions_for "env FOO=bar make" "env -i make")"
 function test_still_allows_a_command_that_only_contains_the_word_env() {
   assert_same "allow envsubst < template.txt
 allow python -m venv env" "$(decisions_for "envsubst < template.txt" "python -m venv env")"
+}
+
+function test_denies_git_stash_in_any_form() {
+  assert_same "deny git stash list
+deny git stash
+deny git -C repo stash list" \
+    "$(decisions_for "git stash list" "git stash" "git -C repo stash list")"
+}
+
+function test_denies_git_stash_after_another_command() {
+  assert_same "deny cd repo && git stash" "$(decisions_for "cd repo && git stash")"
+}
+
+function test_denies_git_stash_list_inside_a_batch_of_checks() {
+  assert_same "deny $STASH_IN_A_BATCH" "$(decisions_for "$STASH_IN_A_BATCH")"
+}
+
+function test_denies_a_forced_recursive_delete() {
+  assert_same "deny rm -rf /tmp/x
+deny cd /tmp && rm -rf pt" \
+    "$(decisions_for "rm -rf /tmp/x" "cd /tmp && rm -rf pt")"
 }
 
 # Prints "<decision> <command>" for each argument, from the decisions of
