@@ -4,9 +4,12 @@
 #
 # TESTS_TEST_TIMEOUT is the limit for each test, in seconds (10 by default).
 # TESTS_BUDGET_MS is the limit for the whole run, in milliseconds (8000 by
-# default). The run fails when it takes longer.
+# default). The run fails when it takes longer. Other runs of tests/run in the
+# same TMPDIR share the cores, so each default goes up by the number of live
+# runs. A run shows in the TMPDIR as a work folder with a pid file. The output
+# says when more than one run is live. Both variables win over the default.
 #
-# Each test file runs in a bashunit or a node of its own, 14 files at a time.
+# Each test file runs in a bashunit or a node of its own, 7 files at a time.
 # bashunit gives no file name in its parallel output, so this is how each line
 # of progress shows the area of its test. The area is the path under the
 # folder, with no suffix.
@@ -29,7 +32,7 @@ PROGRESS_LINES='/^ *(not )?ok [0-9]+ - / {
 }'
 
 main() {
-  local suite=${1:-tests} limit=${TESTS_TEST_TIMEOUT:-10} budget=${TESTS_BUDGET_MS:-8000} pool=14
+  local suite=${1:-tests} limit budget pool=7 runs=1
   local -A areas
   local work tmux nodes shells file runner out outs=() area width=0 running=0 start total progress pass=✓ fail=✗ dim= plain= status=0
   if [[ -t 1 ]]; then
@@ -55,6 +58,7 @@ main() {
     ((${#areas[$file]} > width)) && width=${#areas[$file]}
   done
   work=$(mktemp -d "${TMPDIR:-/tmp}/tests-run.XXXXXX")
+  echo "$$" > "$work/pid"
   tmux=$(mktemp -d /tmp/tests-run-tmux.XXXXXX) || return 1
   export -f end_tmux_servers
   # tmux is local to main, so the EXIT trap takes its value now.
@@ -72,6 +76,8 @@ main() {
       wait -n
       ((running--))
     fi
+    runs=$(count_runs "$runs")
+    limit=${TESTS_TEST_TIMEOUT:-$((10 * runs))}
     printf -v area '%s%-*s%s' "$dim" "$width" "${areas[$file]}" "$plain"
     runner=node
     [[ $file == *_test.sh ]] && runner=bashunit
@@ -91,9 +97,14 @@ main() {
   done
   wait
   total=$(($(now_ms) - start))
+  budget=${TESTS_BUDGET_MS:-$((8000 * runs))}
   print_failures "$work"
   print_counts "$work"
   printf 'total: %s s\n' "$(seconds "$total")"
+  if ((runs > 1)); then
+    printf '%s runs at once: the budget is %s s, and the limit for each test is %s s\n' \
+      "$runs" "$(seconds "$budget")" "$limit"
+  fi
   if ((total > budget)); then
     printf 'over the budget: %s s is more than %s s\n' "$(seconds "$total")" "$(seconds "$budget")"
     status=1
@@ -104,6 +115,17 @@ main() {
   rm -f "$work"/*
   rmdir "$work"
   return "$status"
+}
+
+# Prints the number of live runs of tests/run in TMPDIR, this run included, or
+# $1 when that is more. A run that KILL ended leaves its pid file. It does not
+# count, because no process has that pid.
+count_runs() {
+  local file pid runs=0
+  for file in "${TMPDIR:-/tmp}"/tests-run.*/pid; do
+    { read -r pid < "$file"; } 2> /dev/null && kill -0 "$pid" 2> /dev/null && ((++runs))
+  done
+  if ((runs > $1)); then echo "$runs"; else echo "$1"; fi
 }
 
 now_ms() {

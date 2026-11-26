@@ -33,6 +33,10 @@ STARTED_TMUX_TEST='function test_starts_a_tmux_server_says_so_and_waits_for_go()
   tmux -L "tests-run-$$" -f /dev/null new-session -d -P -F "#{pid} #{socket_path}" cat > server
   { echo started > started; read -r _; } < go
 }'
+HELD_TEST='function test_says_it_started_and_waits_for_go() {
+  echo "$TMUX_TMPDIR" > tmux_tmpdir
+  { echo started > started; read -r _; } < go
+}'
 
 # Each scenario runs tests/run on a small suite of its own. All the runs start
 # before the first test.
@@ -65,19 +69,30 @@ function set_up_before_script() {
   start_run --interrupted TERM terminated
   suite stopped_with_ctrl_c a_test.sh "$STARTED_TMUX_TEST" b.test.mjs "$PASSING_CASE"
   start_run --interrupted INT stopped_with_ctrl_c
+  suite held a_test.sh "$HELD_TEST" b.test.mjs "$PASSING_CASE"
+  suite beside a_test.sh "$PASSING_TEST" b.test.mjs "$PASSING_CASE"
+  run_beside_a_held_run held keep beside TESTS_BUDGET_MS= &
+  suite killed a_test.sh "$HELD_TEST" b.test.mjs "$PASSING_CASE"
+  suite after_a_killed_run a_test.sh "$PASSING_TEST" b.test.mjs "$PASSING_CASE"
+  run_beside_a_held_run killed kill after_a_killed_run &
+  suite held_for_settings a_test.sh "$HELD_TEST" b.test.mjs "$PASSING_CASE"
+  suite beside_with_settings a_test.sh "$PASSING_TEST" b.test.mjs "$PASSING_CASE"
+  run_beside_a_held_run held_for_settings keep beside_with_settings TESTS_BUDGET_MS=5000 TESTS_TEST_TIMEOUT=7 &
   wait
 }
 
 # Ends each tmux server that a planted test started and a run left, by its
 # socket, and removes the socket.
 function tear_down_after_script() {
-  local file pid socket
+  local file pid socket folder
   for file in "$SUITES"/*/server; do
     read -r pid socket < "$file"
     [[ -S $socket ]] || continue
     timeout 5 tmux -S "$socket" kill-server 2> /dev/null || true
     rm -f "$socket"
   done
+  folder=$(cat "$SUITES/killed/tmux_tmpdir" 2> /dev/null)
+  if [[ $folder == /tmp/tests-run-tmux.* ]]; then rm -r "${folder%/*}"; fi
   return 0
 }
 
@@ -241,6 +256,19 @@ function test_ends_the_tmux_server_of_a_test_when_ctrl_c_stops_the_run() {
   assert_same "ended" "$(cat "$SUITES/stopped_with_ctrl_c/state")"
 }
 
+function test_a_run_beside_another_run_doubles_its_budget_and_its_limit() {
+  assert_contains "2 runs at once: the budget is 16.00 s, and the limit for each test is 20 s" "$(output_of beside)"
+}
+
+function test_the_settings_of_a_run_beside_another_run_keep_their_values() {
+  assert_contains "2 runs at once: the budget is 5.00 s, and the limit for each test is 7 s" "$(output_of beside_with_settings)"
+}
+
+function test_a_run_that_kill_ended_does_not_count_as_a_run_at_once() {
+  assert_contains "total:" "$(output_of after_a_killed_run)"
+  assert_not_contains "runs at once" "$(output_of after_a_killed_run)"
+}
+
 function test_leaves_no_folder_of_tmux_sockets() {
   local folder
   folder=$(cat "$SUITES/tmux/tmux_tmpdir")
@@ -263,18 +291,19 @@ suite() {
 }
 
 # Runs tests/run on the suite $1 in the background, with the settings after
-# it, such as TESTS_BUDGET_MS=1. With --in-a-terminal as the first argument,
-# the output of tests/run goes to a terminal of its own. The run gets no
-# variable of this bashunit run and no setting of the tests/run around it, as a
-# run from a shell does. Only its budget is different: it is the same as the
-# KILL limit, unless a setting gives another one. So the load of other suites
-# does not fail a run that works. A run that lasts HUNG_RUN_SECONDS gets KILL,
-# so a hung run cannot stop this file. With --interrupted and a signal as the
-# first two arguments, the run gets that signal once its test says that it
-# started. The file `state` of the suite then tells whether the tmux server of
-# that test still runs after the run.
+# it, such as TESTS_BUDGET_MS=1, and the environment of plant_env. With
+# --in-a-terminal as the first argument, the output of tests/run goes to a
+# terminal of its own. A run that lasts HUNG_RUN_SECONDS gets KILL, so a hung
+# run cannot stop this file. With --interrupted and a signal as the first two
+# arguments, the run gets that signal once its test says that it started. The
+# file `state` of the suite then tells whether the tmux server of that test
+# still runs after the run.
 start_run() {
-  local runner=(timeout -s KILL "$HUNG_RUN_SECONDS" "$ROOT/tests/run" tests) name setting code=0 dir
+  run_suite "$@" &
+}
+
+run_suite() {
+  local runner=(timeout -s KILL "$HUNG_RUN_SECONDS" "$ROOT/tests/run" tests) code=0 dir
   if [[ $1 == --in-a-terminal ]]; then
     runner=(script -q /dev/null "${runner[@]}")
     shift
@@ -286,14 +315,52 @@ start_run() {
   shift
   (
     cd "$dir" || exit
-    for name in $(compgen -e); do
-      [[ $name == *BASHUNIT* || $name == TESTS_* ]] && { unset "$name" 2> /dev/null || true; }
-    done
-    export TESTS_BUDGET_MS=$((HUNG_RUN_SECONDS * 1000))
-    for setting in "$@"; do export "${setting?}"; done
+    plant_env "$@"
     "${runner[@]}" > output 2>&1 < /dev/null || code=$?
     echo "$code" > code
-  ) &
+  )
+}
+
+# Sets the environment of a run of tests/run in the folder of a suite. The run
+# gets no variable of this bashunit run and no setting of the tests/run around
+# it, as a run from a shell does. Its TMPDIR is the folder tmp of the suite, so
+# it does not see the other runs. Its budget is the KILL limit, so the load of
+# other suites does not fail a run that works. The settings $@ come last, so
+# they can change both.
+# Call it in a subshell.
+plant_env() {
+  local name setting
+  for name in $(compgen -e); do
+    [[ $name == *BASHUNIT* || $name == TESTS_* ]] && { unset "$name" 2> /dev/null || true; }
+  done
+  mkdir -p tmp
+  export TMPDIR=$PWD/tmp TESTS_BUDGET_MS=$((HUNG_RUN_SECONDS * 1000))
+  for setting in "$@"; do export "${setting?}"; done
+}
+
+# Runs tests/run on the suite $1. Its test writes to the FIFO started and then
+# waits on the FIFO go. Once the test starts, KILL ends that run when $2 is
+# kill. Then tests/run runs on the suite $3, with the settings after it, in the
+# TMPDIR of the suite $1. At the end, this function writes to go.
+run_beside_a_held_run() {
+  local held=$SUITES/$1 action=$2 suite=$3 run line
+  shift 3
+  (
+    cd "$held" || exit
+    mkfifo started go
+    exec {started}<> started {go}<> go
+    plant_env TESTS_TEST_TIMEOUT="$HUNG_RUN_SECONDS"
+    "$ROOT/tests/run" tests > output 2>&1 < /dev/null &
+    run=$!
+    read -r -t "$HUNG_RUN_SECONDS" -u "$started" line || true
+    if [[ $action == kill ]]; then
+      kill -KILL "$run"
+      wait "$run" || true
+    fi
+    run_suite "$suite" TMPDIR="$held/tmp" "$@"
+    echo >&"$go"
+    wait
+  )
 }
 
 # Runs the command $3... and sends the signal $2 to it when the planted test
