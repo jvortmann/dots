@@ -105,8 +105,14 @@ The plan is also the record of the work. Keep two lists at its end:
   outcome. A row is one line of at most 300 characters. The detail goes in the
   commit message or in the report of the task.
 
-After each task, mark its step, add its row, and update the status, the current
-focus and the last-updated date. Record what changed from the plan and why.
+After each task, record it in the plan:
+
+- Mark its step, and add its row to the log.
+- Update the status, the current focus and the last-updated date.
+- Record what changed from the plan and why.
+- Name what the next task now needs.
+- Add each new follow-up as a step or a note.
+
 Then archive the log when it has more than 20 rows. A plan that still
 describes the first idea after five steps misleads the agent that reads it
 next.
@@ -117,3 +123,7 @@ before `.md`: `plans/auth.md` gets `plans/auth-log.md`. When that file does
 not exist, start it with the table header. Under the log heading of the plan,
 add a line that gives the path of the archive. A long log makes the plan
 large, and an edit of a large plan fails more often.
+
+Several agents can work on one plan at the same time. Then each agent writes
+the items of its task to a file of its own in a plan updates folder. It does
+not edit the plan. Later, one agent applies each file to the plan.

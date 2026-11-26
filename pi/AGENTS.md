@@ -89,7 +89,7 @@ Every piece of work gets a task before its first edit. That includes a request m
 
 1. **Complete only the current task** and make it committable
 2. **Validate** — it works independently and does not break existing code
-3. **Update the plan or the local work record** after every task, whenever one exists for the work. It can live anywhere, so look for it. Mark the task done, record what changed from the plan and why, and name what the next task now needs. When `dev` ran the task, `dev` writes that record, and the main agent checks its Record line. Do it before the commit message, so the record and the commit describe the same state
+3. **Update the plan or the local work record** after every task, whenever one exists for the work. It can live anywhere, so look for it. Record the items that "Record progress" in the `plan` skill gives. When `dev` ran the task, `dev` writes that record, and the main agent checks its Record line. Do it before the commit message, so the record and the commit describe the same state
 4. **Prepare the commit** — draft the message and copy it to the clipboard (see Commits), then stop. **Never run `git commit` yourself** — the user commits. The only exception is the exact phrase "you can commit"
 5. **Mark the task completed** (`TaskUpdate`), present results, and **STOP**
 6. **Ask permission** — "May I proceed with the next task: [description]?" — then wait
@@ -133,9 +133,10 @@ to `dev`.
   a new `dev` at once, and tell the user. Do not ask first. A `/reload` or a
   suspended session can end a `dev`. The new brief holds the first brief,
   the `git diff` of the task files and the path of the old transcript:
-  `$TMPDIR/pi-subagents-<uid>/<cwd>/<session>/tasks/<agentId>.output`. A
-  RED in that transcript counts when the new `dev` runs the test again and
-  sees the same failure.
+  `$TMPDIR/pi-subagents-<uid>/<cwd>/<root-session-id>/tasks/<agentId>.output`.
+  In `<cwd>`, each `/` of the working directory becomes `-`, with no
+  leading `-`. A RED in that transcript counts when the new `dev` runs the
+  test again and sees the same failure.
 - **Background** — an Agent call runs in the background by default, and its
   result comes back when the agent ends. Keep that default for every agent.
   Set `run_in_background: false` only when the next step needs the result.
@@ -148,8 +149,8 @@ to `dev`.
   `git diff -- <its files>` in place of a bare `git diff`, to stage
   nothing, and to leave the plan alone. The brief also names a plan
   updates folder. Each `dev` writes its record there as a file of its own,
-  such as `/tmp/scratch/<plan>-updates/<task>.md`. The record gives the
-  step, what changed from the plan, and any new follow-up. A `dev` never
+  such as `/tmp/scratch/<plan>-updates/<task>.md`. The record holds the
+  items that "Record progress" in the `plan` skill gives. A `dev` never
   edits another file in that folder.
 - **Plan updates after a round** — after parallel devs, the main session
   does not edit the plan itself, so that its context stays small. Make the

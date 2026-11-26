@@ -103,14 +103,13 @@ questions. Do not run the same command again.
    Give the review agent the file path, the intent, the scenarios with test
    names and the suite result line. Give the editor the
    intent, the numbers from your proof, and each file where you wrote a
-   comment. Add the plan or record update: the path, the step done and what
-   changed from the plan. Keep each prompt to about 10 lines at most, since
-   the diff is in the file.
+   comment. Add the path of the plan or record. Also give the facts for each
+   item of "Record progress" in the `plan` skill. Keep each prompt to about
+   10 lines at most, since the diff is in the file.
 
    When the brief names a plan updates folder, the editor writes one new
-   file there, such as `<task>.md`. The file gives the step, what changed
-   from the plan, and any new follow-up. The editor leaves the plan and the
-   other files in that folder as they are.
+   file there, such as `<task>.md`, with those items. The editor leaves the
+   plan and the other files in that folder as they are.
 
    To resume, steer or wait for a nested agent, use the "Agent ID:" line of
    its Agent result. Never use a name that you make up, such as "review".
