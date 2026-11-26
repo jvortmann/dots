@@ -86,5 +86,9 @@ sentence gets shorter for free.
 Run `ste-lint <file>`. It reports and never rewrites, because only the author
 knows the intent. Read the reason, then revise the text yourself.
 
+Give a draft with no file of its own, such as a commit message, a `.txt`
+name. `ste-lint` skips a name such as `x.msg`, or one with no extension, and
+reports no fault.
+
 It reads Markdown, plain text and the comments in a source file. It cannot
 judge whether the text says the right thing, so read the result once yourself.

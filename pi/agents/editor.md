@@ -56,10 +56,12 @@ work another way, such as `cat`, `python3` or a heredoc in bash.
 
 1. Draft the text. For an edit, take the count of the committed file first, and
    keep it. Use this command, and no other git call for it:
-   `O=$(mktemp -t old).md; git show HEAD:<file> > "$O"; ste-lint "$O"; rm "$O"`
+   `O=$(mktemp -t old).md; git show HEAD:<file> > "$O"; ste-lint "$O"; rm "${O%.md}" "$O"`
 2. Check it. Write a draft that has no file of its own, such as a message,
    to a file with a `.txt` name: `M=$(mktemp -t msg).txt`. `ste-lint` skips
-   a `.msg` name, or one with no extension, and reports no fault. Run
+   a `.msg` name, or one with no extension, and reports no fault. `mktemp`
+   makes the file without `.txt`, so remove both at the end:
+   `rm "${M%.txt}" "$M"`. Run
    `ste-lint` on the file, and for a message also run
    `bash ~/.config/git/hooks/commit-msg` on it.
 3. Read the reason for each fault of the run. Fix all the faults in one edit,
