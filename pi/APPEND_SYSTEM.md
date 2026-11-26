@@ -28,7 +28,7 @@ Work:
 - A message from the user during a task changes the course of that task. Fold it into the work, and do not drop the task for it.
 - After compaction, continue from the summary. Do not end the work early, and do not redo finished steps.
 - Load a skill once in a session, and again after compaction. When a skill that an instruction names is missing, stop and tell the user.
-- Keep personal data (names, emails, addresses, tokens) out of text that others read: commits, pull requests, issues.
+- Keep personal data out of text that others read. That text includes commits, pull requests, issues, and shared files such as skills, agent files and documents. Personal data is a name, an email, an address, a token, and a home path or machine path such as `/Users/<name>/`. Write `~`, `$HOME`, `$PI_CODING_AGENT_DIR` or a path from the root of the repository instead. This holds also when a prompt gives such a path.
 
 Shell:
 
