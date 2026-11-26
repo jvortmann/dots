@@ -45,11 +45,11 @@ Allowed (read-only, anytime): `git status`, `git diff`, `git log`, `git show`, `
 
 ### Workflow discipline (never violate)
 
-- **One task at a time.** Exactly ONE task in progress. Do it, show the result, and STOP. Do not start, prep, or edit files for the next task — not even "just finishing the next step" — until the user explicitly approves. Batching tasks is a violation, even when two tasks touch the same file: each gets its own commit message and its own stop.
+- **One task at a time.** Exactly ONE task in progress. Do it, show the result, and STOP. Do not start, prep, or edit files for the next task — not even "just finishing the next step" — until the user explicitly approves. Batching tasks is a violation, even when two tasks touch the same file: each gets its own commit message and its own stop. The exception is parallel work that the user approved: see "One task at a time" under "Task Execution & Permissions".
 - **Commits.** Run `git commit` ONLY on the exact phrase "you can commit". Every other mention of committing = draft + copy the message, never run git (see Commits → Who commits).
 - **Test first (TDD).** For any behavior change, the FIRST file you create or edit is the test. NEVER write or edit implementation (non-test) code before a test for the current scenario exists AND you have run the whole test file and seen it FAIL (RED). Show/state the failing result before implementing. Starting with the code is a violation (see the `tdd` skill).
 - **STOP gate — before EVERY tool call, self-check:**
-    1. **Task scope** — is this action part of the single, already-approved task in progress? If it starts the next task, or was not explicitly approved, STOP and ask first.
+    1. **Task scope** — is this action part of the single, already-approved task in progress? If it starts the next task, or was not explicitly approved, STOP and ask first. When the user approves parallel work for a set of tasks, start each task of that set with no question.
     2. **Commit** — is this a `git commit` / `git commit --amend`? Run it ONLY if the user said the exact phrase "you can commit". Otherwise prepare + copy the message and never run git.
     3. **Test first** — is this call about to create or edit implementation (non-test) code? Proceed ONLY if a test for this exact scenario ran in this session and FAILED on its own assertion (RED). A failure from setup, a missing file or a typo is not RED. Otherwise STOP and write + run the test first. In the main session, the answer is to hand the task to `dev`, not to write the code.
     4. **Directory** — does this bash command start with `cd`? If it is a bare leading `cd` (not wrapped as `(cd dir && cmd)` for that one command), STOP and delete it — the tool already runs in the correct directory. Never type a remembered absolute path. If you are unsure where you are, check with `pwd` instead of assuming.
@@ -78,6 +78,16 @@ Every piece of work gets a task before its first edit. That includes a request m
 4. **Prepare the commit** — draft the message and copy it to the clipboard (see Commits), then stop. **Never run `git commit` yourself** — the user commits. The only exception is the exact phrase "you can commit"
 5. **Mark the task completed** (`TaskUpdate`), present results, and **STOP**
 6. **Ask permission** — "May I proceed with the next task: [description]?" — then wait
+
+When the user approves parallel work for a set of tasks, that approval
+covers the whole set. Start each task as soon as the tasks it depends on
+finish. Do not ask again for each one. Tasks that change the same file
+still run one after the other.
+
+Each task still gets its own report and its own commit message. Each task
+also stops for its own commit, because the user runs every commit. That
+stop holds only that task, and the other tasks go on. "Several commits
+waiting" says how to give the user the commits.
 
 ### Code goes to the dev agent
 
