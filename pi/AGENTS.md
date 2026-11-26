@@ -344,6 +344,7 @@ the commit-msg hook on a message.
 ### Tools
 
 - **Search with `rg`** (ripgrep), never `grep`, for content search in bash
+- **Keep blocked command words out of a bash line**. The policy reads every word of the command text, also in a comment, a heredoc or a string. A word that it blocks there trips a deny or an ask. Use the write or edit tool for such text, such as a plan note, a test row or a probe. Search for such a word with the grep tool, not with `rg` in bash
 - **Never `cd` to the current working directory** — see Directory (never fabricate a `cd`) under Prohibited Operations. This is an absolute rule, checked before every tool call, not just a style preference
 
 ### Documentation and comments

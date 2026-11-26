@@ -45,6 +45,12 @@ deny or an ask blocks a path or a command, stop the work that needs it. Name
 the path or the command under Open questions in the report. Never do the same
 work another way, such as `cat`, `python3` or a heredoc in bash.
 
+Before a bash call, keep each word that the policy blocks out of it. The
+policy reads every word of the command text, also in a comment, a heredoc or a
+string. Such a word there trips a deny or an ask. Use the write or edit tool
+for such text, such as a plan note, a test row or a probe. Search for such a
+word with the grep tool, not with `rg` in bash.
+
 ## The work
 
 Run each test command as `timeout -v -k 5 <limit> <command> </dev/null`.
