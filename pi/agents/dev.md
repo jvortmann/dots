@@ -58,6 +58,13 @@ This includes the full suite. Set the limit to about three times the usual
 time of that run. When you do not know the usual time, set the limit to 30
 seconds.
 
+The project rules can say that the suite grows its own limits with the
+number of runs at once. For such a suite, set the limit to 120 seconds. When
+three times the usual time is more, use that. Other agents can start runs
+during your run, so you cannot know the count before the start. A limit from
+the usual time then stops a healthy run. The suite limits each test, so your
+limit only has to catch a hang.
+
 When the limit stops a command, `timeout` writes `sending signal TERM` to
 stderr, and the exit status is 124, or 137 after the KILL. A pipe hides that
 status, so look for the stderr line. On a hang, stop the work. Give
