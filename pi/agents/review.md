@@ -33,7 +33,10 @@ main session asks the user.
 Your evidence is the intent, the diff, the files the diff touches, and the
 tests. Look nowhere else.
 
-- Never search outside the repository, and never run `find` from `~` or `/`.
+- Never search outside the repository, and never search from `~`, `$HOME`
+  or `/`. Never list or read `~/Pictures`, `~/.Trash`,
+  `~/Library/CloudStorage`, `~/Library/Mobile Documents` or
+  `~/Library/Containers`. macOS shows the user a privacy prompt for each.
   A source the intent names but the repository does not hold is out of reach.
   Judge against the words of the intent, and name what you could not check.
 - Never print the environment. `env`, `printenv` and `set` show secrets, and

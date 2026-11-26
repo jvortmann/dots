@@ -39,6 +39,14 @@ Allowed (read-only, anytime): `git status`, `git diff`, `git log`, `git show`, `
 - **Allowed with a warning** — an agent may run `sudo`, `sfltool dumpbtm`, or any command that opens a macOS authorization dialog
 - **Tell the user first** — give the command and what it does. Say why the task needs it, and that a password prompt will appear
 
+### macOS privacy
+
+pi runs inside a terminal app, Herdr today. macOS charges that app for each access below, and shows the user a prompt.
+
+- **NO UI control** — never run `osascript`, System Events, `cliclick` or `screencapture`. Never run code that posts key or mouse events, such as `CGEvent`, `postToPid` or `AXUIElement`. When a check needs a key press or a click, stop and give the user the steps.
+- **NO protected folders** — never list or read `~/Pictures`, `~/.Trash`, `~/Library/CloudStorage`, `~/Library/Mobile Documents` or `~/Library/Containers`. Read a file there only at the exact path that the user gives.
+- **NO search of the whole disk** — never search from `~`, `$HOME` or `/`, with a tool or with `find`, `fd`, `rg` or `grep -r`. Search the repository, or the exact folder that the task names. When a file is not where the brief says, report it.
+
 ### Directory (never fabricate a `cd`)
 
 - **NO leading `cd`** — never generate a bash command prefixed with `cd {path}` (absolute or relative) to reach the current working directory. Every tool call already executes there — a leading `cd` is always redundant, and a stale/wrong remembered path is a real failure mode (e.g. drifting into a sibling git worktree).
@@ -112,8 +120,9 @@ to `dev`.
   tests run. It tells `dev` to update the plan or work record, or for
   parallel devs to write its file of plan updates. It does not list the test scenarios, because `dev` derives them
   by the rule of the tdd skill. `dev` trusts these facts and does not search
-  again. Add no delete rule of your own: the rule under Prohibited
-  Operations holds for every agent.
+  again, so give each file, tool and document by its absolute path. Add no
+  delete rule of your own: the rule under Prohibited Operations holds for
+  every agent.
 - **One dev for each task** — keep the same `dev` until the task is
   committed. For any follow-up, resume that `dev` with its id, the
   "Agent ID:" line of the Agent result. Never use a name you make up. A
@@ -195,7 +204,8 @@ session.
 
 - **The brief** gives the question, why it matters, and how deep to search. It
   asks for findings with absolute paths and line numbers, in about 400 words,
-  and no copy of a whole file.
+  and no copy of a whole file. It gives each file, tool and document by its
+  absolute path, or the folders that hold it.
 - **Background** — start `Explore` in the background, as for `dev`. Wait
   only when the next step needs the answer.
 - **Skills** — when a skill names where the answer lives, put that place in

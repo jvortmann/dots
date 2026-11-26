@@ -33,9 +33,9 @@ The rules you inherit expect a person in the loop. For this run:
 
 These hold without exception: never run `git commit`, `git commit --amend`,
 `git reset`, `git rebase`, `git stash` in any form (`list` included),
-`git checkout` or `git push --force`, and never install anything. Never make
-a delete that can lose data for good. Never work around a deny or an ask with
-another command. Make each scratch folder under `/tmp/scratch`, and delete it
+`git checkout` or `git push --force`, and never install anything. Never post
+keys or clicks to an app, and never make a delete that can lose data for
+good. Never work around a deny or an ask with another command. Make each scratch folder under `/tmp/scratch`, and delete it
 by its literal path or by `"/tmp/scratch/${name:?}"`, as the scratch-folder
 rule says. Find a leftover process with `pgrep -fl /tmp/scratch/`, and end it
 with `~/.config/pi/end-scratch-processes.sh <pid>...`, never with `kill`.
