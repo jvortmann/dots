@@ -24,9 +24,13 @@ function test_notes_the_input_of_its_terminal() {
 }'
 STUCK_CASE='import { test } from "node:test";
 test("waits a minute", () => new Promise((resolve) => setTimeout(resolve, 60000)));'
-TMUX_TEST='function test_starts_a_tmux_server_and_reads_the_terminal() {
+# The limit of a test starts after set_up_before_script ends. The limit cannot
+# stop the planted file before it writes the name of its tmux server.
+TMUX_TEST='function set_up_before_script() {
   tmux -L "tests-run-$$" -f /dev/null new-session -d -P -F "#{pid} #{socket_path}" cat > server
   echo "$TMUX_TMPDIR" > tmux_tmpdir
+}
+function test_reads_the_terminal() {
   read -r < /dev/tty
 }'
 STARTED_TMUX_TEST='function test_starts_a_tmux_server_says_so_and_waits_for_go() {
@@ -238,6 +242,7 @@ function test_counts_a_node_case_over_the_limit_as_failed() {
 }
 
 function test_ends_the_tmux_server_of_a_test_over_the_limit() {
+  assert_contains "Test timed out after 1s" "$(output_of tmux)"
   assert_same "ended" "$(server_state tmux)"
 }
 
