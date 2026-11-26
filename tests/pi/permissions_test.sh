@@ -27,7 +27,8 @@ FILE_DELETES=(
 )
 CLIMBING_DELETES=(
   "rm -rf /tmp/../Users/someone/prj" "rm -R /var/folders/ab/cd/T/../../x" "rmdir /tmp/../x"
-  "trash /private/tmp/../x" "find /tmp/../x -delete" "rm -rf /tmp/{x,../y}"
+  "trash /private/tmp/../x" "find /tmp/../x -delete" "rm -rf /tmp/{x,../y}" "rm -r /tmp/../x; ls"
+  'rm -r "/tmp/scratch/../x"' 'rm -r /tmp/scratch/${d:?}/..' 'rm -r "/tmp/scratch/${d:?}/../x"; ls'
 )
 UI_CONTROL=(
   "osascript -e 'tell application \"Herdr\" to quit'" "cd repo && osascript -e 'beep'"
@@ -80,7 +81,36 @@ WORK_WRITES+=("write:/Users/someone/prj/config/vim-files/Documents/x" "edit:/Use
 MIXED_DELETES=(
   "rm -rf /tmp/x build" "rm -rf build /tmp/x" "rm -rf /tmp/x && rm -rf build" "rm -f /tmp/x && rm -rf build"
   "rmdir /tmp/x build" "trash /tmp/x && rm -rf build" "find /tmp/x build -delete"
-  "find /tmp/x -delete && find build -delete"
+  "find /tmp/x -delete && find build -delete" "rm -rf /tmp/x build; ls" "rm -rf /tmp/x build && ls"
+  "rm -r /tmp/x && rmdir build" "rm -r /tmp/x; trash build" "rm -r /tmp/x && find build -delete"
+  "rm -r /tmp/x; /usr/bin/find build -delete" "rm -r /tmp/x && git clean -fd" "rm -r /tmp/x; git -C repo clean -fd"
+  'rm -r /tmp/scratch/${d:?} build' 'rm -r build "/tmp/scratch/${d:?}"' 'rm -f -r build "/tmp/scratch/x"'
+  'rm --recursive build "/tmp/scratch/x"'
+)
+SCRATCH_DELETES=(
+  "rm -r /tmp/scratch/step42.Ab12Cd" 'rm -r "/tmp/scratch/step42.Ab12Cd"' 'rm -rf "/tmp/scratch/step42.Ab12Cd"'
+)
+SCRATCH_GUARDED_DELETES=('rm -r "/tmp/scratch/${d:?}"' 'rm -r /tmp/scratch/${d:?}' 'rm -Rf "/tmp/scratch/${d:?}"')
+SCRATCH_EMPTY_NAMES=(
+  'rm -r /tmp/scratch/$d' 'rm -r "/tmp/scratch/$d"' 'rm -r /tmp/scratch/${d}' 'rm -r /tmp/scratch/$d; ls'
+  'rm -r "/tmp/scratch/$d" && ls' 'rm -r "/tmp/scratch/${d:-}"' 'rm -r /tmp/scratch/${d:+}' 'rm -r /tmp/scratch/${d:=}'
+  'rm -r /tmp/scratch/${d}; ls ${e:?}' 'rm -r /tmp/scratch/${d:+:?}' 'rm -r "/tmp/scratch/${d#*:?}"'
+  'rm -r "/tmp/scratch/${d%%*:?}"' 'rm -r "/tmp/scratch/`true`"'
+)
+SCRATCH_ROOT_DELETES=(
+  "rm -r /tmp/scratch/" "rm -r /tmp/scratch" 'rm -r "/tmp/scratch/"' 'rm -rf "/tmp/scratch"' "rm -r /tmp/scratch/ && ls"
+  "rm -r /tmp/scratch/; ls" "rm -r /tmp/scratch; ls" "rm -r /tmp/scratch/*" "rm -rf /tmp/scratch/* && ls"
+  "rm -r /tmp/scratch/*; ls"
+)
+DANGER_AFTER_TEMP_DELETES=(
+  "rm -r /tmp/x; rm -rf ~" "rm -r /tmp/x && rm -rf /" 'rm -r /tmp/x; rm -r "$d"' "rm -r /tmp/x && rm -r /Users"
+  'rm -r "/tmp/scratch/${d:?}"; rm -rf ~'
+)
+FOLLOWED_TEMP_DELETES=(
+  "rm -r /tmp/x; ls /tmp" "rm -r /tmp/x && git status" "rm -rf /private/tmp/x; ls"
+  "rm -R /var/folders/ab/cd/T/x && ls" "rm -fr /private/var/folders/ab/cd/T/x; ls"
+  'rm -r "/tmp/scratch/step42.Ab12Cd"; ls /tmp/scratch' 'rm -r "/tmp/scratch/step42.Ab12Cd" && git status'
+  'rm -r "/tmp/scratch/${d:?}"; ls /tmp/scratch' 'rm -rf /tmp/scratch/${d:?} && git status'
 )
 
 # One bun decides each command that a test checks, before the first test.
@@ -121,6 +151,8 @@ function set_up_before_script() {
     'rm -Rf "$HOME"' 'rm -r "$HOME/"' 'rm -r $HOME/*' \
     'rm -r "$d/out"' 'rm -r $d/out' 'cd repo && rm -fR "${out}/cache"' 'rm -R "$HOME/prj/x"' \
     "${SYSTEM_DELETES[@]}" "${LIBRARY_DELETES[@]}" "${TEMP_DELETES[@]}" "${MIXED_DELETES[@]}" "${OTHER_TEMP_DELETES[@]}" "${FILE_DELETES[@]}" "${CLIMBING_DELETES[@]}" \
+    "${FOLLOWED_TEMP_DELETES[@]}" "${DANGER_AFTER_TEMP_DELETES[@]}" "${SCRATCH_DELETES[@]}" "${SCRATCH_EMPTY_NAMES[@]}" "${SCRATCH_GUARDED_DELETES[@]}" \
+    "${SCRATCH_ROOT_DELETES[@]}" \
     'rm -rf build && echo $?' "rm -f out.txt; printf '%s' \"\$x\"" "rm -rf build && cd ~" \
     "rm -rf /tmp/x && /usr/bin/find . -name y" "rm -rf build && ls ~/Library/Logs" "rm -rf Game/Library" \
     "${UI_CONTROL[@]}" "${WIDE_SEARCHES[@]}" "${PROTECTED_READS[@]}" "${NARROW_READS[@]}" \
@@ -357,6 +389,30 @@ function test_asks_when_a_temp_delete_also_deletes_another_folder() {
   assert_same "$(printf 'ask %s\n' "${MIXED_DELETES[@]}")" "$(decisions_for "${MIXED_DELETES[@]}")"
 }
 
+function test_allows_a_temp_delete_that_another_command_follows() {
+  assert_same "$(printf 'allow %s\n' "${FOLLOWED_TEMP_DELETES[@]}")" "$(decisions_for "${FOLLOWED_TEMP_DELETES[@]}")"
+}
+
+function test_allows_a_delete_of_a_scratch_folder_by_its_name_quoted_or_not() {
+  assert_same "$(printf 'allow %s\n' "${SCRATCH_DELETES[@]}")" "$(decisions_for "${SCRATCH_DELETES[@]}")"
+}
+
+function test_allows_a_delete_of_a_scratch_folder_by_a_variable_that_stops_when_empty() {
+  assert_same "$(printf 'allow %s\n' "${SCRATCH_GUARDED_DELETES[@]}")" "$(decisions_for "${SCRATCH_GUARDED_DELETES[@]}")"
+}
+
+function test_asks_when_a_scratch_delete_has_a_name_that_can_be_empty() {
+  assert_same "$(printf 'ask %s\n' "${SCRATCH_EMPTY_NAMES[@]}")" "$(decisions_for "${SCRATCH_EMPTY_NAMES[@]}")"
+}
+
+function test_asks_before_a_delete_of_the_whole_scratch_folder() {
+  assert_same "$(printf 'ask %s\n' "${SCRATCH_ROOT_DELETES[@]}")" "$(decisions_for "${SCRATCH_ROOT_DELETES[@]}")"
+}
+
+function test_denies_a_dangerous_delete_after_a_temp_delete() {
+  assert_same "$(printf 'deny %s\n' "${DANGER_AFTER_TEMP_DELETES[@]}")" "$(decisions_for "${DANGER_AFTER_TEMP_DELETES[@]}")"
+}
+
 function test_asks_when_a_temp_delete_climbs_out_of_the_temp_folder() {
   assert_same "$(printf 'ask %s\n' "${CLIMBING_DELETES[@]}")" "$(decisions_for "${CLIMBING_DELETES[@]}")"
 }
@@ -365,7 +421,7 @@ function test_does_not_deny_for_a_later_command_that_names_a_variable_or_a_prote
   assert_same "ask rm -rf build && echo \$?
 allow rm -f out.txt; printf '%s' \"\$x\"
 ask rm -rf build && cd ~
-ask rm -rf /tmp/x && /usr/bin/find . -name y
+allow rm -rf /tmp/x && /usr/bin/find . -name y
 ask rm -rf build && ls ~/Library/Logs
 ask rm -rf Game/Library" \
     "$(decisions_for 'rm -rf build && echo $?' "rm -f out.txt; printf '%s' \"\$x\"" "rm -rf build && cd ~" \

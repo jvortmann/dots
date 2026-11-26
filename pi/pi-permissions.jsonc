@@ -176,37 +176,25 @@
     "* defaults write*": "ask",
 
     // A delete of a folder asks, in every spelling: rm, rmdir, trash,
-    // find -delete and git clean.
+    // find -delete and git clean. The same delete later in the line has its
+    // rules further down, after the temp allows.
     "rm -r*": "ask",
-    "* rm -r*": "ask",
     "rm -R*": "ask",
-    "* rm -R*": "ask",
     "rm -fr*": "ask",
-    "* rm -fr*": "ask",
     "rm -fR*": "ask",
-    "* rm -fR*": "ask",
     "rm -f -r*": "ask",
-    "* rm -f -r*": "ask",
     "rm --recursive*": "ask",
-    "* rm --recursive*": "ask",
-    "*/rm -r*": "ask",
-    "*/rm -R*": "ask",
-    "*/rm -fr*": "ask",
-    "*/rm -fR*": "ask",
     "rmdir*": "ask",
-    "* rmdir*": "ask",
     "trash*": "ask",
-    "* trash*": "ask",
     "*find * -delete*": "ask",
     "git clean*": "ask",
-    "* git clean*": "ask",
     "git -* clean*": "ask",
-    "* git -* clean*": "ask",
 
     // A delete under the temp folders runs without asking. A `*` also
     // matches a space or `&&`, so a recursive delete with a second space
     // after its flag asks again: it holds another target or command. A
-    // `..` asks again too, because it can climb out of the temp folder.
+    // quoted name in /tmp/scratch runs too, after a flag of one or two
+    // characters.
     "rm -r* /tmp/*": "allow",
     "rm -R* /tmp/*": "allow",
     "rm -fr* /tmp/*": "allow",
@@ -235,6 +223,8 @@
     "rmdir /private/var/folders/*/T/*": "allow",
     "trash /private/var/folders/*/T/*": "allow",
     "find /private/var/folders/*/T/* -delete": "allow",
+    "rm -? \"/tmp/scratch/?*": "allow",
+    "rm -?? \"/tmp/scratch/?*": "allow",
     "rm -r* * ?*": "ask",
     "rm -R* * ?*": "ask",
     "rm -fr* * ?*": "ask",
@@ -242,6 +232,69 @@
     "rmdir * ?*": "ask",
     "trash * ?*": "ask",
     "find * * -delete": "ask",
+
+    // A temp delete that another command follows, after `; ` or ` && `,
+    // runs without asking. A second space before the separator asks again,
+    // because it holds a second target.
+    "rm -* /tmp/*; *": "allow",
+    "rm -* /tmp/* && *": "allow",
+    "rm -* /private/tmp/*; *": "allow",
+    "rm -* /private/tmp/* && *": "allow",
+    "rm -* /var/folders/*/T/*; *": "allow",
+    "rm -* /var/folders/*/T/* && *": "allow",
+    "rm -* /private/var/folders/*/T/*; *": "allow",
+    "rm -* /private/var/folders/*/T/* && *": "allow",
+    "rm -* \"/tmp/scratch/?*; *": "allow",
+    "rm -* \"/tmp/scratch/?* && *": "allow",
+    "rm -* * ?*; *": "ask",
+    "rm -* * ?* && *": "ask",
+
+    // Each agent makes its scratch folders in /tmp/scratch. The temp allows
+    // above also match a name from a variable and the folder itself, so
+    // these rules ask again. An empty name from a variable deletes the
+    // folders of all agents. A `${name:?}` name runs, because the shell
+    // stops on an empty name. The forms `:-`, `:+`, `:=`, `#` and `%` and a
+    // backtick can give an empty name, so they ask. A plain `${name}` asks
+    // too, even when a later `:?}` in the line would match the allow
+    // pattern. A `?` stands for the `*` of `/tmp/scratch/*`, so a name of
+    // one character also asks.
+    "rm -*/tmp/scratch/$*": "ask",
+    "rm -? /tmp/scratch/${*:?}": "allow",
+    "rm -?? /tmp/scratch/${*:?}": "allow",
+    "rm -? \"/tmp/scratch/${*:?}\"": "allow",
+    "rm -?? \"/tmp/scratch/${*:?}\"": "allow",
+    "rm -? /tmp/scratch/${*:?}; *": "allow",
+    "rm -?? /tmp/scratch/${*:?}; *": "allow",
+    "rm -? \"/tmp/scratch/${*:?}\"; *": "allow",
+    "rm -?? \"/tmp/scratch/${*:?}\"; *": "allow",
+    "rm -? /tmp/scratch/${*:?} && *": "allow",
+    "rm -?? /tmp/scratch/${*:?} && *": "allow",
+    "rm -? \"/tmp/scratch/${*:?}\" && *": "allow",
+    "rm -?? \"/tmp/scratch/${*:?}\" && *": "allow",
+    "rm -*/tmp/scratch/${*:-*": "ask",
+    "rm -*/tmp/scratch/${*:+*": "ask",
+    "rm -*/tmp/scratch/${*:=*": "ask",
+    "rm -*/tmp/scratch/${*#*": "ask",
+    "rm -*/tmp/scratch/${*%*": "ask",
+    "rm -*/tmp/scratch/`*": "ask",
+    "rm -*/tmp/scratch/${*}*:?}*": "ask",
+    "rm -? /tmp/scratch *": "ask",
+    "rm -?? /tmp/scratch *": "ask",
+    "rm -? /tmp/scratch/ *": "ask",
+    "rm -?? /tmp/scratch/ *": "ask",
+    "rm -? /tmp/scratch;*": "ask",
+    "rm -?? /tmp/scratch;*": "ask",
+    "rm -? /tmp/scratch/;*": "ask",
+    "rm -?? /tmp/scratch/;*": "ask",
+    "rm -? \"/tmp/scratch/\"*": "ask",
+    "rm -?? \"/tmp/scratch/\"*": "ask",
+    "rm -? /tmp/scratch/? *": "ask",
+    "rm -?? /tmp/scratch/? *": "ask",
+    "rm -? /tmp/scratch/?;*": "ask",
+    "rm -?? /tmp/scratch/?;*": "ask",
+
+    // A `..` asks again, because it can climb out of the temp folder. These
+    // rules follow the allows above, and the last match wins.
     "rm -r*..*": "ask",
     "rm -R*..*": "ask",
     "rm -fr*..*": "ask",
@@ -249,6 +302,26 @@
     "rmdir *..*": "ask",
     "trash *..*": "ask",
     "find *..* -delete": "ask",
+
+    // A delete of a folder later in the line asks, also after a temp delete.
+    // The deny rules come later still, so a dangerous delete there is
+    // denied.
+    "* rm -r*": "ask",
+    "* rm -R*": "ask",
+    "* rm -fr*": "ask",
+    "* rm -fR*": "ask",
+    "* rm -f -r*": "ask",
+    "* rm --recursive*": "ask",
+    "*/rm -r*": "ask",
+    "*/rm -R*": "ask",
+    "*/rm -fr*": "ask",
+    "*/rm -fR*": "ask",
+    "* rmdir*": "ask",
+    "* trash*": "ask",
+    "* find * -delete*": "ask",
+    "*/find * -delete*": "ask",
+    "* git clean*": "ask",
+    "* git -* clean*": "ask",
 
     // pi runs inside a terminal app, and macOS shows the user a privacy
     // prompt for that app when a command controls the user interface.
