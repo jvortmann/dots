@@ -7,6 +7,7 @@ tools: read, bash, edit, write, grep, find, ls
 skills: asd-ste100, documentation, git-commit, create-pr
 max_turns: 30
 prompt_mode: append
+persist_session: true
 ---
 
 # Editor

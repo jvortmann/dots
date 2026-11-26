@@ -7,6 +7,7 @@ tools: read, bash, grep, find, ls
 skills: testing, refactoring, codebase-design
 max_turns: 12
 prompt_mode: replace
+persist_session: true
 ---
 
 # Review

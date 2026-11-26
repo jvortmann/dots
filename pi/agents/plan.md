@@ -5,6 +5,7 @@ description: Software architect for implementation planning (read-only)
 tools: read, bash, grep, find, ls
 skills: plan
 prompt_mode: replace
+persist_session: true
 ---
 
 # Plan

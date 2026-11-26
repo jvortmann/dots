@@ -5,6 +5,7 @@ description: Fast codebase exploration agent (read-only)
 model: anthropic/claude-sonnet-5-5
 tools: read, bash, grep, find, ls
 prompt_mode: replace
+persist_session: true
 ---
 
 # Explore

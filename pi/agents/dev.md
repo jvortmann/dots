@@ -6,6 +6,7 @@ tools: all
 skills: tdd, testing, refactoring, codebase-design, impeccable, reproducible-locally
 allowed_subagents: editor, review
 prompt_mode: append
+persist_session: true
 ---
 
 # Dev
