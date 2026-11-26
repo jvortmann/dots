@@ -29,10 +29,9 @@ TMUX_TEST='function test_starts_a_tmux_server_and_reads_the_terminal() {
   echo "$TMUX_TMPDIR" > tmux_tmpdir
   read -r < /dev/tty
 }'
-STARTED_TMUX_TEST='function test_starts_a_tmux_server_says_so_and_reads_the_terminal() {
+STARTED_TMUX_TEST='function test_starts_a_tmux_server_says_so_and_waits_for_go() {
   tmux -L "tests-run-$$" -f /dev/null new-session -d -P -F "#{pid} #{socket_path}" cat > server
-  echo started > started
-  read -r < /dev/tty
+  { echo started > started; read -r _; } < go
 }'
 
 # Each scenario runs tests/run on a small suite of its own. All the runs start
@@ -63,9 +62,9 @@ function set_up_before_script() {
   suite tmux a_test.sh "$TMUX_TEST" b.test.mjs "$PASSING_CASE"
   start_run tmux TESTS_TEST_TIMEOUT=1
   suite terminated a_test.sh "$STARTED_TMUX_TEST" b.test.mjs "$PASSING_CASE"
-  start_run --interrupted TERM terminated TESTS_TEST_TIMEOUT=1
+  start_run --interrupted TERM terminated
   suite stopped_with_ctrl_c a_test.sh "$STARTED_TMUX_TEST" b.test.mjs "$PASSING_CASE"
-  start_run --interrupted INT stopped_with_ctrl_c TESTS_TEST_TIMEOUT=1
+  start_run --interrupted INT stopped_with_ctrl_c
   wait
 }
 
@@ -226,8 +225,16 @@ function test_ends_the_tmux_server_of_a_test_over_the_limit() {
   assert_same "ended" "$(server_state tmux)"
 }
 
+function test_term_ends_the_run() {
+  assert_same "143" "$(code_of terminated)"
+}
+
 function test_ends_the_tmux_server_of_a_test_when_the_run_gets_term() {
   assert_same "ended" "$(cat "$SUITES/terminated/state")"
+}
+
+function test_ctrl_c_ends_the_run() {
+  assert_same "130" "$(code_of stopped_with_ctrl_c)"
 }
 
 function test_ends_the_tmux_server_of_a_test_when_ctrl_c_stops_the_run() {
@@ -270,7 +277,7 @@ start_run() {
     runner=(script -q /dev/null "${runner[@]}")
     shift
   elif [[ $1 == --interrupted ]]; then
-    runner=(interrupt_run "$3" "$2" "${runner[@]}")
+    runner=(interrupt_run "$3" "$2" timeout --foreground -s KILL "$HUNG_RUN_SECONDS" "$ROOT/tests/run" tests)
     shift 2
   fi
   dir="$SUITES/$1"
@@ -286,28 +293,38 @@ start_run() {
   ) &
 }
 
-# Runs the command $3... in a process group of its own, and sends the signal $2
-# to that group when the planted test writes to the FIFO started, as Ctrl-C
-# does. Then it writes the state of the tmux server of that test to the file
-# state, for the suite $1. The command writes to started when it ends, so a
-# test that never writes stops the wait when its run ends. The trap keeps the
-# writer alive until the run ends.
+# Runs the command $3... and sends the signal $2 to it when the planted test
+# writes to the FIFO started. When the run ends first, the watcher sends no
+# signal. Then it writes the state of the tmux server of that test to the file
+# state, for the suite $1. The planted test waits on the FIFO go until the
+# state exists, and then this function writes to go. It returns the exit
+# status of the run.
+#
+# The command is timeout --foreground. It sends the signal to the run once, as
+# Ctrl-C in a terminal does, and not to the group of the run. The signal goes
+# once because tests/run guards its EXIT trap from a second TERM only.
+#
+# A background job ignores INT, and so does each test file that tests/run
+# starts. A bash trap cannot change a signal that the shell ignored at its
+# start. So genv sets the signal of the run back to its default.
 interrupt_run() {
-  local suite=$1 signal=$2 started pid
+  local suite=$1 signal=$2 started go run watch line code=0
   shift 2
-  mkfifo started
-  exec {started}<> started
-  set -m
+  mkfifo started go
+  exec {started}<> started {go}<> go
+  genv --default-signal="$signal" "$@" &
+  run=$!
   {
-    trap : "$signal"
-    "$@"
-    echo ended >&"$started"
+    read -r -u "$started" line
+    if [[ $line == started ]]; then kill -"$signal" "$run"; fi
   } &
-  pid=$!
-  read -r -u "$started" _
-  kill -"$signal" -- -"$pid"
-  wait "$pid" || true
+  watch=$!
+  wait "$run" || code=$?
+  echo ended >&"$started"
+  wait "$watch"
   server_state "$suite" > state
+  echo >&"$go"
+  return "$code"
 }
 
 # Prints whether the tmux server that the planted test of the suite $1 started
