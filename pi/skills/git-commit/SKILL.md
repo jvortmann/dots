@@ -83,22 +83,30 @@ Good: Raise the pi version in settings
 
 ## Check the draft
 
-Write the draft to a temporary file and run both checks against it. Give
-the file a `.txt` name. `ste-lint` skips a name such as `x.msg`, or one
-with no extension, and passes its text with no check.
+Write the draft to a temporary file with the write tool, and run both
+checks against it. Never write it with a heredoc in bash. The policy reads
+every word of a bash line. A word of the message can trip a deny or an ask
+there. Give the file a `.txt` name. `ste-lint` skips a name such as `x.msg`,
+or one with no extension, and passes its text with no check.
 
-```sh
-M=$(mktemp -t msg).txt
-cat > "$M" <<'EOF'
-Title here
+1. Run `mktemp -t msg`. It makes an empty file and prints its path, here
+   `<path>`.
+2. Write the message to `<path>.txt` with the write tool:
 
-Body here.
+   ```
+   Title here
 
-Change-type: fix
-EOF
-ste-lint "$M"
-bash ~/.config/git/hooks/commit-msg "$M"
-```
+   Body here.
+
+   Change-type: fix
+   ```
+
+3. Run both checks on that file:
+
+   ```sh
+   ste-lint <path>.txt
+   bash ~/.config/git/hooks/commit-msg <path>.txt
+   ```
 
 For a message with no body, drop the `Body here.` line and the blank line
 after it. Read what they report, revise the text, and run them again.
@@ -116,8 +124,8 @@ ready or on the clipboard, and does not show it, delivered nothing.
 - Print the text that passed both checks, and never an earlier draft.
 - Put the message alone inside the block, with no comment of yours in it, so
   it copies clean.
-- Copy the same text with `pbcopy < "$M"`. Then remove the file and the
-  file without `.txt` that `mktemp` also made: `rm "${M%.txt}" "$M"`. Copy only
+- Copy the same text with `pbcopy < <path>.txt`. Then remove the file and
+  the file without `.txt` that `mktemp` made: `rm <path> <path>.txt`. Copy only
   in the session the user reads directly. A subagent leaves the clipboard
   alone and puts the message in its report, because the clipboard belongs to
   the user.
