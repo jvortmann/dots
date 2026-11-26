@@ -152,6 +152,33 @@ ASKED_AFTER_TEMP_DELETES=(
   "rm -r /tmp/out; .pi/skills/impeccable/scripts/impeccable live" "rm -r /tmp/out && .pi/skills/impeccable/scripts/impeccable detect"
   "$CLEANUP_START; rm -rf build" "$CLEANUP_START; kill 1" "$CLEANUP_START; sudo ls"
 )
+SEPARATORS=(";" "&&" "||" "|" "&")
+ASKED_COMMANDS=(
+  "sudo ls" "brew upgrade" "mise install node" "mise use node" "kill 1" "killall x" "pkill x" "git push"
+  "docker run x" "docker exec x sh" "aws s3 ls" "gh pr create" "gh pr merge 1" "curl -o y z" "curl -X POST z"
+  "curl -d a z" "defaults write x y z" "osascript -e 'beep'" "cliclick c:1,2" "screencapture /tmp/s.png"
+  "find / -name hc"
+)
+FOLDER_DELETES=(
+  "rm -rf src" "rm -R src" "rm -fr src" "rm -fR src" "rm -f -r src" "rm --recursive src" "rmdir src" "trash src"
+  "find src -delete" "git clean -fd" "git -C repo clean -fd"
+)
+DENIED_COMMANDS=(
+  "git commit -m x" "git -C repo commit" "git reset --hard" "git -C repo reset" "git rebase main" "git -C repo rebase main"
+  "git push --force" "git -C repo push --force" "git push -f" "git -C repo push -f" "git stash" "git -C repo stash"
+  "git checkout main" "git -C repo checkout main" "security dump-keychain" "security find-generic-password -s x"
+)
+JOINED_ASKS=()
+JOINED_DELETES=()
+JOINED_DENIES=()
+JOINED_DUMPS=()
+JOINED_ONE_VARIABLE_READS=("ls;env FOO=bar make" "ls&&env -i make" "ls|printenv HOME" "ls;printenv HOME | head")
+for separator in "${SEPARATORS[@]}"; do
+  for command in "env" "env | sort" "printenv" "printenv | sort"; do JOINED_DUMPS+=("ls$separator$command"); done
+  for command in "${ASKED_COMMANDS[@]}"; do JOINED_ASKS+=("ls$separator$command"); done
+  for command in "${FOLDER_DELETES[@]}"; do JOINED_DELETES+=("ls$separator$command"); done
+  for command in "${DENIED_COMMANDS[@]}"; do JOINED_DENIES+=("ls$separator$command"); done
+done
 DENIED_AFTER_TEMP_DELETES=(
   "rm -r /tmp/out; git commit -m x" 'rm -r "/tmp/scratch/${d:?}" && git stash' "rm -rf /private/tmp/out && git -C repo commit"
   "$CLEANUP_START; git commit -m x" "$CLEANUP_START; git stash"
@@ -298,7 +325,7 @@ function set_up_before_script() {
     'rm -Rf "$HOME"' 'rm -r "$HOME/"' 'rm -r $HOME/*' \
     'rm -r "$d/out"' 'rm -r $d/out' 'cd repo && rm -fR "${out}/cache"' 'rm -R "$HOME/prj/x"' \
     "${SYSTEM_DELETES[@]}" "${LIBRARY_DELETES[@]}" "${TEMP_DELETES[@]}" "${MIXED_DELETES[@]}" "${OTHER_TEMP_DELETES[@]}" "${FILE_DELETES[@]}" "${CLIMBING_DELETES[@]}" \
-    "${FOLLOWED_TEMP_DELETES[@]}" "${DANGER_AFTER_TEMP_DELETES[@]}" "${ASKED_AFTER_TEMP_DELETES[@]}" "${DENIED_AFTER_TEMP_DELETES[@]}" "${SCRATCH_DELETES[@]}" "${SCRATCH_EMPTY_NAMES[@]}" "${SCRATCH_GUARDED_DELETES[@]}" \
+    "${FOLLOWED_TEMP_DELETES[@]}" "${DANGER_AFTER_TEMP_DELETES[@]}" "${ASKED_AFTER_TEMP_DELETES[@]}" "${JOINED_ASKS[@]}" "${JOINED_DELETES[@]}" "${JOINED_DENIES[@]}" "${JOINED_DUMPS[@]}" "${JOINED_ONE_VARIABLE_READS[@]}" "${DENIED_AFTER_TEMP_DELETES[@]}" "${SCRATCH_DELETES[@]}" "${SCRATCH_EMPTY_NAMES[@]}" "${SCRATCH_GUARDED_DELETES[@]}" \
     "${SCRATCH_ROOT_DELETES[@]}" "${TEMP_EMPTY_NAMES[@]}" "${TEMP_GUARDED_DELETES[@]}" "${TEMP_ROOT_DELETES[@]}" \
     'rm -rf build && echo $?' "rm -f out.txt; printf '%s' \"\$x\"" "rm -rf build && cd ~" \
     "rm -rf /tmp/out && /usr/bin/find . -name y" "rm -rf build && ls ~/Library/Logs" "rm -rf Game/Library" \
@@ -375,6 +402,10 @@ deny echo `env`' \
     "$(decisions_for 'echo $(env)' 'echo $(printenv)' 'echo `env`')"
 }
 
+function test_denies_a_dump_that_is_joined_to_the_command_before_with_no_space() {
+  assert_same "$(printf 'deny %s\n' "${JOINED_DUMPS[@]}")" "$(decisions_for "${JOINED_DUMPS[@]}")"
+}
+
 function test_still_allows_a_command_that_reads_or_sets_one_variable() {
   assert_same 'allow printenv HOME
 allow printenv HOME | head
@@ -384,6 +415,10 @@ allow set -e
 allow export FOO=1' \
     "$(decisions_for "printenv HOME" "printenv HOME | head" 'echo $PI_SESSION_FILE' \
       "declare -p FOO" "set -e" "export FOO=1")"
+}
+
+function test_still_allows_a_joined_env_that_runs_a_command_or_reads_one_variable() {
+  assert_same "$(printf 'allow %s\n' "${JOINED_ONE_VARIABLE_READS[@]}")" "$(decisions_for "${JOINED_ONE_VARIABLE_READS[@]}")"
 }
 
 function test_still_allows_env_to_run_a_command() {
@@ -581,6 +616,18 @@ function test_denies_a_dangerous_delete_after_a_temp_delete() {
 
 function test_asks_before_a_command_that_asks_when_it_follows_a_temp_delete() {
   assert_same "$(printf 'ask %s\n' "${ASKED_AFTER_TEMP_DELETES[@]}")" "$(decisions_for "${ASKED_AFTER_TEMP_DELETES[@]}")"
+}
+
+function test_asks_before_a_command_that_asks_when_it_is_joined_to_the_one_before_with_no_space() {
+  assert_same "$(printf 'ask %s\n' "${JOINED_ASKS[@]}")" "$(decisions_for "${JOINED_ASKS[@]}")"
+}
+
+function test_asks_before_a_folder_delete_that_is_joined_to_the_command_before_with_no_space() {
+  assert_same "$(printf 'ask %s\n' "${JOINED_DELETES[@]}")" "$(decisions_for "${JOINED_DELETES[@]}")"
+}
+
+function test_denies_a_denied_git_or_keychain_command_that_is_joined_to_the_one_before_with_no_space() {
+  assert_same "$(printf 'deny %s\n' "${JOINED_DENIES[@]}")" "$(decisions_for "${JOINED_DENIES[@]}")"
 }
 
 function test_denies_a_git_commit_or_stash_that_follows_a_temp_delete() {
