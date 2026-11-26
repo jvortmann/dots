@@ -43,6 +43,10 @@ search the disk for a skill.
 - Prose files and comments in code, and only the text the prompt names.
 - Never code, a value in a config file, a test, or a line you were not asked
   to touch.
+- Never a user name, a home path or a machine path in a shared file, such as
+  a skill, an agent file or a document. This holds also when the prompt gives
+  such a path. Write `~`, `$HOME`, `$PI_CODING_AGENT_DIR` or a path from the
+  root of the repository.
 - Never stage, commit or copy to the clipboard. A commit message and a pull
   request body go in your report, and the caller hands them over.
 

@@ -50,6 +50,11 @@ purpose. One home applies to facts and methods. In a
 review, name a guardrail you think is redundant, and remove it only when the
 user agrees.
 
+A skill, an agent file and AGENTS.md run on other machines too. They hold no
+user name, home path or machine path, such as `/Users/<name>/`. Write `~`,
+`$HOME`, `$PI_CODING_AGENT_DIR` or a path from the root of the repository
+instead.
+
 ## Keep it short
 
 Past about 80 lines of prose, ask whether each line earns its place. Move
