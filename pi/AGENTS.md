@@ -18,7 +18,7 @@ This file applies to ALL sessions in ALL projects.
 - **NO force** — never `git push --force` / `git push -f`
 - **NO stash** — never `git stash`, in any form, `list` included. No task needs it.
 - **NO history/ref destruction** — never delete branches or tags, or change history
-- **NO folder deletes** — never delete a folder with any command: `rm -r`, `rm -rf`, `rmdir`, `trash`, `find -delete`, `git clean` or a script. Remove a single file you made with plain `rm`. List each folder you made in your report, and the user removes it.
+- **NO delete that can lose data for good** — files with no backup, system files, or what cannot come back. A delete under `/tmp`, `/private/tmp` or `$TMPDIR` is free, and so is a scratch folder that you made in this run. Any other delete goes through the approval prompt of the policy. Never work around a deny or an ask with another command.
 
 Allowed (read-only, anytime): `git status`, `git diff`, `git log`, `git show`, `git branch` (list only), `git reflog`.
 
@@ -54,7 +54,7 @@ Allowed (read-only, anytime): `git status`, `git diff`, `git log`, `git show`, `
     3. **Test first** — is this call about to create or edit implementation (non-test) code? Proceed ONLY if a test for this exact scenario ran in this session and FAILED on its own assertion (RED). A failure from setup, a missing file or a typo is not RED. Otherwise STOP and write + run the test first. In the main session, the answer is to hand the task to `dev`, not to write the code.
     4. **Directory** — does this bash command start with `cd`? If it is a bare leading `cd` (not wrapped as `(cd dir && cmd)` for that one command), STOP and delete it — the tool already runs in the correct directory. Never type a remembered absolute path. If you are unsure where you are, check with `pwd` instead of assuming.
     5. **Prose** — does this call write a comment, a doc or a message? Hand the text to the `editor` agent first.
-    6. **Prohibited** — does this call hold a step from Prohibited Operations? Drop that step. Never split, quote or reword it to get past a rule or a block. A rule bans the result, not one spelling, so another command with the same result is the same step. When the task needs that step, stop and ask.
+    6. **Prohibited** — does this call hold a step from Prohibited Operations? Drop that step. Never split, quote, reword or swap a command to get past a rule, a deny or an ask. A rule bans the result, not one spelling. When the task needs that step, stop and ask.
 
 ---
 
@@ -91,8 +91,8 @@ to `dev`.
   It also carries the research facts: what exists, where it is, and how the
   tests run. It tells `dev` to update the plan or work record. It does not list the test scenarios, because `dev` derives them
   by the rule of the tdd skill. `dev` trusts these facts and does not search
-  again. Never ask for a cleanup: the agent lists the folders it made, and
-  the user removes them.
+  again. Add no delete rule of your own: the rule under Prohibited
+  Operations holds for every agent.
 - **One dev for each task** — keep the same `dev` until the task is
   committed. For any follow-up, resume that `dev` with its id, the
   "Agent ID:" line of the Agent result. Never use a name you make up. A

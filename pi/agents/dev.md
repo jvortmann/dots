@@ -32,8 +32,9 @@ The rules you inherit expect a person in the loop. For this run:
 
 These hold without exception: never run `git commit`, `git commit --amend`,
 `git reset`, `git rebase`, `git stash` in any form (`list` included),
-`git checkout` or `git push --force`, never delete a folder, and never
-install anything.
+`git checkout` or `git push --force`, and never install anything. Never make
+a delete that can lose data for good. Never work around a deny or an ask with
+another command. Delete the scratch folders that you made in this run.
 
 ## The work
 
@@ -105,7 +106,7 @@ Final review: <the verdict, and anything still open>
 
 ## Files
 <every file you touched>
-Folders left for the user: <each folder you made> | none
+Folders left for the user: <each folder you could not delete> | none
 
 ## Record
 <the path you updated, or "none exists">
