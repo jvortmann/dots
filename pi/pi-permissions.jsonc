@@ -249,6 +249,102 @@
     "rm -* * ?*; *": "ask",
     "rm -* * ?* && *": "ask",
 
+    // The temp allows above also match a name from a variable. An empty name
+    // deletes the whole temp folder, with the scratch folders of all agents.
+    // So a recursive delete of a `$name` directly under a temp folder asks
+    // again. A `?` before the `$` catches a quote or a second `/`. `/T/`
+    // stands for the two var/folders roots. A file delete such as
+    // `rm -f "/tmp/$name"` still runs.
+    "rm -r*/tmp/$*": "ask",
+    "rm -R*/tmp/$*": "ask",
+    "rm -?r*/tmp/$*": "ask",
+    "rm -?R*/tmp/$*": "ask",
+    "rm -r*/T/$*": "ask",
+    "rm -R*/T/$*": "ask",
+    "rm -?r*/T/$*": "ask",
+    "rm -?R*/T/$*": "ask",
+    "rm -r*/tmp/?$*": "ask",
+    "rm -R*/tmp/?$*": "ask",
+    "rm -?r*/tmp/?$*": "ask",
+    "rm -?R*/tmp/?$*": "ask",
+    "rm -r*/T/?$*": "ask",
+    "rm -R*/T/?$*": "ask",
+    "rm -?r*/T/?$*": "ask",
+    "rm -?R*/T/?$*": "ask",
+    // A `${name:?}` name runs, because the shell stops on an empty name. The
+    // flag of one or two characters keeps out a second target.
+    "rm -? /tmp/${*:?}": "allow",
+    "rm -?? /tmp/${*:?}": "allow",
+    "rm -? /tmp/${*:?}; *": "allow",
+    "rm -?? /tmp/${*:?}; *": "allow",
+    "rm -? /tmp/${*:?} && *": "allow",
+    "rm -?? /tmp/${*:?} && *": "allow",
+    "rm -? /private/tmp/${*:?}": "allow",
+    "rm -?? /private/tmp/${*:?}": "allow",
+    "rm -? /private/tmp/${*:?}; *": "allow",
+    "rm -?? /private/tmp/${*:?}; *": "allow",
+    "rm -? /private/tmp/${*:?} && *": "allow",
+    "rm -?? /private/tmp/${*:?} && *": "allow",
+    "rm -? /var/folders/*/T/${*:?}": "allow",
+    "rm -?? /var/folders/*/T/${*:?}": "allow",
+    "rm -? /var/folders/*/T/${*:?}; *": "allow",
+    "rm -?? /var/folders/*/T/${*:?}; *": "allow",
+    "rm -? /var/folders/*/T/${*:?} && *": "allow",
+    "rm -?? /var/folders/*/T/${*:?} && *": "allow",
+    "rm -? /private/var/folders/*/T/${*:?}": "allow",
+    "rm -?? /private/var/folders/*/T/${*:?}": "allow",
+    "rm -? /private/var/folders/*/T/${*:?}; *": "allow",
+    "rm -?? /private/var/folders/*/T/${*:?}; *": "allow",
+    "rm -? /private/var/folders/*/T/${*:?} && *": "allow",
+    "rm -?? /private/var/folders/*/T/${*:?} && *": "allow",
+    // A `?` matches any character, so the allows above also match the forms
+    // `:-`, `:+` and `:=`. These forms, `#`, `%` and a backtick can give an
+    // empty name, so they ask. A plain `${name}` asks, even when a later
+    // `:?}` in the line matches an allow. The `*` of a var/folders root can
+    // hold a second target, so a second space before `/T/${` asks.
+    "rm -*/tmp/${*:-*": "ask",
+    "rm -*/tmp/${*:+*": "ask",
+    "rm -*/tmp/${*:=*": "ask",
+    "rm -*/tmp/${*#*": "ask",
+    "rm -*/tmp/${*%*": "ask",
+    "rm -*/tmp/`*": "ask",
+    "rm -*/tmp/${*}*:?}*": "ask",
+    "rm -*/T/${*:-*": "ask",
+    "rm -*/T/${*:+*": "ask",
+    "rm -*/T/${*:=*": "ask",
+    "rm -*/T/${*#*": "ask",
+    "rm -*/T/${*%*": "ask",
+    "rm -*/T/`*": "ask",
+    "rm -*/T/${*}*:?}*": "ask",
+    "rm -* * */T/${*": "ask",
+    // A delete of a whole temp folder asks, by its bare path or by a bare
+    // `*`. A pattern cannot match a literal `*`, so a `?` stands for it, and
+    // a name of one character also asks.
+    "rm -? /tmp/ *": "ask",
+    "rm -?? /tmp/ *": "ask",
+    "rm -? /tmp/;*": "ask",
+    "rm -?? /tmp/;*": "ask",
+    "rm -? /private/tmp/ *": "ask",
+    "rm -?? /private/tmp/ *": "ask",
+    "rm -? /private/tmp/;*": "ask",
+    "rm -?? /private/tmp/;*": "ask",
+    "rm -? /*/T/ *": "ask",
+    "rm -?? /*/T/ *": "ask",
+    "rm -? /*/T/;*": "ask",
+    "rm -?? /*/T/;*": "ask",
+    "rm -? /tmp/? *": "ask",
+    "rm -?? /tmp/? *": "ask",
+    "rm -? /tmp/?;*": "ask",
+    "rm -?? /tmp/?;*": "ask",
+    "rm -? /private/tmp/? *": "ask",
+    "rm -?? /private/tmp/? *": "ask",
+    "rm -? /private/tmp/?;*": "ask",
+    "rm -?? /private/tmp/?;*": "ask",
+    "rm -? /*/T/? *": "ask",
+    "rm -?? /*/T/? *": "ask",
+    "rm -? /*/T/?;*": "ask",
+    "rm -?? /*/T/?;*": "ask",
+
     // Each agent makes its scratch folders in /tmp/scratch. The temp allows
     // above also match a name from a variable and the folder itself, so
     // these rules ask again. An empty name from a variable deletes the

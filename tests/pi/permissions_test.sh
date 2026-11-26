@@ -14,8 +14,8 @@ LIBRARY_DELETES=(
   "rm -r /Users/someone/Library/Caches" "cd repo && rm -fr ~/Library/Mail"
 )
 TEMP_DELETES=(
-  "rm -rf /tmp/x" "rm -r /private/tmp/x" "rm -Rf /var/folders/ab/cd/T/tmp.X"
-  "rm -fr /private/var/folders/ab/cd/T/x" "rm -fR /tmp/x" "rm -R /tmp/x"
+  "rm -rf /tmp/out" "rm -r /private/tmp/out" "rm -Rf /var/folders/ab/cd/T/tmp.X"
+  "rm -fr /private/var/folders/ab/cd/T/out" "rm -fR /tmp/out" "rm -R /tmp/out"
 )
 OTHER_TEMP_DELETES=()
 for folder in /tmp /private/tmp /var/folders/ab/cd/T /private/var/folders/ab/cd/T; do
@@ -23,7 +23,7 @@ for folder in /tmp /private/tmp /var/folders/ab/cd/T /private/var/folders/ab/cd/
 done
 FILE_DELETES=(
   "rm -f /tmp/msg.txt" 'rm "$M"' 'rm -f "$dir/report.txt"' "rm -f /tmp/a.txt /tmp/b.txt" "rm -f a.txt b.txt"
-  "find /tmp/x -type f -name '*.log'"
+  "find /tmp/x -type f -name '*.log'" 'rm -f "/tmp/$f.txt"' 'rm -f /tmp/$f.txt; ls'
 )
 CLIMBING_DELETES=(
   "rm -rf /tmp/../Users/someone/prj" "rm -R /var/folders/ab/cd/T/../../x" "rmdir /tmp/../x"
@@ -85,7 +85,7 @@ MIXED_DELETES=(
   "rm -r /tmp/x && rmdir build" "rm -r /tmp/x; trash build" "rm -r /tmp/x && find build -delete"
   "rm -r /tmp/x; /usr/bin/find build -delete" "rm -r /tmp/x && git clean -fd" "rm -r /tmp/x; git -C repo clean -fd"
   'rm -r /tmp/scratch/${d:?} build' 'rm -r build "/tmp/scratch/${d:?}"' 'rm -f -r build "/tmp/scratch/x"'
-  'rm --recursive build "/tmp/scratch/x"'
+  'rm --recursive build "/tmp/scratch/x"' 'rm -r /var/folders/ab /etc/T/${d:?}' 'rm -r /tmp/${d:?} /etc/${e:?}'
 )
 SCRATCH_DELETES=(
   "rm -r /tmp/scratch/step42.Ab12Cd" 'rm -r "/tmp/scratch/step42.Ab12Cd"' 'rm -rf "/tmp/scratch/step42.Ab12Cd"'
@@ -102,13 +102,31 @@ SCRATCH_ROOT_DELETES=(
   "rm -r /tmp/scratch/; ls" "rm -r /tmp/scratch; ls" "rm -r /tmp/scratch/*" "rm -rf /tmp/scratch/* && ls"
   "rm -r /tmp/scratch/*; ls"
 )
+TEMP_GUARDED_DELETES=(
+  'rm -r /tmp/${d:?}' 'rm -rf /private/tmp/${d:?}' 'rm -R /var/folders/ab/cd/T/${d:?}'
+  'rm -fr /private/var/folders/ab/cd/T/${d:?}' 'rm -r /tmp/${d:?}; ls' 'rm -rf /private/tmp/${d:?} && ls'
+  'rm -r /var/folders/ab/cd/T/${d:?}; ls' 'rm -Rf /private/var/folders/ab/cd/T/${d:?} && git status'
+)
+TEMP_EMPTY_NAMES=(
+  'rm -r /tmp/$d' 'rm -r /tmp/${d}' 'rm -rf /private/tmp/$d' 'rm -R /var/folders/ab/cd/T/$d'
+  'rm -fr /private/var/folders/ab/cd/T/$d' 'rm -r /tmp/$d; ls' 'rm -r /tmp/$d && ls' 'rm --recursive /tmp/$d; ls'
+  'rm -r /tmp/"$d"' 'rm -rf /private/var/folders/ab/cd/T/"$d"; ls' 'rm -r /tmp//$d' 'rm -rf /private/var/folders/ab/cd/T//$d; ls' 'rm -r /tmp/$(true)' 'rm -r /tmp/${d:-}' 'rm -r /private/tmp/${d:+}' 'rm -r /tmp/${d:=}' 'rm -r /tmp/${d:+:?}'
+  'rm -r /var/folders/ab/cd/T/${d#*:?}' 'rm -r /private/var/folders/ab/cd/T/${d%%*:?}' 'rm -r /tmp/`true`'
+  'rm -rf /private/var/folders/ab/cd/T/`true`; ls' 'rm -r /tmp/${d}; ls ${e:?}' 'rm -r /var/folders/ab/cd/T/${d}; ls ${e:?}'
+)
+TEMP_ROOT_DELETES=(
+  "rm -r /tmp/" "rm -rf /private/tmp/" "rm -r /var/folders/ab/cd/T/" "rm -R /private/var/folders/ab/cd/T/"
+  "rm -r /tmp/ && ls" "rm -r /tmp/; ls" "rm -rf /private/tmp/; ls" "rm -r /var/folders/ab/cd/T/ && ls"
+  "rm -r /tmp/*" "rm -rf /private/tmp/*" "rm -r /var/folders/ab/cd/T/*" "rm -fr /private/var/folders/ab/cd/T/*"
+  "rm -r /tmp/* && ls" "rm -r /tmp/*; ls" "rm -rf /private/tmp/*; ls" "rm -R /var/folders/ab/cd/T/* && ls"
+)
 DANGER_AFTER_TEMP_DELETES=(
   "rm -r /tmp/x; rm -rf ~" "rm -r /tmp/x && rm -rf /" 'rm -r /tmp/x; rm -r "$d"' "rm -r /tmp/x && rm -r /Users"
   'rm -r "/tmp/scratch/${d:?}"; rm -rf ~'
 )
 FOLLOWED_TEMP_DELETES=(
-  "rm -r /tmp/x; ls /tmp" "rm -r /tmp/x && git status" "rm -rf /private/tmp/x; ls"
-  "rm -R /var/folders/ab/cd/T/x && ls" "rm -fr /private/var/folders/ab/cd/T/x; ls"
+  "rm -r /tmp/out; ls /tmp" "rm -r /tmp/out && git status" "rm -rf /private/tmp/out; ls"
+  "rm -R /var/folders/ab/cd/T/out && ls" "rm -fr /private/var/folders/ab/cd/T/out; ls"
   'rm -r "/tmp/scratch/step42.Ab12Cd"; ls /tmp/scratch' 'rm -r "/tmp/scratch/step42.Ab12Cd" && git status'
   'rm -r "/tmp/scratch/${d:?}"; ls /tmp/scratch' 'rm -rf /tmp/scratch/${d:?} && git status'
 )
@@ -136,7 +154,7 @@ function set_up_before_script() {
     "env FOO=bar make" "env -i make" "envsubst < template.txt" "python -m venv env" \
     "git stash list" "git stash" "git -C repo stash list" "cd repo && git stash" \
     "$STASH_IN_A_BATCH" \
-    "rm -rf /tmp/x" "cd /tmp && rm -rf pt" "rm -rf build" "cd repo && rm -rf x" 'rm -rf "$d/out"' \
+    "cd /tmp && rm -rf pt" "rm -rf build" "cd repo && rm -rf x" 'rm -rf "$d/out"' \
     "rm -r build" "rm -R build" "rm -fr build" "rm -fR build" "rm -Rf build" \
     "rm -r -f build" "rm -f -r build" "rm --recursive build" \
     "cd repo && rm -r x" "cd repo && rm -R x" "cd repo && rm -fr x" "cd repo && rm -fR x" \
@@ -152,9 +170,9 @@ function set_up_before_script() {
     'rm -r "$d/out"' 'rm -r $d/out' 'cd repo && rm -fR "${out}/cache"' 'rm -R "$HOME/prj/x"' \
     "${SYSTEM_DELETES[@]}" "${LIBRARY_DELETES[@]}" "${TEMP_DELETES[@]}" "${MIXED_DELETES[@]}" "${OTHER_TEMP_DELETES[@]}" "${FILE_DELETES[@]}" "${CLIMBING_DELETES[@]}" \
     "${FOLLOWED_TEMP_DELETES[@]}" "${DANGER_AFTER_TEMP_DELETES[@]}" "${SCRATCH_DELETES[@]}" "${SCRATCH_EMPTY_NAMES[@]}" "${SCRATCH_GUARDED_DELETES[@]}" \
-    "${SCRATCH_ROOT_DELETES[@]}" \
+    "${SCRATCH_ROOT_DELETES[@]}" "${TEMP_EMPTY_NAMES[@]}" "${TEMP_GUARDED_DELETES[@]}" "${TEMP_ROOT_DELETES[@]}" \
     'rm -rf build && echo $?' "rm -f out.txt; printf '%s' \"\$x\"" "rm -rf build && cd ~" \
-    "rm -rf /tmp/x && /usr/bin/find . -name y" "rm -rf build && ls ~/Library/Logs" "rm -rf Game/Library" \
+    "rm -rf /tmp/out && /usr/bin/find . -name y" "rm -rf build && ls ~/Library/Logs" "rm -rf Game/Library" \
     "${UI_CONTROL[@]}" "${WIDE_SEARCHES[@]}" "${PROTECTED_READS[@]}" "${NARROW_READS[@]}" \
     "${RESEARCH_READS[@]}" "${RESEARCH_WRITES[@]}" "${WORK_READS[@]}" "${WORK_WRITES[@]}" \
     "${PROTECTED_INSIDE_OPEN[@]}" "${GH_TOKEN_READS[@]}" \
@@ -405,6 +423,18 @@ function test_asks_when_a_scratch_delete_has_a_name_that_can_be_empty() {
   assert_same "$(printf 'ask %s\n' "${SCRATCH_EMPTY_NAMES[@]}")" "$(decisions_for "${SCRATCH_EMPTY_NAMES[@]}")"
 }
 
+function test_allows_a_temp_delete_by_a_variable_that_stops_when_empty() {
+  assert_same "$(printf 'allow %s\n' "${TEMP_GUARDED_DELETES[@]}")" "$(decisions_for "${TEMP_GUARDED_DELETES[@]}")"
+}
+
+function test_asks_when_a_temp_delete_has_a_name_that_can_be_empty() {
+  assert_same "$(printf 'ask %s\n' "${TEMP_EMPTY_NAMES[@]}")" "$(decisions_for "${TEMP_EMPTY_NAMES[@]}")"
+}
+
+function test_asks_before_a_delete_of_a_whole_temp_folder() {
+  assert_same "$(printf 'ask %s\n' "${TEMP_ROOT_DELETES[@]}")" "$(decisions_for "${TEMP_ROOT_DELETES[@]}")"
+}
+
 function test_asks_before_a_delete_of_the_whole_scratch_folder() {
   assert_same "$(printf 'ask %s\n' "${SCRATCH_ROOT_DELETES[@]}")" "$(decisions_for "${SCRATCH_ROOT_DELETES[@]}")"
 }
@@ -421,11 +451,11 @@ function test_does_not_deny_for_a_later_command_that_names_a_variable_or_a_prote
   assert_same "ask rm -rf build && echo \$?
 allow rm -f out.txt; printf '%s' \"\$x\"
 ask rm -rf build && cd ~
-allow rm -rf /tmp/x && /usr/bin/find . -name y
+allow rm -rf /tmp/out && /usr/bin/find . -name y
 ask rm -rf build && ls ~/Library/Logs
 ask rm -rf Game/Library" \
     "$(decisions_for 'rm -rf build && echo $?' "rm -f out.txt; printf '%s' \"\$x\"" "rm -rf build && cd ~" \
-      "rm -rf /tmp/x && /usr/bin/find . -name y" "rm -rf build && ls ~/Library/Logs" "rm -rf Game/Library")"
+      "rm -rf /tmp/out && /usr/bin/find . -name y" "rm -rf build && ls ~/Library/Logs" "rm -rf Game/Library")"
 }
 
 function test_asks_before_a_command_that_controls_the_user_interface() {
