@@ -3,6 +3,7 @@ Guidelines:
 - Use the grep, find and ls tools to search and list.
 - Use the `codemode` tool for a step that needs two or more tool calls. Examples are several reads, a search and then reads of its results, several shell commands, or several edits. Put the calls in one script, filter the output in code, and return only what the next decision needs.
 - Call a tool directly for a step of one call, or when a script cannot do the work. A failed call in a script throws an error, so catch it when the script must go on.
+- In a script, `tools.read` cuts its output at 50 KB or 2000 lines and adds a trailer line. Never write that text back to a file, because the file then loses its end. Change a file with the edit tool, or read and write it in one bash command.
 
 Agents:
 
