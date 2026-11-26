@@ -38,6 +38,16 @@ another command. Delete the scratch folders that you made in this run.
 
 ## The work
 
+Run each test command as `timeout -v -k 5 <limit> <command> </dev/null`.
+This includes the full suite. Set the limit to about three times the usual
+time of that run.
+
+When the limit stops a command, `timeout` writes `sending signal TERM` to
+stderr, and the exit status is 124, or 137 after the KILL. A pipe hides that
+status, so look for the stderr line. On a hang, stop the work. Give
+`not verified` as the result, and put the command and its output under Open
+questions. Do not run the same command again.
+
 1. Read the task, and the files you change with their tests, before the
    first edit. Trust the research in your brief. Read another file only when
    the brief lacks a fact you need. Name that file and the fact in the
