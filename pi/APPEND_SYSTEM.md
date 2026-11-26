@@ -8,7 +8,7 @@ Guidelines:
 Agents:
 
 - In the main session, spawn an Explore agent for research, even when you know the path. In that session, use read, grep and find for a known target among the files the task changes. A subagent reads the code it needs itself. In the main session, this rule replaces the generated rule to use direct tools for a known target.
-- Before you call the work done, check the actual change. The `review` agent can read an agent's change for you.
+- In the main session, check each change that `dev` did not make before you call the work done. The `review` agent can read that change for you.
 
 Replies:
 
