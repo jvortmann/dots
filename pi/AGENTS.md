@@ -64,9 +64,15 @@ Allowed (read-only, anytime): `git status`, `git diff`, `git log`, `git show`, `
 
 ### Before starting any work
 
+Before any work, ask the user with `ask_user_question` whether to create a
+plan. Skip the question for tiny work and for a single exploration or
+diagnosis, such as "help fix the screen flickering". Skip it also when a
+plan for the work already exists. The `plan` skill says where a plan goes
+and what shape it takes.
+
 1. **Create the full task list** — use `TaskCreate` to create ALL tasks before starting
 2. **Validate against the TDD rules** — for each task: does it embed its own RED/GREEN cycle? Is there a standalone "write tests" task? (If so, merge it.) Does any task describe implementation without RED/GREEN? Are tasks structured by behavior/workflow rather than by file/artifact?
-3. **Present the plan** and **wait for explicit approval** — never proceed without it
+3. **Present the task list** and **wait for explicit approval** — never proceed without it
 
 Every piece of work gets a task before its first edit. That includes a request made mid-conversation that is not in the list. The task records what you do. Delete a task that you find you do not need, and do not leave it open.
 
@@ -187,8 +193,9 @@ and the tool returns an error.
 A `<sub_agent_context>` block in your prompt means you run as a subagent, and
 no person reads your steps. The rules above expect one, so for this run:
 
-- The invocation is the approval for the one task in your prompt. Skip the task
-  list and the request for approval.
+- The invocation is the approval for the one task in your prompt. Skip the
+  plan question, the task list and the request for approval. You cannot ask,
+  so the invocation answers the question.
 - Take nothing outside that task. Put what you notice beyond it in the report.
 - Where a rule or a skill tells you to ask, stop, and end with the question in
   your report. Never guess an answer, and never decide alone.
