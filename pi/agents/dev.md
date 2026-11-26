@@ -40,7 +40,8 @@ another command. Delete the scratch folders that you made in this run.
 
 Run each test command as `timeout -v -k 5 <limit> <command> </dev/null`.
 This includes the full suite. Set the limit to about three times the usual
-time of that run.
+time of that run. When you do not know the usual time, set the limit to 30
+seconds.
 
 When the limit stops a command, `timeout` writes `sending signal TERM` to
 stderr, and the exit status is 124, or 137 after the KILL. A pipe hides that
