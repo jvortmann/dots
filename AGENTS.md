@@ -30,3 +30,39 @@ The rules for a test:
   fails at the limit of 10 seconds.
 - A test that checks behavior stays. Make a slow test fast, and do not cut it.
 - Cut only a test that restates a config or repeats another test.
+
+# Herdr
+
+The user works in the Herdr app, so its window and its core, herdr-core, are
+live. The setup links each config folder as a whole: `~/.config/herdr-app` is a
+link to `herdr-app/`, and `~/.config/herdr-core` is a link to `herdr-core/`. An
+edit in `herdr-app/` reaches the running app in about a second. The app
+also writes its own files into `herdr-app/`, so `git/ignore` keeps an allow
+list for it. A new mod, layout or theme needs an allow line there.
+
+The docs and the types are `herdr-app/AGENTS.md`, `herdr-app/herdr.d.ts` and
+`herdr-app/gpui-kit.d.ts`. The app writes them at each start. The programs are
+`~/.local/bin/herdr-app` and `~/.local/bin/hc`.
+
+Check a change in a scratch core and a scratch window:
+
+- Give the scratch core its own `HC_SESSION`, a short `HC_SOCKET` in `/tmp`
+  (the limit is 103 bytes), and a scratch `HOME`, `XDG_CONFIG_HOME` and
+  `XDG_STATE_HOME`. The function `in_scratch` in
+  `tests/herdr-core/config_test.sh` shows how.
+- Give the scratch window its own `HERDR_APP_HOME`, with its current folder in
+  `/tmp`.
+- Stop each scratch core before you finish. Run `hc server stop` with the same
+  scratch values, as `in_scratch` does. A bare `hc server stop` stops the core
+  of the user.
+
+Never run these on the window or the core of the user:
+
+- `herdr-app do`, or a start of the app from a shell
+- `hc server`, `hc label`, `hc send` or `hc keys`
+
+When a check needs the window of the user, stop and give the user the steps.
+
+# Plans
+
+Git ignores `plans/`, so an edit to a plan needs no commit.
