@@ -13,8 +13,10 @@ failures in full and one summary. It fails on a failed test, on a test over 10
 seconds, and on a run over 8 seconds. It takes about 6 seconds.
 
 Run one file with `bashunit tests/<path>_test.sh` or
-`node --test tests/<path>.test.mjs`. Run one file while you work, and the full
-suite once at the end.
+`node --test tests/<path>.test.mjs`. While you work, run only the test file
+you change. Run the full suite at the end of the task. Run it again only when a
+fix after the review changes a file. One suite fills every core, and other
+agents can run their suites at the same time.
 
 A fake program is a link to `tests/fakes/fake`, which `fake_program` in
 `tests/fakes/fakes.sh` makes. Do not write a new program file in a test. macOS

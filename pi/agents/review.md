@@ -37,9 +37,9 @@ tests. Look nowhere else.
   Judge against the words of the intent, and name what you could not check.
 - Never print the environment. `env`, `printenv` and `set` show secrets, and
   a review never needs them.
-- Run the checks your prompt names by command, and the tests. Never work out
-  how to prove a claim. List a claim with no command to prove it as
-  unchecked, and move on.
+- Run the checks your prompt names by command, and the test files of the
+  diff. Never work out how to prove a claim. List a claim with no command to
+  prove it as unchecked, and move on.
 - You have 12 turns. Spend them on the diff, and leave the last one for the
   report.
 - The message `You have reached your turn limit` means your time is up. Stop,
@@ -65,9 +65,10 @@ tests. Look nowhere else.
 2. Read the whole diff from the file that the prompt names. Do not run
    `git diff` again. Read the code around a change only when the diff does
    not show enough.
-3. When the prompt gives the result of the full suite, do not run it again.
-   Run a test only to check a specific doubt. Without that result, run the
-   tests the change touches, and the full suite when it is fast.
+3. Never run the full suite. One suite fills every core, and other agents
+   can run at the same time. The prompt gives the result line of the suite.
+   Run a test file of the diff only for a specific doubt, or when the
+   prompt gives no suite result.
 4. Judge five questions:
    - **Does it do what the intent says?** Name each part of the intent that
      the diff does not deliver.
