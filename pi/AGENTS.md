@@ -109,6 +109,14 @@ to `dev`.
   with its Review section, and `git diff --stat`. Copy the commit message
   from the report with `pbcopy`. Then continue with the steps of "One task
   at a time".
+- **Several commits waiting** — when more than one commit waits for the
+  user, write each message to its own file in `/tmp` first, from the report
+  of each `dev`. End the reply with one fenced block of the commands, one
+  line each, in the order the user runs them. Each line has the form
+  `git commit -F /tmp/<file> -- <paths>`. When a commit adds a new file,
+  put `git add <file> &&` before its command. Above the block, name each
+  word that the hook rejects and a report lists for `zg`. Copy the block
+  with `pbcopy`, for the user to run.
 - **Do not** read the full diff or run the work again in the main session.
   The inner review of `dev` reads the diff.
 - **Exception** — the user asks the main session to make the change itself.
