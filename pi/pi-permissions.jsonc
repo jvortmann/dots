@@ -212,6 +212,50 @@
     "trash *..*": "ask",
     "find *..* -delete": "ask",
 
+    // pi runs inside a terminal app, and macOS shows the user a privacy
+    // prompt for that app when a command controls the user interface.
+    "osascript*": "ask",
+    "* osascript*": "ask",
+    "*System Events*": "ask",
+    "*CGEvent*": "ask",
+    "*postToPid*": "ask",
+    "*AXUIElement*": "ask",
+    "cliclick*": "ask",
+    "* cliclick*": "ask",
+    "screencapture*": "ask",
+    "* screencapture*": "ask",
+    // A search from the root or the home folder walks into the protected
+    // folders. The home folder asks only as a whole word, so `~/prj` stays
+    // allowed.
+    "find / *": "ask",
+    "* find / *": "ask",
+    "* ~": "ask",
+    "* ~ *": "ask",
+    "* ~/": "ask",
+    "* ~/ *": "ask",
+    "* $HOME": "ask",
+    "* $HOME *": "ask",
+    "* \"$HOME\"": "ask",
+    "* \"$HOME\" *": "ask",
+    // These folders are protected by macOS. Each pattern starts with a bare
+    // `*`, so that a quoted path matches too. The user approved Desktop and
+    // Documents in macOS, so they are not on the list.
+    "*~/Pictures*": "ask",
+    "*$HOME/Pictures*": "ask",
+    "*/Users/*/Pictures*": "ask",
+    "*~/.Trash*": "ask",
+    "*$HOME/.Trash*": "ask",
+    "*/Users/*/.Trash*": "ask",
+    "*~/Library/CloudStorage*": "ask",
+    "*$HOME/Library/CloudStorage*": "ask",
+    "*/Users/*/Library/CloudStorage*": "ask",
+    "*~/Library/Mobile Documents*": "ask",
+    "*$HOME/Library/Mobile Documents*": "ask",
+    "*/Users/*/Library/Mobile Documents*": "ask",
+    "*~/Library/Containers*": "ask",
+    "*$HOME/Library/Containers*": "ask",
+    "*/Users/*/Library/Containers*": "ask",
+
     // The denies below hold only for the target right after a flag of one or
     // two characters. A `*` there would also match a later command in the
     // line, such as `&& cd ~`.

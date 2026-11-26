@@ -29,6 +29,26 @@ CLIMBING_DELETES=(
   "rm -rf /tmp/../Users/someone/prj" "rm -R /var/folders/ab/cd/T/../../x" "rmdir /tmp/../x"
   "trash /private/tmp/../x" "find /tmp/../x -delete" "rm -rf /tmp/{x,../y}"
 )
+UI_CONTROL=(
+  "osascript -e 'tell application \"Herdr\" to quit'" "cd repo && osascript -e 'beep'"
+  $'cat > /tmp/keys.applescript <<\'EOF\'\ntell application "System Events" to keystroke "a"\nEOF'
+  $'cat > /tmp/press.swift <<\'EOF\'\nlet e = CGEvent(keyboardEventSource: nil, virtualKey: 120, keyDown: true)\nEOF\ntimeout 60 swift /tmp/press.swift 4664 120'
+  "swift -e 'event.postToPid(4664)'" "swift -e 'AXUIElementCreateApplication(4664)'"
+  "cliclick c:100,200" "cd repo && cliclick kp:return" "screencapture -x /tmp/s.png" "cd repo && screencapture /tmp/s.png"
+)
+WIDE_SEARCHES=(
+  "rg --files -g 'herdr.d.ts' ~ 2>/dev/null | head -3" "find ~ -maxdepth 4 -name hc -type f"
+  "find / -path /proc -prune -o -name tui.js -print" "cd repo && find / -name tui.js"
+  "ls ~" "find ~/ -name hc" "ls ~/" 'find $HOME -name hc' 'ls $HOME' 'find "$HOME" -name hc' 'ls "$HOME"'
+)
+PROTECTED_READS=("ls -lt ~/.Trash" 'cd repo && ls "$HOME/Library/Mobile Documents"')
+for folder in Pictures .Trash Library/CloudStorage "Library/Mobile Documents" Library/Containers; do
+  PROTECTED_READS+=("ls ~/$folder" "ls \"\$HOME/$folder\"" "ls /Users/someone/$folder")
+done
+NARROW_READS=(
+  "ls ~/.config/pi" "ls ~/.local/state/herdr-core" "rg -n foo ~/prj/config/dots" "find /tmp/x -name y" "ls /tmp"
+  "defaults read com.apple.HIToolbox" "ls ~/Desktop" 'ls "$HOME/Documents"' "git show HEAD~"
+)
 MIXED_DELETES=(
   "rm -rf /tmp/x build" "rm -rf build /tmp/x" "rm -rf /tmp/x && rm -rf build" "rm -f /tmp/x && rm -rf build"
   "rmdir /tmp/x build" "trash /tmp/x && rm -rf build" "find /tmp/x build -delete"
@@ -75,6 +95,7 @@ function set_up_before_script() {
     "${SYSTEM_DELETES[@]}" "${LIBRARY_DELETES[@]}" "${TEMP_DELETES[@]}" "${MIXED_DELETES[@]}" "${OTHER_TEMP_DELETES[@]}" "${FILE_DELETES[@]}" "${CLIMBING_DELETES[@]}" \
     'rm -rf build && echo $?' "rm -f out.txt; printf '%s' \"\$x\"" "rm -rf build && cd ~" \
     "rm -rf /tmp/x && /usr/bin/find . -name y" "rm -rf build && ls ~/Library/Logs" "rm -rf Game/Library" \
+    "${UI_CONTROL[@]}" "${WIDE_SEARCHES[@]}" "${PROTECTED_READS[@]}" "${NARROW_READS[@]}" \
     > "$DECISIONS"
 }
 
@@ -321,14 +342,31 @@ ask rm -rf Game/Library" \
       "rm -rf /tmp/x && /usr/bin/find . -name y" "rm -rf build && ls ~/Library/Logs" "rm -rf Game/Library")"
 }
 
+function test_asks_before_a_command_that_controls_the_user_interface() {
+  assert_same "$(printf 'ask %s\n' "${UI_CONTROL[@]}")" "$(decisions_for "${UI_CONTROL[@]}")"
+}
+
+function test_asks_before_a_search_from_the_root_or_the_home_folder() {
+  assert_same "$(printf 'ask %s\n' "${WIDE_SEARCHES[@]}")" "$(decisions_for "${WIDE_SEARCHES[@]}")"
+}
+
+function test_asks_before_a_read_of_a_protected_folder() {
+  assert_same "$(printf 'ask %s\n' "${PROTECTED_READS[@]}")" "$(decisions_for "${PROTECTED_READS[@]}")"
+}
+
+function test_still_allows_a_read_of_a_folder_that_macos_does_not_protect() {
+  assert_same "$(printf 'allow %s\n' "${NARROW_READS[@]}")" "$(decisions_for "${NARROW_READS[@]}")"
+}
+
 # Prints "<decision> <command>" for each argument, from the decisions of
 # set_up_before_script.
 decisions_for() {
-  local wanted state line
+  local wanted encoded state line
   for wanted in "$@"; do
     state=missing
     while IFS= read -r line; do
-      [[ ${line#* } == "$wanted" ]] && state=${line%% *}
+      encoded=${wanted//\\/\\\\}
+      [[ ${line#* } == "${encoded//$'\n'/\\n}" ]] && state=${line%% *}
     done < "$DECISIONS"
     echo "$state $wanted"
   done
@@ -350,7 +388,7 @@ decide() {
       mcpServerNames: [],
     });
     for (const command of process.argv.slice(1)) {
-      console.log(manager.checkPermission("bash", { command }).state + " " + command);
+      console.log(manager.checkPermission("bash", { command }).state + " " + command.replaceAll("\\", "\\\\").replaceAll("\n", "\\n"));
     }
   ' "$@"
 }
