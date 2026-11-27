@@ -1,7 +1,7 @@
 {
   "commands": {
     "file": {
-      "list": "fd --type f",
+      "list": "fd --type f --hidden --no-ignore-vcs --exclude .git --exclude node_modules",
       "action": "@{{selected}}",
       "shortcut": "@"
     }
