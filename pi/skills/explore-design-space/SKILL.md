@@ -18,8 +18,10 @@ not heard.
 ## Facts are yours, decisions are the user's
 
 - **A fact** comes from the code, the tools or the files. Find it yourself, and
-  never ask the user for it. A search that is still running holds back only
-  the questions that depend on it.
+  never ask the user for it. For a source outside the change, hand it to the
+  Explore agent. "Research goes to the Explore agent" in AGENTS.md says how.
+  A tool behavior still goes to a spike. A search that is still running
+  holds back only the questions that depend on it.
 - **A decision** is a choice the user makes. Put it to the user, and wait.
 - **A tool behavior that nobody tried is a guess, not a fact.** When the
   design rests on one, prove it with a short spike before the user confirms
@@ -34,11 +36,20 @@ not heard.
 Ask the whole frontier in one round, with the question tool when you have one.
 
 - Give each question your recommended answer, marked as recommended, and say
-  why in one line.
+  why in one line. Word the question so that "yes" accepts that answer.
+  Put that option first, as "Ask with the tool" in AGENTS.md says, and label
+  it so that "yes" accepts it.
+- With the question tool, use a short header, a question worded for "yes",
+  and the recommended option first. Put the one-line why in the description
+  of that option.
+- With no tool, format each question the same way: a number, a short title,
+  the body, then the recommended answer on its own line.
 - Leave out a question whose answer depends on another question in the same
   round. It goes in a later round.
 - After each round, mark what the answers settled, find the new frontier, and
   ask again.
+- When a term is new, vague or in conflict with the glossary, or a decision
+  may need an ADR, load the `domain-modeling` skill.
 
 ## When it ends
 
