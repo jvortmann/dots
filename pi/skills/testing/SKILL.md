@@ -38,6 +38,20 @@ implementation. Rewrite it against the interface.
   own. At the boundary such a check is fine, such as one charge sent to a
   payment gateway.
 - Its name says how the code works, not what it does.
+- It is tautological. The test computes the expected value again with the
+  logic of the code, so it passes by construction and can never disagree
+  with the code. The expected value is an independent literal. A probe has a
+  related rule in the `reproducible-locally` skill. A probe must not hold
+  its answer in the prompt or the fixture.
+
+```typescript
+// Not this: the test repeats the sum that the code does
+const expected = items.reduce((sum, i) => sum + i.price, 0);
+t.is(calculateTotal(items), expected);
+
+// This: a known value from a worked example
+t.is(calculateTotal([{ price: 10 }, { price: 5 }]), 15);
+```
 
 ## Mock at the boundary only
 
@@ -45,6 +59,21 @@ Mock what you do not control: an external API, the clock, randomness. For a
 database or a file system, prefer a local stand-in over a mock. Never mock a
 module or a collaborator of your own. The test then checks your guess about
 that module, and not the module.
+
+Prefer one function for each operation of the boundary over one generic
+fetcher. Each function gets a mock of its own that returns one shape. A mock
+of a generic fetcher must branch on the endpoint.
+
+```typescript
+// Not this: the mock must branch on the endpoint
+const api = { fetch: (endpoint, options) => fetch(endpoint, options) };
+
+// This: one function for each operation, each mocked on its own
+const api = {
+  getUser: (id) => fetch(`/users/${id}`),
+  createOrder: (data) => fetch("/orders", { method: "POST", body: JSON.stringify(data) }),
+};
+```
 
 ## Pin the output you parse
 
