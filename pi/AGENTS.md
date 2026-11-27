@@ -352,6 +352,11 @@ text, where it goes, and the intent. For a commit message, give the brief
 that the Commits section describes. It loads `asd-ste100` and `documentation`,
 and runs `ste-lint` until the text passes. Its loop stays out of your context.
 
+For an instruction file, the editor also runs the `review` agent. Take its
+report as it stands, as for `dev`, when its Review section shows that the
+review ran. Run no `review` on it. Do not resume the editor with findings of
+your own.
+
 When you cannot start an agent, load the `asd-ste100` skill and follow it, and
 check the text with `ste-lint <file>`.
 

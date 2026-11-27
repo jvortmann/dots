@@ -101,7 +101,8 @@ questions. Do not run the same command again.
    Give the review agent the file path, the intent, the scenarios with test
    names and the suite result line. Give the editor the
    intent, the numbers from your proof, and each file where you wrote a
-   comment. Add the path of the plan or record. Also give the facts for each
+   comment. Tell it that you review the whole diff, so it skips its own
+   review. Add the path of the plan or record. Also give the facts for each
    item of "Record progress" in the `plan` skill. Keep each prompt to about
    10 lines at most, since the diff is in the file.
 
