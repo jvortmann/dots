@@ -81,7 +81,8 @@ and what shape it takes.
 
 1. **Create the full task list** — use `TaskCreate` to create ALL tasks before starting
 2. **Validate against the TDD rules** — for each task: does it embed its own RED/GREEN cycle? Is there a standalone "write tests" task? (If so, merge it.) Does any task describe implementation without RED/GREEN? Are tasks structured by behavior/workflow rather than by file/artifact?
-3. **Present the task list** and **wait for explicit approval** — never proceed without it
+3. **Wire the edges** — after the validation, because a merge of tasks makes an edge stale. Set the "Blocked by" lines of the `plan` skill with `TaskUpdate addBlockedBy`, once the ids exist. The main session confirms the edges and seams at step 4, because the Plan agent cannot ask
+4. **Present the task list**, with its edges and its testing seams, and **wait for explicit approval** — never proceed without it
 
 Every piece of work gets a task before its first edit. That includes a request made mid-conversation that is not in the list. The task records what you do. Delete a task that you find you do not need, and do not leave it open.
 
@@ -96,11 +97,11 @@ Every piece of work gets a task before its first edit. That includes a request m
 
 When the user approves parallel work for a set of tasks, that approval
 covers the whole set. Start each task as soon as the tasks it depends on
-finish. Do not ask again for each one. A task on the same file as an
-earlier task waits for its commit, so the diffs do not mix. A task that
-depends on a task in another file starts once that task reports. Run
-`/reload` only when no subagent runs, because a reload stops every
-subagent.
+finish, as the `addBlockedBy` edges say. Do not ask again for each one. A
+task on the same file as an earlier task waits for its commit, so the diffs
+do not mix. A task that depends on a task in another file starts once that
+task reports. Run `/reload` only when no subagent runs, because a reload
+stops every subagent.
 
 Each task still gets its own report and its own commit message. Each task
 also stops for its own commit, because the user runs every commit. That
@@ -115,11 +116,12 @@ only. A subagent, which has a `<sub_agent_context>` block, never hands work
 to `dev`.
 
 - **The brief** gives the task in the words of the user, the path of the plan
-  or work record, and the decisions and constraints from the conversation.
-  It also carries the research facts: what exists, where it is, and how the
-  tests run. It tells `dev` to update the plan or work record, or for
-  parallel devs to write its file of plan updates. It does not list the test scenarios, because `dev` derives them
-  by the rule of the tdd skill. `dev` trusts these facts and does not search
+  or work record, and the decisions and constraints from the conversation,
+  with the confirmed testing seams. It also carries the research facts: what
+  exists, where it is, and how the tests run. It tells `dev` to update the
+  plan or work record, or for parallel devs to write its file of plan updates.
+  It does not list the test scenarios, because `dev` derives them by the rule
+  of the tdd skill. `dev` trusts these facts and does not search
   again, so give each file, tool and document by its absolute path. Add no
   delete rule of your own: the rule under Prohibited Operations holds for
   every agent.

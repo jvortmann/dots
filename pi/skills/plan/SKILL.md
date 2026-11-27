@@ -57,6 +57,7 @@ Then the body, in the minimal shape by default:
 - Goal
 - What to change, and why
 - Out of scope, naming the neighboring work left out on purpose
+- The testing seams
 - The pull requests and their steps
 - The skills to use, each with one line on when it applies
 - Done when
@@ -64,6 +65,13 @@ Then the body, in the minimal shape by default:
 Use the full shape for an architectural change, a complex feature, or a new
 project. It adds the approach with the alternatives you rejected, and what else
 the change affects. It also adds the risks, with a mitigation for each.
+
+## Testing seams
+
+Give the plan one "Testing seams" line: the seam where each behavior gets
+its test. Prefer a seam that already exists, and use the highest one. Add a
+new seam only with a reason, and the ideal is one seam for the whole plan. The
+user confirms the seams before the work starts.
 
 ## Pull requests and steps
 
@@ -80,6 +88,8 @@ becomes one commit.
   A map from an exploring agent shows the code, and it is never the shape of
   the steps.
 - Give each step the check that proves it.
+- Give each step a "Blocked by" line: the steps that must end first, or
+  "none". A step that changes a file of an earlier step waits for it.
 - Say what a step does, and never paste its code. The code comes when the
   step runs.
 - Make the last step a review of the documentation near the changed code.
@@ -95,6 +105,18 @@ Split the steps by kind, because each step is one commit:
 - The tests of a feature stay in the step of that feature.
 - Tests for behavior that already exists are a step of their own.
 - Order the steps so that each commit passes the tests and the build alone.
+  The "Blocked by" lines state that order.
+
+The parallel rule in `~/.config/pi/AGENTS.md` says when a blocker ends.
+The frontier is the steps whose blockers all ended. They can start next.
+
+A wide mechanical change, such as a rename across the code, cannot land green
+as one slice. Cut it in three:
+
+1. Expand: add the new form beside the old one, so nothing breaks.
+2. Migrate: move the callers in batches, one step for each batch. The expand
+   blocks each batch.
+3. Contract: delete the old form. Every batch blocks this step.
 
 ## Record progress
 
