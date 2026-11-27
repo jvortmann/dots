@@ -56,11 +56,11 @@ pi runs inside a terminal app, Herdr today. macOS charges that app for each acce
 
 - **One task at a time.** Exactly ONE task in progress. Do it, show the result, and STOP. Do not start, prep, or edit files for the next task — not even "just finishing the next step" — until the user explicitly approves. Batching tasks is a violation, even when two tasks touch the same file: each gets its own commit message and its own stop. The exception is parallel work that the user approved: see "One task at a time" under "Task Execution & Permissions".
 - **Commits.** Run `git commit` ONLY on the exact phrase "you can commit". Every other mention of committing = draft + copy the message, never run git (see Commits → Who commits).
-- **Test first (TDD).** For any behavior change, the FIRST file you create or edit is the test. NEVER write or edit implementation (non-test) code before a test for the current scenario exists AND you have run the whole test file and seen it FAIL (RED). Show/state the failing result before implementing. Starting with the code is a violation (see the `tdd` skill).
+- **Test first (TDD).** For any behavior change, the FIRST file you create or edit is the test. NEVER write or edit implementation (non-test) code before a test for the current scenario exists AND you have run the whole test file and seen it FAIL (RED). Show/state the failing result before implementing. Starting with the code is a violation (see the `tdd` skill). A throwaway that the user starts with the `prototype` skill needs no test and never merges.
 - **STOP gate — before EVERY tool call, self-check:**
     1. **Task scope** — is this action part of the single, already-approved task in progress? If it starts the next task, or was not explicitly approved, STOP and ask first. When the user approves parallel work for a set of tasks, start each task of that set with no question.
     2. **Commit** — is this a `git commit` / `git commit --amend`? Run it ONLY if the user said the exact phrase "you can commit". Otherwise prepare + copy the message and never run git.
-    3. **Test first** — is this call about to create or edit implementation (non-test) code? Proceed ONLY if a test for this exact scenario ran in this session and FAILED on its own assertion (RED). A failure from setup, a missing file or a typo is not RED. Otherwise STOP and write + run the test first. In the main session, the answer is to hand the task to `dev`, not to write the code.
+    3. **Test first** — is this call about to create or edit implementation (non-test) code? Proceed ONLY if a test for this exact scenario ran in this session and FAILED on its own assertion (RED). A failure from setup, a missing file or a typo is not RED. Otherwise STOP and write + run the test first, unless the user started a throwaway with the `prototype` skill. In the main session, the answer is to hand the task to `dev`, not to write the code.
     4. **Directory** — does this bash command start with `cd`? If it is a bare leading `cd` (not wrapped as `(cd dir && cmd)` for that one command), STOP and delete it — the tool already runs in the correct directory. Never type a remembered absolute path. If you are unsure where you are, check with `pwd` instead of assuming.
     5. **Prose** — does this call write a comment, a doc or a message? Hand the text to the `editor` agent first.
     6. **Prohibited** — does this call hold a step from Prohibited Operations? Drop that step. Never split, quote, reword or swap a command to get past a rule, a deny or an ask. A rule bans the result, not one spelling. When the task needs that step, stop and ask.
@@ -125,6 +125,10 @@ to `dev`.
   again, so give each file, tool and document by its absolute path. Add no
   delete rule of your own: the rule under Prohibited Operations holds for
   every agent.
+- **A prototype** goes to `dev` too. The brief names the `prototype` skill
+  and the one folder that `dev` may write. That folder is under `/tmp/scratch`.
+  It is the repo only when the user already checked out the `prototype/<name>`
+  branch. `dev` reports questions and decisions, not a commit message.
 - **One dev for each task** — keep the same `dev` until the task is
   committed. For any follow-up, resume that `dev` with its id, the
   "Agent ID:" line of the Agent result. Never use a name you make up. A

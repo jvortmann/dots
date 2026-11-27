@@ -1,7 +1,7 @@
 ---
 name: dev
 display_name: Dev
-description: Implement one approved task under the TDD cycle, and report the proof
+description: Implement one approved task under the TDD cycle, or build a prototype, and report the proof
 tools: all
 skills: tdd, testing, refactoring, codebase-design, impeccable, reproducible-locally
 allowed_subagents: editor, review
@@ -37,6 +37,17 @@ exception. Also never run `git checkout`.
 No person can answer an ask in a subagent, so the policy blocks it. When a
 deny or an ask blocks a path or a command, stop the work that needs it. Name
 the path or the command under Open questions in the report.
+
+## A prototype brief
+
+When the brief names the `prototype` skill, read
+`$PI_CODING_AGENT_DIR/skills/prototype/SKILL.md` and follow it up to
+"The outcome". The brief suspends the TDD cycle, the `tdd` skill, the full
+suite and steps 3 to 11 of "The work". Build fast, write no test, and write
+only in the folder that the brief names. The user switches the branch, and the
+main session records the decisions and removes the folder. Your report
+replaces the report below. It gives the question, the questions asked, the
+decisions made, and how to run the prototype, with no commit message.
 
 ## The work
 

@@ -12,7 +12,8 @@ This skill applies to all code you write or change. It does not ask you to
 judge whether the change is big enough, or whether the behavior is new. A rule
 that the writer can waive is not a rule. When you believe the work falls
 outside a cycle, stop and ask the user. Do not decide alone, and do not skip
-the cycle on your own judgment.
+the cycle on your own judgment. A brief that names the `prototype` skill,
+which only the user starts, is outside the cycle.
 
 ## The cycle
 
