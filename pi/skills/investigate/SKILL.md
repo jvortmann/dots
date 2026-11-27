@@ -16,6 +16,8 @@ a named cause, and not at a fix.
 - An empty result proves nothing until a positive control passes. Run the same
   query against a case you know exists. A wrong field, time window or pattern
   also comes back empty.
+- Remove every secret from the output that you quote. Write `<REDACTED>` in its
+  place, and quote only the lines that carry the signal.
 - An input that you cannot read blocks the diagnosis. A photo, a screenshot or
   a log on another machine are examples. Ask for it at once, as an exact path
   or as text. Until you read it, the outcome is inconclusive. Do not search a
@@ -27,13 +29,17 @@ a named cause, and not at a fix.
 Keep this order. How you do each step is your choice.
 
 1. **Make it fail on demand.** Capture one failing case, with the exact input
-   and the exact wrong output. Then write a command that triggers it again.
-   Every later step reads that command. When nothing triggers the failure, say
-   so, and work from the recorded evidence alone.
+   and the exact wrong output, then build a command that triggers it again.
+   Read `loops.md` for the ways to build one and to tighten it. The step ends
+   when one command ran once and can fail on demand. It must be deterministic
+   and fast, and show the exact symptom of the user. Every later step reads
+   that command. With no trigger, say so and use the recorded evidence alone.
 2. **Read what the system recorded.** Read the logs, the captured output and
    the stored data. Do this before you reason about what the code should do.
 3. **Narrow.** Cut the suspect region in half until one component is left. Cut
    first at the recent changes and at the boundaries between components.
+   Before you probe, rank 3 to 5 hypotheses. Give each a prediction that can
+   fail, such as "a change to Y removes the bug". Drop any that has none.
 4. **Run the real input through the real code path.** Call the real function,
    and not a copy or a similar one that looks right. Read the output it gives.
 5. **Trace back to a line.** Follow the bad output back to where the bad value
@@ -43,6 +49,9 @@ Keep this order. How you do each step is your choice.
 
 Choose by the shape of the failure.
 
+- **Minimise the case**, once the command fails. Remove one input, caller,
+  config or step at a time. Run the command after each cut. Stop when each
+  element left matters.
 - **Bisect the history**, when the behavior was correct before. Give the
   command from step 1 to `git bisect run`. The commit it finds is a lead, not
   the cause. Read its diff and continue to trace.
@@ -54,6 +63,10 @@ Choose by the shape of the failure.
   and run once. Open the layer where good input becomes bad output. Log before
   the suspect operation, not after it fails. When a bad value comes from an
   unknown caller, print a stack trace with the value.
+- **Tag each debug log** with a unique prefix, such as `[DEBUG-a4f2]`. Before
+  the report, search for the tag and remove every match.
+- **Measure first**, for a performance fault. Take a baseline with a timer or
+  a profiler, then bisect. Logs mislead here.
 - **Diff a working case**, when a similar case succeeds. Compare the input, the
   config, the environment and the order of calls in full. List every difference
   before you set one aside. When it works on one machine only, name the
@@ -80,7 +93,9 @@ Then state one outcome.
 - **inconclusive**: what you ruled out, and the next probe to run.
 
 Never report a third outcome such as "probably" or "likely". A cause without
-output behind it is inconclusive.
+output behind it is inconclusive. A seam that is too shallow for a regression
+test is no third outcome either. State it inside the outcome you report, so the
+reader knows the test cannot run the real bug pattern there.
 
 Load the `tdd` skill for the fix. The failing case from step 1 becomes its
 first RED test.
