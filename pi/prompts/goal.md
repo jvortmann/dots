@@ -12,7 +12,7 @@ Request from the user: "$@"
 - Change no file. Run nothing that changes state. Write no code. Plan no implementation.
 - When the request above is empty, ask the user what they want with the `ask_user_question` tool, and wait.
 - Keep the request in the words of the user.
-- When the request touches code, start an `Explore` agent. Ask it for the current behavior, the words the code and `GLOSSARY.md` use, and the ADRs in `docs/adr/` that bound the request. Those decisions stay closed unless the request needs them open.
+- When the request touches code, start an `Explore` agent. Ask it for the current behavior, the words the code and `GLOSSARY.md` use, and the ADRs in `docs/adr/` that bound the request. Those decisions stay closed unless the request needs them open. This run writes neither file. The `domain-modeling` skill holds how to write a term or an ADR.
 
 ## 2. Close the gaps
 

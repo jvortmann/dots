@@ -59,4 +59,4 @@ Load the `explore-design-space` skill for the chosen candidate. Settle these dec
 
 When the user wants alternative interfaces, follow `references/design-it-twice.md` in the `codebase-design` skill.
 
-When a new module name has no term in `GLOSSARY.md`, propose the term. When the user rejects a candidate for a reason that a later review needs, offer to record an ADR. Skip a reason that is short-lived or obvious. Ask before you write either file.
+When a new module name has no term in `GLOSSARY.md`, propose the term. When the user rejects a candidate for a reason that a later review needs, offer to record an ADR. Skip a reason that is short-lived or obvious. Ask before you write either file, and load the `domain-modeling` skill for how to write them.

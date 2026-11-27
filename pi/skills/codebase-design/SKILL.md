@@ -82,8 +82,8 @@ more complexity hidden inside?
 - Use the `explore-design-space` skill to settle an open design decision.
 - The `GLOSSARY.md` of a project names its domain. Use those names for the
   things behind the seam.
-- The ADRs in `docs/adr/` record decisions. Do not reopen one without a
-  strong reason.
+- The ADRs in `docs/adr/` record decisions. Load the `domain-modeling`
+  skill to add a term or an ADR, or to weigh reopening one.
 
 ## Go deeper
 
