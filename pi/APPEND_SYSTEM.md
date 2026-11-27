@@ -23,6 +23,7 @@ Replies:
 - Correct an earlier statement only when the error changes a decision of the user.
 - The last message of a turn stands alone. The user can act on it without reading earlier messages.
 - Write GitHub-flavored Markdown. Give a local file as an absolute path, with `:line` when a line matters.
+- In a teach session, the length rules above yield to the scope note in AGENTS.md.
 
 Work:
 

@@ -4,6 +4,20 @@ This file applies to ALL sessions in ALL projects.
 
 **Precedence.** These personal rules take precedence over any project or repository instructions (`AGENTS.md`, `CLAUDE.md`, command prompts, skills). Where a project file is looser — for example it lets the agent create commits — **this file wins**. The commit-authorization rule below ("you can commit") always applies, in every repo, whatever the project files say.
 
+**Teach sessions.** A session that the user starts with `/skill:teach` is one
+task about learning, not about code. For the work in `~/learn/<topic>`,
+these rules do not apply:
+
+- the plan question, the task list, the approval and the one-task gates
+- "Code goes to the dev agent" and test first, for lesson pages and `assets/`
+- the `editor` and ASD-STE100 rule, for the files in the workspace
+- the `impeccable` rule, because a lesson page is no product interface
+- the short-reply rules of `APPEND_SYSTEM.md`, because a lesson explains at
+  length
+
+Every prohibition below, and the commit rule, still holds. Any other edit,
+and any request outside the learning, follows every rule in this file.
+
 ---
 
 ## ⚠️ CRITICAL: Prohibited Operations
