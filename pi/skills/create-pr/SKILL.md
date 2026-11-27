@@ -51,7 +51,10 @@ worth a retry.
 
 ## Detail
 
-- Never list the files or the tests, and never narrate the diff.
+- Never list the files or the tests, and never narrate the diff. A list of
+  the files that changed is not evidence. A structural view is a graph, a
+  tree or a folder layout. Add one only when it is the evidence for the
+  change.
 - Name a function, a file or an error only when the sentence says what it
   does and the reader needs the name to find the change.
 - Keep cause and effect in one place. A reader must not join three sentences
@@ -61,6 +64,22 @@ worth a retry.
   out on purpose.
 - Keep the text as small as the change allows.
 - Add a test plan only when the change is complex enough to need one.
+
+## Risk and evidence
+
+Give the reviewer the merge risk and the evidence in the shape that fits the
+change. They need no fixed headings, and a small change needs only a line.
+
+- **Merge risk.** Say whether the change is a one-way door or a two-way door.
+  A one-way door is hard to undo, such as a data migration or a public
+  interface. Give the blast radius: what breaks, and for whom, if the change
+  is wrong.
+- **Evidence.** Show the behavior before and after the change, by output, a
+  screen image or a reproduction. Pick the one run that proves the change.
+- Keep personal data out of pasted output, as the personal-data rule in
+  `pi/APPEND_SYSTEM.md` says.
+- Never take a screen image with `screencapture`. The `reproducible-locally`
+  skill says how to capture one.
 
 ## Steps
 
