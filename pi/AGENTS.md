@@ -231,9 +231,13 @@ session.
 - **The brief** gives the question, why it matters, and how deep to search. It
   asks for findings with absolute paths and line numbers, in about 400 words,
   and no copy of a whole file. It gives each file, tool and document by its
-  absolute path, or the folders that hold it.
+  absolute path, or the folders that hold it. It asks for a source for each
+  claim.
 - **Background** — start `Explore` in the background, as for `dev`. Wait
   only when the next step needs the answer.
+- **A note that outlives the session** — start `research` in place of
+  `Explore` when the answer must outlive the session as a note. Give it the
+  brief above, without the limit of 400 words.
 - **Skills** — when a skill names where the answer lives, put that place in
   the brief. The `pi` skill names where its docs live, for example.
 - **Do not** read the file in the main session. Read it only when the task

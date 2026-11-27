@@ -1,11 +1,9 @@
 import assert from "node:assert/strict";
 import { existsSync } from "node:fs";
-import { homedir } from "node:os";
 import { test } from "node:test";
 import extension from "../../../pi/extensions/preamble.ts";
-import { PI_DIR } from "./pi-packages.mjs";
+import { PI_DIR, SUBAGENTS_DIR } from "./pi-packages.mjs";
 
-const SUBAGENTS_DIR = `${homedir()}/.config/pi/npm/node_modules/@tintinweb/pi-subagents`;
 const skip = !existsSync(`${PI_DIR}/dist/core/system-prompt.js`) && "needs pi installed with mise";
 const skipSubagents = skip || (!existsSync(`${SUBAGENTS_DIR}/dist/prompts.js`) && "needs the subagents package installed");
 const { buildSystemPrompt } = skip ? {} : await import(`${PI_DIR}/dist/core/system-prompt.js`);
