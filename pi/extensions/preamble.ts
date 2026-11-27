@@ -6,8 +6,9 @@
 // bash tool is active. The variables stay in the environment.
 // A custom prompt, such as the body of an agent, has no preamble of pi and
 // stays as it is. The exception is the header that the pi-subagents package
-// puts at the start of the prompt of each replace-mode agent (Explore, review,
-// Plan). "You are a pi coding agent sub-agent." becomes "You are a sub-agent.".
+// puts at the start of the prompt of each replace-mode agent (Explore,
+// research, review, Plan). "You are a pi coding agent sub-agent." becomes
+// "You are a sub-agent.".
 // Without that header, the prompt stays unchanged.
 
 const PREAMBLE =

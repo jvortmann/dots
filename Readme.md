@@ -66,7 +66,7 @@ which you import by hand in DevDocs and Raycast.
 | `extensions/preamble.ts` | changes the opening sentence of the system prompt and drops its documentation section, so the main prompt never names the agent harness |
 | `extensions/herdr-restore.ts` | labels a Herdr app terminal with the file of its pi session, so that a terminal that comes back after a reboot resumes that session |
 | `skills/` | the skills that agents load for a kind of work, such as tdd, git-commit and create-pr |
-| `agents/` | five subagents: dev implements one task under TDD, editor writes text that people read and runs `ste-lint` until it passes, review reads a diff and changes nothing, Explore and Plan search and plan and change nothing |
+| `agents/` | six subagents: dev implements one task under TDD, editor writes text that people read and runs `ste-lint` until it passes, review reads a diff and changes nothing, Explore and Plan search and plan and change nothing, research searches like Explore and saves one cited note in `plans/research/` |
 | `prompts/` | three commands: `/goal`, `/review-architecture` and `/watch-pr` |
 | `pi-permissions.jsonc` | what an agent may run without asking, and what it may never run |
 | `settings.json` | runs `greprip/greprip.sh` before each agent shell command, so `grep` and `find` there use ripgrep and fd and skip ignored files. The terminal keeps the real ones. mise installs greprip |
