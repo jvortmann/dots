@@ -31,7 +31,7 @@
     "anthropic-console/claude-sonnet-5-5"
   ],
   "packages": [
-    "npm:pi-fzf",
+    "git:github.com/jvortmann/pi-fzf@use-agent-dir",
     "git:git@github.com:jvortmann/pi-claude-commands",
     "npm:@juanibiapina/pi-gob",
     "git:github.com/ghoseb/pi-askuserquestion",
