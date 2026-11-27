@@ -22,6 +22,10 @@ The agent reads only the description before it chooses to load the skill.
 - **Never put `: ` in an unquoted description.** YAML fails to parse it, and
   pi drops the skill without an error. After any change to the frontmatter,
   run the pi loader and check that the skill is on the list.
+- **Set `disable-model-invocation: true` for a skill that only the user
+  starts.** The skill leaves the system prompt, with no name, description or
+  path. `/skill:name` still loads it, and the `skills:` field of an agent
+  file can still preload it.
 
 ## State the intent
 
@@ -54,8 +58,9 @@ user agrees.
 
 Past about 80 lines of prose, ask whether each line earns its place. Move
 reference that only some runs need into a file beside SKILL.md. Give it a
-pointer that says when to read it. A table or an example that the reader needs
-does not count against the prose.
+pointer that says when to read it. Read `levers.md` beside this file when
+you prune agent text or the rules here do not settle a choice. A table or an
+example that the reader needs does not count against the prose.
 
 End each step on a condition the agent can check. A vague end lets it stop
 early. A late step with no output, such as a verification, is the one it
