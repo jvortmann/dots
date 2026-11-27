@@ -6,7 +6,8 @@ description: Load whenever a piece of work is reviewed to improve the agent setu
 # Retro
 
 Review a piece of work, and turn what went wrong into changes to the agent
-setup. A change can go in a skill, a prompt, an agent file, or AGENTS.md.
+setup. A change can go in a skill, a prompt, an agent file, AGENTS.md, or
+`pi/APPEND_SYSTEM.md`.
 Analyze first. Change nothing until the user picks.
 
 ## Read the evidence
@@ -31,6 +32,28 @@ work with the `pi-sessions` skill.
 - A fact the agent learned late, which a skill can give it at the start.
 - A workflow the agent built from nothing, which a skill can carry.
 - A report that claimed more than its session shows.
+- A mistake that no check caught. Read the checks of the repo first, here
+  `tests/run`, and see what each one covers. A check that exists but did not
+  run, or did not catch the mistake, is a finding.
+- Tool economy: an expensive tool call that a cheaper call or a script could
+  replace. The target is `pi/APPEND_SYSTEM.md`.
+- A no-op in a steering file: a line that changes no behavior, or a copy of a
+  rule that lives elsewhere.
+- Information access: an agent that could not reach what it needed, such as a
+  log or a document, and guessed or stopped.
+
+## Sort each finding first
+
+Sort every finding before you propose a change. A mechanical mistake, such as
+a banned command or a fixed pattern, gets a deterministic check. Only a
+judgement call gets a written rule. A check beats a rule, because an agent
+may skip a rule and cannot skip a check. This step chooses between a check
+and a rule. In this setup a check is one of:
+
+- A rule in `pi/pi-permissions.jsonc`, with a row in
+  `tests/pi/permissions_test.sh`.
+- A script.
+- A test.
 
 ## Report the findings
 
@@ -44,7 +67,10 @@ Sort each finding into one group:
 
 - **A new skill** for a workflow that repeats. Give its name and what it holds.
 - **A change to a skill**, with the skill and the detail to add.
-- **A change to a rule, a prompt or an agent**, with the file.
+- **A new check** for a mechanical mistake. Give the kind (a permissions rule
+  with its test row, a script, or a test) and the file.
+- **A change to a rule, a prompt or an agent**, with the file. Use this only
+  for a judgement call.
 - **Not worth encoding**, for a one-off mistake. Name these, so one incident
   does not become a permanent rule.
 
