@@ -152,6 +152,26 @@ Use only the trailer keys the template carries, with the values and the shape
 it shows. Keep them in this order: `Work-item-id`, `Change-type`, `Refactoring`,
 `See-also`, then the advisory ids.
 
+The trailers form one block after one blank line that follows the body. Put
+each trailer on its own line, with no blank line between trailers. Git reads
+only the last paragraph as trailers, so a blank line turns the earlier ones
+into body text.
+
+Bad:
+
+```
+Change-type: feature
+
+See-also: https://example.com/spec
+```
+
+Good:
+
+```
+Change-type: feature
+See-also: https://example.com/spec
+```
+
 - **`Work-item-id`** comes from `prepare-commit-msg` on a branch named after a
   work item. Do not write it by hand, because the hook adds it at commit time.
 - **`Refactoring`** goes on a `refactor` commit, and names the catalog id of
